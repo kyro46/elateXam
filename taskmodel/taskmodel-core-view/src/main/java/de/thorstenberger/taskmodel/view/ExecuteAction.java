@@ -41,6 +41,7 @@ import de.thorstenberger.taskmodel.TaskModelViewDelegateObject;
 import de.thorstenberger.taskmodel.complex.ComplexTasklet;
 import de.thorstenberger.taskmodel.complex.TaskDef_Complex;
 import de.thorstenberger.taskmodel.complex.complextaskhandling.SubTasklet;
+import de.thorstenberger.taskmodel.complex.complextaskhandling.Try;
 import de.thorstenberger.taskmodel.complex.complextaskhandling.Try.ProgressInformation;
 
 /**
@@ -159,6 +160,19 @@ public class ExecuteAction extends org.apache.struts.action.Action {
             return mapping.findForward("error");
         }
 
+		// check if clicked on save-and-forward (or save-and-backward)
+		if (request.getParameterMap().containsKey("save-and-forward")) {
+			// handle what to do when there is no next page
+			Try ttry =  ct.getActiveTry();
+			if (page < ttry.getNumberOfPages())
+				page = page + 1;
+		}
+		else if (request.getParameterMap().containsKey("save-and-backward")) {
+			// handle what to do when there is no previous page
+			if (page > 1)
+				page = page - 1;
+		}
+
         populateVO(ctivo, taskDef, ct, page);
         request.setAttribute("Task", ctivo);
 
@@ -201,12 +215,15 @@ public class ExecuteAction extends org.apache.struts.action.Action {
         ctivo.setTaskId(ctd.getId());
 
         if (ct.getComplexTaskDefRoot().hasTimeRestriction()) {
-            final long deadline = ct.getActiveTry().getStartTime() +
-            				ct.getActiveTry().getTimeExtension() +
-                    ct.getComplexTaskDefRoot().getTimeInMinutesWithoutKindnessExtensionTime() * 60 * 1000;
+			final long deadline = ct.getActiveTry().getStartTime()
+					+ ct.getActiveTry().getTimeExtension()
+					+ ct.getComplexTaskDefRoot().getTimeInMinutesWithoutKindnessExtensionTime()
+					* 60 * 1000;
             ctivo.setRemainingTimeMillis(deadline - System.currentTimeMillis());
+            ctivo.setDeadline(DateUtil.getStringFromMillis(deadline));
         } else {
             ctivo.setRemainingTimeMillis(-1);
+            ctivo.setDeadline("-");
         }
 
         ctivo.setTimeRestricted(ct.getComplexTaskDefRoot().hasTimeRestriction());
@@ -221,14 +238,6 @@ public class ExecuteAction extends org.apache.struts.action.Action {
         ctivo.setProcessPercentage(nf.format(pi.getProgressPercentage()));
         ctivo.setNumOfSubtasklets(pi.getNumOfSubtasklets());
         ctivo.setNumOfProcessedSubtasklets(pi.getNumOfProcessedSubtasklets());
-
-        if (ct.getComplexTaskDefRoot().hasTimeRestriction()) {
-            ctivo.setDeadline(DateUtil.getStringFromMillis(
-                    ct.getActiveTry().getStartTime() + ct.getActiveTry().getTimeExtension() + ct.getComplexTaskDefRoot().getTimeInMinutesWithoutKindnessExtensionTime()
-                    * 60 * 1000));
-        } else {
-            ctivo.setDeadline("-");
-        }
 
         ctivo.setHashCode("" + ct.getActiveTry().getPage(page).getHash());
 

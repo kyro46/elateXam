@@ -108,6 +108,11 @@ function nutzeUhr()
 	}else return;
 }
 
+function submit_on_timeout()
+{
+	document.forms._speichern.submit();
+}
+
 function timer1()
 {
 	var remaining_min = Math.floor( this.mseconds >= 0 ? this.mseconds / 60000 : 0 );
@@ -149,6 +154,7 @@ function timer1()
 				break;
 			}
 		}
+		submit_on_timeout();
 	}
 
 	this.mseconds = this.mseconds - 1000;
@@ -178,9 +184,15 @@ function checkedLink(name, target, linkClass)
   <tr>
 
     <td bgcolor="#F2F9FF" class="complexTaskNav">
-      <div align="left">
-	  	<a href="${ReturnURL}" class="ComplexTaskLink">
-	  	<img src="<%= request.getContextPath() %>/pics/exit.gif" width="20" height="16" align="absbottom" hspace="4px">Hauptseite</a>
+      <div align="left"><img src="<%= request.getContextPath() %>/pics/exit.gif" width="20" height="16" align="absbottom">
+        <script type="text/javascript">
+		 <!--
+			checkedLink("Hauptseite", "${ReturnURL}", "ComplexTaskLink");
+		 //-->
+		</script>
+		  <noscript>
+		  	<a href="${ReturnURL}" class="ComplexTaskLink">Hauptseite</a>
+		  </noscript>
 		</div>
     </td>
 
@@ -260,7 +272,7 @@ function checkedLink(name, target, linkClass)
       </table>
       <br>
       <br>
-      <form method="post" action="<html:rewrite action="/commit"/>" onSubmit=" return send() ">
+      <form name="_abgeben" method="post" action="<html:rewrite action="/commit"/>" onSubmit=" return send() ">
    	    <input type="hidden" name="id" value="${Task.taskId}">
         <div align="center">
           <input type="submit" name="submit" value="Abgeben">
@@ -281,7 +293,7 @@ function checkedLink(name, target, linkClass)
       <br>
       <br>
       <br>
-      <form method="post" action="<html:rewrite action="/savePage"/>" onSubmit="return preSaveManager.callback();">
+      <form name="_speichern" method="post" action="<html:rewrite action="/savePage"/>" onSubmit="return preSaveManager.callback();">
 	    <input type="hidden" name="hashCode" value="${Task.hashCode}">
 	    <input type="hidden" name="id" value="${Task.taskId}">
 	    <!-- continue after saving -->
@@ -333,30 +345,21 @@ function checkedLink(name, target, linkClass)
 			<br></fieldset>
 				<div id="TimeOver_<%=i++%>" style="visibility:hidden; color:red; font-size:12px" align="right">Bearbeitungszeit abgelaufen</div>
 			<br>
-
 		</c:forEach>
-
 
 		<br>
         <br>
         <hr size="1" noshade>
         <br>
-        <table width="100%">
-          <tr>
-            <td valign="top"> <br>
-            </td>
-            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-            <td valign="top">
-              <p align="right">
-			  	<input type="hidden" name="page" value="${Task.page}">
-                <input type="submit" name="save" value="Speichern">
-                <br>
-                <br>
-                Diese Seite abspeichern.<br>
-              </p>
-              </td>
-          </tr>
-        </table>
+		<input type="hidden" name="page" value="${Task.page}">
+		<c:if test="${Task.page < Task.numOfPages}">
+			<input type="submit" class="imgbutton" name="save-and-forward" title="Speichern und Weiter" value="">
+		</c:if>
+		<input type="submit" class="imgbutton" name="save" title="Speichern" value="">
+		<c:if test="${Task.page > 1}">
+			<input type="submit" class="imgbutton" name="save-and-backward" title="Speichern und Zurück" value="">
+		</c:if>
+		<br style="clear: both;" />
        </form>
     </td>
   </tr>
