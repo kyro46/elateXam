@@ -108,11 +108,6 @@ function nutzeUhr()
 	}else return;
 }
 
-function submit_on_timeout()
-{
-	document.forms._speichern.submit();
-}
-
 function timer1()
 {
 	var remaining_min = Math.floor( this.mseconds >= 0 ? this.mseconds / 60000 : 0 );
@@ -143,7 +138,6 @@ function timer1()
     if( remaining_min < 3){
 		getElem( "id","UhrTop",null).style.backgroundColor = "white";
     }
-    
 
 	if( this.mseconds <= 0 ){
 		for( var i = 0; i<500; i++ ){
@@ -154,13 +148,24 @@ function timer1()
 				break;
 			}
 		}
-		submit_on_timeout();
 	}
 
 	this.mseconds = this.mseconds - 1000;
 
 	window.setTimeout('timer1()',1000);
 }
+
+
+function autosaveOnTimeout()  {
+	
+	if (mseconds > 500) {
+		document.forms._speichern.submit();
+	}
+	
+}
+
+window.setTimeout("autosaveOnTimeout()", mseconds-1000);
+
 function format_time(min,sec){
  var val = "";
  if(min<10)
