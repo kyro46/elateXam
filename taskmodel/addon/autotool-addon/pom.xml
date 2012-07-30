@@ -17,6 +17,18 @@
   <inceptionYear>2007</inceptionYear>
   <packaging>bundle</packaging>
   
+    <scm>
+    <connection>
+    	git://github.com/kyro46/elateXam.git
+    </connection>
+    <developerConnection>
+      scm:git:git@github.com:kyro46/elateXam.git
+    </developerConnection>
+    <url>
+      http://github.com/kyro46/elateXam
+    </url>
+  </scm>
+  
   <build>
     <plugins>
       <plugin> 

@@ -16,15 +16,15 @@
   <name>Taskmodel Schema</name>
   <description>Taskmodel xsd schema and generated JAXB sources</description>
 
-  <scm>
+    <scm>
     <connection>
-        git://github.com/smee/elateXam.git
+    	git://github.com/kyro46/elateXam.git
     </connection>
     <developerConnection>
-      scm:git:git@github.com:smee/elateXam.git
+      scm:git:git@github.com:kyro46/elateXam.git
     </developerConnection>
     <url>
-      http://github.com/smee/elateXam/taskmodel/taskmodel-schema
+      http://github.com/kyro46/elateXam
     </url>
   </scm>
 

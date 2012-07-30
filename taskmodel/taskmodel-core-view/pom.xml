@@ -15,15 +15,15 @@
   <name>TaskModel Core View</name>
   <description>The presentation layer webapp for complex Tasks of the TaskModel.</description>
   
-  <scm>
+    <scm>
     <connection>
-        git://github.com/smee/elateXam.git
+    	git://github.com/kyro46/elateXam.git
     </connection>
     <developerConnection>
-      scm:git:git@github.com:smee/elateXam.git
+      scm:git:git@github.com:kyro46/elateXam.git
     </developerConnection>
     <url>
-      http://github.com/smee/elateXam/taskmodel/taskmodel-core-view
+      http://github.com/kyro46/elateXam
     </url>
   </scm>
 
