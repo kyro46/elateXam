@@ -28,6 +28,7 @@
   </scm>
   <modules>
     <module>autotool-addon</module>
+    <module>groupingTask-addon</module>
 	<!--
     <module>junit-addon</module>
     <module>junit-addon-correction</module>
