@@ -17,17 +17,18 @@
   
   <scm>
     <connection>
-        git://github.com/smee/elateXam.git
+    	git://github.com/kyro46/elateXam.git
     </connection>
     <developerConnection>
-      scm:git:git@github.com:smee/elateXam.git
+      scm:git:git@github.com:kyro46/elateXam.git
     </developerConnection>
     <url>
-      http://github.com/smee/elateXam/taskmodel/addon
+      http://github.com/kyro46/elateXam
     </url>
   </scm>
   <modules>
     <module>autotool-addon</module>
+    <module>groupingTask-addon</module>
 	<!--
     <module>junit-addon</module>
     <module>junit-addon-correction</module>

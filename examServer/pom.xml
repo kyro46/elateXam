@@ -40,13 +40,13 @@
   </developers>
   <scm>
     <connection>
-        git://github.com/smee/elateXam.git
+    	git://github.com/kyro46/elateXam.git
     </connection>
     <developerConnection>
-      scm:git:git@github.com:smee/elateXam.git
+      scm:git:git@github.com:kyro46/elateXam.git
     </developerConnection>
     <url>
-      http://github.com/smee/elateXam
+      http://github.com/kyro46/elateXam
     </url>
   </scm>
   
@@ -576,7 +576,13 @@
       <artifactId>slf4j-log4j12</artifactId>
       <version>1.6.1</version>
       <scope>compile</scope>
-    </dependency>      
+    </dependency>   
+     <dependency>
+    	<groupId>com.spiru.dev</groupId>
+    	<artifactId>groupingTask-addon</artifactId>
+    	<version>0.0.25-SNAPSHOT</version>
+    	<type>bundle</type>
+    </dependency>   
     <dependency>
       <!-- This dependency is not needed at all. The scope 'provided' results 
         in globally excluding it from all transitive dependencies. The classes get 
@@ -590,6 +596,12 @@
       <groupId>de.elatexam</groupId>
       <artifactId>autotool-addon</artifactId>
       <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+    	<groupId>com.spiru.dev</groupId>
+    	<artifactId>groupingTask-addon</artifactId>
+    	<version>0.0.25-SNAPSHOT</version>
+    	<type>bundle</type>
     </dependency>
 </dependencies>
 
