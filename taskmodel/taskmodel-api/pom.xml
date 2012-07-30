@@ -41,7 +41,7 @@
   <profiles>
     <profile>
       <id>deployTomcat</id>
-      <!-- deploy the api to ${tomcat}/shared/lib -->
+      <!-- deploy the api to ${tomcat}/lib -->
       <build>
         <plugins>
           <plugin>
@@ -57,7 +57,7 @@
                   <tasks>
                     <copy verbose="true"
                       file="${project.build.directory}/${project.build.finalName}.${project.packaging}"
-                      todir="${tomcat.path}/shared/lib" />
+                      todir="${tomcat.path}/lib" />
                   </tasks>
                 </configuration>
               </execution>
