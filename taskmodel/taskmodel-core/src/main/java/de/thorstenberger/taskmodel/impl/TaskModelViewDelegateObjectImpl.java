@@ -106,6 +106,14 @@ public class TaskModelViewDelegateObjectImpl implements TaskModelViewDelegateObj
 		return taskManager.getTaskletContainer().getTasklet( taskId, login );
 	}
 
+
+	/* (non-Javadoc)
+	 * @see de.thorstenberger.taskmodel.TaskModelViewDelegateObject#getTasklet()
+	 */
+	public Tasklet getTaskletForStudent(boolean noupdate) throws TaskApiException {
+		return taskManager.getTaskletContainer().getTaskletForStudent( taskId, login, noupdate );
+	}
+
 	/* (non-Javadoc)
 	 * @see de.thorstenberger.taskmodel.TaskModelViewDelegateObject#getReturnURL()
 	 */

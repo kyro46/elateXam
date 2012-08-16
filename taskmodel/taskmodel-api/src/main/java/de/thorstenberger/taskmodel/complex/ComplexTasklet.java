@@ -63,6 +63,7 @@ public interface ComplexTasklet extends Tasklet {
 	 * @throws IllegalStateException if the hashcode doesn't match of the
 	 */
 	public void savePage( int pageNo, List<SubmitData> submitData, long hashcode ) throws IllegalStateException;
+	public void savePageAuto( int pageNo, List<SubmitData> submitData, long hashcode ) throws IllegalStateException;
 
 	public void submit() throws IllegalStateException;
 

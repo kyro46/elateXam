@@ -15,7 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ */
 /**
  *
  */
@@ -52,24 +52,24 @@ public class TaskletContainerImpl implements TaskletContainer {
 	 *
 	 */
 	public TaskletContainerImpl( final TaskFactory taskFactory ) {
-        this(taskFactory, "taskmodel-core_userObjectCache");
-    }
+		this(taskFactory, "taskmodel-core_userObjectCache");
+	}
 
-    /**
-     * @param taskFactory
-     * @param cacheName
-     */
-    public TaskletContainerImpl(final TaskFactory taskFactory, String cacheName) {
-        this.taskFactory = taskFactory;
+	/**
+	 * @param taskFactory
+	 * @param cacheName
+	 */
+	public TaskletContainerImpl(final TaskFactory taskFactory, String cacheName) {
+		this.taskFactory = taskFactory;
 
-        // TODO check for at least 512MB of free memory
-//		System.out.println( Runtime.getRuntime().maxMemory() );
+		// TODO check for at least 512MB of free memory
+		//		System.out.println( Runtime.getRuntime().maxMemory() );
 
-        try {
-            this.userObjectCache = JCS.getInstance(cacheName);
-        } catch (final CacheException e) {
-            throw new TaskModelPersistenceException(e);
-        }
+		try {
+			this.userObjectCache = JCS.getInstance(cacheName);
+		} catch (final CacheException e) {
+			throw new TaskModelPersistenceException(e);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -86,12 +86,20 @@ public class TaskletContainerImpl implements TaskletContainer {
 	 * @see de.thorstenberger.taskmodel.TaskletContainer#getTasklet(long, java.lang.String)
 	 */
 	public synchronized Tasklet getTasklet(final long taskId, final String userId) throws TaskApiException{
+		return getTaskletForStudent(taskId, userId, false);
+	}
+
+	public synchronized Tasklet getTaskletForStudent(final long taskId, final String userId, final boolean noupdate) throws TaskApiException {
+		System.out.println("\n\nSAYMAR\n\n");
 		final UserObject uo = getUserObj( userId );
 		final Tasklet t = uo.getTasklet( taskId, false );
 		if( t != null ) {
-      t.update();
-    }
+			if (!noupdate)
+				t.update();
+		}
 		return t;
+		
+			
 	}
 
 	/* (non-Javadoc)
@@ -123,8 +131,8 @@ public class TaskletContainerImpl implements TaskletContainer {
 		final List<String> userIds = taskFactory.getUserIdsOfAvailableTasklets( taskId );
 		final List<Tasklet> ret = new ArrayList<Tasklet>();
 		for( final String userId : userIds ) {
-      ret.add( getTasklet( taskId, userId ) );
-    }
+			ret.add( getTasklet( taskId, userId ) );
+		}
 
 		return ret;
 	}
@@ -143,10 +151,10 @@ public class TaskletContainerImpl implements TaskletContainer {
 	 * @see de.thorstenberger.taskmodel.TaskletContainer#calculateStatistics(long)
 	 */
 	public TaskStatistics calculateStatistics(final long taskId) throws TaskApiException {
-//		System.out.println( "start calculateStatistics");
-//		long start = System.currentTimeMillis();
+		//		System.out.println( "start calculateStatistics");
+		//		long start = System.currentTimeMillis();
 		final List<Tasklet> tasklets = getTaskletsHelper( taskId );
-//		System.out.println( System.currentTimeMillis() - start );
+		//		System.out.println( System.currentTimeMillis() - start );
 		int numOfSolutions = 0;
 		int numOfCorrectedSolutions = 0;
 		int numOfAssignedSolutions = 0;
@@ -159,16 +167,16 @@ public class TaskletContainerImpl implements TaskletContainer {
 					numOfSolutions++;
 
 					if( tasklet.hasOrPassedStatus( Tasklet.Status.CORRECTED ) ) {
-            numOfCorrectedSolutions++;
-          }
+						numOfCorrectedSolutions++;
+					}
 				}
 				if( tasklet.getTaskletCorrection().getCorrector() != null ) {
-          numOfAssignedSolutions++;
-        }
+					numOfAssignedSolutions++;
+				}
 
 			}
 		}
-//		System.out.println( System.currentTimeMillis() - start );
+		//		System.out.println( System.currentTimeMillis() - start );
 		return new TaskStatisticsImpl( taskId, numOfSolutions, numOfCorrectedSolutions, numOfAssignedSolutions );
 
 
@@ -190,20 +198,20 @@ public class TaskletContainerImpl implements TaskletContainer {
 				final List<ManualCorrection> mcs = tasklet.getTaskletCorrection().getManualCorrections();
 				boolean add = true;
 				for( final ManualCorrection mc : mcs ) {
-          if( mc.getCorrector().equals( correctorId ) ){
+					if( mc.getCorrector().equals( correctorId ) ){
 						add = false;
 						break;
 					}
-        }
+				}
 				if( add ) {
-          assignableTasklets.add( tasklet );
-        }
+					assignableTasklets.add( tasklet );
+				}
 			}
 
 		}
 
 		if( assignableTasklets.size() == 0 )
-            throw new TaskApiException( TaskHandlingConstants.NO_UNCORRECTED_AND_UNASSIGNED_SOLUTIONS_AVAILABLE );
+			throw new TaskApiException( TaskHandlingConstants.NO_UNCORRECTED_AND_UNASSIGNED_SOLUTIONS_AVAILABLE );
 
 		assignableTasklets.get( r.nextInt( assignableTasklets.size() ) ).assignToCorrector( correctorId );
 
@@ -212,24 +220,24 @@ public class TaskletContainerImpl implements TaskletContainer {
 	/* (non-Javadoc)
 	 * @see de.thorstenberger.taskmodel.TaskletContainer#distributeTaskletsToCorrectors(long, java.lang.String[])
 	 */
-  public Map<String, Integer> distributeTaskletsToCorrectors(final long taskId, final String... correctorIds) throws TaskApiException {
+	public Map<String, Integer> distributeTaskletsToCorrectors(final long taskId, final String... correctorIds) throws TaskApiException {
 
-    final List<Tasklet> tasklets = getTaskletsHelper(taskId);
-    return new TaskletDistributor().distributeAmong(tasklets, correctorIds);
-  }
+		final List<Tasklet> tasklets = getTaskletsHelper(taskId);
+		return new TaskletDistributor().distributeAmong(tasklets, correctorIds);
+	}
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see de.thorstenberger.taskmodel.TaskletContainer#getTaskletsAssignedToCorrector(long, java.lang.String)
-   */
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see de.thorstenberger.taskmodel.TaskletContainer#getTaskletsAssignedToCorrector(long, java.lang.String)
+	 */
 	public synchronized List<Tasklet> getTaskletsAssignedToCorrector(final long taskId, final String correctorId ) throws TaskApiException {
 
 		final List<String> userIds = taskFactory.getUserIdsOfTaskletsAssignedToCorrector( taskId, correctorId );
 		final List<Tasklet> ret = new ArrayList<Tasklet>();
 		for( final String userId : userIds ) {
-      ret.add( getTasklet( taskId, userId ) );
-    }
+			ret.add( getTasklet( taskId, userId ) );
+		}
 
 		return ret;
 
@@ -249,11 +257,11 @@ public class TaskletContainerImpl implements TaskletContainer {
 	 */
 	public synchronized void reset() {
 		try {
-            userObjectCache.remove();
+			userObjectCache.remove();
 		} catch (final CacheException e) {
 			throw new TaskModelPersistenceException( e );
 		}
-    taskFactory.reset();
+		taskFactory.reset();
 	}
 
 	/* (non-Javadoc)

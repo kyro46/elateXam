@@ -57,195 +57,310 @@ import de.thorstenberger.taskmodel.complex.complextaskhandling.SubmitData;
  */
 public class SavePageAction extends Action {
 
-    public static void logPostData(final HttpServletRequest request, final Tasklet tasklet) {
-        final Map vars = request.getParameterMap();
-        final StringBuffer parameters = new StringBuffer();
-        final Iterator keys = vars.keySet().iterator();
-        while (keys.hasNext()) {
-            final String key = (String) keys.next();
-            parameters.append(key + "=" + ((String[]) vars.get(key))[0] + "\n");
-        }
-        tasklet.logPostData("posted parameters:\n" + parameters.toString(), request.getRemoteAddr());
-    }
+	public static void logPostData(final HttpServletRequest request,
+			final Tasklet tasklet) {
+		final Map vars = request.getParameterMap();
+		final StringBuffer parameters = new StringBuffer();
+		final Iterator keys = vars.keySet().iterator();
+		while (keys.hasNext()) {
+			final String key = (String) keys.next();
+			parameters.append(key + "=" + ((String[]) vars.get(key))[0] + "\n");
+		}
+		tasklet.logPostData("posted parameters:\n" + parameters.toString(),
+				request.getRemoteAddr());
+	}
 
-    private final Log log = LogFactory.getLog(SavePageAction.class);
+	private final Log log = LogFactory.getLog(SavePageAction.class);
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seeorg.apache.struts.action.Action#execute(org.apache.struts.action.
-     * ActionMapping, org.apache.struts.action.ActionForm,
-     * javax.servlet.http.HttpServletRequest,
-     * javax.servlet.http.HttpServletResponse)
-     */
-    @Override
-    public ActionForward execute(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-            final HttpServletResponse response) throws Exception {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.apache.struts.action.Action#execute(org.apache.struts.action.
+	 * ActionMapping, org.apache.struts.action.ActionForm,
+	 * javax.servlet.http.HttpServletRequest,
+	 * javax.servlet.http.HttpServletResponse)
+	 */
+	@Override
+	public ActionForward execute(final ActionMapping mapping,
+			final ActionForm form, final HttpServletRequest request,
+			final HttpServletResponse response) throws Exception {
 
-        final ActionMessages msgs = new ActionMessages();
-        final ActionMessages errors = new ActionMessages();
+		/*// hier Prüfen ob Autosave ja nein - Dann Methode aufrufen
+		if (Boolean.valueOf(request.getParameter("autosave"))) {
+			ComplexTaskInfoVO ctivo = (ComplexTaskInfoVO) request.getAttribute("Task");
+			final long remaining_msec = ctivo.getRemainingTimeMillis();
+			System.out.println("REMAINS");
+			System.out.println(remaining_msec);
+			ctivo.setRemainingTimeMillis(remaining_msec + 1000);
+		}*/
+		if (Boolean.valueOf(request.getParameter("autosave"))) {
+			return this.autoSave(mapping, request);
+		}
 
-        int page;
-        long id;
-        try {
-            id = Long.parseLong(request.getParameter("id"));
-            page = Integer.parseInt(request.getParameter("page") == null ? "1" : request.getParameter("page"));
-        } catch (final NumberFormatException e) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("invalid.parameter"));
-            saveErrors(request, errors);
-            return mapping.findForward("error");
-        }
+		final ActionMessages msgs = new ActionMessages();
+		final ActionMessages errors = new ActionMessages();
 
-        final TaskModelViewDelegateObject delegateObject = (TaskModelViewDelegateObject) TaskModelViewDelegate.getDelegateObject(
-                request.getSession().getId(), id);
-        if (delegateObject == null) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("no.session"));
-            saveErrors(request, errors);
-            return mapping.findForward("error");
-        }
-        request.setAttribute("ReturnURL", delegateObject.getReturnURL());
+		int page;
+		long id;
+		try {
+			id = Long.parseLong(request.getParameter("id"));
+			page = Integer.parseInt(request.getParameter("page") == null ? "1"
+					: request.getParameter("page"));
+		} catch (final NumberFormatException e) {
+			errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("invalid.parameter"));
+			saveErrors(request, errors);
+			return mapping.findForward("error");
+		}
 
-        ComplexTasklet ct;
+		final TaskModelViewDelegateObject delegateObject = (TaskModelViewDelegateObject) TaskModelViewDelegate
+				.getDelegateObject(request.getSession().getId(), id);
+		if (delegateObject == null) {
+			errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("no.session"));
+			saveErrors(request, errors);
+			return mapping.findForward("error");
+		}
+		request.setAttribute("ReturnURL", delegateObject.getReturnURL());
 
-        try {
-            ct = (ComplexTasklet) delegateObject.getTasklet();
-        } catch (final ClassCastException e1) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("only.complexTasks.supported"));
-            saveErrors(request, errors);
-            return mapping.findForward("error");
-        } catch (final TaskApiException e3) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("misc.error", e3.getMessage()));
-            saveErrors(request, errors);
-            log.error(e3);
-            return mapping.findForward("error");
-        }
+		ComplexTasklet ct;
 
-        logPostData(request, ct);
+		try {
+			ct = (ComplexTasklet) delegateObject.getTasklet();
+		} catch (final ClassCastException e1) {
+			errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("only.complexTasks.supported"));
+			saveErrors(request, errors);
+			return mapping.findForward("error");
+		} catch (final TaskApiException e3) {
+			errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("misc.error", e3.getMessage()));
+			saveErrors(request, errors);
+			log.error(e3);
+			return mapping.findForward("error");
+		}
 
-        TaskDef_Complex taskDef;
-        try {
-            taskDef = (TaskDef_Complex) delegateObject.getTaskDef();
-        } catch (final ClassCastException e2) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("only.complexTasks.supported"));
-            saveErrors(request, errors);
-            return mapping.findForward("error");
-        } catch (final TaskApiException e3) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("misc.error", e3.getMessage()));
-            saveErrors(request, errors);
-            log.error(e3);
-            return mapping.findForward("error");
-        }
+		logPostData(request, ct);
 
-        if (!taskDef.isActive()) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("task.inactive"));
-            saveErrors(request, errors);
-            return mapping.findForward("error");
-        }
+		TaskDef_Complex taskDef;
+		try {
+			taskDef = (TaskDef_Complex) delegateObject.getTaskDef();
+		} catch (final ClassCastException e2) {
+			errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("only.complexTasks.supported"));
+			saveErrors(request, errors);
+			return mapping.findForward("error");
+		} catch (final TaskApiException e3) {
+			errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("misc.error", e3.getMessage()));
+			saveErrors(request, errors);
+			log.error(e3);
+			return mapping.findForward("error");
+		}
 
-        try {
+		if (!taskDef.isActive()) {
+			errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("task.inactive"));
+			saveErrors(request, errors);
+			return mapping.findForward("error");
+		}
 
-            final long hashCode = Long.parseLong(request.getParameter("hashCode"));
+		try {
 
-            // ...and the following too:
-            final List<SubTasklet> subtasklets = ct.getComplexTaskHandlingRoot().getRecentTry().getPage(page).getSubTasklets();
+			final long hashCode = Long.parseLong(request
+					.getParameter("hashCode"));
 
-            final List<SubmitData> submitDataList = getSubmitData(request, subtasklets);
+			// ...and the following too:
+			final List<SubTasklet> subtasklets = ct
+					.getComplexTaskHandlingRoot().getRecentTry().getPage(page)
+					.getSubTasklets();
 
-            ct.savePage(page, submitDataList, hashCode);
-            processInteractiveTasklets(ct, subtasklets, submitDataList, request);
+			final List<SubmitData> submitDataList = getSubmitData(request,
+					subtasklets);
 
-            return mapping.findForward("success");
+			ct.savePage(page, submitDataList, hashCode);
+			processInteractiveTasklets(ct, subtasklets, submitDataList, request);
 
-        } catch (final IllegalStateException e) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(e.getMessage()));
-            saveErrors(request, errors);
-            log.info(e);
-            return mapping.findForward("error");
-        } catch (final ParsingException e1) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("parsing.error"));
-            saveErrors(request, errors);
-            log.error("Parsing error!", e1);
-            return mapping.findForward("error");
-        } catch (final NumberFormatException e2) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("invalid.parameter"));
-            saveErrors(request, errors);
-            return mapping.findForward("error");
-        }
+			return mapping.findForward("success");
 
-    }
+		} catch (final IllegalStateException e) {
+			errors.add(ActionMessages.GLOBAL_MESSAGE,
+					new ActionMessage(e.getMessage()));
+			saveErrors(request, errors);
+			log.info(e);
+			return mapping.findForward("error");
+		} catch (final ParsingException e1) {
+			errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("parsing.error"));
+			saveErrors(request, errors);
+			log.error("Parsing error!", e1);
+			return mapping.findForward("error");
+		} catch (final NumberFormatException e2) {
+			errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("invalid.parameter"));
+			saveErrors(request, errors);
+			return mapping.findForward("error");
+		}
 
-    /**
-     * task[111]
-     * 
-     * @param varName
-     * @return
-     */
-    private int getRelativeTaskNo(final String varName) throws ParsingException {
-        try {
-            return Integer.parseInt(
-                    varName.substring(5, varName.indexOf(']')));
-        } catch (final NumberFormatException e) {
-            throw new ParsingException(e);
-        }
-    }
+	}
 
-    private List<SubmitData> getSubmitData(final HttpServletRequest request, final List<SubTasklet> subtasklets)
-            throws ParsingException {
-        try {
+	/**
+	 * 
+	 * @param varName
+	 * @return
+	 */
+	private int getRelativeTaskNo(final String varName) throws ParsingException {
+		try {
+			return Integer.parseInt(varName.substring(5, varName.indexOf(']')));
+		} catch (final NumberFormatException e) {
+			throw new ParsingException(e);
+		}
+	}
 
-            final Enumeration varNames = request.getParameterNames();
+	private List<SubmitData> getSubmitData(final HttpServletRequest request,
+			final List<SubTasklet> subtasklets) throws ParsingException {
+		try {
 
-            // wir erwarten Variablen zu den entsprechenden Tasks
-            // wenn das nicht �bereinstimmt, dann ArrayIndexOutOfBoundsException
-            final Map[] taskVarMaps = new Map[subtasklets.size()];
-            for (int i = 0; i < taskVarMaps.length; i++) {
-                taskVarMaps[i] = new HashMap();
-            }
+			final Enumeration varNames = request.getParameterNames();
 
-            while (varNames.hasMoreElements()) {
-                final String varName = (String) varNames.nextElement();
+			// wir erwarten Variablen zu den entsprechenden Tasks
+			// wenn das nicht �bereinstimmt, dann ArrayIndexOutOfBoundsException
+			final Map[] taskVarMaps = new Map[subtasklets.size()];
+			for (int i = 0; i < taskVarMaps.length; i++) {
+				taskVarMaps[i] = new HashMap();
+			}
 
-                if (varName.startsWith("task[")) {
+			while (varNames.hasMoreElements()) {
+				final String varName = (String) varNames.nextElement();
 
-                    final int relativeTaskNo = getRelativeTaskNo(varName);
+				if (varName.startsWith("task[")) {
 
-                    if (relativeTaskNo >= 0) {
-                        taskVarMaps[relativeTaskNo].
-                                put(varName, request.getParameter(varName));
-                    }
+					final int relativeTaskNo = getRelativeTaskNo(varName);
 
-                }
-            }
+					if (relativeTaskNo >= 0) {
+						taskVarMaps[relativeTaskNo].put(varName,
+								request.getParameter(varName));
+					}
 
-            final List<SubmitData> ret = new ArrayList<SubmitData>(subtasklets.size());
+				}
+			}
 
-            for (int i = 0; i < subtasklets.size(); i++) {
-                ret.add(i, TaskModelServices.getInstance().getSubTaskView(subtasklets.get(i)).getSubmitData(taskVarMaps[i]));
-            }
+			final List<SubmitData> ret = new ArrayList<SubmitData>(
+					subtasklets.size());
 
-            return ret;
+			for (int i = 0; i < subtasklets.size(); i++) {
+				ret.add(i,
+						TaskModelServices.getInstance()
+								.getSubTaskView(subtasklets.get(i))
+								.getSubmitData(taskVarMaps[i]));
+			}
 
-        } catch (final ArrayIndexOutOfBoundsException e) {
-            throw new ParsingException(e);
-        }
+			return ret;
 
-    }
+		} catch (final ArrayIndexOutOfBoundsException e) {
+			throw new ParsingException(e);
+		}
 
-    private void processInteractiveTasklets(final ComplexTasklet ct, final List<SubTasklet> subtasklets,
-            final List<SubmitData> submitDatas, final HttpServletRequest request) {
-        for (int i = 0; i < subtasklets.size(); i++) {
-            final SubTasklet subTasklet = subtasklets.get(i);
+	}
 
-            if (request.getParameterMap().containsKey("doAutoCorrection_" + subTasklet.getVirtualSubtaskNumber())) {
-                // FIXME: add TaskModelSecurityException being subclassed from
-                // SecurityException
-                if (!subTasklet.isInteractiveFeedback()) {
-                    throw new SecurityException("No interactive feedback allowed for SubTaskDef " + subTasklet.getSubTaskDefId());
-                }
-                ct.doInteractiveFeedback(subTasklet, submitDatas.get(i));
-            }
-        }
+	private void processInteractiveTasklets(final ComplexTasklet ct,
+			final List<SubTasklet> subtasklets,
+			final List<SubmitData> submitDatas, final HttpServletRequest request) {
+		for (int i = 0; i < subtasklets.size(); i++) {
+			final SubTasklet subTasklet = subtasklets.get(i);
 
-    }
+			if (request.getParameterMap().containsKey("doAutoCorrection_" + subTasklet.getVirtualSubtaskNumber())) {
+				// FIXME: add TaskModelSecurityException being subclassed from
+				// SecurityException
+				if (!subTasklet.isInteractiveFeedback()) {
+					throw new SecurityException("No interactive feedback allowed for SubTaskDef " + subTasklet.getSubTaskDefId());
+				}
+				ct.doInteractiveFeedback(subTasklet, submitDatas.get(i));
+			}
+		}
 
+	}
+
+	public ActionForward autoSave(final ActionMapping mapping,final HttpServletRequest request) throws Exception {
+		// ActionFoward!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		final ActionMessages msgs = new ActionMessages();
+		final ActionMessages errors = new ActionMessages();
+
+		int page;
+		long id;
+		try {
+			id = Long.parseLong(request.getParameter("id"));
+			page = Integer.parseInt(request.getParameter("page") == null ? "1" : request.getParameter("page"));
+		} catch (final NumberFormatException e) {
+			errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("invalid.parameter"));
+			saveErrors(request, errors);
+			return mapping.findForward("error");
+		}
+
+		final TaskModelViewDelegateObject delegateObject = (TaskModelViewDelegateObject) TaskModelViewDelegate
+				.getDelegateObject(request.getSession().getId(), id);
+		if (delegateObject == null) {
+			errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("no.session"));
+			saveErrors(request, errors);
+			return mapping.findForward("error");
+		}
+		request.setAttribute("ReturnURL", delegateObject.getReturnURL());
+
+		ComplexTasklet ct;
+
+		try {
+			// Important: getTasklet() calls TaskModelViewDelegateObjecdtImpl.update(), which calls submit()!
+			ct = (ComplexTasklet) delegateObject.getTaskletForStudent(true); // Attention: Get-Method manipulates Data!
+		} catch (final ClassCastException e1) {
+			errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("only.complexTasks.supported"));
+			saveErrors(request, errors);
+			return mapping.findForward("error");
+		} catch (final TaskApiException e3) {
+			errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("misc.error", e3.getMessage()));
+			saveErrors(request, errors);
+			log.error(e3);
+			return mapping.findForward("error");
+		}
+
+		logPostData(request, ct);
+
+		TaskDef_Complex taskDef;
+		try {
+			taskDef = (TaskDef_Complex) delegateObject.getTaskDef();
+		} catch (final ClassCastException e2) {
+			errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("only.complexTasks.supported"));
+			saveErrors(request, errors);
+			return mapping.findForward("error");
+		} catch (final TaskApiException e3) {
+			errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("misc.error", e3.getMessage()));
+			saveErrors(request, errors);
+			log.error(e3);
+			return mapping.findForward("error");
+		}
+
+		/*if (!taskDef.isActive()) {
+			errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("task.inactive"));
+			saveErrors(request, errors);
+			return mapping.findForward("error");
+		}*/
+
+		try {
+
+			final long hashCode = Long.parseLong(request.getParameter("hashCode"));
+			// ...and the following too:
+			final List<SubTasklet> subtasklets = ct.getComplexTaskHandlingRoot().getRecentTry().getPage(page).getSubTasklets();
+			final List<SubmitData> submitDataList = getSubmitData(request, subtasklets);
+
+			ct.savePageAuto(page, submitDataList, hashCode);
+
+			processInteractiveTasklets(ct, subtasklets, submitDataList, request);
+			return mapping.findForward("success");
+
+		} catch (final IllegalStateException e) {
+			errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(e.getMessage()));
+			saveErrors(request, errors);
+			log.info(e);
+			return mapping.findForward("error");
+		} catch (final ParsingException e1) {
+			errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("parsing.error"));
+			saveErrors(request, errors);
+			log.error("Parsing error!", e1);
+			return mapping.findForward("error");
+		} catch (final NumberFormatException e2) {
+			errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("invalid.parameter"));
+			saveErrors(request, errors);
+			return mapping.findForward("error");
+		}		
+	}
 }

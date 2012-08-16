@@ -35,6 +35,7 @@ public interface TaskletContainer {
 	public Tasklet createTasklet( long taskId, String userId ) throws TaskApiException;
 
 	public Tasklet getTasklet( long taskId, String userId ) throws TaskApiException;
+	public Tasklet getTaskletForStudent( long taskId, String userId, boolean noupdate ) throws TaskApiException;
 
 	public List<Tasklet> getTasklets( long taskId ) throws TaskApiException;
 

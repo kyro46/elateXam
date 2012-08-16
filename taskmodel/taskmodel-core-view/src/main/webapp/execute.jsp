@@ -28,10 +28,19 @@ Scripts by Daniel Zimmermann and Thorsten Berger
 <!--Das eigentliche Script, mit saemtlichen Funktionen-->
 <script type="text/javascript">
 <!--
-var modified = false; //wurde das Dokument veraendert?
-var mseconds = ${Task.remainingTimeMillis}; //Zeit uebergeben in Millisekunden
-var useTime = ${Task.timeRestricted}; //ist Aufgabe zeitbeschraenkt?
-var everythingDone = ${Task.everythingProcessed}; //Sind alle Aufgaben bearbeitet worden --> Abschicken-Button!
+/*
+var modified = false;
+var mseconds = 5000;
+var useTime = ${Task.timeRestricted};
+var everythingDone = ${Task.everythingProcessed};
+var ktime = 3000;
+*/
+var modified = false;
+var mseconds = ${Task.remainingTimeMillis};
+var useTime = ${Task.timeRestricted};
+var everythingDone = ${Task.everythingProcessed};
+var ktime = ${Task.kindnesTimeMillis};
+
 
 Function.prototype.andThen=function(g){
 	var f = this;
@@ -140,14 +149,21 @@ function timer1()
     }
 
 	if( this.mseconds <= 0 ){
-		for( var i = 0; i<500; i++ ){
-			if( getElem("id","TimeOver_"+i,null) != null ){
-				getElem("id","TimeOver_"+i,null).style.visibility = "visible";
-			}
-			else{
-				break;
-			}
+		/*if( this.ktime > 0) {
+			this.mseconds = this.ktime;
+			this.ktime = 0;
+			timer1();
+			return;
 		}
+		for( var i = 0; i<500; i++ ){
+			if( getElem("id","TimeOver_"+i,null) != null )
+				getElem("id","TimeOver_"+i,null).style.visibility = "visible";
+			else break;
+		}*/
+		if(this.ktime > 0)
+			window.setTimeout('submit_on_timeout()',this.ktime);
+		else submit_on_timeout();
+		return;
 	}
 
 	this.mseconds = this.mseconds - 1000;
@@ -155,26 +171,21 @@ function timer1()
 	window.setTimeout('timer1()',1000);
 }
 
-
-function autosaveOnTimeout()  {
-	
-	if (mseconds > 500) {
-		document.forms._speichern.submit();
-	}
-	
+function submit_on_timeout()
+{
+	document._speichern.autosave.value = ${true};
+	//console.log(document._speichern.autosave);
+	//document._absenden.onsubmit = null; // would call send()
+	document._speichern.submit();
 }
 
-window.setTimeout("autosaveOnTimeout()", mseconds-1000);
-
 function format_time(min,sec){
- var val = "";
- if(min<10)
-   val+="0";
- val+=min+":"; 
- if(sec<10)
-   val+="0";
- val+=sec;
- return val;
+	var val = "";
+	if(min<10) val+="0";
+	val+=min+":";
+	if(sec<10) val+="0";
+	val+=sec;
+	return val;
 }
 function checkedLink(name, target, linkClass)
 {
@@ -301,8 +312,8 @@ function checkedLink(name, target, linkClass)
       <form name="_speichern" method="post" action="<html:rewrite action="/savePage"/>" onSubmit="return preSaveManager.callback();">
 	    <input type="hidden" name="hashCode" value="${Task.hashCode}">
 	    <input type="hidden" name="id" value="${Task.taskId}">
-	    <!-- continue after saving -->
 	    <input type="hidden" name="todo" value="continue">
+	    <input type="hidden" name="autosave" value="0">
 
 		<% int i = 0; %>
 

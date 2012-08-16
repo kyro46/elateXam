@@ -46,201 +46,211 @@ import de.thorstenberger.taskmodel.complex.complextaskhandling.Try.ProgressInfor
 
 /**
  * TODO transactions that respects all changes to tasklets etc. per action
+ * 
  * @author Thorsten Berger
- *
+ * 
  */
 public class ExecuteAction extends org.apache.struts.action.Action {
 
-    private final Log log = LogFactory.getLog(ExecuteAction.class);
+	private final Log log = LogFactory.getLog(ExecuteAction.class);
 
-    // TODO Locale dependance
-    private final NumberFormat nf = NumberFormat.getPercentInstance();
+	// TODO Locale dependance
+	private final NumberFormat nf = NumberFormat.getPercentInstance();
 
-    public ExecuteAction() {
-    }
+	public ExecuteAction() {
+	}
 
-    @Override
-    public ActionForward execute(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-            final HttpServletResponse response) throws Exception {
+	@Override
+	public ActionForward execute(final ActionMapping mapping,
+			final ActionForm form, final HttpServletRequest request,
+			final HttpServletResponse response) throws Exception {
 
-        final ActionMessages msgs = new ActionMessages();
-        final ActionMessages errors = new ActionMessages();
+		final ActionMessages msgs = new ActionMessages();
+		final ActionMessages errors = new ActionMessages();
 
-        int page;
-        long id;
-        try {
-            id = Long.parseLong(request.getParameter("id"));
-            page = Integer.parseInt(request.getParameter("page") == null ? "1" : request.getParameter("page"));
-        } catch (final NumberFormatException e) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("invalid.parameter"));
-            saveErrors(request, errors);
-            return mapping.findForward("error");
-        }
+		int page;
+		long id;
+		try {
+			id = Long.parseLong(request.getParameter("id"));
+			page = Integer.parseInt(request.getParameter("page") == null ? "1"
+					: request.getParameter("page"));
+		} catch (final NumberFormatException e) {
+			errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(
+					"invalid.parameter"));
+			saveErrors(request, errors);
+			return mapping.findForward("error");
+		}
 
-        final TaskModelViewDelegateObject delegateObject = (TaskModelViewDelegateObject) TaskModelViewDelegate.getDelegateObject(
-                request.getSession().getId(), id);
+		final TaskModelViewDelegateObject delegateObject = (TaskModelViewDelegateObject) TaskModelViewDelegate
+				.getDelegateObject(request.getSession().getId(), id);
 
-        if (delegateObject == null) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("no.session"));
-            saveErrors(request, errors);
-            return mapping.findForward("error");
-        }
-        request.setAttribute("ReturnURL", delegateObject.getReturnURL());
+		if (delegateObject == null) {
+			errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(
+					"no.session"));
+			saveErrors(request, errors);
+			return mapping.findForward("error");
+		}
+		request.setAttribute("ReturnURL", delegateObject.getReturnURL());
 
-        TaskDef_Complex taskDef;
-        try {
-            taskDef = (TaskDef_Complex) delegateObject.getTaskDef();
-        } catch (final ClassCastException e2) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("only.complexTasks.supported"));
-            saveErrors(request, errors);
-            return mapping.findForward("error");
-        } catch (final TaskApiException e3) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("misc.error", e3.getMessage()));
-            saveErrors(request, errors);
-            log.error(e3);
-            return mapping.findForward("error");
-        }
+		TaskDef_Complex taskDef;
+		try {
+			taskDef = (TaskDef_Complex) delegateObject.getTaskDef();
+		} catch (final ClassCastException e2) {
+			errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(
+					"only.complexTasks.supported"));
+			saveErrors(request, errors);
+			return mapping.findForward("error");
+		} catch (final TaskApiException e3) {
+			errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(
+					"misc.error", e3.getMessage()));
+			saveErrors(request, errors);
+			log.error(e3);
+			return mapping.findForward("error");
+		}
 
-        final ComplexTaskInfoVO ctivo = new ComplexTaskInfoVO();
+		final ComplexTaskInfoVO ctivo = new ComplexTaskInfoVO();
 
-        ctivo.setLogin(delegateObject.getLogin());
-        ctivo.setUserName(delegateObject.getUserName());
-        ctivo.setReturnURL(delegateObject.getReturnURL());
+		ctivo.setLogin(delegateObject.getLogin());
+		ctivo.setUserName(delegateObject.getUserName());
+		ctivo.setReturnURL(delegateObject.getReturnURL());
 
-        ComplexTasklet ct;
+		ComplexTasklet ct;
 
-        try {
-            ct = (ComplexTasklet) delegateObject.getTasklet();
-        } catch (final ClassCastException e1) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("only.complexTasks.supported"));
-            saveErrors(request, errors);
-            return mapping.findForward("error");
-        } catch (final TaskApiException e3) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("misc.error", e3.getMessage()));
-            saveErrors(request, errors);
-            log.error(e3);
-            return mapping.findForward("error");
-        }
+		try {
+			ct = (ComplexTasklet) delegateObject.getTasklet();
+		} catch (final ClassCastException e1) {
+			errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("only.complexTasks.supported"));
+			saveErrors(request, errors);
+			return mapping.findForward("error");
+		} catch (final TaskApiException e3) {
+			errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("misc.error", e3.getMessage()));
+			saveErrors(request, errors);
+			log.error(e3);
+			return mapping.findForward("error");
+		}
 
-        if (!taskDef.isActive()) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("task.inactive"));
-            saveErrors(request, errors);
-            return mapping.findForward("error");
-        }
+		if (!taskDef.isActive()) {
+			errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("task.inactive"));
+			saveErrors(request, errors);
+			return mapping.findForward("error");
+		}
 
-        final String todo = request.getParameter("todo");
+		final String todo = request.getParameter("todo");
 
-        try {
+		try {
 
-            SavePageAction.logPostData(request, ct);
+			SavePageAction.logPostData(request, ct);
 
-            if ("new".equals(todo)) { // new try
-                int tryNo = Integer.parseInt(request.getParameter("try"));
-                ct.startNewTry(tryNo, delegateObject.getRandomSeed());
+			if ("new".equals(todo)) { // new try
+				int tryNo = Integer.parseInt(request.getParameter("try"));
+				ct.startNewTry(tryNo, delegateObject.getRandomSeed());
+				log.info("Student starts new try.");
+			} else if ("continue".equals(todo)) { // continue try
+				ct.continueLastTry();
+				log.info("Student continues the try.");
+			} else {
+				errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("invalid.parameter"));
+				saveErrors(request, errors);
+				return mapping.findForward("error");
+			}
 
-                log.info("Student starts new try.");
-            } else if ("continue".equals(todo)) { // continue try
-                ct.continueLastTry();
-
-                log.info("Student continues the try.");
-            } else {
-                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("invalid.parameter"));
-                saveErrors(request, errors);
-                return mapping.findForward("error");
-            }
-
-        } catch (final IllegalStateException e) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(e.getMessage()));
-            saveErrors(request, errors);
-            log.info(e);
-            return mapping.findForward("error");
-        } catch (final NumberFormatException e1) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("invalid.parameter"));
-            saveErrors(request, errors);
-            return mapping.findForward("error");
-        }
+		} catch (final IllegalStateException e) {
+			errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(e.getMessage()));
+			saveErrors(request, errors);
+			log.info(e);
+			return mapping.findForward("error");
+		} catch (final NumberFormatException e1) {
+			errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("invalid.parameter"));
+			saveErrors(request, errors);
+			return mapping.findForward("error");
+		}
 
 		// check if clicked on save-and-forward (or save-and-backward)
 		if (request.getParameterMap().containsKey("save-and-forward")) {
 			// handle what to do when there is no next page
-			Try ttry =  ct.getActiveTry();
+			Try ttry = ct.getActiveTry();
 			if (page < ttry.getNumberOfPages())
 				page = page + 1;
-		}
-		else if (request.getParameterMap().containsKey("save-and-backward")) {
+		} else if (request.getParameterMap().containsKey("save-and-backward")) {
 			// handle what to do when there is no previous page
 			if (page > 1)
 				page = page - 1;
 		}
 
-        populateVO(ctivo, taskDef, ct, page);
-        request.setAttribute("Task", ctivo);
+		populateVO(ctivo, taskDef, ct, page);
+		request.setAttribute("Task", ctivo);
 
-        // add the navigation menu
-        final NavigationRootNode nrn = new NavigationRootNode(ct, id, page);
-        request.setAttribute("rootNode", nrn);
-        final NavigationNodeFormatter nnf = new NavigationNodeFormatter(id, request.getContextPath()
-                + mapping.findForward("execute").getPath(), request, response);
-        request.setAttribute("nodeFormatter", nnf);
-        request.setAttribute("expanded", true);
+		// add the navigation menu
+		final NavigationRootNode nrn = new NavigationRootNode(ct, id, page);
+		request.setAttribute("rootNode", nrn);
+		final NavigationNodeFormatter nnf = new NavigationNodeFormatter(id,
+				request.getContextPath() + mapping.findForward("execute").getPath(), request, response);
+		request.setAttribute("nodeFormatter", nnf);
+		request.setAttribute("expanded", true);
 
-        final HtmlViewContext context = new HtmlViewContext(request);
-        // add the subtasklets
-        final List<SubTasklet> subtasklets = ct.getActiveTry().getPage(page).getSubTasklets();
-        final List<SubTaskletInfoVO> stivos = new ArrayList<SubTaskletInfoVO>();
-        int i = 0;
-        for (final SubTasklet subTasklet : subtasklets) {
-            final SubTaskletInfoVO stivo = new SubTaskletInfoVO();
-            stivo.setHint(subTasklet.getHint());
-            stivo.setProblem(ParserUtil.getProblem(subTasklet.getProblem()));
-            stivo.setReachablePoints(subTasklet.getReachablePoints());
-            stivo.setVirtualSubTaskletNumber(subTasklet.getVirtualSubtaskNumber());
-            stivo.setRenderedHTML(TaskModelServices.getInstance().getSubTaskView(subTasklet).getRenderedHTML(context, i++));
-            stivo.setCorrected(subTasklet.isCorrected());
-            if (subTasklet.isCorrected()) {
-                stivo.setCorrectedHTML(TaskModelServices.getInstance().getSubTaskView(subTasklet).getCorrectedHTML(context, i));
-            }
-            stivo.setInteractiveFeedback(subTasklet.isInteractiveFeedback());
-            stivos.add(stivo);
-        }
-        request.setAttribute("SubTasklets", stivos);
+		final HtmlViewContext context = new HtmlViewContext(request);
+		// add the subtasklets
+		final List<SubTasklet> subtasklets = ct.getActiveTry().getPage(page).getSubTasklets();
+		final List<SubTaskletInfoVO> stivos = new ArrayList<SubTaskletInfoVO>();
+		int i = 0;
+		for (final SubTasklet subTasklet : subtasklets) {
+			final SubTaskletInfoVO stivo = new SubTaskletInfoVO();
+			stivo.setHint(subTasklet.getHint());
+			stivo.setProblem(ParserUtil.getProblem(subTasklet.getProblem()));
+			stivo.setReachablePoints(subTasklet.getReachablePoints());
+			stivo.setVirtualSubTaskletNumber(subTasklet.getVirtualSubtaskNumber());
+			stivo.setRenderedHTML(TaskModelServices.getInstance().getSubTaskView(subTasklet).getRenderedHTML(context, i++));
+			stivo.setCorrected(subTasklet.isCorrected());
+			if (subTasklet.isCorrected()) {
+				stivo.setCorrectedHTML(TaskModelServices.getInstance()
+						.getSubTaskView(subTasklet)
+						.getCorrectedHTML(context, i));
+			}
+			stivo.setInteractiveFeedback(subTasklet.isInteractiveFeedback());
+			stivos.add(stivo);
+		}
+		request.setAttribute("SubTasklets", stivos);
 
-        return mapping.findForward("success");
+		return mapping.findForward("success");
 
-    }
+	}
 
-    private void populateVO(final ComplexTaskInfoVO ctivo, final TaskDef_Complex ctd, final ComplexTasklet ct, final int page) {
+	private void populateVO(final ComplexTaskInfoVO ctivo,
+			final TaskDef_Complex ctd, final ComplexTasklet ct, final int page) {
 
-        ctivo.setTitle(ctd.getTitle());
-        ctivo.setTaskId(ctd.getId());
+		ctivo.setTitle(ctd.getTitle());
+		ctivo.setTaskId(ctd.getId());
 
-        if (ct.getComplexTaskDefRoot().hasTimeRestriction()) {
+		if (ct.getComplexTaskDefRoot().hasTimeRestriction()) {
+			final long time_incl_kindness = ct.getComplexTaskDefRoot().getTimeInMinutesWithKindnessExtensionTime();
+			final long time_excl_kindness = ct.getComplexTaskDefRoot().getTimeInMinutesWithoutKindnessExtensionTime();
 			final long deadline = ct.getActiveTry().getStartTime()
 					+ ct.getActiveTry().getTimeExtension()
-					+ ct.getComplexTaskDefRoot().getTimeInMinutesWithoutKindnessExtensionTime()
+					+ time_excl_kindness
 					* 60 * 1000;
-            ctivo.setRemainingTimeMillis(deadline - System.currentTimeMillis());
-            ctivo.setDeadline(DateUtil.getStringFromMillis(deadline));
-        } else {
-            ctivo.setRemainingTimeMillis(-1);
-            ctivo.setDeadline("-");
-        }
+			ctivo.setRemainingTimeMillis(deadline - System.currentTimeMillis());
+			ctivo.setKindnesTimeMillis((time_incl_kindness - time_excl_kindness) * 60 * 1000);
+			ctivo.setDeadline(DateUtil.getStringFromMillis(deadline));
+		} else {
+			ctivo.setRemainingTimeMillis(-1);
+			ctivo.setDeadline("-");
+		}
 
-        ctivo.setTimeRestricted(ct.getComplexTaskDefRoot().hasTimeRestriction());
-        final ProgressInformation pi = ct.getActiveTry().getProgressInformation();
-        ctivo.setEverythingProcessed(pi.getProgressPercentage() == 1);
+		ctivo.setTimeRestricted(ct.getComplexTaskDefRoot().hasTimeRestriction());
+		final ProgressInformation pi = ct.getActiveTry().getProgressInformation();
+		ctivo.setEverythingProcessed(pi.getProgressPercentage() == 1);
 
-        ctivo.setPage(page);
-        ctivo.setNumOfPages(ct.getActiveTry().getNumberOfPages());
-        ctivo.setActualTry(ct.getComplexTaskHandlingRoot().getNumberOfTries());
-        ctivo.setNumOfTries(ctd.getComplexTaskDefRoot().getTries());
-        ctivo.setTryStartTime(DateUtil.getStringFromMillis(ct.getActiveTry().getStartTime()));
-        ctivo.setProcessPercentage(nf.format(pi.getProgressPercentage()));
-        ctivo.setNumOfSubtasklets(pi.getNumOfSubtasklets());
-        ctivo.setNumOfProcessedSubtasklets(pi.getNumOfProcessedSubtasklets());
+		ctivo.setPage(page);
+		ctivo.setNumOfPages(ct.getActiveTry().getNumberOfPages());
+		ctivo.setActualTry(ct.getComplexTaskHandlingRoot().getNumberOfTries());
+		ctivo.setNumOfTries(ctd.getComplexTaskDefRoot().getTries());
+		ctivo.setTryStartTime(DateUtil.getStringFromMillis(ct.getActiveTry().getStartTime()));
+		ctivo.setProcessPercentage(nf.format(pi.getProgressPercentage()));
+		ctivo.setNumOfSubtasklets(pi.getNumOfSubtasklets());
+		ctivo.setNumOfProcessedSubtasklets(pi.getNumOfProcessedSubtasklets());
 
-        ctivo.setHashCode("" + ct.getActiveTry().getPage(page).getHash());
+		ctivo.setHashCode("" + ct.getActiveTry().getPage(page).getHash());
 
-    }
+	}
 
 }

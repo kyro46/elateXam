@@ -37,6 +37,7 @@ public interface TaskModelViewDelegateObject extends DelegateObject {
 	public String getUserName();
 
 	public Tasklet getTasklet() throws TaskApiException;
+	public Tasklet getTaskletForStudent(boolean noupdate) throws TaskApiException;
 
     public long getRandomSeed();
 

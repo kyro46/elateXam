@@ -35,6 +35,7 @@ public class ComplexTaskInfoVO {
 	private String returnURL;
 	
 	private long remainingTimeMillis;
+	private long kindnesTimeMillis;
 	private boolean timeRestricted;
 	private boolean everythingProcessed;
 	
@@ -265,8 +266,16 @@ public class ComplexTaskInfoVO {
 	public void setNumOfSubtasklets(int numOfSubtasklets) {
 		this.numOfSubtasklets = numOfSubtasklets;
 	}
-	
-	
-	
-
+	/**
+	 * @return Returns the kindnesTime in Milliseconds
+	 */
+	public long getKindnesTimeMillis() {
+		return kindnesTimeMillis;
+	}
+	/**
+	 * @param remainingTimeMillis The kindnesTime in Milliseconds to set.
+	 */
+	public void setKindnesTimeMillis(long kindnesTimeMillis) {
+		this.kindnesTimeMillis = kindnesTimeMillis;
+	}
 }
