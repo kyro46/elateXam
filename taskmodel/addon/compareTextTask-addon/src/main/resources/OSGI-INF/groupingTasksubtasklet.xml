@@ -1,0 +1,6 @@
+<component name="CompareTextTask-Subtasklets">
+    <implementation class="com.spiru.dev.compareTextTask_addon.CompareTextTaskAddOnSubTaskletFactoryImpl"/>
+    <service>
+        <provide interface="de.thorstenberger.taskmodel.complex.addon.AddOnSubTaskletFactory"/>
+    </service>
+</component>
