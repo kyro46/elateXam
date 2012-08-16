@@ -91,7 +91,7 @@ public class Element extends JPanel implements DragGestureListener{
             DnDConstants.ACTION_COPY, this);              
 	}	
 
-	@Override
+	//@Override
 	public void dragGestureRecognized(DragGestureEvent event) {
         Cursor cursor = null;
         Element element = this;        

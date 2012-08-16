@@ -25,7 +25,7 @@ public class TransferableElement implements Transferable {
     	this.element = element;     	
     }
     
-	@Override
+	//@Override
 	public Element getTransferData(DataFlavor flavor)
 			throws UnsupportedFlavorException, IOException {
 		if (flavor.equals(elementFlavor))
@@ -34,12 +34,13 @@ public class TransferableElement implements Transferable {
 	         throw new UnsupportedFlavorException(flavor);
 	}
 
-	@Override
+	//@Override
 	public DataFlavor[] getTransferDataFlavors() {		 
+		
 		return supportedFlavors;
 	}
 
-	@Override
+	//@Override
 	public boolean isDataFlavorSupported(DataFlavor flavor) {
 		if (flavor.equals(elementFlavor)) 
 			return true;

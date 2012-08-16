@@ -32,7 +32,7 @@ public class MyDropTargetListener extends DropTargetAdapter {
             this, true, null);
     }
     
-	@Override
+	//@Override
 	public void drop(DropTargetDropEvent event) {
 		// wenn Maus losgelassen wurde und ein Objekt gedropt werden soll
         try {              
