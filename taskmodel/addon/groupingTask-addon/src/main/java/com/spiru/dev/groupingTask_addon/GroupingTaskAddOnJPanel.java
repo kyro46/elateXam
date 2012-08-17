@@ -2,6 +2,7 @@ package com.spiru.dev.groupingTask_addon;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.ScrollPane;
 import java.util.ArrayList;
 import java.util.List;
@@ -123,6 +124,8 @@ public class GroupingTaskAddOnJPanel extends JPanel {
     	scroll.setMinimumSize(new Dimension(160, 200));
         scroll.setPreferredSize(new Dimension(160, 200));
         scroll.setBounds(0,jPanelButtons.getHeight()+jPanelElements.getHeight(),400,275);        
-    	this.add(scroll);    	
+    	this.add(scroll);    
+    	
+    	this.setDoubleBuffered(false);
     }    
 }
