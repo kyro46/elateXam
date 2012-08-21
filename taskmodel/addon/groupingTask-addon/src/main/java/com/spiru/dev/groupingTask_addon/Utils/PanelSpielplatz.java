@@ -36,6 +36,8 @@ public class PanelSpielplatz extends JPanel {
 		this.listener = listener;
 		this.setLayout(null);
 		this.addMouseListener(listener);
+				
+		this.setDoubleBuffered(false);
 	}
 	
 	/**
@@ -43,14 +45,14 @@ public class PanelSpielplatz extends JPanel {
 	 */
 	private void zeichneVerbindungen(){		
 		for(Verbindung n:verbindungen){			
-			n.paint(this.getGraphics());
+			n.draw(this.getGraphics());
 		}			
 	}
 	
 	@Override
-	protected void paintComponent( Graphics g ){		
-	    super.paintComponent( g );	   
-	    zeichneVerbindungen();
+	public void paint( Graphics g ){		
+		super.paint( g );	   
+		zeichneVerbindungen();
 	  }
 	
 	/**
@@ -59,7 +61,7 @@ public class PanelSpielplatz extends JPanel {
 	 * @param e Element welches hinzugefuegt werden soll
 	 * @param pos Point-Objekt mit Koordinaten fuer Position des Elementes
 	 */
-	public void addElement(Element e, Point pos){			
+	public void addElement(Element e, Point pos){
 		Element neuesElement = null;
 		// element schon auf PanelSpielplatz?
 		for (Element n: elemente){
@@ -94,7 +96,7 @@ public class PanelSpielplatz extends JPanel {
 		    neuesElement.addMouseListener(listener);			
 	    }
 	    // Panel neu zeichnen
-	    this.paint(this.getGraphics());
+	    this.repaint();
 	}
 	
 	/**
@@ -111,7 +113,7 @@ public class PanelSpielplatz extends JPanel {
 		deleteVerbindung(e);
 		this.remove(e);
 		// Panel neu zeichnen
-		this.paint(this.getGraphics());
+		this.repaint();
 	}	
 	
 	/**
@@ -122,11 +124,12 @@ public class PanelSpielplatz extends JPanel {
 		// prüfen, dass sie nicht schon vorhanden ist...***********************************************************
 		for(Verbindung n:verbindungen){
 			if (n.find(linie)){
+				this.repaint();
 				return;
 			}
 		}
 		verbindungen.add(linie);
-		this.paint(this.getGraphics());
+		this.repaint();
 	}
 	
 	/**
@@ -142,7 +145,7 @@ public class PanelSpielplatz extends JPanel {
 			}
 		}
 		verbindungen.removeAll(clear);
-		this.paint(this.getGraphics());
+		this.repaint();
 	}
 	
 	/**
@@ -157,7 +160,7 @@ public class PanelSpielplatz extends JPanel {
 		}
 		elemente.clear();
 		verbindungen.clear();
-		this.paint(this.getGraphics());
+		this.repaint();
 	}
 	
 	// getter and setter

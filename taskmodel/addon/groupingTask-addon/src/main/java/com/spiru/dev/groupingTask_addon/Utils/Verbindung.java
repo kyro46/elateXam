@@ -29,8 +29,60 @@ public class Verbindung {
 	public Verbindung(Element e1, Element e2){
 		this.e1 = e1;
 		this.e2 = e2;
-		linie = new Line2D.Double(e1.getX(),e1.getY(),e2.getX(),e2.getY());
-		markiert = false;
+		this.markiert = false;		
+		linie = new Line2D.Double(e1.getX()+e1.getWidth()/2, e1.getY()+e1.getHeight()/2, e2.getX()+e2.getWidth()/2, e2.getY()+e2.getHeight()/2);		
+	}
+	
+	private void adjustLine(){
+		// liegt e1 weiter rechts als e2, dann tausche
+		if (e1.getX()>e2.getX()){
+			Element dummy = e2;
+			this.e2 = e1;
+			this.e1 = dummy;
+		}
+		int x1, y1, x2, y2;
+		if(e1.getY()<e2.getY()){
+			// from  midpoint (x) 
+			if(e1.getX()+e1.getWidth() > e2.getX()){
+				x1 = e1.getX()+e1.getWidth()/2;
+				x2 = e2.getX()+e2.getWidth()/2;
+			}
+			else{				
+				x1 = e1.getX()+e1.getWidth();
+				x2 = e2.getX();
+				}
+			//  from midpoint (y) 
+			if(e1.getY()+e1.getHeight()>e2.getY()){
+				y1 = e1.getY()+e1.getHeight()/2;
+				y2 = e2.getY()+e2.getHeight()/2;				
+			}
+			else{
+				y1 = e1.getY()+e1.getHeight();			
+				y2 = e2.getY();				
+			}
+			linie = new Line2D.Double(x1,y1,x2,y2);
+		}
+		else{
+			// from  midpoint (x)
+			if(e1.getX()+e1.getWidth() > e2.getX()){
+				x1 = e1.getX()+ (e1.getWidth()/2);
+				x2 = e2.getX()+ (e2.getWidth()/2);					
+			}else{
+				x1 = e1.getX()+e1.getWidth();
+				x2 = e2.getX();
+			}
+			// from  midpoint (y)
+			if (e1.getY()+e1.getHeight()-20>e2.getY() && e1.getX()+e1.getWidth()<e2.getX()){
+				y1 = e1.getY()+e1.getHeight()/2;
+				y2 = e2.getY()+e2.getHeight()/2;								
+			}else{
+				y1 = e1.getY();					
+				y2 = e2.getY()+e2.getHeight();
+			}
+			linie = new Line2D.Double(x1,y1,x2,y2);
+		}
+		
+			
 	}
 	
 	/**
@@ -53,13 +105,15 @@ public class Verbindung {
 	 * Zeichnet die Verbindung
 	 * @param g Zeichenbereich auf dem gezeichnet werden soll
 	 */
-	public void paint(Graphics g){
-		g.setColor(Color.BLACK);		
-		linie = new Line2D.Double(e1.getX()+e1.getWidth()/2, e1.getY()+e1.getHeight()/2, e2.getX()+e2.getWidth()/2, e2.getY()+e2.getHeight()/2);
+	public void draw(Graphics g){
+		adjustLine();
+		g.setColor(Color.BLACK);	
+		if (markiert)
+			g.setColor(Color.YELLOW);			
 		Graphics2D g2D = (Graphics2D) g;
 		if (markiert)
 			g2D.setColor(Color.YELLOW);
-		g2D.draw(linie);		
+		g2D.draw(linie);			
 	}
 	
 	/**

@@ -50,6 +50,8 @@ public class GroupingTaskAddOnApplet extends Applet{
 	    	
 	    	gpanel = new GroupingTaskAddOnJPanel(elements);	        
 	        add(gpanel);
+	        
+	       
 	    }
 
 	    @Override

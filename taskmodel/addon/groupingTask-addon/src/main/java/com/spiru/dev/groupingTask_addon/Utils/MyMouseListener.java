@@ -47,7 +47,7 @@ public class MyMouseListener implements MouseListener {
 				break;
 			}
 		}
-		spielplatz.paint(spielplatz.getGraphics());		
+		spielplatz.repaint();
 	}
 	
 	public void mouseClicked(MouseEvent event) {	
@@ -58,6 +58,8 @@ public class MyMouseListener implements MouseListener {
 			// alte Selektion aufheben
 			if (element != null)
 				element.markiereElement(false);
+			if (element2 != null)
+				element2.markiereElement(false);
 			element = null;
 			element2 = null;
 			return;
@@ -97,6 +99,7 @@ public class MyMouseListener implements MouseListener {
 					for (Verbindung n: spielplatz.getVerbindungen()){
 						if (n.isMarkiert()){
 							spielplatz.getVerbindungen().remove(n);
+							spielplatz.repaint();
 							break;
 						}
 					}
@@ -127,7 +130,6 @@ public class MyMouseListener implements MouseListener {
 			element2 = null;
 			element = null;
 		}
-		spielplatz.paint(spielplatz.getGraphics());
 	}
 
 	public void mouseEntered(MouseEvent arg0) {

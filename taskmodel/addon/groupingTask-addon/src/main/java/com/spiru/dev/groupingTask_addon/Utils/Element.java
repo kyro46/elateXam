@@ -14,6 +14,10 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.LineBorder;
+
 import com.spiru.dev.groupingTask_addon.GroupingTaskAddOnJPanel;
 
 /**
@@ -109,9 +113,19 @@ public class Element extends JPanel implements DragGestureListener{
 	 * @param mark true, Markierung wird gesetzt; false, Markierung wird aufgehoben
 	 */
 	public void markiereElement(boolean mark){
-		if (mark)
-			labelCaption.setForeground(Color.YELLOW);
-		else labelCaption.setForeground(Color.BLACK);
+		Border border = this.getBorder();
+		Border margin;
+		
+		if (mark){
+			margin = new LineBorder(Color.YELLOW,2);
+			this.setBorder(new CompoundBorder(border, margin));
+			labelCaption.setForeground(Color.YELLOW);			
+		}
+		else{
+			margin = new LineBorder(Color.BLACK,1);
+			this.setBorder(margin);
+			labelCaption.setForeground(Color.BLACK);
+		}
 	}
 	
 	/**
