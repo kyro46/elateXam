@@ -24,7 +24,8 @@ public class CompareTextApplet extends Applet {
 				+ "\n"
 				+ "Als Möglichkeit in solchen Fällen herauszufinden, von wo aus es zu bestimmten Methodenaufrufen kommt, bleibt dann oft nur noch eine Volltextsuche innerhalb des Projektes durchzuführen.\n"
 				+ "Außerdem lässt sich mit Print-Anweisungen prüfen, ob eine Methode, mit deren Aufruf man rechnet, auch wirklich aufgerufen wird.";
-		CompareTextPanel jpanel = new CompareTextPanel(text);
+		String xmldef = "<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE api SYSTEM 'CompletionXml.dtd'><api language='HTML'><keywords><keyword name='var' type='tag'><desc>Defines a variable</desc></keyword><keyword name='video' type='tag'><desc>Defines a video</desc></keyword></keywords></api>";
+		CompareTextPanel jpanel = new CompareTextPanel(text, xmldef);
 		//jpanel.setSize(600, 400);
 		add(jpanel);
 		this.setSize(800, 400);

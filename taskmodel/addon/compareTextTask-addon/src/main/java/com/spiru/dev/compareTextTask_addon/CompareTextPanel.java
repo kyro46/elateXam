@@ -1,81 +1,121 @@
 package com.spiru.dev.compareTextTask_addon;
 
-import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 
-import javax.swing.SwingUtilities;
+import javax.swing.BoundedRangeModel;
+import javax.swing.Box;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.GroupLayout;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTextArea;
+import javax.swing.JToggleButton;
+import javax.swing.JToolBar;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.ToolTipManager;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultHighlighter.DefaultHighlightPainter;
+import javax.swing.text.DefaultHighlighter;
 
-import org.fife.ui.rsyntaxtextarea.*;
-import org.fife.ui.autocomplete.*;
+import org.fife.ui.autocomplete.AutoCompletion;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.fife.ui.rtextarea.ToolTipSupplier;
 
 import com.spiru.dev.compareTextTask_addon.Utils.CompareTextCompletionProvider;
-import com.spiru.dev.compareTextTask_addon.Utils.SwitchSentenceCaretListener;
 
 /**
  *
  * @author C.Wilhelm
  */
-public class CompareTextPanel extends javax.swing.JPanel {
+public class CompareTextPanel extends JPanel {
 
 	private static String sentenceEndingCharacters = ".!?\"'";
-	private javax.swing.JButton helpButton;
-	private javax.swing.JScrollPane jScrollPaneLeft;
-	private javax.swing.JScrollPane jScrollPaneRight;
-	private javax.swing.JSplitPane jSplitPane;
-	private RSyntaxTextArea textAreaLeft;
-	private RSyntaxTextArea textAreaRight;
+	private static String defaultFontSizeLabel = "Default Font Size";
+	private static String defaultFontSize = "13";
+	private BoundedRangeModel independentScrollbarModel;
+	private CompareTextCompletionProvider completionp; // contains Help, etc
+	private String initialText;
+	private JLabel helpPane;
+	private JSplitPane splitPane;
+	private JScrollPane scrollPaneLeft;
+	private JScrollPane scrollPaneRight;
+	private JTextArea textAreaLeft;
+	private JTextArea textAreaRight;
 	private int splitPlaneHeight;
 	private int splitPlaneWidth;
-	private String initialText;
-	private String buttonText;
 	private int lastCaretPosRight;
-	private int lastSentenceNumberLeft;
+	private JToolBar toolBar;
+	private JToggleButton toggleHelpButton;
+	private JToggleButton toggleSyncButton;
+	private JComboBox fontComboBox;
 
-	/**
-	 * Creates new form NewJPanel2
-	 */
-	public CompareTextPanel(String initialText) {
-		setSplitPlaneHeight(300);
-		setSplitPlaneWidth(600);
-		setInitialText(initialText);
-		setButtonText("Tags");
-		lastCaretPosRight = 0;
-		lastSentenceNumberLeft = 0;
-		initComponents();
+
+	public CompareTextPanel(final String initialText, final String tagDefinitionString) {
+		independentScrollbarModel = null;
+		splitPlaneHeight = 300;
+		splitPlaneWidth = 600;
+
+		splitPane = new JSplitPane();
+		scrollPaneLeft = new JScrollPane();
+		scrollPaneRight = new JScrollPane();
+		textAreaLeft = new RSyntaxTextArea(); // JTextArea();
+		textAreaRight = new RSyntaxTextArea(); // JTextArea();
+
+		toolBar = new JToolBar();
+		fontComboBox = new JComboBox();
+		toggleHelpButton = new JToggleButton("Help", false);
+		toggleSyncButton = new JToggleButton("Sync Scrollbars", true);
+
+		this.initialText = initialText;
+		this.lastCaretPosRight = 0;
+
+		completionp = new CompareTextCompletionProvider(tagDefinitionString);
+		helpPane = new JLabel("<html>" + completionp.generateHelpHtml() + "</html>");
+		initToolbar();
+		initMainWindow();
+		//enableAutoCompletion();
+		textAreaRight.setCaretPosition(0);
 	}
-	private int calculatePositionOfSentence(RSyntaxTextArea textArea, final int sentenceNumber) {
-		//textAreaRight.setText(new Integer(textArea.getHighlighter().getHighlights().length).toString());
-		char[] right_text = textArea.getText().toCharArray();
-		int currentSentence = 0, sentencePosBeg = 0, sentencePosEnd = 0;
-		for(int i = 0;i < right_text.length; i++) {
-			//if (right_text[i] == '\n') {
-			if (sentenceEndingCharacters.indexOf(right_text[i]) != -1) {
-				sentencePosBeg = sentencePosEnd+1;
-				//sentencePosEnd = i+1;
-				currentSentence++;
-				if (currentSentence == sentenceNumber)
-					return sentencePosBeg;
-			}
-		}
-		/*try {
-			textArea.getHighlighter().addHighlight(sentencePosBeg, sentencePosEnd, new DefaultHighlightPainter(Color.YELLOW));
-		} catch (BadLocationException e) {
-			e.printStackTrace();
-		}*/
-		return -1;
-	}
-	private int calculateSentenceOfPosition(RSyntaxTextArea textArea, final int sentencePosBeg) {
-		char[] right_text = textArea.getText().toCharArray();
-		int currentSentence = 0;
-		for(int i = 0;i < right_text.length; i++) {
-			if (sentenceEndingCharacters.indexOf(right_text[i]) != -1) {
-				currentSentence++;
+
+	private int calculateSentenceAtPosition(final char[] txt, final int sentencePosBeg) {
+		int currentSentence = 1;
+		for(int i = 0;i < txt.length; i++) {
+			if (sentenceEndingCharacters.indexOf(txt[i]) != -1) {
 				if (i >= sentencePosBeg)
 					return currentSentence;
+				currentSentence++;
 			}
 		}
 		return -1;
+	}
+
+	private void highlightSentence(final int sentenceNumber) {
+		char[] right_text = textAreaLeft.getText().toCharArray();
+		int currentSentence = 0, sentencePosBeg = 0, sentencePosEnd = 0;
+		for(int i = 0;i < right_text.length; i++) {
+			if (sentenceEndingCharacters.indexOf(right_text[i]) != -1) {
+				sentencePosBeg = sentencePosEnd;
+				sentencePosEnd = i+1;
+				currentSentence++;
+				if (currentSentence == sentenceNumber)
+					break;
+			}
+		}
+		try {
+			// new DefaultHighlightPainter(Color.YELLOW)
+			textAreaLeft.getHighlighter().addHighlight(sentencePosBeg, sentencePosEnd, DefaultHighlighter.DefaultPainter);
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void onCaretMove(final int dot, final int mark) {
@@ -91,8 +131,10 @@ public class CompareTextPanel extends javax.swing.JPanel {
 		for(int i = 0;i < text_between.length; i++) {
 			if (sentenceEndingCharacters.indexOf(text_between[i]) != -1) {
 				//System.out.println(text_between);
-				
-				calculatePositionOfSentence(textAreaLeft, 9);
+				char[] right_text = textAreaRight.getText().toCharArray();
+				int sentenceNumber = calculateSentenceAtPosition(right_text, dot);
+				textAreaLeft.getHighlighter().removeAllHighlights();
+				highlightSentence(sentenceNumber);
 				break;
 			}
 		}
@@ -100,103 +142,138 @@ public class CompareTextPanel extends javax.swing.JPanel {
 	}
 
 	/**
-	 * This method is called from within the constructor to initialize the form.
+	 * causes the two scrollbars to be in sync or,
+	 * if they are in sync already, calling sync_scrollbars()
+	 * another time causes them to be independent again
+	 * (works back and forth)
 	 */
-	private void initComponents() {
+	private void sync_scrollbars() {
+		if (independentScrollbarModel != null) {
+			scrollPaneLeft.getVerticalScrollBar().setModel(independentScrollbarModel);
+			independentScrollbarModel = null;
+			return;
+		}
+		independentScrollbarModel = scrollPaneLeft.getVerticalScrollBar().getModel(); // keep reference
+		scrollPaneLeft.getVerticalScrollBar().setModel(scrollPaneRight.getVerticalScrollBar().getModel());
+		int rightval = scrollPaneRight.getVerticalScrollBar().getValue();
+		scrollPaneLeft.getVerticalScrollBar().setValue(rightval);
+		//scrollPaneLeft.getVerticalScrollBar().s
+	}
+	
+	private void initToolbar() {
+		toolBar.add(toggleHelpButton);
+		toolBar.add(toggleSyncButton);
+		toolBar.add(Box.createHorizontalGlue());
+		fontComboBox.setModel(new DefaultComboBoxModel(new String[] { defaultFontSizeLabel, "8", "9", "10", "11",
+				"12", "13", "14", "15", "16", "18", "20", "24", "28", "30", "36", "48", "64", "72" }));
+		fontComboBox.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent e) {
+				JComboBox cb = (JComboBox)e.getSource();
+				String itemStr = (String)cb.getSelectedItem();
+				if (itemStr == defaultFontSizeLabel)
+					itemStr = defaultFontSize;
+				float newfontsize = Float.parseFloat(itemStr);
+				textAreaLeft.setFont(textAreaLeft.getFont().deriveFont(newfontsize));
+				textAreaRight.setFont(textAreaRight.getFont().deriveFont(newfontsize));
+			}
+		});
+		toolBar.add(fontComboBox);
+		toolBar.setEnabled(false); // set not movable
+		toggleHelpButton.addActionListener(new ActionListener() {
+			@Override public void actionPerformed(ActionEvent e) {
+				if (scrollPaneLeft.getViewport().getView() != helpPane) {
+					if(toggleSyncButton.isSelected())
+						sync_scrollbars();
+					scrollPaneLeft.setViewportView(helpPane);
+				} else {
+					scrollPaneLeft.setViewportView(textAreaLeft);
+					if(toggleSyncButton.isSelected())
+						sync_scrollbars();
+				}
+			}
+		});
+		toggleSyncButton.addActionListener(new ActionListener() {
+			@Override public void actionPerformed(ActionEvent e) {
+				sync_scrollbars();
+			}
+		});
+	}
 
-		jSplitPane = new javax.swing.JSplitPane();
-		jScrollPaneLeft = new javax.swing.JScrollPane();
-		jScrollPaneRight = new javax.swing.JScrollPane();
-		textAreaLeft = new RSyntaxTextArea();
-		textAreaRight = new RSyntaxTextArea();
-		helpButton = new javax.swing.JButton(buttonText);
-
+	private void initMainWindow() {
 		textAreaLeft.setLineWrap(true);
 		textAreaRight.setLineWrap(true);
-		textAreaLeft.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
-		textAreaRight.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
 		textAreaLeft.setText(initialText);
 		textAreaRight.setText(initialText);
 
 		textAreaLeft.setEditable(false); // left area contains original
-		textAreaLeft.setHighlightCurrentLine(false);
-		textAreaRight.setHighlightCurrentLine(false);
+		((RSyntaxTextArea)textAreaLeft).setHighlightCurrentLine(false);
+		((RSyntaxTextArea)textAreaRight).setHighlightCurrentLine(false);
+		((RSyntaxTextArea)textAreaLeft).setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
+		((RSyntaxTextArea)textAreaRight).setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
 
-		jScrollPaneLeft.setViewportView(textAreaLeft);
-		jScrollPaneRight.setViewportView(textAreaRight);
-		jSplitPane.setLeftComponent(jScrollPaneLeft);
-		jSplitPane.setRightComponent(jScrollPaneRight);
-		CompletionProvider provider = new CompareTextCompletionProvider();
-		AutoCompletion ac = new AutoCompletion(provider);
+		// Adjust Divider of SplitPlane
+		splitPane.setDividerSize(5); // width of the divider
+		splitPane.setEnabled(false); // won't let resize the areas
+		splitPane.setResizeWeight(.5d); // give both 50%
+
+		// Configure Scrollbars
+		scrollPaneLeft.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		scrollPaneRight.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		// Sync Scrollbars, hold old Scrollbar Model as a reference
+		sync_scrollbars(); // requires to sync textarea sizes, too...
+		textAreaRight.addComponentListener(new ComponentListener() {
+			@Override public void componentResized(ComponentEvent e) {
+				Dimension d = textAreaRight.getSize();
+				textAreaLeft.setSize(d);
+				textAreaLeft.setPreferredSize(d);
+				textAreaLeft.setMinimumSize(d);
+			}
+			@Override public void componentHidden(ComponentEvent e) {}
+			@Override public void componentMoved(ComponentEvent e) {}
+			@Override public void componentShown(ComponentEvent e) {}
+		});
+
+		// React on Cursor movement in the right textArea: Highlight Sentence on the Left side
+		textAreaRight.addCaretListener(new CaretListener() {
+			@Override public void caretUpdate(CaretEvent e) {
+				onCaretMove(e.getDot(), e.getMark());
+			}
+		});
+
+		scrollPaneLeft.setViewportView(textAreaLeft);
+		scrollPaneRight.setViewportView(textAreaRight);
+		splitPane.setLeftComponent(scrollPaneLeft);
+		splitPane.setRightComponent(scrollPaneRight);
+
+		GroupLayout layout = new GroupLayout(this);
+		this.setLayout(layout);
+		layout.setHorizontalGroup(
+				layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+				.addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+						.addContainerGap()
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+								.addComponent(splitPane, GroupLayout.DEFAULT_SIZE, splitPlaneWidth, Short.MAX_VALUE)
+								.addGroup(layout.createSequentialGroup()
+										.addGap(0, 0, Short.MAX_VALUE)
+										.addComponent(toolBar, javax.swing.GroupLayout.DEFAULT_SIZE, splitPlaneWidth, Short.MAX_VALUE)))
+										.addContainerGap())
+		);
+		layout.setVerticalGroup(
+				layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+				.addGroup(layout.createSequentialGroup()
+						.addContainerGap()
+						.addComponent(toolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+						.addComponent(splitPane, GroupLayout.DEFAULT_SIZE, splitPlaneHeight, Short.MAX_VALUE)
+						.addContainerGap())
+		);
+	}
+
+	private void enableAutoCompletion() {
+		AutoCompletion ac = new AutoCompletion(completionp);
 		ac.install(textAreaRight);
 		ac.setAutoActivationEnabled(true);
 		ac.setAutoCompleteEnabled(true);
 		//ac.setParameterAssistanceEnabled(true);
-		
-
-		// Adjust Divider of SplitPlane
-		jSplitPane.setDividerSize(5); // width of the divider
-		jSplitPane.setEnabled(false); // won't let resize the areas
-		jSplitPane.setResizeWeight(.5d); // give both 50%
-
-		// Configure Scrollbars
-		//jScrollPaneLeft.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		//jScrollPaneRight.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-
-		// Listen for Scrollbar Events to be able to synchronize Scrolling
-		//AdjustmentListener listener = new ScrollBarAdjustmentListener();
-		//jScrollPaneLeft.getHorizontalScrollBar().addAdjustmentListener(listener);
-		//jScrollPaneRight.getHorizontalScrollBar().addAdjustmentListener(listener);
-		jScrollPaneLeft.getVerticalScrollBar().setModel(jScrollPaneRight.getVerticalScrollBar().getModel()); // shorter
-
-		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-		this.setLayout(layout);
-		layout.setHorizontalGroup(
-				layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-						.addContainerGap()
-						.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-								.addComponent(jSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, splitPlaneWidth, Short.MAX_VALUE)
-								.addGroup(layout.createSequentialGroup()
-										.addGap(0, 0, Short.MAX_VALUE)
-										.addComponent(helpButton)))
-										.addContainerGap())
-				);
-		layout.setVerticalGroup(
-				layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(layout.createSequentialGroup()
-						.addContainerGap()
-						.addComponent(jSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, splitPlaneHeight, Short.MAX_VALUE)
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addComponent(helpButton)
-						.addContainerGap())
-				);
-		//highlightSentence(textAreaLeft, 2);
-		textAreaRight.addCaretListener(new SwitchSentenceCaretListener(this));
-	}
-
-	public int getSplitPlaneHeight() {
-		return splitPlaneHeight;
-	}
-	public void setSplitPlaneHeight(int splitPlaneHeight) {
-		this.splitPlaneHeight = splitPlaneHeight;
-	}
-	public int getSplitPlaneWidth() {
-		return splitPlaneWidth;
-	}
-	public void setSplitPlaneWidth(int splitPlaneWidth) {
-		this.splitPlaneWidth = splitPlaneWidth;
-	}
-	public String getButtonText() {
-		return buttonText;
-	}
-	public void setButtonText(String buttonText) {
-		this.buttonText = buttonText;
-	}
-	public String getInitialText() {
-		return initialText;
-	}
-	public void setInitialText(String initialText) {
-		this.initialText = initialText;
+		ac.setShowDescWindow(true);
 	}
 }
