@@ -8,6 +8,9 @@ public class CompareTextApplet extends Applet {
 	 * the browser.
 	 */
 	public void init() {
+		//this.getParameter("..."); // HTML: <parma name="" value=""></param>
+		// http://docs.oracle.com/javase/tutorial/deployment/applet/invokingAppletMethodsFromJavaScript.html
+		// http://stackoverflow.com/questions/7278626/javascript-to-java-applet-communication
 		String text = "Die bestehende Codebasis des elateXam-Projektes ist sehr umfangreich, wodurch es schwierig ist, sich einen Überblick zu verschaffen, was genau in einem bestimmten Codeabschnitt passiert.\n"
 				+ "Es muss stets unterschieden werden, welche Klassen nur als Mapper auf XML-Daten agieren, und welche Klassen tatsächlich wesentliche Implementierungen enthalten.\n"
 				+ "Ein besseres Verständniss wichtiger Codeabschnitte ist nötog, mögliche Seiteneffekte überschauen und vermeiden zu können.\n"

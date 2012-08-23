@@ -222,6 +222,12 @@
           	</exclusion>
           </exclusions>
         </dependency>   
+        <dependency>
+    	<groupId>com.spiru.dev</groupId>
+    	<artifactId>compareTextTask-addon</artifactId>
+    	<version>0.0.30-SNAPSHOT</version>
+    	<scope>provided</scope>
+        </dependency>
     </dependencies>
    <build>
        <resources>
@@ -269,6 +275,15 @@
               <targetPath>drawTask</targetPath>
             </resource>
           </webResources>
+          <webResources>
+            <resource>
+              <directory>${project.build.directory}/compareTextApplet</directory>
+              <includes>
+                <include>**/*.jar</include>
+              </includes>
+              <targetPath>compareTextTask</targetPath>
+            </resource>
+          </webResources>
         </configuration>
       </plugin>
       <plugin>
@@ -291,6 +306,15 @@
                      <overWrite>false</overWrite>
                      <outputDirectory>${project.build.directory}/applet</outputDirectory>
                      <destFileName>drawtask.jar</destFileName>
+                   </artifactItem>
+                   <artifactItem>
+                     <groupId>com.spiru.dev</groupId>
+                     <artifactId>compareTextTask-addon</artifactId>
+                     <version>0.0.30-SNAPSHOT</version>
+                     <type>jar</type>
+                     <overWrite>false</overWrite>
+                     <outputDirectory>${project.build.directory}/compareTextApplet</outputDirectory>
+                     <destFileName>compareTextTask.jar</destFileName>
                    </artifactItem>
                  </artifactItems>
                <overWriteReleases>false</overWriteReleases>

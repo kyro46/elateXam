@@ -94,7 +94,7 @@ public class CompareTextCompletionProvider extends DefaultCompletionProvider {
 	}
 
 	public String generateHelpHtml() {
-		String htmlStr = "<table border=1 width=200>\n";
+		String htmlStr = "<table border=1 width=260>\n";
 		htmlStr += "<th>Tag</th><th>Beschreibung</th>\n";
 		for (Iterator<?> i=completions.iterator(); i.hasNext(); ) {
 			MarkupTagCompletion c = (MarkupTagCompletion)i.next();
@@ -103,7 +103,7 @@ public class CompareTextCompletionProvider extends DefaultCompletionProvider {
 			htmlStr += "<tr><td>" + tag + "</td><td>" + desc + "</td></tr>\n";
 		}
 		htmlStr += "</table>";
-		htmlStr += "<br><p>Dies ist ein netter Hinweis. Sie können im rechten Textfeld Änderungen vornehmen und Textstellen mit den entsprechenden Tags umschließen.</p>";
+		htmlStr += "<br><p width=260>Dies ist ein netter Hinweis. Sie können im rechten Textfeld Änderungen vornehmen und Textstellen mit den entsprechenden Tags umschließen.</p>";
 		return htmlStr;
 	}
 

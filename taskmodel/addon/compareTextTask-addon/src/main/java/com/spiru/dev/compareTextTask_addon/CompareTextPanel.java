@@ -42,7 +42,7 @@ public class CompareTextPanel extends JPanel {
 	private static String defaultFontSizeLabel = "Default Font Size";
 	private static String defaultFontSize = "13";
 	private BoundedRangeModel independentScrollbarModel;
-	private CompareTextCompletionProvider completionp; // contains Help, etc
+	private CompareTextCompletionProvider completionp; // handles Help text, etc
 	private String initialText;
 	private JLabel helpPane;
 	private JSplitPane splitPane;
@@ -123,8 +123,7 @@ public class CompareTextPanel extends JPanel {
 		char[] text_between;
 		if (dot > lastCaretPosRight) {
 			text_between = textAreaRight.getText().substring(lastCaretPosRight, dot).toCharArray();
-		}
-		else {
+		} else {
 			text_between = textAreaRight.getText().substring(dot, lastCaretPosRight).toCharArray();
 		}
 		//System.out.println(text_between);
@@ -146,18 +145,21 @@ public class CompareTextPanel extends JPanel {
 	 * if they are in sync already, calling sync_scrollbars()
 	 * another time causes them to be independent again
 	 * (works back and forth)
+	 * 
+	 * @see com.spiru.dev.compareTextTask_addon.CompareTextPanel.initToolbar().new ActionListener() {...}.actionPerformed(ActionEvent)
 	 */
 	private void sync_scrollbars() {
-		if (independentScrollbarModel != null) {
+		if (independentScrollbarModel != null) { // already in sync
 			scrollPaneLeft.getVerticalScrollBar().setModel(independentScrollbarModel);
 			independentScrollbarModel = null;
-			return;
+			// fix scrollbar position (would lag behind after un-syncing)
+			int rightval = scrollPaneRight.getVerticalScrollBar().getValue();
+			scrollPaneLeft.getVerticalScrollBar().setValue(rightval);
+		} else {
+			independentScrollbarModel = scrollPaneLeft.getVerticalScrollBar().getModel(); // keep reference
+			scrollPaneLeft.getVerticalScrollBar().setModel(scrollPaneRight.getVerticalScrollBar().getModel());
+			scrollPaneLeft.getViewport().setViewPosition(scrollPaneRight.getViewport().getViewPosition());
 		}
-		independentScrollbarModel = scrollPaneLeft.getVerticalScrollBar().getModel(); // keep reference
-		scrollPaneLeft.getVerticalScrollBar().setModel(scrollPaneRight.getVerticalScrollBar().getModel());
-		int rightval = scrollPaneRight.getVerticalScrollBar().getValue();
-		scrollPaneLeft.getVerticalScrollBar().setValue(rightval);
-		//scrollPaneLeft.getVerticalScrollBar().s
 	}
 	
 	private void initToolbar() {
@@ -185,16 +187,22 @@ public class CompareTextPanel extends JPanel {
 					if(toggleSyncButton.isSelected())
 						sync_scrollbars();
 					scrollPaneLeft.setViewportView(helpPane);
+					scrollPaneLeft.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 				} else {
 					scrollPaneLeft.setViewportView(textAreaLeft);
 					if(toggleSyncButton.isSelected())
 						sync_scrollbars();
+					scrollPaneLeft.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 				}
 			}
 		});
 		toggleSyncButton.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent e) {
-				sync_scrollbars();
+				// ignore if Help pane is on the left
+				if (scrollPaneLeft.getViewport().getView() != helpPane)
+					sync_scrollbars();
+				else // revert state of the button, as if it was never clicked
+					toggleSyncButton.setSelected(!toggleSyncButton.isSelected());
 			}
 		});
 	}
@@ -273,7 +281,7 @@ public class CompareTextPanel extends JPanel {
 		ac.install(textAreaRight);
 		ac.setAutoActivationEnabled(true);
 		ac.setAutoCompleteEnabled(true);
-		//ac.setParameterAssistanceEnabled(true);
-		ac.setShowDescWindow(true);
+		//ac.setParameterAssistanceEnabled(true); // might come as a requirement
+		ac.setShowDescWindow(true); // show help text alongside completions
 	}
 }

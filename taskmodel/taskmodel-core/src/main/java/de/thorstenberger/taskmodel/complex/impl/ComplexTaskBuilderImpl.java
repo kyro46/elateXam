@@ -179,7 +179,8 @@ public class ComplexTaskBuilderImpl implements ComplexTaskBuilder {
 
 			try {
 				newSubTasklet = complexTaskFactory.createSubTaskletForSubTaskDef( subTaskDef, complexTaskDefRoot, categoryId );
-				// new:
+				if (newSubTasklet == null) // sign of need to add option, also look into examServer/pom.xml
+					System.out.println("\n buildSubTaskletsFromBlock(): complexTaskFactory.createSubTaskletForSubTaskDef() returned NULL \n");
                 newSubTasklet.build(r.getLong()); // important to correctly initialize SubTasklet
 			} catch (TaskApiException e) {
 				throw new TaskModelPersistenceException( e );

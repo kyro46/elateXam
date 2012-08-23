@@ -72,11 +72,9 @@ public class ExecuteAction extends org.apache.struts.action.Action {
 		long id;
 		try {
 			id = Long.parseLong(request.getParameter("id"));
-			page = Integer.parseInt(request.getParameter("page") == null ? "1"
-					: request.getParameter("page"));
+			page = Integer.parseInt(request.getParameter("page") == null ? "1" : request.getParameter("page"));
 		} catch (final NumberFormatException e) {
-			errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(
-					"invalid.parameter"));
+			errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("invalid.parameter"));
 			saveErrors(request, errors);
 			return mapping.findForward("error");
 		}
@@ -85,8 +83,7 @@ public class ExecuteAction extends org.apache.struts.action.Action {
 				.getDelegateObject(request.getSession().getId(), id);
 
 		if (delegateObject == null) {
-			errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(
-					"no.session"));
+			errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("no.session"));
 			saveErrors(request, errors);
 			return mapping.findForward("error");
 		}
@@ -96,13 +93,11 @@ public class ExecuteAction extends org.apache.struts.action.Action {
 		try {
 			taskDef = (TaskDef_Complex) delegateObject.getTaskDef();
 		} catch (final ClassCastException e2) {
-			errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(
-					"only.complexTasks.supported"));
+			errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("only.complexTasks.supported"));
 			saveErrors(request, errors);
 			return mapping.findForward("error");
 		} catch (final TaskApiException e3) {
-			errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(
-					"misc.error", e3.getMessage()));
+			errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("misc.error", e3.getMessage()));
 			saveErrors(request, errors);
 			log.error(e3);
 			return mapping.findForward("error");
@@ -143,6 +138,7 @@ public class ExecuteAction extends org.apache.struts.action.Action {
 
 			if ("new".equals(todo)) { // new try
 				int tryNo = Integer.parseInt(request.getParameter("try"));
+				// will load Addons here (if any)
 				ct.startNewTry(tryNo, delegateObject.getRandomSeed());
 				log.info("Student starts new try.");
 			} else if ("continue".equals(todo)) { // continue try

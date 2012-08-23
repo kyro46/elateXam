@@ -15,7 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ */
 /**
  *
  */
@@ -107,50 +107,49 @@ public class ComplexTaskFactoryImpl implements ComplexTaskFactory {
 	 * @see de.thorstenberger.taskmodel.complex.ComplexTaskFactory#createSubTaskletForSubTaskDef(de.thorstenberger.taskmodel.complex.complextaskdef.SubTaskDef)
 	 */
 	public SubTasklet createSubTaskletForSubTaskDef(SubTaskDef subTaskDef, ComplexTaskDefRoot complexTaskDefRoot, String categoryId )
-      throws TaskApiException {
+			throws TaskApiException {
 
-    if (subTaskDef instanceof GenericSubTaskDefImpl) {
-      Object jaxbSubTaskDef = ((GenericSubTaskDefImpl) subTaskDef).getJaxbSubTaskDef();
-      if (jaxbSubTaskDef instanceof McSubTaskDef) {
-        McSubTask mcSubTask = objectFactory.createComplexTaskHandlingTryPageMcSubTask();
-        mcSubTask.setRefId(subTaskDef.getId());
-        return instantiateSubTasklet(mcSubTask, complexTaskDefRoot, categoryId);
-      } else if (jaxbSubTaskDef instanceof MappingSubTaskDef) {
-        MappingSubTask mappingSubTask = objectFactory.createComplexTaskHandlingTryPageMappingSubTask();
-        mappingSubTask.setRefId(subTaskDef.getId());
-        return instantiateSubTasklet(mappingSubTask, complexTaskDefRoot, categoryId);
-      } else if (jaxbSubTaskDef instanceof ClozeSubTaskDef) {
-        ClozeSubTask clozeSubTask = objectFactory.createComplexTaskHandlingTryPageClozeSubTask();
-        clozeSubTask.setRefId(subTaskDef.getId());
-        return instantiateSubTasklet(clozeSubTask, complexTaskDefRoot, categoryId);
-      } else if (jaxbSubTaskDef instanceof TextSubTaskDef) {
-        TextSubTask textSubTask = objectFactory.createComplexTaskHandlingTryPageTextSubTask();
-        textSubTask.setRefId(subTaskDef.getId());
-        return instantiateSubTasklet(textSubTask, complexTaskDefRoot, categoryId);
-      } else if (jaxbSubTaskDef instanceof PaintSubTaskDef) {
-        PaintSubTask paintSubTask = objectFactory.createComplexTaskHandlingTryPagePaintSubTask();
-        paintSubTask.setRefId(subTaskDef.getId());
-        return instantiateSubTasklet(paintSubTask, complexTaskDefRoot, categoryId);
-      } else if (jaxbSubTaskDef instanceof AddonSubTaskDef) {
-        AddonSubTask atSubTask = objectFactory.createComplexTaskHandlingTryPageAddonSubTask();
-        atSubTask.setRefId(subTaskDef.getId());
-        return instantiateSubTasklet(atSubTask, complexTaskDefRoot, categoryId);
-      }
-    } else
-      return null;// should be extended via addonsubtasks
-
-    return null;
-  }
-
+		//System.out.println(subTaskDef.getClass().getName());
+		if (subTaskDef instanceof GenericSubTaskDefImpl) {
+			Object jaxbSubTaskDef = ((GenericSubTaskDefImpl) subTaskDef).getJaxbSubTaskDef();
+			if (jaxbSubTaskDef instanceof McSubTaskDef) {
+				McSubTask mcSubTask = objectFactory.createComplexTaskHandlingTryPageMcSubTask();
+				mcSubTask.setRefId(subTaskDef.getId());
+				return instantiateSubTasklet(mcSubTask, complexTaskDefRoot, categoryId);
+			} else if (jaxbSubTaskDef instanceof MappingSubTaskDef) {
+				MappingSubTask mappingSubTask = objectFactory.createComplexTaskHandlingTryPageMappingSubTask();
+				mappingSubTask.setRefId(subTaskDef.getId());
+				return instantiateSubTasklet(mappingSubTask, complexTaskDefRoot, categoryId);
+			} else if (jaxbSubTaskDef instanceof ClozeSubTaskDef) {
+				ClozeSubTask clozeSubTask = objectFactory.createComplexTaskHandlingTryPageClozeSubTask();
+				clozeSubTask.setRefId(subTaskDef.getId());
+				return instantiateSubTasklet(clozeSubTask, complexTaskDefRoot, categoryId);
+			} else if (jaxbSubTaskDef instanceof TextSubTaskDef) {
+				TextSubTask textSubTask = objectFactory.createComplexTaskHandlingTryPageTextSubTask();
+				textSubTask.setRefId(subTaskDef.getId());
+				return instantiateSubTasklet(textSubTask, complexTaskDefRoot, categoryId);
+			} else if (jaxbSubTaskDef instanceof PaintSubTaskDef) {
+				PaintSubTask paintSubTask = objectFactory.createComplexTaskHandlingTryPagePaintSubTask();
+				paintSubTask.setRefId(subTaskDef.getId());
+				return instantiateSubTasklet(paintSubTask, complexTaskDefRoot, categoryId);
+			} else if (jaxbSubTaskDef instanceof AddonSubTaskDef) {
+				AddonSubTask atSubTask = objectFactory.createComplexTaskHandlingTryPageAddonSubTask();
+				atSubTask.setRefId(subTaskDef.getId());
+				return instantiateSubTasklet(atSubTask, complexTaskDefRoot, categoryId);
+			}
+		} else
+			return null; // should be extended via addonsubtasks
+		return null; // FIXME: need proper Errorhandling!
+	}
 
 	public SubTasklet instantiateSubTasklet( SubTaskType jaxbSubTask, ComplexTaskDefRoot complexTaskDefRoot, String categoryId ){
-    BlockAndSubTaskDef blockAndSubTaskDef = lookupTaskBlockAndSubTaskDef( complexTaskDefRoot, categoryId, jaxbSubTask.getRefId() );
-    SubTaskDefType stdt = ((GenericSubTaskDefImpl)blockAndSubTaskDef.getSubTaskDef()).getJaxbSubTaskDef();    
-    CorrectionModeType correctionMode = complexTaskDefRoot.getCorrectionMode().getType();
-    TaskBlockType block = (TaskBlockType) ((GenericBlockImpl)blockAndSubTaskDef.getBlock()).getJaxbTaskBlock();
-    float maxPoints = block.getConfig().getPointsPerTask();
-    
-	  if( jaxbSubTask instanceof McSubTask ){
+		BlockAndSubTaskDef blockAndSubTaskDef = lookupTaskBlockAndSubTaskDef( complexTaskDefRoot, categoryId, jaxbSubTask.getRefId() );
+		SubTaskDefType stdt = ((GenericSubTaskDefImpl)blockAndSubTaskDef.getSubTaskDef()).getJaxbSubTaskDef();    
+		CorrectionModeType correctionMode = complexTaskDefRoot.getCorrectionMode().getType();
+		TaskBlockType block = (TaskBlockType) ((GenericBlockImpl)blockAndSubTaskDef.getBlock()).getJaxbTaskBlock();
+		float maxPoints = block.getConfig().getPointsPerTask();
+
+		if( jaxbSubTask instanceof McSubTask ){
 
 			McSubTask mcSubTask = (McSubTask)jaxbSubTask;
 			McConfig mcConfig = ((McTaskBlock)block).getMcConfig();
@@ -188,13 +187,13 @@ public class ComplexTaskFactoryImpl implements ComplexTaskFactory {
 	/* (non-Javadoc)
 	 * @see de.thorstenberger.taskmodel.complex.ComplexTaskFactory#createTry(long)
 	 */
-  public Try createTry(long startTime, ComplexTaskFactory complexTaskFactory, ComplexTaskDefRoot complexTaskDefRoot, long randomSeed) throws TaskApiException {
-    ComplexTaskHandling.Try tryType;
-    tryType = objectFactory.createComplexTaskHandlingTry();
+	public Try createTry(long startTime, ComplexTaskFactory complexTaskFactory, ComplexTaskDefRoot complexTaskDefRoot, long randomSeed) throws TaskApiException {
+		ComplexTaskHandling.Try tryType;
+		tryType = objectFactory.createComplexTaskHandlingTry();
 		tryType.setStartTime( startTime );
 		// FIXME never used; remove?
 		tryType.setSubmitted( false );
-    tryType.setRandomSeed(randomSeed);
+		tryType.setRandomSeed(randomSeed);
 
 		Try tryImpl = new TryImpl( tryType, complexTaskFactory, complexTaskDefRoot  );
 		return tryImpl;

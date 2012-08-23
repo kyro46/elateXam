@@ -5,7 +5,6 @@ import java.text.ParseException;
 import java.util.Iterator;
 import java.util.Map;
 
-
 import de.thorstenberger.taskmodel.MethodNotSupportedException;
 import de.thorstenberger.taskmodel.complex.ParsingException;
 import de.thorstenberger.taskmodel.complex.complextaskhandling.CorrectionSubmitData;
@@ -15,13 +14,13 @@ import de.thorstenberger.taskmodel.view.ViewContext;
 
 public class SubTaskView_CompareTextTask extends SubTaskView{
 
-	private SubTasklet_CompareTextTask AnordnungSubTasklet;
+	private SubTasklet_CompareTextTask subTasklet;
 
 	/**
 	 *
 	 */
-	public SubTaskView_CompareTextTask( SubTasklet_CompareTextTask anordnungSubTasklet ) {
-		this.AnordnungSubTasklet = anordnungSubTasklet;
+	public SubTaskView_CompareTextTask( SubTasklet_CompareTextTask subTaskletObject ) {
+		this.subTasklet = subTaskletObject;
 	}
 
 	/**
@@ -32,27 +31,40 @@ public class SubTaskView_CompareTextTask extends SubTaskView{
 	}
 
 	public String getRenderedHTML(int relativeTaskNumber, boolean corrected) {
-		StringBuffer ret = new StringBuffer();
+		final StringBuffer ret = new StringBuffer();
+		String path = "com/spiru/dev/compareTextTask_addon/CompareTextApplet.class";
+		/*
+		ret.append("<script src=\"http://java.com/js/deployJava.js\"></script>\n"); // need that locally (no internet access during exams)
+		ret.append("<script>\n");
+		ret.append("    var attributes = {codebase:'http://java.sun.com/products/plugin/1.5.0/demos/jfc/Java2D', code:'com/spiru/dev/compareTextTask_addon/CompareTextApplet.class', width:710, height:540};\n");
+		ret.append("    var parameters = {fontSize:16};\n");
+		ret.append("    var version = '1.6';\n");
+		ret.append("    deployJava.runApplet(attributes, parameters, version);\n");
+		ret.append("</script>\n");
+		*/
+		ret.append("<applet archive=\"compareTextTask/compareTextTask.jar\" code=\"" + path + "\" width=\"710\" height=\"540\" title=\"Java\">\n");
+		ret.append("<param name=\"fontSize\" value=\"16\"><param name=\"codebase_lookup\" value=\"false\">\n");
+		ret.append("</applet>\n");
+		//final String userAgent = request.getHeader("User-Agent");
+		//final boolean mozilla = userAgent != null && userAgent.startsWith("Mozilla") && userAgent.indexOf("MSIE") == -1;
 
-		// workaround: textarea nicht disabled
-		//corrected = false;
-
-		ret.append("<div align=\"left\">\n");
-		ret.append("<textarea name=\"task[" + relativeTaskNumber + "].Anordnung\" cols=\"" +
-				AnordnungSubTasklet.getTextFieldWidth() + "\" rows=\"" + AnordnungSubTasklet.getTextFieldHeight() + "\" onChange=\"setModified()\"" +
-				( corrected ? "disabled=\"disabled\"" : "" ) + ">\n");
-		ret.append( corrected?AnordnungSubTasklet.getLastCorrectedAnswer():AnordnungSubTasklet.getAnswer() );
-		ret.append("</textarea></div>\n");
-
-		if(corrected) {
-			ret.append("<div class=\"problem\">\n");
-			ret.append("Anordnungantwort:<br><br>");
-			ret.append(AnordnungSubTasklet.getAnordnungGradeDoc());
-			ret.append("</div><br>");
-		}
-
+		/*
+		ret.append("<div align=\"center\">\n");
+		ret.append("<object classid = \"java:" + path + "\"\n");
+		ret.append("    codebase = \"http://java.sun.com/update/1.5.0/jinstall-1_5-windows-i586.cab#Version=5,0,0,7\"\n");
+		ret.append("    WIDTH = \"600\" HEIGHT = \"" + (corrected ? 355 : 395) + "\" NAME = \"comapreTextTask_" + relativeTaskNumber + "\" >\r\n");
+		ret.append("    <param name=\"" + path + "\"\n");
+		ret.append("</object>\n<br/><br/>\n");
+		*/
+		/*ret.append("<object classid=\"clsid:8AD9C840-044E-11D1-B3E9-00805F499D93\"\n");
+		ret.append("<param name=\"code\" value=\"com/spiru/dev/compareTextTask_addon/CompareTextApplet.class\">\n");
+		ret.append("  <comment>\n");
+		ret.append("    <embed code=\"com/spiru/dev/compareTextTask_addon/CompareTextApplet.class\" type=\"application/x-java-applet;jpi-version=1.5.0\">\n");
+		ret.append("      <noembed>You need to enable Java Plugin.</noembed>\n");
+		ret.append("    </embed>\n");
+		ret.append("  </comment>\n");
+		ret.append("</object>\n");*/
 		return ret.toString();
-
 	}
 
 	public String getCorrectedHTML( ViewContext context, int relativeTaskNumber ){
@@ -63,7 +75,7 @@ public class SubTaskView_CompareTextTask extends SubTaskView{
 		StringBuffer ret = new StringBuffer();
 		ret.append( getRenderedHTML( -1, true ) );
 
-		ret.append(getCorrectorPointsInputString(actualCorrector, "Anordnung", AnordnungSubTasklet));
+		ret.append(getCorrectorPointsInputString(actualCorrector, "Anordnung", subTasklet));
 
 		return ret.toString();
 	}
