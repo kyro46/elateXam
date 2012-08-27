@@ -29,7 +29,7 @@
   <modules>
     <module>autotool-addon</module>
     <module>groupingTask-addon</module>
-    <module>compareTextTask-addon</module>
+	<module>compareTextTask-addon</module>
 	<!--
     <module>junit-addon</module>
     <module>junit-addon-correction</module>
@@ -37,7 +37,7 @@
 	-->
   </modules>
   
-  <repositories>
+<!--  <repositories>
     <repository>
       <releases>
         <enabled>true</enabled>
@@ -54,5 +54,5 @@
       <url>http://flowsgi.inf.ethz.ch/repository/maven2</url>
       <layout>default</layout>
     </repository>
-  </repositories>
+  </repositories> -->
 </project>

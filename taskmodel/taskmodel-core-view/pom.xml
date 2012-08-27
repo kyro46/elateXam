@@ -277,7 +277,7 @@
           </webResources>
           <webResources>
             <resource>
-              <directory>${project.build.directory}/compareTextApplet</directory>
+              <directory>${project.build.directory}/applet</directory>
               <includes>
                 <include>**/*.jar</include>
               </includes>
@@ -313,7 +313,7 @@
                      <version>0.0.30-SNAPSHOT</version>
                      <type>jar</type>
                      <overWrite>false</overWrite>
-                     <outputDirectory>${project.build.directory}/compareTextApplet</outputDirectory>
+                     <outputDirectory>${project.build.directory}/applet</outputDirectory>
                      <destFileName>compareTextTask.jar</destFileName>
                    </artifactItem>
                  </artifactItems>
