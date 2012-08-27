@@ -43,7 +43,8 @@ public class SubTaskView_CompareTextTask extends SubTaskView{
 		ret.append("</script>\n");
 		*/
 		ret.append("<applet archive=\"compareTextTask/compareTextTask.jar\" code=\"" + path + "\" width=\"710\" height=\"540\" title=\"Java\">\n");
-		ret.append("<param name=\"fontSize\" value=\"16\"><param name=\"codebase_lookup\" value=\"false\">\n");
+		ret.append("<param name=\"initialText\" value=\"16\">\n");
+		ret.append("<param name=\"xmlDef\" value=\"16\">\n");
 		ret.append("</applet>\n");
 		//final String userAgent = request.getHeader("User-Agent");
 		//final boolean mozilla = userAgent != null && userAgent.startsWith("Mozilla") && userAgent.indexOf("MSIE") == -1;

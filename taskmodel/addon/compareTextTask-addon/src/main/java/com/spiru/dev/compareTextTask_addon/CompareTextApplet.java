@@ -1,5 +1,8 @@
 package com.spiru.dev.compareTextTask_addon;
 
+/* NOTE: if you get this error: java.util.MissingResourceException: Can't find bundle for base name org.fife.ui.rsyntaxtextarea.RSyntaxTextArea, locale en_US
+you need to add "i18n" as Source Folder in Eclipse - this error only affects Eclipse, Maven will build properly */
+
 import java.applet.Applet;
 
 public class CompareTextApplet extends Applet {
@@ -11,6 +14,9 @@ public class CompareTextApplet extends Applet {
 		//this.getParameter("..."); // HTML: <parma name="" value=""></param>
 		// http://docs.oracle.com/javase/tutorial/deployment/applet/invokingAppletMethodsFromJavaScript.html
 		// http://stackoverflow.com/questions/7278626/javascript-to-java-applet-communication
+		String text = this.getParameter("initialText");
+		String xmldef = this.getParameter("xmlDef");
+		/*
 		String text = "Die bestehende Codebasis des elateXam-Projektes ist sehr umfangreich, wodurch es schwierig ist, sich einen Überblick zu verschaffen, was genau in einem bestimmten Codeabschnitt passiert.\n"
 				+ "Es muss stets unterschieden werden, welche Klassen nur als Mapper auf XML-Daten agieren, und welche Klassen tatsächlich wesentliche Implementierungen enthalten.\n"
 				+ "Ein besseres Verständniss wichtiger Codeabschnitte ist nötog, mögliche Seiteneffekte überschauen und vermeiden zu können.\n"
@@ -28,6 +34,7 @@ public class CompareTextApplet extends Applet {
 				+ "Als Möglichkeit in solchen Fällen herauszufinden, von wo aus es zu bestimmten Methodenaufrufen kommt, bleibt dann oft nur noch eine Volltextsuche innerhalb des Projektes durchzuführen.\n"
 				+ "Außerdem lässt sich mit Print-Anweisungen prüfen, ob eine Methode, mit deren Aufruf man rechnet, auch wirklich aufgerufen wird.";
 		String xmldef = "<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE api SYSTEM 'CompletionXml.dtd'><api language='HTML'><keywords><keyword name='var' type='tag'><desc>Defines a variable</desc></keyword><keyword name='video' type='tag'><desc>Defines a video</desc></keyword></keywords></api>";
+		*/
 		CompareTextPanel jpanel = new CompareTextPanel(text, xmldef);
 		//jpanel.setSize(600, 400);
 		add(jpanel);

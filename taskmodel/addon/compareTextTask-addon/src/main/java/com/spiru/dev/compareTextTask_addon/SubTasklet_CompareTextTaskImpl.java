@@ -160,7 +160,7 @@ public class SubTasklet_CompareTextTaskImpl  extends AbstractAddonSubTasklet imp
 	 */
 	public void build(long randomSeed) throws TaskApiException {
 		// nothing to build :)
-		System.out.println("SJFLKHKL\n\n");
+		//System.out.println("SJFLKHKL\n\n");
 		// except:
 		anordnungSubTask.setAnswer( "Hier wurde die Methode build aufgerufen!!!!!!! Was macht sie es und wann?" );
 
