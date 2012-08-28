@@ -47,6 +47,7 @@ public abstract class AbstractTokenMakerFactory extends TokenMakerFactory {
 	 * @return The corresponding <code>TokenMaker</code>, or <code>null</code>
 	 *         if none matches the specified key.
 	 */
+	@Override
 	protected TokenMaker getTokenMakerImpl(String key) {
 		TokenMakerCreator tmc = (TokenMakerCreator)tokenMakerMap.get(key);
 		if (tmc!=null) {
@@ -74,6 +75,7 @@ public abstract class AbstractTokenMakerFactory extends TokenMakerFactory {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Set keySet() {
 		return tokenMakerMap.keySet();
 	}

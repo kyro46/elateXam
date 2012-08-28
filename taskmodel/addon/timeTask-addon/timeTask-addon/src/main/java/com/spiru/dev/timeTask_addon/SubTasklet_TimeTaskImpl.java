@@ -260,7 +260,6 @@ public class SubTasklet_TimeTaskImpl  extends AbstractAddonSubTasklet implements
 		return ((AddonSubTaskDef)this.jaxbSubTaskDef).getTaskType();
 	}
 
-	
 	public double getAnordnungScore() {
 		return anordnungSubTask.getAnordnungScore();
 	}

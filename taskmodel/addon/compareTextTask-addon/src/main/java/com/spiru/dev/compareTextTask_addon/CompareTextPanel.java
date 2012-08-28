@@ -19,7 +19,6 @@ import javax.swing.JTextArea;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.ToolTipManager;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.text.BadLocationException;
@@ -28,8 +27,6 @@ import javax.swing.text.DefaultHighlighter;
 import org.fife.ui.autocomplete.AutoCompletion;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
-import org.fife.ui.rtextarea.ToolTipSupplier;
-
 import com.spiru.dev.compareTextTask_addon.Utils.CompareTextCompletionProvider;
 
 /**
@@ -169,6 +166,7 @@ public class CompareTextPanel extends JPanel {
 		fontComboBox.setModel(new DefaultComboBoxModel(new String[] { defaultFontSizeLabel, "8", "9", "10", "11",
 				"12", "13", "14", "15", "16", "18", "20", "24", "28", "30", "36", "48", "64", "72" }));
 		fontComboBox.addActionListener(new java.awt.event.ActionListener() {
+			@Override
 			public void actionPerformed(java.awt.event.ActionEvent e) {
 				JComboBox cb = (JComboBox)e.getSource();
 				String itemStr = (String)cb.getSelectedItem();

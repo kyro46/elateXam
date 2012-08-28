@@ -31,10 +31,12 @@ public class AttributeCompletion extends AbstractCompletion {
 		this.param = param;
 	}
 
+	@Override
 	public String getSummary() {
 		return param.getDescription();
 	}
 
+	@Override
 	public String getReplacementText() {
 		return param.getName();
 	}

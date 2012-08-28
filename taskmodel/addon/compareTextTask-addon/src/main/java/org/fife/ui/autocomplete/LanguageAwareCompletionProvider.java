@@ -19,6 +19,7 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.RSyntaxUtilities;
 import org.fife.ui.rsyntaxtextarea.Token;
+import org.fife.ui.rsyntaxtextarea.TokenTypes;
 import org.fife.ui.rtextarea.RTextArea;
 import org.fife.ui.rtextarea.ToolTipSupplier;
 
@@ -104,6 +105,7 @@ public class LanguageAwareCompletionProvider extends CompletionProviderBase
 	 * @throws UnsupportedOperationException Always.
 	 * @see #setParameterizedCompletionParams(char, String, char)
 	 */
+	@Override
 	public void clearParameterizedCompletionParams() {
 		throw new UnsupportedOperationException();
 	}
@@ -112,6 +114,7 @@ public class LanguageAwareCompletionProvider extends CompletionProviderBase
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getAlreadyEnteredText(JTextComponent comp) {
 		if (!(comp instanceof RSyntaxTextArea)) {
 			return EMPTY_STRING;
@@ -135,6 +138,7 @@ public class LanguageAwareCompletionProvider extends CompletionProviderBase
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public List getCompletionsAt(JTextComponent tc, Point p) {
 		return defaultProvider==null ? null :
 				defaultProvider.getCompletionsAt(tc, p);
@@ -148,6 +152,7 @@ public class LanguageAwareCompletionProvider extends CompletionProviderBase
 	 * @return The list of possible completions, or an empty list if there
 	 *         are none.
 	 */
+	@Override
 	protected List getCompletionsImpl(JTextComponent comp) {
 		if (!(comp instanceof RSyntaxTextArea)) {
 			return new ArrayList(0);
@@ -184,6 +189,7 @@ public class LanguageAwareCompletionProvider extends CompletionProviderBase
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public List getParameterizedCompletions(JTextComponent tc) {
 		// Parameterized completions can only come from the "code" completion
 		// provider.  We do not do function/method completions while editing
@@ -197,6 +203,7 @@ public class LanguageAwareCompletionProvider extends CompletionProviderBase
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public char getParameterListEnd() {
 		return defaultProvider.getParameterListEnd();
 	}
@@ -205,6 +212,7 @@ public class LanguageAwareCompletionProvider extends CompletionProviderBase
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getParameterListSeparator() {
 		return defaultProvider.getParameterListSeparator();
 	}
@@ -213,6 +221,7 @@ public class LanguageAwareCompletionProvider extends CompletionProviderBase
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public char getParameterListStart() {
 		return defaultProvider.getParameterListStart();
 	}
@@ -241,7 +250,7 @@ public class LanguageAwareCompletionProvider extends CompletionProviderBase
 		if (curToken==null) { // At end of the line
 
 			int type = doc.getLastTokenTypeOnLine(line);
-			if (type==Token.NULL) {
+			if (type==TokenTypes.NULL) {
 				Token temp = t.getLastPaintableToken();
 				if (temp==null) {
 					return getDefaultCompletionProvider();
@@ -250,12 +259,12 @@ public class LanguageAwareCompletionProvider extends CompletionProviderBase
 			}
 
 			switch (type) {
-				case Token.ERROR_STRING_DOUBLE:
+				case TokenTypes.ERROR_STRING_DOUBLE:
 					return getStringCompletionProvider();
-				case Token.COMMENT_EOL:
-				case Token.COMMENT_MULTILINE:
+				case TokenTypes.COMMENT_EOL:
+				case TokenTypes.COMMENT_MULTILINE:
 					return getCommentCompletionProvider();
-				case Token.COMMENT_DOCUMENTATION:
+				case TokenTypes.COMMENT_DOCUMENTATION:
 					return getDocCommentCompletionProvider();
 				default:
 					return getDefaultCompletionProvider();
@@ -271,21 +280,21 @@ public class LanguageAwareCompletionProvider extends CompletionProviderBase
 		}
 
 		switch (curToken.type) {
-			case Token.LITERAL_STRING_DOUBLE_QUOTE:
-			case Token.ERROR_STRING_DOUBLE:
+			case TokenTypes.LITERAL_STRING_DOUBLE_QUOTE:
+			case TokenTypes.ERROR_STRING_DOUBLE:
 				return getStringCompletionProvider();
-			case Token.COMMENT_EOL:
-			case Token.COMMENT_MULTILINE:
+			case TokenTypes.COMMENT_EOL:
+			case TokenTypes.COMMENT_MULTILINE:
 				return getCommentCompletionProvider();
-			case Token.COMMENT_DOCUMENTATION:
+			case TokenTypes.COMMENT_DOCUMENTATION:
 				return getDocCommentCompletionProvider();
-			case Token.NULL:
-			case Token.WHITESPACE:
-			case Token.IDENTIFIER:
-			case Token.VARIABLE:
-			case Token.PREPROCESSOR:
-			case Token.DATA_TYPE:
-			case Token.FUNCTION:
+			case TokenTypes.NULL:
+			case TokenTypes.WHITESPACE:
+			case TokenTypes.IDENTIFIER:
+			case TokenTypes.VARIABLE:
+			case TokenTypes.PREPROCESSOR:
+			case TokenTypes.DATA_TYPE:
+			case TokenTypes.FUNCTION:
 				return getDefaultCompletionProvider();
 		}
 
@@ -308,6 +317,7 @@ public class LanguageAwareCompletionProvider extends CompletionProviderBase
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean isAutoActivateOkay(JTextComponent tc) {
 		CompletionProvider provider = getProviderFor(tc);
 		return provider!=null ? provider.isAutoActivateOkay(tc) : false;
@@ -360,6 +370,7 @@ public class LanguageAwareCompletionProvider extends CompletionProviderBase
 	 * @throws UnsupportedOperationException Always.
 	 * @see #clearParameterizedCompletionParams()
 	 */
+	@Override
 	public void setParameterizedCompletionParams(char listStart,
 										String separator, char listEnd) {
 		throw new UnsupportedOperationException();
@@ -391,6 +402,7 @@ public class LanguageAwareCompletionProvider extends CompletionProviderBase
 	 * @param e The mouse event.
 	 * @return The tool tip text, or <code>null</code> if none.
 	 */
+	@Override
 	public String getToolTipText(RTextArea textArea, MouseEvent e) {
 
 		String tip = null;

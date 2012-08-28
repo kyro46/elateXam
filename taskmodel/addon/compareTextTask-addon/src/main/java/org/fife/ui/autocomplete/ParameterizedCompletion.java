@@ -152,6 +152,7 @@ public interface ParameterizedCompletion extends Completion {
 			this.desc = desc;
 		}
 
+		@Override
 		public String toString() {
 			StringBuffer sb = new StringBuffer();
 			if (getType()!=null) {

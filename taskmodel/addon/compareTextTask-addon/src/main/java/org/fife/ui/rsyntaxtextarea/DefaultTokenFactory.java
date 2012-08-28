@@ -104,10 +104,11 @@ class DefaultTokenFactory implements TokenFactory {
 	 *
 	 * @return A null token.
 	 */
+	@Override
 	public Token createToken() {
 		Token token = tokenList[currentFreeToken];
 		token.text = null;
-		token.type = Token.NULL;
+		token.type = TokenTypes.NULL;
 		token.offset = -1;
 		token.setNextToken(null);
 		currentFreeToken++;
@@ -127,6 +128,7 @@ class DefaultTokenFactory implements TokenFactory {
 	 * @param type The type of token.
 	 * @return The token.
 	 */
+	@Override
 	public Token createToken(final Segment line, final int beg,
 					final int end, final int startOffset, final int type) {
 		return createToken(line.array, beg,end, startOffset, type);
@@ -143,6 +145,7 @@ class DefaultTokenFactory implements TokenFactory {
 	 * @param type The type of token.
 	 * @return The token.
 	 */
+	@Override
 	public Token createToken(final char[] line, final int beg,
 					final int end, final int startOffset, final int type) {
 		Token token = tokenList[currentFreeToken];
@@ -159,6 +162,7 @@ class DefaultTokenFactory implements TokenFactory {
 	 * by the <code>TokenMaker</code> every time a token list is generated for
 	 * a new line so the tokens can be reused.
 	 */
+	@Override
 	public void resetAllTokens() {
 		currentFreeToken = 0;
 	}

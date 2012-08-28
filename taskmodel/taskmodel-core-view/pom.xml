@@ -303,7 +303,7 @@
                      <artifactId>drawtask</artifactId>
                      <version>1.0.2-SNAPSHOT</version>
                      <type>jar</type>
-                     <overWrite>false</overWrite>
+                     <overWrite>true</overWrite>
                      <outputDirectory>${project.build.directory}/applet</outputDirectory>
                      <destFileName>drawtask.jar</destFileName>
                    </artifactItem>
@@ -312,12 +312,12 @@
                      <artifactId>compareTextTask-addon</artifactId>
                      <version>0.0.30-SNAPSHOT</version>
                      <type>jar</type>
-                     <overWrite>false</overWrite>
+                     <overWrite>true</overWrite>
                      <outputDirectory>${project.build.directory}/applet</outputDirectory>
                      <destFileName>compareTextTask.jar</destFileName>
                    </artifactItem>
                  </artifactItems>
-               <overWriteReleases>false</overWriteReleases>
+               <overWriteReleases>true</overWriteReleases>
                <overWriteSnapshots>true</overWriteSnapshots>
             </configuration>
           </execution>

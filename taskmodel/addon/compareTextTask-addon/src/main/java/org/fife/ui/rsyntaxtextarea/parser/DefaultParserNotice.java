@@ -81,6 +81,7 @@ public class DefaultParserNotice implements ParserNotice {
 	 * @return How the two parser notices should be sorted relative to one
 	 *         another.
 	 */
+	@Override
 	public int compareTo(Object obj) {
 		int diff = -1;
 		if (obj instanceof ParserNotice) {
@@ -100,6 +101,7 @@ public class DefaultParserNotice implements ParserNotice {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean containsPosition(int pos) {
 		return offset<=pos && pos<(offset+length);
 	}
@@ -111,6 +113,7 @@ public class DefaultParserNotice implements ParserNotice {
 	 * @param obj Another parser notice.
 	 * @return Whether the two notices are equal.
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		return compareTo(obj)==0;
 	}
@@ -119,6 +122,7 @@ public class DefaultParserNotice implements ParserNotice {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Color getColor() {
 		Color c = color; // User-defined
 		if (c==null) {
@@ -131,6 +135,7 @@ public class DefaultParserNotice implements ParserNotice {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public int getLength() {
 		return length;
 	}
@@ -139,6 +144,7 @@ public class DefaultParserNotice implements ParserNotice {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public int getLevel() {
 		return level;
 	}
@@ -147,6 +153,7 @@ public class DefaultParserNotice implements ParserNotice {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public int getLine() {
 		return line;
 	}
@@ -155,6 +162,7 @@ public class DefaultParserNotice implements ParserNotice {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getMessage() {
 		return message;
 	}
@@ -163,6 +171,7 @@ public class DefaultParserNotice implements ParserNotice {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public int getOffset() {
 		return offset;
 	}
@@ -171,6 +180,7 @@ public class DefaultParserNotice implements ParserNotice {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Parser getParser() {
 		return parser;
 	}
@@ -179,6 +189,7 @@ public class DefaultParserNotice implements ParserNotice {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean getShowInEditor() {
 		return showInEditor;
 	}
@@ -187,6 +198,7 @@ public class DefaultParserNotice implements ParserNotice {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getToolTipText() {
 		return toolTipText!=null ? toolTipText : getMessage();
 	}
@@ -197,6 +209,7 @@ public class DefaultParserNotice implements ParserNotice {
 	 *
 	 * @return The hash code.
 	 */
+	@Override
 	public int hashCode() {
 		return (line<<16) | offset;
 	}
@@ -260,6 +273,7 @@ public class DefaultParserNotice implements ParserNotice {
 	 *
 	 * @return This parser notice as a string.
 	 */
+	@Override
 	public String toString() {
 		return "Line " + getLine() + ": " + getMessage();
 	}

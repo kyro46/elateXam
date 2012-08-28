@@ -26,6 +26,7 @@ public class SubTaskView_CompareTextTask extends SubTaskView{
 	/**
 	 * @see de.thorstenberger.uebman.services.student.task.complex.SubTaskView#getRenderedHTML(int)
 	 */
+	@Override
 	public String getRenderedHTML( ViewContext context, int relativeTaskNumber) {
 		return getRenderedHTML( relativeTaskNumber, false );
 	}
@@ -43,35 +44,18 @@ public class SubTaskView_CompareTextTask extends SubTaskView{
 		ret.append("</script>\n");
 		*/
 		ret.append("<applet archive=\"compareTextTask/compareTextTask.jar\" code=\"" + path + "\" width=\"710\" height=\"540\" title=\"Java\">\n");
-		ret.append("<param name=\"initialText\" value=\"16\">\n");
-		ret.append("<param name=\"xmlDef\" value=\"16\">\n");
+		ret.append("<param name=\"initialText\" value=\"" + subTasklet.getInitialText() + "\">\n");
+		ret.append("<param name=\"xmlDef\" value=\"" + subTasklet.getTagsString() + "\">\n");
 		ret.append("</applet>\n");
-		//final String userAgent = request.getHeader("User-Agent");
-		//final boolean mozilla = userAgent != null && userAgent.startsWith("Mozilla") && userAgent.indexOf("MSIE") == -1;
-
-		/*
-		ret.append("<div align=\"center\">\n");
-		ret.append("<object classid = \"java:" + path + "\"\n");
-		ret.append("    codebase = \"http://java.sun.com/update/1.5.0/jinstall-1_5-windows-i586.cab#Version=5,0,0,7\"\n");
-		ret.append("    WIDTH = \"600\" HEIGHT = \"" + (corrected ? 355 : 395) + "\" NAME = \"comapreTextTask_" + relativeTaskNumber + "\" >\r\n");
-		ret.append("    <param name=\"" + path + "\"\n");
-		ret.append("</object>\n<br/><br/>\n");
-		*/
-		/*ret.append("<object classid=\"clsid:8AD9C840-044E-11D1-B3E9-00805F499D93\"\n");
-		ret.append("<param name=\"code\" value=\"com/spiru/dev/compareTextTask_addon/CompareTextApplet.class\">\n");
-		ret.append("  <comment>\n");
-		ret.append("    <embed code=\"com/spiru/dev/compareTextTask_addon/CompareTextApplet.class\" type=\"application/x-java-applet;jpi-version=1.5.0\">\n");
-		ret.append("      <noembed>You need to enable Java Plugin.</noembed>\n");
-		ret.append("    </embed>\n");
-		ret.append("  </comment>\n");
-		ret.append("</object>\n");*/
 		return ret.toString();
 	}
 
+	@Override
 	public String getCorrectedHTML( ViewContext context, int relativeTaskNumber ){
 		return getRenderedHTML( -1, true );
 	}
 
+	@Override
 	public String getCorrectionHTML(String actualCorrector, ViewContext context ){
 		StringBuffer ret = new StringBuffer();
 		ret.append( getRenderedHTML( -1, true ) );
@@ -84,6 +68,7 @@ public class SubTaskView_CompareTextTask extends SubTaskView{
 	/**
 	 * @see de.thorstenberger.uebman.services.student.task.complex.SubTaskView#getSubmitData(java.util.Map, int)
 	 */
+	@Override
 	public SubmitData getSubmitData(Map postedVarsForTask)
 			throws ParsingException {
 
@@ -97,6 +82,7 @@ public class SubTaskView_CompareTextTask extends SubTaskView{
 
 	}
 
+	@Override
 	public CorrectionSubmitData getCorrectionSubmitData( Map postedVars ) throws ParsingException, MethodNotSupportedException{
 		Iterator it = postedVars.values().iterator();
 		if( it.hasNext() ){

@@ -55,6 +55,7 @@ class CompletionListModel extends AbstractListModel {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Object getElementAt(int index) {
 		return delegate.get(index);
 	}
@@ -63,6 +64,7 @@ class CompletionListModel extends AbstractListModel {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public int getSize() {
 		return delegate.size();
 	}

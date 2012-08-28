@@ -120,7 +120,7 @@ public class Gutter extends JPanel {
 
 		listener = new TextAreaListener();
 		lineNumberColor = Color.gray;
-		lineNumberFont = RTextArea.getDefaultFont();
+		lineNumberFont = RTextAreaBase.getDefaultFont();
 		lineNumberingStartIndex = 1;
 
 		setTextArea(textArea);
@@ -480,6 +480,7 @@ public class Gutter extends JPanel {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void setComponentOrientation(ComponentOrientation o) {
 		// Reuse the border to preserve its color.
 		if (o.isLeftToRight()) {
@@ -737,6 +738,7 @@ public class Gutter extends JPanel {
 			return color;
 		}
 
+		@Override
 		public void paintBorder(Component c, Graphics g, int x, int y,
 								int width, int height) {
 			g.setColor(color);
@@ -785,6 +787,7 @@ public class Gutter extends JPanel {
 		 *
 		 * @param e Information about the new "active line range."
 		 */
+		@Override
 		public void activeLineRangeChanged(ActiveLineRangeEvent e) {
 			if (e.getMin()==-1) {
 				clearActiveLineRange();
@@ -794,8 +797,10 @@ public class Gutter extends JPanel {
 			}
 		}
 
+		@Override
 		public void changedUpdate(DocumentEvent e) {}
 
+		@Override
 		public void componentResized(java.awt.event.ComponentEvent e) {
 			revalidate();
 		}
@@ -808,6 +813,7 @@ public class Gutter extends JPanel {
 			}
 		}
 
+		@Override
 		public void insertUpdate(DocumentEvent e) {
 			handleDocumentEvent(e);
 		}
@@ -827,6 +833,7 @@ public class Gutter extends JPanel {
 			installed = true;
 		}
 
+		@Override
 		public void propertyChange(PropertyChangeEvent e) {
 
 			String name = e.getPropertyName();
@@ -860,6 +867,7 @@ public class Gutter extends JPanel {
 
 		}
 
+		@Override
 		public void removeUpdate(DocumentEvent e) {
 			handleDocumentEvent(e);
 		}

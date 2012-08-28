@@ -1,9 +1,6 @@
 package com.spiru.dev.compareTextTask_addon.Utils;
 
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,6 +21,7 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.RSyntaxUtilities;
 import org.fife.ui.rsyntaxtextarea.Token;
+import org.fife.ui.rsyntaxtextarea.TokenTypes;
 
 /**
  * CompletionProvider for AutoCompletion in RSyntaxTextArea
@@ -109,15 +107,16 @@ public class CompareTextCompletionProvider extends DefaultCompletionProvider {
 
 	protected void initCompletions() {
 		// alternative way to load that XML (preferably as String)
-		if (xmlStr == null) return;
+		/*if (xmlStr == null) return;
 		try {
-			//loadFromXML("/home/rrae/src/SHK2012/Dokumentation/XMLPlayground/html.xml");
-			InputStream is = new ByteArrayInputStream(xmlStr.getBytes("UTF-8"));
-			loadFromXML(is);
-			is.close();
+			//loadFromXML(new File("/home/rrae/src/SHK2012/Dokumentation/XMLPlayground/html.xml"));
+			//InputStream is = new ByteArrayInputStream(xmlStr.getBytes("UTF-8"));
+			//System.out.println(xmlStr);
+			//loadFromXML(is);
+			//is.close();
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
-		}
+		}*/
 	}
 
 
@@ -154,10 +153,10 @@ public class CompareTextCompletionProvider extends DefaultCompletionProvider {
 			if (t.containsPosition(offs)) {
 				break;
 			}
-			else if (t.type==Token.MARKUP_TAG_NAME) {
+			else if (t.type==TokenTypes.MARKUP_TAG_NAME) {
 				lastTagName = t.getLexeme();
 			}
-			else if (t.type==Token.MARKUP_TAG_DELIMITER) {
+			else if (t.type==TokenTypes.MARKUP_TAG_DELIMITER) {
 				lastTagName = null;
 				foundOpenTag = t.isSingleChar('<');
 				t = t.getNextToken();
@@ -176,10 +175,10 @@ public class CompareTextCompletionProvider extends DefaultCompletionProvider {
 			while (prevLine>=0) {
 				tokenList = doc.getTokenListForLine(prevLine);
 				for (Token t=tokenList; t!=null; t=t.getNextToken()) {
-					if (t.type==Token.MARKUP_TAG_NAME) {
+					if (t.type==TokenTypes.MARKUP_TAG_NAME) {
 						lastTagName = t.getLexeme();
 					}
-					else if (t.type==Token.MARKUP_TAG_DELIMITER) {
+					else if (t.type==TokenTypes.MARKUP_TAG_DELIMITER) {
 						lastTagName = null;
 						foundOpenTag = t.isSingleChar('<');
 						t = t.getNextToken();
@@ -206,6 +205,7 @@ public class CompareTextCompletionProvider extends DefaultCompletionProvider {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getAlreadyEnteredText(JTextComponent comp) {
 
 		isTagName = true;
@@ -236,7 +236,7 @@ public class CompareTextCompletionProvider extends DefaultCompletionProvider {
 						// If we're completing just after a tag delimiter,
 						// only offer suggestions for the "inside" of tags,
 						// e.g. after "<" and "</".
-						else if (t.type==Token.MARKUP_TAG_DELIMITER) {
+						else if (t.type==TokenTypes.MARKUP_TAG_DELIMITER) {
 							if (!isTagOpeningToken(t)) {
 								text = null;
 							}
@@ -244,7 +244,7 @@ public class CompareTextCompletionProvider extends DefaultCompletionProvider {
 
 						// If we're completing after whitespace, we must
 						// determine whether we're "inside" a tag.
-						else if (t.type==Token.WHITESPACE) {
+						else if (t.type==TokenTypes.WHITESPACE) {
 							if (!insideMarkupTag(textArea, list, line, dot)) {
 								text = null;
 							}
@@ -253,8 +253,8 @@ public class CompareTextCompletionProvider extends DefaultCompletionProvider {
 						// Otherwise, only auto-complete if we're appending
 						// to text already recognized as a markup tag name or
 						// attribute (e.g. we know we're in a tag).
-						else if (t.type!=Token.MARKUP_TAG_ATTRIBUTE &&
-								t.type!=Token.MARKUP_TAG_NAME) {
+						else if (t.type!=TokenTypes.MARKUP_TAG_ATTRIBUTE &&
+								t.type!=TokenTypes.MARKUP_TAG_NAME) {
 
 							// We also have the case where "dot" was the start
 							// offset of the line, so the token list we got was
@@ -306,13 +306,14 @@ public class CompareTextCompletionProvider extends DefaultCompletionProvider {
 	 *         recognized.
 	 */
 	protected List getAttributeCompletionsForTag(String tagName) {
-		return (List)tagToAttrs.get(lastTagName);
+		return tagToAttrs.get(lastTagName);
 	}
 
 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected List getCompletionsImpl(JTextComponent comp) {
 
 		List retVal = new ArrayList();
@@ -404,11 +405,11 @@ public class CompareTextCompletionProvider extends DefaultCompletionProvider {
 				break;
 			}
 			switch (t.type) {
-			case Token.MARKUP_TAG_NAME:
-			case Token.MARKUP_TAG_ATTRIBUTE:
+			case TokenTypes.MARKUP_TAG_NAME:
+			case TokenTypes.MARKUP_TAG_ATTRIBUTE:
 				inside = 1;
 				break;
-			case Token.MARKUP_TAG_DELIMITER:
+			case TokenTypes.MARKUP_TAG_DELIMITER:
 				inside = t.isSingleChar('>') ? 0 : 1;
 				break;
 			}
@@ -443,6 +444,7 @@ public class CompareTextCompletionProvider extends DefaultCompletionProvider {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean isAutoActivateOkay(JTextComponent tc) {
 
 		boolean okay = super.isAutoActivateOkay(tc);

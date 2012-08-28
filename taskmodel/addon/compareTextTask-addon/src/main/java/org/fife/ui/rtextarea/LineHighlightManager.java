@@ -172,6 +172,7 @@ class LineHighlightManager {
 			this.color = c;
 		}
 
+		@Override
 		public int compareTo(Object o) {
 			if (o instanceof LineHighlightInfo) {
 				return offs.getOffset() - ((LineHighlightInfo)o).getOffset();
@@ -179,6 +180,7 @@ class LineHighlightManager {
 			return -1;
 		}
 
+		@Override
 		public boolean equals(Object o) {
 			if (o==this) {
 				return true;
@@ -197,6 +199,7 @@ class LineHighlightManager {
 			return offs.getOffset();
 		}
 
+		@Override
 		public int hashCode() {
 			return getOffset();
 		}

@@ -526,6 +526,7 @@ public class ScalaTokenMaker extends AbstractJFlexCTokenMaker {
 	 *                    occurs.
 	 * @param hyperlink Whether this token is a hyperlink.
 	 */
+	@Override
 	public void addToken(char[] array, int start, int end, int tokenType,
 						int startOffset, boolean hyperlink) {
 		super.addToken(array, start,end, tokenType, startOffset, hyperlink);
@@ -540,6 +541,7 @@ public class ScalaTokenMaker extends AbstractJFlexCTokenMaker {
 	 * @return The start and end strings to add to a line to "comment"
 	 *         it out.
 	 */
+	@Override
 	public String[] getLineCommentStartAndEnd() {
 		return new String[] { "//", null };
 	}
@@ -557,20 +559,21 @@ public class ScalaTokenMaker extends AbstractJFlexCTokenMaker {
 	 * @return The first <code>Token</code> in a linked list representing
 	 *         the syntax highlighted text.
 	 */
+	@Override
 	public Token getTokenList(Segment text, int initialTokenType, int startOffset) {
 
 		resetTokenList();
 		this.offsetShift = -text.offset + startOffset;
 
 		// Start off in the proper state.
-		int state = Token.NULL;
+		int state = TokenTypes.NULL;
 		switch (initialTokenType) {
-			case Token.COMMENT_MULTILINE:
+			case TokenTypes.COMMENT_MULTILINE:
 				state = MLC;
 				start = text.offset;
 				break;
 			default:
-				state = Token.NULL;
+				state = TokenTypes.NULL;
 		}
 
 		s = text;
@@ -693,7 +696,8 @@ public class ScalaTokenMaker extends AbstractJFlexCTokenMaker {
    *
    * @param newState the new lexical state
    */
-  public final void yybegin(int newState) {
+  @Override
+public final void yybegin(int newState) {
     zzLexicalState = newState;
   }
 
@@ -855,11 +859,11 @@ public class ScalaTokenMaker extends AbstractJFlexCTokenMaker {
           }
         case 22: break;
         case 13: 
-          { addToken(Token.LITERAL_CHAR);
+          { addToken(TokenTypes.LITERAL_CHAR);
           }
         case 23: break;
         case 17: 
-          { yybegin(YYINITIAL); addToken(start,zzStartRead+1, Token.COMMENT_MULTILINE);
+          { yybegin(YYINITIAL); addToken(start,zzStartRead+1, TokenTypes.COMMENT_MULTILINE);
           }
         case 24: break;
         case 16: 
@@ -867,35 +871,35 @@ public class ScalaTokenMaker extends AbstractJFlexCTokenMaker {
           }
         case 25: break;
         case 7: 
-          { addToken(Token.WHITESPACE);
+          { addToken(TokenTypes.WHITESPACE);
           }
         case 26: break;
         case 18: 
-          { addToken(Token.LITERAL_NUMBER_HEXADECIMAL);
+          { addToken(TokenTypes.LITERAL_NUMBER_HEXADECIMAL);
           }
         case 27: break;
         case 11: 
-          { addToken(Token.LITERAL_NUMBER_FLOAT);
+          { addToken(TokenTypes.LITERAL_NUMBER_FLOAT);
           }
         case 28: break;
         case 12: 
-          { addToken(Token.RESERVED_WORD);
+          { addToken(TokenTypes.RESERVED_WORD);
           }
         case 29: break;
         case 3: 
-          { addToken(Token.SEPARATOR);
+          { addToken(TokenTypes.SEPARATOR);
           }
         case 30: break;
         case 19: 
-          { addToken(Token.LITERAL_BACKQUOTE);
+          { addToken(TokenTypes.LITERAL_BACKQUOTE);
           }
         case 31: break;
         case 1: 
-          { addToken(Token.IDENTIFIER);
+          { addToken(TokenTypes.IDENTIFIER);
           }
         case 32: break;
         case 10: 
-          { addToken(start,zzStartRead-1, Token.COMMENT_EOL); addNullToken(); return firstToken;
+          { addToken(start,zzStartRead-1, TokenTypes.COMMENT_EOL); addNullToken(); return firstToken;
           }
         case 33: break;
         case 15: 
@@ -903,27 +907,27 @@ public class ScalaTokenMaker extends AbstractJFlexCTokenMaker {
           }
         case 34: break;
         case 4: 
-          { addToken(Token.ERROR_CHAR); addNullToken(); return firstToken;
+          { addToken(TokenTypes.ERROR_CHAR); addNullToken(); return firstToken;
           }
         case 35: break;
         case 6: 
-          { addToken(Token.ERROR_STRING_DOUBLE); addNullToken(); return firstToken;
+          { addToken(TokenTypes.ERROR_STRING_DOUBLE); addNullToken(); return firstToken;
           }
         case 36: break;
         case 14: 
-          { addToken(Token.LITERAL_STRING_DOUBLE_QUOTE);
+          { addToken(TokenTypes.LITERAL_STRING_DOUBLE_QUOTE);
           }
         case 37: break;
         case 21: 
-          { int temp=zzStartRead; addToken(start,zzStartRead-1, Token.COMMENT_EOL); addHyperlinkToken(temp,zzMarkedPos-1, Token.COMMENT_EOL); start = zzMarkedPos;
+          { int temp=zzStartRead; addToken(start,zzStartRead-1, TokenTypes.COMMENT_EOL); addHyperlinkToken(temp,zzMarkedPos-1, TokenTypes.COMMENT_EOL); start = zzMarkedPos;
           }
         case 38: break;
         case 20: 
-          { int temp=zzStartRead; addToken(start,zzStartRead-1, Token.COMMENT_MULTILINE); addHyperlinkToken(temp,zzMarkedPos-1, Token.COMMENT_MULTILINE); start = zzMarkedPos;
+          { int temp=zzStartRead; addToken(start,zzStartRead-1, TokenTypes.COMMENT_MULTILINE); addHyperlinkToken(temp,zzMarkedPos-1, TokenTypes.COMMENT_MULTILINE); start = zzMarkedPos;
           }
         case 39: break;
         case 2: 
-          { addToken(Token.LITERAL_NUMBER_DECIMAL_INT);
+          { addToken(TokenTypes.LITERAL_NUMBER_DECIMAL_INT);
           }
         case 40: break;
         case 8: 
@@ -931,7 +935,7 @@ public class ScalaTokenMaker extends AbstractJFlexCTokenMaker {
           }
         case 41: break;
         case 9: 
-          { addToken(start,zzStartRead-1, Token.COMMENT_MULTILINE); return firstToken;
+          { addToken(start,zzStartRead-1, TokenTypes.COMMENT_MULTILINE); return firstToken;
           }
         case 42: break;
         default: 
@@ -939,7 +943,7 @@ public class ScalaTokenMaker extends AbstractJFlexCTokenMaker {
             zzAtEOF = true;
             switch (zzLexicalState) {
             case EOL_COMMENT: {
-              addToken(start,zzStartRead-1, Token.COMMENT_EOL); addNullToken(); return firstToken;
+              addToken(start,zzStartRead-1, TokenTypes.COMMENT_EOL); addNullToken(); return firstToken;
             }
             case 174: break;
             case YYINITIAL: {
@@ -947,7 +951,7 @@ public class ScalaTokenMaker extends AbstractJFlexCTokenMaker {
             }
             case 175: break;
             case MLC: {
-              addToken(start,zzStartRead-1, Token.COMMENT_MULTILINE); return firstToken;
+              addToken(start,zzStartRead-1, TokenTypes.COMMENT_MULTILINE); return firstToken;
             }
             case 176: break;
             default:

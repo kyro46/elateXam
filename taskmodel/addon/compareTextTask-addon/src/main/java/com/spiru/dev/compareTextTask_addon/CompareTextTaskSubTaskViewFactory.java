@@ -7,6 +7,7 @@ import de.thorstenberger.taskmodel.view.SubTaskView;
 
 public class CompareTextTaskSubTaskViewFactory implements AddonSubTaskViewFactory {
 
+	@Override
 	public String getAddonTaskType() {
 		System.out.println("SubtaskletViewFactory CompareTextTask successfully loaded");
 		return "CompareText";
@@ -19,6 +20,7 @@ public class CompareTextTaskSubTaskViewFactory implements AddonSubTaskViewFactor
 	 * de.thorstenberger.taskmodel.view.SubTaskViewFactory#getSubTaskView(de
 	 * .thorstenberger.taskmodel.complex.complextaskhandling.SubTasklet)
 	 */
+	@Override
 	public SubTaskView getSubTaskView(final SubTasklet subTasklet) {
 		return new SubTaskView_CompareTextTask((SubTasklet_CompareTextTask) subTasklet);
 	}

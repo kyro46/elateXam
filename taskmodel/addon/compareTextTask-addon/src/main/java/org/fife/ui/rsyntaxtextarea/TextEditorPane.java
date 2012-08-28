@@ -21,6 +21,7 @@ import java.nio.charset.UnsupportedCharsetException;
 
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.Document;
 
 import org.fife.io.UnicodeReader;
@@ -184,6 +185,7 @@ public class TextEditorPane extends RSyntaxTextArea implements
 	 *
 	 * @param e The document event.
 	 */
+	@Override
 	public void changedUpdate(DocumentEvent e) {
 	}
 
@@ -283,7 +285,7 @@ public class TextEditorPane extends RSyntaxTextArea implements
 	 */
 	public Object getLineSeparator() {
 		return getDocument().getProperty(
-							RTextAreaEditorKit.EndOfLineStringProperty);
+							DefaultEditorKit.EndOfLineStringProperty);
 	}
 
 
@@ -335,6 +337,7 @@ public class TextEditorPane extends RSyntaxTextArea implements
 	 *
 	 * @param e Information on the insertion.
 	 */
+	@Override
 	public void insertUpdate(DocumentEvent e) {
 		if (!dirty) {
 			setDirty(true);
@@ -493,6 +496,7 @@ public class TextEditorPane extends RSyntaxTextArea implements
 	 *
 	 * @param e The document event.
 	 */
+	@Override
 	public void removeUpdate(DocumentEvent e) {
 		if (!dirty) {
 			setDirty(true);
@@ -575,6 +579,7 @@ public class TextEditorPane extends RSyntaxTextArea implements
 	 *
 	 * @param doc The new document.
 	 */
+	@Override
 	public void setDocument(Document doc) {
 		Document old = getDocument();
 		if (old!=null) {
@@ -656,9 +661,9 @@ public class TextEditorPane extends RSyntaxTextArea implements
 		}
 		Document doc = getDocument();
 		Object old = doc.getProperty(
-						RTextAreaEditorKit.EndOfLineStringProperty);
+						DefaultEditorKit.EndOfLineStringProperty);
 		if (!separator.equals(old)) {
-			doc.putProperty(RTextAreaEditorKit.EndOfLineStringProperty,
+			doc.putProperty(DefaultEditorKit.EndOfLineStringProperty,
 							separator);
 			if (setDirty) {
 				setDirty(true);

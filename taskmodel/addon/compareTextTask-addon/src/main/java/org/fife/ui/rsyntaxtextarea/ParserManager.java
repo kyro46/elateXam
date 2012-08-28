@@ -120,6 +120,7 @@ class ParserManager implements DocumentListener, ActionListener,
 	 * 
 	 * @param e The event.
 	 */
+	@Override
 	public void actionPerformed(ActionEvent e) {
 
 		// Sanity check - should have >1 parser if event is fired.
@@ -258,6 +259,7 @@ class ParserManager implements DocumentListener, ActionListener,
 	 *
 	 * @param e The document event.
 	 */
+	@Override
 	public void changedUpdate(DocumentEvent e) {
 	}
 
@@ -473,6 +475,7 @@ class ParserManager implements DocumentListener, ActionListener,
 	 *
 	 * @param e The event.
 	 */
+	@Override
 	public void hyperlinkUpdate(HyperlinkEvent e) {
 		if (parserForTip!=null && parserForTip.getHyperlinkListener()!=null) {
 			parserForTip.getHyperlinkListener().linkClicked(textArea, e);
@@ -485,6 +488,7 @@ class ParserManager implements DocumentListener, ActionListener,
 	 *
 	 * @param e The document event.
 	 */
+	@Override
 	public void insertUpdate(DocumentEvent e) {
 
 		// Keep track of the first and last offset modified.  Some parsers are
@@ -584,6 +588,7 @@ class ParserManager implements DocumentListener, ActionListener,
 	 *
 	 * @param e The document event.
 	 */
+	@Override
 	public void removeUpdate(DocumentEvent e) {
 
 		// Keep track of the first and last offset modified.  Some parsers are

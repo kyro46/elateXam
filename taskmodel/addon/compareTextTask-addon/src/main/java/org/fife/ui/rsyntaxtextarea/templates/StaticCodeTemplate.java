@@ -172,6 +172,7 @@ public class StaticCodeTemplate extends AbstractCodeTemplate {
 	 * @param textArea The text area to operate on.
 	 * @throws BadLocationException If something bad happens.
 	 */
+	@Override
 	public void invoke(RSyntaxTextArea textArea) throws BadLocationException {
 
 		Caret c = textArea.getCaret();
@@ -253,6 +254,7 @@ public class StaticCodeTemplate extends AbstractCodeTemplate {
 	 *
 	 * @return A string representation of this template.
 	 */
+	@Override
 	public String toString() {
 		return "[StaticCodeTemplate: id=" + getID() +
 			", text=" + getBeforeCaretText() + "|" + getAfterCaretText() + "]";

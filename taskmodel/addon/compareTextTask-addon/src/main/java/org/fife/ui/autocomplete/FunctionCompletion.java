@@ -49,6 +49,7 @@ public class FunctionCompletion extends VariableCompletion
 	}
 
 
+	@Override
 	protected void addDefinitionString(StringBuffer sb) {
 		sb.append("<html><b>");
 		sb.append(getDefinitionString());
@@ -100,6 +101,7 @@ public class FunctionCompletion extends VariableCompletion
 	 * 
 	 * @return The definition string.
 	 */
+	@Override
 	public String getDefinitionString() {
 
 		StringBuffer sb = new StringBuffer();
@@ -146,6 +148,7 @@ public class FunctionCompletion extends VariableCompletion
 	}
 
 
+	@Override
 	public ParameterizedCompletionInsertionInfo getInsertionInfo(
 			JTextComponent tc, boolean addParamStartList,
 			boolean replaceTabsWithSpaces) {
@@ -211,6 +214,7 @@ public class FunctionCompletion extends VariableCompletion
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Parameter getParam(int index) {
 		return (Parameter)params.get(index);
 	}
@@ -222,6 +226,7 @@ public class FunctionCompletion extends VariableCompletion
 	 * @return The number of parameters to this function.
 	 * @see #getParam(int)
 	 */
+	@Override
 	public int getParamCount() {
 		return params==null ? 0 : params.size();
 	}
@@ -230,6 +235,7 @@ public class FunctionCompletion extends VariableCompletion
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean getShowParameterToolTip() {
 		return true;
 	}
@@ -267,6 +273,7 @@ public class FunctionCompletion extends VariableCompletion
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getSummary() {
 		StringBuffer sb = new StringBuffer();
 		addDefinitionString(sb);
@@ -282,6 +289,7 @@ public class FunctionCompletion extends VariableCompletion
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getToolTipText() {
 		String text = getSummary();
 		if (text==null) {

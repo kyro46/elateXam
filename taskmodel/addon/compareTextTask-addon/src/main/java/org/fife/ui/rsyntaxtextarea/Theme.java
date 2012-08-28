@@ -38,6 +38,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import org.fife.io.UnicodeWriter;
 import org.fife.ui.rtextarea.Gutter;
+import org.fife.ui.rtextarea.RTextAreaBase;
 
 
 /**
@@ -247,7 +248,7 @@ public class Theme {
 
 			Element elem = doc.createElement("baseFont");
 			if (!baseFont.getFamily().equals(
-					RSyntaxTextArea.getDefaultFont().getFamily())) {
+					RTextAreaBase.getDefaultFont().getFamily())) {
 				elem.setAttribute("family", baseFont.getFamily());
 			}
 			elem.setAttribute("size", Integer.toString(baseFont.getSize()));
@@ -423,10 +424,12 @@ public class Theme {
 
 		private Theme theme;
 
+		@Override
 		public void error(SAXParseException e) throws SAXException {
 			throw e;
 		}
 
+		@Override
 		public void fatalError(SAXParseException e) throws SAXException {
 			throw e;
 		}
@@ -466,12 +469,14 @@ public class Theme {
 			return value;
 		}
 
-	    public InputSource resolveEntity(String publicID, 
+	    @Override
+		public InputSource resolveEntity(String publicID, 
 				String systemID) throws SAXException {
 			return new InputSource(getClass().
 					getResourceAsStream("/theme.dtd"));
 		}
 
+		@Override
 		public void startElement(String uri, String localName, String qName,
 								Attributes attrs) {
 
@@ -497,7 +502,7 @@ public class Theme {
 					theme.baseFont = new Font(family, Font.PLAIN, size);
 				}
 				else {
-					theme.baseFont = RSyntaxTextArea.getDefaultFont();
+					theme.baseFont = RTextAreaBase.getDefaultFont();
 					theme.baseFont = theme.baseFont.deriveFont(size*1f);
 				}
 			}
@@ -673,6 +678,7 @@ public class Theme {
 
 		}
 
+		@Override
 		public void warning(SAXParseException e) throws SAXException {
 			throw e;
 		}

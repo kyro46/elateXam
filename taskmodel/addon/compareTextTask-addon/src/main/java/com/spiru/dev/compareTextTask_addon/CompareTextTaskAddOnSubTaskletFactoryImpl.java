@@ -10,10 +10,12 @@ import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskHandling.Try.Page.Add
 public class CompareTextTaskAddOnSubTaskletFactoryImpl  implements
 AddOnSubTaskletFactory {
 
+	@Override
 	public AddOnSubTasklet createAddOnSubTasklet( Object subTaskDef, Object subTask, CorrectionModeType correctionMode, float reachablePoints) {
 		return new SubTasklet_CompareTextTaskImpl((AddonSubTaskDef)subTaskDef,(AddonSubTask)subTask, correctionMode, reachablePoints);
 	}
 
+	@Override
 	public String getAddonTaskType() {
 		System.out.println("Subtasklet CompareTextTask successfully loaded");
 		return "CompareText";

@@ -14,6 +14,7 @@ import javax.swing.text.BadLocationException;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.Token;
+import org.fife.ui.rsyntaxtextarea.TokenTypes;
 
 
 /**
@@ -34,6 +35,7 @@ public class XmlFoldParser implements FoldParser {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public List getFolds(RSyntaxTextArea textArea) {
 
 		List folds = new ArrayList();
@@ -77,7 +79,7 @@ public class XmlFoldParser implements FoldParser {
 
 						else {
 							// If we're an MLC that ends on a later line...
-							if (t.type==Token.COMMENT_MULTILINE && !t.endsWith(MLC_END)) {
+							if (t.type==TokenTypes.COMMENT_MULTILINE && !t.endsWith(MLC_END)) {
 								inMLC = true;
 								mlcStart = t.offset;
 							}
@@ -85,7 +87,7 @@ public class XmlFoldParser implements FoldParser {
 
 					}
 
-					else if (t.type==Token.MARKUP_TAG_DELIMITER && t.isSingleChar('<')) {
+					else if (t.type==TokenTypes.MARKUP_TAG_DELIMITER && t.isSingleChar('<')) {
 						if (currentFold==null) {
 							currentFold = new Fold(FoldType.CODE, textArea, t.offset);
 							folds.add(currentFold);
@@ -95,7 +97,7 @@ public class XmlFoldParser implements FoldParser {
 						}
 					}
 
-					else if (t.is(Token.MARKUP_TAG_DELIMITER, MARKUP_SHORT_TAG_END)) {
+					else if (t.is(TokenTypes.MARKUP_TAG_DELIMITER, MARKUP_SHORT_TAG_END)) {
 						if (currentFold!=null) {
 							Fold parentFold = currentFold.getParent();
 							currentFold.removeFromParent();
@@ -103,7 +105,7 @@ public class XmlFoldParser implements FoldParser {
 						}
 					}
 
-					else if (t.is(Token.MARKUP_TAG_DELIMITER, MARKUP_CLOSING_TAG_START)) {
+					else if (t.is(TokenTypes.MARKUP_TAG_DELIMITER, MARKUP_CLOSING_TAG_START)) {
 						if (currentFold!=null) {
 							currentFold.setEndOffset(t.offset);
 							Fold parentFold = currentFold.getParent();

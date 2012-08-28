@@ -590,6 +590,7 @@ private Fold getFoldForLineImpl(Fold parent, List folds, int line) {
 			}
 			if (enabled) {
 				tempParser = new AbstractParser() {
+					@Override
 					public ParseResult parse(RSyntaxDocument doc, String style) {
 						reparse();
 						return new DefaultParseResult(this);
@@ -634,9 +635,11 @@ private Parser tempParser;
 	 */
 	private class Listener implements DocumentListener, PropertyChangeListener {
 
+		@Override
 		public void changedUpdate(DocumentEvent e) {
 		}
 
+		@Override
 		public void insertUpdate(DocumentEvent e) {
 			// Adding text containing a newline to the visible line of a folded
 			// Fold causes that Fold to unfold.  Check only start offset of
@@ -655,11 +658,13 @@ private Parser tempParser;
 			}
 		}
 
+		@Override
 		public void propertyChange(PropertyChangeEvent e) {
 			// Syntax style changed in editor.
 			updateFoldParser();
 			reparse(); // Even if no fold parser change, highlighting did
 		}
+		@Override
 		public void removeUpdate(DocumentEvent e) {
 			// Removing text from the visible line of a folded Fold causes that
 			// Fold to unfold.  We only need to check the removal offset since
