@@ -34,15 +34,6 @@ public class SubTaskView_CompareTextTask extends SubTaskView{
 	public String getRenderedHTML(int relativeTaskNumber, boolean corrected) {
 		final StringBuffer ret = new StringBuffer();
 		String path = "com/spiru/dev/compareTextTask_addon/CompareTextApplet.class";
-		/*
-		ret.append("<script src=\"http://java.com/js/deployJava.js\"></script>\n"); // need that locally (no internet access during exams)
-		ret.append("<script>\n");
-		ret.append("    var attributes = {codebase:'http://java.sun.com/products/plugin/1.5.0/demos/jfc/Java2D', code:'com/spiru/dev/compareTextTask_addon/CompareTextApplet.class', width:710, height:540};\n");
-		ret.append("    var parameters = {fontSize:16};\n");
-		ret.append("    var version = '1.6';\n");
-		ret.append("    deployJava.runApplet(attributes, parameters, version);\n");
-		ret.append("</script>\n");
-		*/
 		ret.append("<applet archive=\"compareTextTask/compareTextTask.jar\" code=\"" + path + "\" width=\"710\" height=\"540\" title=\"Java\">\n");
 		ret.append("<param name=\"initialText\" value=\"" + subTasklet.getInitialText() + "\">\n");
 		ret.append("<param name=\"xmlDef\" value=\"" + subTasklet.getTagsString() + "\">\n");

@@ -55,11 +55,7 @@ public class CompareTextPanel extends JPanel {
 	private JToggleButton toggleSyncButton;
 	private JComboBox fontComboBox;
 
-
-	public CompareTextPanel(final String initialText, final String tagDefinitionString) {
-		independentScrollbarModel = null;
-		splitPlaneHeight = 300;
-		splitPlaneWidth = 600;
+	public CompareTextPanel(final String initialText, final String tagDefinitionString, final int Width, final int Height) {
 
 		splitPane = new JSplitPane();
 		scrollPaneLeft = new JScrollPane();
@@ -72,15 +68,23 @@ public class CompareTextPanel extends JPanel {
 		toggleHelpButton = new JToggleButton("Help", false);
 		toggleSyncButton = new JToggleButton("Sync Scrollbars", true);
 
-		this.initialText = initialText;
-		this.lastCaretPosRight = 0;
+		initToolbar();
 
+		lastCaretPosRight = 0;
 		completionp = new CompareTextCompletionProvider(tagDefinitionString);
 		helpPane = new JLabel("<html>" + completionp.generateHelpHtml() + "</html>");
-		initToolbar();
+		independentScrollbarModel = null;
+		splitPlaneWidth = Width;
+		splitPlaneHeight = Height - 30; //toolBar.getSize().height;
+		this.initialText = initialText;
+
 		initMainWindow();
 		//enableAutoCompletion();
 		textAreaRight.setCaretPosition(0);
+	}
+
+	public String getRightTextAreaContent() {
+		return textAreaRight.getText();
 	}
 
 	private int calculateSentenceAtPosition(final char[] txt, final int sentencePosBeg) {
@@ -256,21 +260,16 @@ public class CompareTextPanel extends JPanel {
 		layout.setHorizontalGroup(
 				layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-						.addContainerGap()
 						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 								.addComponent(splitPane, GroupLayout.DEFAULT_SIZE, splitPlaneWidth, Short.MAX_VALUE)
 								.addGroup(layout.createSequentialGroup()
-										.addGap(0, 0, Short.MAX_VALUE)
-										.addComponent(toolBar, javax.swing.GroupLayout.DEFAULT_SIZE, splitPlaneWidth, Short.MAX_VALUE)))
-										.addContainerGap())
+										.addComponent(toolBar, javax.swing.GroupLayout.DEFAULT_SIZE, splitPlaneWidth, Short.MAX_VALUE))))
 		);
 		layout.setVerticalGroup(
 				layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addGroup(layout.createSequentialGroup()
-						.addContainerGap()
 						.addComponent(toolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-						.addComponent(splitPane, GroupLayout.DEFAULT_SIZE, splitPlaneHeight, Short.MAX_VALUE)
-						.addContainerGap())
+						.addComponent(splitPane, GroupLayout.DEFAULT_SIZE, splitPlaneHeight, Short.MAX_VALUE))
 		);
 	}
 
