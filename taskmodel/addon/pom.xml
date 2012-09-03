@@ -30,6 +30,7 @@
     <module>autotool-addon</module>
     <module>groupingTask-addon</module>
 	<module>compareTextTask-addon</module>
+	<module>compareTextTaskProfessor-addon</module>
 	<!--
     <module>junit-addon</module>
     <module>junit-addon-correction</module>

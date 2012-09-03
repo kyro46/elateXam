@@ -28,7 +28,7 @@ public class CompareTextApplet extends Applet {
 		add(jpanel);
 	}
 	public String getResult() {
-		return jpanel.getRightTextAreaContent();
+		return "";//return jpanel.getRightTextAreaContent();
 	}
 	@Override
 	public void start() {
