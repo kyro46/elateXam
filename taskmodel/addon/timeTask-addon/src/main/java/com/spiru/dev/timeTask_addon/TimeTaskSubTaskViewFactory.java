@@ -1,16 +1,16 @@
-package com.spiru.dev.groupingTask_addon;
+package com.spiru.dev.timeTask_addon;
 
 
 import de.thorstenberger.taskmodel.complex.complextaskhandling.SubTasklet;
 import de.thorstenberger.taskmodel.view.AddonSubTaskViewFactory;
 import de.thorstenberger.taskmodel.view.SubTaskView;
 
-public class GroupingTaskSubTaskViewFactory implements AddonSubTaskViewFactory {
+public class TimeTaskSubTaskViewFactory implements AddonSubTaskViewFactory {
 
     public String getAddonTaskType() {
     	
-    	System.out.println("ViewSubtasklet groupingTask successfully loaded");
-    	return "groupingTask";
+    	System.out.println("SubtaskletViewFactory CompareTextTask successfully loaded");
+    	return "timeTask";
     }
 
     /*
@@ -21,6 +21,6 @@ public class GroupingTaskSubTaskViewFactory implements AddonSubTaskViewFactory {
      * .thorstenberger.taskmodel.complex.complextaskhandling.SubTasklet)
      */
     public SubTaskView getSubTaskView(final SubTasklet subTasklet) {
-        return new SubTaskView_GroupingTask((SubTasklet_GroupingTask) subTasklet);
+        return new SubTaskView_TimeTask((SubTasklet_TimeTask) subTasklet);
     }
 }

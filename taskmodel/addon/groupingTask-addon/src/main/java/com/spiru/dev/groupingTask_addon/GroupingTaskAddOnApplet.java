@@ -2,8 +2,13 @@ package com.spiru.dev.groupingTask_addon;
 
 import java.applet.Applet;
 import java.awt.Dimension;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.input.SAXBuilder;
 
 
 public class GroupingTaskAddOnApplet extends Applet{
@@ -16,42 +21,28 @@ public class GroupingTaskAddOnApplet extends Applet{
 	    	this.setMinimumSize(new Dimension(400,400));
 	    	this.setPreferredSize(new Dimension(400,400));
 	    	this.setLayout(null);
-	    	// read parameter	    	
-	    	/* moegliche Fehler beachten!
-	    	 * kein Zeichen statt zaheln
-	    	 * weniger Parameter als angegeben
-	    	 */	
-	    	/*
-	    	int[] counts = null;
-    		String[] captions = null;
-	    	try{
-	    		int count = Integer.parseInt(getParameter("CountElements"));
-	    		captions = new String[count];
-	    		counts = new int[count];	    		    
-	    		for(int i = 0; i<count; i++){
-	    			String parameter = getParameter("e"+i);
-	    			// split String in caption and count
-	    			String[] splitResult = parameter.split("&");
-	    			captions[i] = splitResult[0];
-	    			counts[i] = Integer.parseInt(splitResult[1]);
-	    		}
-		        gpanel = new GroupingTaskAddOnJPanel(captions, counts);	        
-		        add(gpanel);	
-	    	} catch(Exception e){
-	    		// Error...
-	    	} 
-	    	*/     	
-	    	String[][] elements = new String[3][3];
-	    	for (int i=0; i<elements.length; i++){
-	    		elements[i][0] = "Cap"+i;
-	    		elements[i][1] = i+"";
-	    	}
-	    	elements[0][1] = "n";
 	    	
-	    	gpanel = new GroupingTaskAddOnJPanel(elements);	        
-	        add(gpanel);
-	        
-	       
+	    	String[][] elements; 
+	    	try{
+	    		File targetFile = new File("C:\\Users\\Yves\\Desktop\\Test.xml");
+	    		Document doc = new SAXBuilder().build(targetFile);
+	    		Element memento = doc.getRootElement();
+	    		Element dragSubTaskDef = memento.getChild("dragSubTaskDef");
+	    		List<Element> xmlList = dragSubTaskDef.getChildren("BoxContainer");
+	    		elements = new String[xmlList.size()][2];
+				for (int i = 0; i < xmlList.size(); i++) {
+					String name = xmlList.get(i).getAttributeValue("BoxName");
+					String count = xmlList.get(i).getAttributeValue("count");
+					elements[i][0] = " "+name+" ";
+					elements[i][1] = count;
+				}
+				gpanel = new GroupingTaskAddOnJPanel(elements);	        
+		        add(gpanel);
+		        
+	    	}
+	    	catch(Exception e){
+	    		
+	    	}	    		       
 	    }
 
 	    @Override

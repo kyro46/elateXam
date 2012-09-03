@@ -9,13 +9,13 @@
   </parent>
   
   <groupId>com.spiru.dev</groupId>
-  <artifactId>groupingTask-addon</artifactId>
+  <artifactId>timeTask-addon</artifactId>
     <version>0.0.30-SNAPSHOT</version>
-    <description>Implementation of the new Tasktype: Grouping Task</description>
-  <inceptionYear>2007</inceptionYear>
+    <description>Implementation of the new Tasktype: Time Task</description>
+  <inceptionYear>2013</inceptionYear>
     <packaging>bundle</packaging>
     
-  <name>groupingTask-addon</name>
+  <name>timeTask-addon</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
