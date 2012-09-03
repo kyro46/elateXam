@@ -15,8 +15,8 @@ return new SubTasklet_GroupingTaskImpl((AddonSubTaskDef)subTaskDef,(AddonSubTask
 }
 
 public String getAddonTaskType() {
-System.out.println("HERE WE ARE AnordnungAddOnSubTaskletFactoryImpl");
-return "Anordnung";
+	System.out.println("Subtasklet groupingTask successfully loaded");
+return "groupingTask";
 }
 
 }

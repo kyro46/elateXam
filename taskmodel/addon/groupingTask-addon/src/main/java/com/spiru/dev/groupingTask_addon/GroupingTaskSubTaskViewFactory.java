@@ -9,9 +9,8 @@ public class GroupingTaskSubTaskViewFactory implements AddonSubTaskViewFactory {
 
     public String getAddonTaskType() {
     	
-    	System.out.println("HIER SIND WIR RICHTIG!!!!!!!!!!!!!!!");
-        System.out.println("Denn hier sind wir in der AnordnungSubTaskViewFactory");
-    	return "Anordnung";
+    	System.out.println("ViewSubtasklet groupingTask successfully loaded");
+    	return "groupingTask";
     }
 
     /*

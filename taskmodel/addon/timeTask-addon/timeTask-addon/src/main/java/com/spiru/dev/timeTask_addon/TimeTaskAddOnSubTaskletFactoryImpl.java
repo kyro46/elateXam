@@ -17,7 +17,7 @@ return new SubTasklet_TimeTaskImpl((AddonSubTaskDef)subTaskDef,(AddonSubTask)sub
 public String getAddonTaskType() {
 System.out.println("Subtasklet CompareTextTask successfully loaded");
 
-return "TimeTask";
+return "timeTask";
 }
 
 }

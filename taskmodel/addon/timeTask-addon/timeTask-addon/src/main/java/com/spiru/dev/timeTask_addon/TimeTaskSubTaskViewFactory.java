@@ -10,7 +10,7 @@ public class TimeTaskSubTaskViewFactory implements AddonSubTaskViewFactory {
     public String getAddonTaskType() {
     	
     	System.out.println("SubtaskletViewFactory CompareTextTask successfully loaded");
-    	return "TimeTask";
+    	return "timeTask";
     }
 
     /*
