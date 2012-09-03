@@ -228,6 +228,18 @@
     	<version>0.0.30-SNAPSHOT</version>
     	<scope>provided</scope>
         </dependency>
+        <dependency>
+        	<groupId>com.spiru.dev</groupId>
+        	<artifactId>timeTask-addon</artifactId>
+        	<version>0.0.30-SNAPSHOT</version>
+        	<type>jar</type>
+        </dependency>
+        <dependency>
+        	<groupId>com.spiru.dev</groupId>
+        	<artifactId>groupingTask-addon</artifactId>
+        	<version>0.0.30-SNAPSHOT</version>
+        	<type>jar</type>
+        </dependency>
     </dependencies>
    <build>
        <resources>
@@ -272,18 +284,11 @@
               <includes>
                 <include>**/*.jar</include>
               </includes>
-              <targetPath>drawTask</targetPath>
+              <targetPath>applet</targetPath>
             </resource>
           </webResources>
-          <webResources>
-            <resource>
-              <directory>${project.build.directory}/applet</directory>
-              <includes>
-                <include>**/*.jar</include>
-              </includes>
-              <targetPath>compareTextTask</targetPath>
-            </resource>
-          </webResources>
+       
+          
         </configuration>
       </plugin>
       <plugin>
@@ -315,6 +320,24 @@
                      <overWrite>true</overWrite>
                      <outputDirectory>${project.build.directory}/applet</outputDirectory>
                      <destFileName>compareTextTask.jar</destFileName>
+                   </artifactItem>
+                   <artifactItem>
+                     <groupId>com.spiru.dev</groupId>
+                     <artifactId>groupingTask-addon</artifactId>
+                     <version>0.0.30-SNAPSHOT</version>
+                     <type>jar</type>
+                     <overWrite>true</overWrite>
+                     <outputDirectory>${project.build.directory}/applet</outputDirectory>
+                     <destFileName>groupingTask.jar</destFileName>
+                   </artifactItem>
+                   <artifactItem>
+                     <groupId>com.spiru.dev</groupId>
+                     <artifactId>timeTask-addon</artifactId>
+                     <version>0.0.30-SNAPSHOT</version>
+                     <type>jar</type>
+                     <overWrite>true</overWrite>
+                     <outputDirectory>${project.build.directory}/applet</outputDirectory>
+                     <destFileName>timeTask.jar</destFileName>
                    </artifactItem>
                  </artifactItems>
                <overWriteReleases>true</overWriteReleases>

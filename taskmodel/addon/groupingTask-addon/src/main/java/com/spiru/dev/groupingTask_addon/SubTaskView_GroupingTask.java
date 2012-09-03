@@ -32,25 +32,11 @@ public class SubTaskView_GroupingTask extends SubTaskView{
 	}
 
 	public String getRenderedHTML(int relativeTaskNumber, boolean corrected) {
-		StringBuffer ret = new StringBuffer();
-
-		// workaround: textarea nicht disabled
-		//corrected = false;
-
-		ret.append("<div align=\"left\">\n");
-		ret.append("<textarea name=\"task[" + relativeTaskNumber + "].Anordnung\" cols=\"" +
-						AnordnungSubTasklet.getTextFieldWidth() + "\" rows=\"" + AnordnungSubTasklet.getTextFieldHeight() + "\" onChange=\"setModified()\"" +
-						( corrected ? "disabled=\"disabled\"" : "" ) + ">\n");
-		ret.append( corrected?AnordnungSubTasklet.getLastCorrectedAnswer():AnordnungSubTasklet.getAnswer() );
-		ret.append("</textarea></div>\n");
-
-		if(corrected) {
-			ret.append("<div class=\"problem\">\n");
-			ret.append("Anordnungantwort:<br><br>");
-			ret.append(AnordnungSubTasklet.getAnordnungGradeDoc());
-			ret.append("</div><br>");
-		}
-
+		final StringBuffer ret = new StringBuffer();
+		String path = "com/spiru/dev/groupingtTask_addon/GroupingTaskAddOnApplet.class";
+		ret.append("<applet archive=\"applet/groupingTask.jar\" code=\"" + path + "\" width=\"710\" height=\"540\" title=\"Java\">\n");
+		
+		ret.append("</applet>\n");
 		return ret.toString();
 
 	}
