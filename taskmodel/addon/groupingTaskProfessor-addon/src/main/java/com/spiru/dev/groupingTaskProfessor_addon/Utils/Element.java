@@ -1,4 +1,4 @@
-package com.spiru.dev.groupingTask_addon.Utils;
+package com.spiru.dev.groupingTaskProfessor_addon.Utils;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -10,6 +10,9 @@ import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DragGestureListener;
 import java.awt.dnd.DragSource;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -18,7 +21,7 @@ import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
 
-import com.spiru.dev.groupingTask_addon.GroupingTaskAddOnJPanel;
+import com.spiru.dev.groupingTaskProfessor_addon.GroupingTaskAddOnJPanel;
 
 /**
  * Klasse fuer Elemente, die angeordnet werden sollen
@@ -43,6 +46,7 @@ public class Element extends JPanel implements DragGestureListener{
 	private JLabel labelAnz;
 	/** Kleiner Button auf dem Element, um eine Verbindung zu einem anderen zu ziehen */
 	private JButton jButtonVerbindung;
+	private boolean marked = false;
 	
 	/**
 	 * Konstruktor eines Elementes
@@ -53,7 +57,7 @@ public class Element extends JPanel implements DragGestureListener{
 	public Element (String name, String anz, MyMouseListener listener){
 		labelCaption = new JLabel(name, JLabel.CENTER);
 		labelCaption.setBorder(BorderFactory.createLineBorder(Color.black));	
-		this.add(labelCaption);
+		this.add(labelCaption);		
 		// Element liegt auf ElementePanel
 		if (anz!=null){
 			// 2 Labels untereinander
@@ -61,6 +65,7 @@ public class Element extends JPanel implements DragGestureListener{
 			labelAnz = new JLabel(""+anz, JLabel.CENTER);
 			labelAnz.setBorder(BorderFactory.createLineBorder(Color.black));
 			this.add(labelAnz);
+			this.addMouseListener(new MouseListenerElement());
 		}
 		// Element liegt auf Spielplatz
 		else{
@@ -120,13 +125,19 @@ public class Element extends JPanel implements DragGestureListener{
 		if (mark){
 			margin = new LineBorder(Color.YELLOW,2);
 			this.setBorder(new CompoundBorder(border, margin));
-			labelCaption.setForeground(Color.YELLOW);			
+			labelCaption.setForeground(Color.YELLOW);	
+			marked=true;
 		}
 		else{
 			margin = new LineBorder(Color.BLACK,1);
 			this.setBorder(margin);
 			labelCaption.setForeground(Color.BLACK);
+			marked=false;
 		}
+	}
+	
+	public boolean isElementMarked(){
+		return marked;
 	}
 	
 	/**
@@ -180,4 +191,8 @@ public class Element extends JPanel implements DragGestureListener{
 		anz = anzAnfang;
 		labelAnz.setText(anz);
 	}	
+	
+	public String getMaxCount(){
+		return anzAnfang;
+	}
 }

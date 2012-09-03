@@ -1,4 +1,4 @@
-package com.spiru.dev.timeTask_addon.Utils;
+package com.spiru.dev.timeTaskProfessor_addon.Utils;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -24,22 +24,28 @@ public class Symbol extends JPanel implements DragGestureListener {
 	private ConnectionLine line = null;
 	/** is Line selected? */
 	private boolean markLine = false;
+	private int id;
 	
 	/**
 	 * constructor for a Symbol
 	 * @param maus Point for Location
 	 * @param color BackGroundColor
 	 */
-	public Symbol(Point maus, Color color){	
+	public Symbol(Point maus, Color color, int id){	
 		this.setLayout(null);
 		this.setBackground(color);
 		this.setBounds(maus.x, maus.y, 20,20);	
 		this.setBorder(BorderFactory.createLineBorder(Color.black));
+		this.id = id;
 		// Drag'n Drop
 		DragSource ds = new DragSource();
         ds.createDefaultDragGestureRecognizer(this,
             DnDConstants.ACTION_COPY, this);    
 	}	
+	
+	public int getId(){
+		return id;
+	}
 	
 	/**
 	 * set the ConnectionLine

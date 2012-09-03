@@ -1,4 +1,4 @@
-package com.spiru.dev.timeTask_addon.Utils;
+package com.spiru.dev.timeTaskProfessor_addon.Utils;
 
 import java.awt.Color;
 import javax.swing.BorderFactory;
@@ -16,8 +16,13 @@ public class Element extends JPanel {
 	
 	private JLabel label;
 	private JPanel colorPanel;
+	private boolean isMarked=false;
+	private static int idElement = 0;
+	private int id;
 	
-	public Element(String caption, Color color, MyMouseListener mouseListener){
+	public Element(String caption, Color color, MyMouseListener mouseListener){		
+		idElement++;
+		id = idElement;
 		colorPanel = new JPanel();
 		colorPanel.setBackground(color);
 		this.add(colorPanel);		
@@ -36,15 +41,29 @@ public class Element extends JPanel {
 		Border margin;
 		
 		if (mark){
+			isMarked = true;
 			margin = new LineBorder(Color.YELLOW,2);
 			this.setBorder(new CompoundBorder(border, margin));	
 		}
 		else{
+			isMarked = false;
 			margin = new LineBorder(Color.BLACK,1);
 			this.setBorder(margin);
 		}
 			
+	}	
+	
+	public int getId(){
+		return id;
 	}
+	
+	public String getCaption(){
+		return label.getText();
+	}
+	
+	public boolean isMarked(){
+		return isMarked;
+	}		
 	
 	public Color getColor(){
 		return colorPanel.getBackground(); 

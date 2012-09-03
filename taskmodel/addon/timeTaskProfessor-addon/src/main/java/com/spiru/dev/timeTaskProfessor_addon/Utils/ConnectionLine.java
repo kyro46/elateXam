@@ -1,4 +1,4 @@
-package com.spiru.dev.timeTask_addon.Utils;
+package com.spiru.dev.timeTaskProfessor_addon.Utils;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;

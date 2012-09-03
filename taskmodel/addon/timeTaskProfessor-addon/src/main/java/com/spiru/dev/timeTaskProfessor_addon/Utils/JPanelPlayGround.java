@@ -1,4 +1,4 @@
-package com.spiru.dev.timeTask_addon.Utils;
+package com.spiru.dev.timeTaskProfessor_addon.Utils;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -23,9 +23,8 @@ public class JPanelPlayGround extends JPanel {
 		this.addMouseListener(mouseListener);		
 		this.addMouseMotionListener(new MyMouseMotionListener(this));		
 		timeLine = new TimeLine(this);		
-		this.setPreferredSize(new Dimension((int)timeLine.getLine().getP2().getX()+40,300));
-		this.setLayout(null);	
-		
+		this.setPreferredSize(new Dimension((int)timeLine.getLine().getP2().getX()+40,150));
+		this.setLayout(null);			
 	}
 	
 	@Override
@@ -33,6 +32,10 @@ public class JPanelPlayGround extends JPanel {
 		super.paint(g);		
 		drawTimeLine(g);
 		drawConnectionLine(g);			
+	}
+	
+	public List<Symbol> getSymbols(){
+		return symbols;
 	}
 	
 	/**
@@ -59,13 +62,13 @@ public class JPanelPlayGround extends JPanel {
 	 * @param maus the Location for the Symbol
 	 */
 	public void addSymbol(Element e, Point maus){	
-		if (maus.y<220){
+		if (maus.y<70){
 			for(Symbol n: symbols){
 				if (e.getColor() == n.getBackground()){
 					return; // Element schon vorhanden
 				}
 			}		
-			Symbol symbol = new Symbol(maus, e.getColor());
+			Symbol symbol = new Symbol(maus, e.getColor(),e.getId());
 			symbol.addMouseListener(mouseListener);
 			symbols.add(symbol);
 			this.add(symbol);
@@ -90,7 +93,7 @@ public class JPanelPlayGround extends JPanel {
 					return;
 				}
 			}
-			ConnectionLine line = new ConnectionLine(symbol, timeLine.getMouseOnLine_X(),245);		
+			ConnectionLine line = new ConnectionLine(symbol, timeLine.getMouseOnLine_X(),95);		
 			symbol.setConnectionLine(line);
 		}
 		this.repaint();

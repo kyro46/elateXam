@@ -10,16 +10,17 @@ public class JPanelOfElements extends JPanel {
 	
 	private List<Element> elementsList = new ArrayList<Element>();
 	
-	public JPanelOfElements(List<Object> objects, MyMouseListener mouseListener){
+	public JPanelOfElements(String[][] elements, MyMouseListener mouseListener){
 		this.setBackground(Color.LIGHT_GRAY);
-		init(mouseListener);
+		init(elements, mouseListener);
 	}
 	
-	private void init(MyMouseListener mouseListener){	
+	private void init(String[][] elements, MyMouseListener mouseListener){	
 		// create Elements 
 		this.addMouseListener(mouseListener);
-		this.add(new Element("Wann kam ich zur Welt?", Color.GREEN, mouseListener));
-		this.add(new Element("Element2", Color.BLUE, mouseListener));
-		this.add(new Element("Langer Text, der angezeigt werden muss.", Color.CYAN, mouseListener));
+		
+		for(int i=0; i<elements.length; i++){
+			this.add(new Element(elements[i][0],Color.decode(elements[i][1]), mouseListener));
+		}
 	}
 }

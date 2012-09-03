@@ -1,4 +1,4 @@
-package com.spiru.dev.timeTask_addon.Utils;
+package com.spiru.dev.timeTaskProfessor_addon.Utils;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -23,15 +24,17 @@ public class TimeLine {
 	/** The TimeLine */
 	private Line2D line;
 	/** position of the mouse over the TimeLine */
-	private int mouseOnLine_x = 2000;
-	
+	private int mouseOnLine_x = -20;
+	private JPanelPlayGround panel;
 	/**
 	 * 	Constructor for a TimeLine 
 	 */
 	public TimeLine(JPanelPlayGround panel/* List of DatePoints *//* groesse mit angeben */){	
 		// create DatePoints
 		datePoints = new ArrayList<DatePoint>();
-		this.line = new Line2D.Double(10,250,400-10,250);	
+		this.line = new Line2D.Double(10,95,300,95);
+		this.panel = panel;
+		/*
 		// StartDatePoint
 		DatePoint start = new DatePoint("19.08.0001",true); 
 		panel.add(start);
@@ -49,36 +52,40 @@ public class TimeLine {
 		datePoints.add(end);
 		panel.add(end);
 		datePoints.add(end);
+		*/
 		
 		// arrange DatePoints on Line
 		sortDatePoints();
 	}
 	
-	private void sortDatePoints(){
+	public void sortDatePoints(){	
+		if (datePoints.size()==0)
+			return;
 		Date[] dates = new Date[datePoints.size()];
 		for(int i=0; i<dates.length; i++){
 			dates[i] = datePoints.get(i).getDate();
 		}	
-		datePoints.get(0).setLocation(10, 270);
+		datePoints.get(0).setLocation(10, 120);
 		for(int i = 1; i<datePoints.size(); i++){
-			int x = datePoints.get(i-1).getX()+datePoints.get(i-1).getWidth()+2*(dates[i].getYear()-dates[i-1].getYear());
-			datePoints.get(i).setLocation(x, 270);
+			int x = datePoints.get(i-1).getX()+datePoints.get(i-1).getWidth()+10+2*(dates[i].getYear()-dates[i-1].getYear());
+			datePoints.get(i).setLocation(x, 120);
 		}	
 		boolean test = true;
 		while(test){
 			test=false;
 			for(int i=1; i<datePoints.size(); i++){			
-				if(datePoints.get(i).getX()-datePoints.get(i-1).getX() > 300){
+				if(datePoints.get(i).getX()-datePoints.get(i-1).getX() > 200){
 					test=true;
 					for(int k=i; k<datePoints.size(); k++){
-						datePoints.get(k).setLocation(datePoints.get(k).getX()-80,270);
+						datePoints.get(k).setLocation(datePoints.get(k).getX()-80,120);
 					}
 				}
 			}
 		}
 		int start = datePoints.get(0).getX()+datePoints.get(0).getWidth()/2;
 		int end = datePoints.get(datePoints.size()-1).getX()+datePoints.get(datePoints.size()-1).getWidth()/2;
-		this.line = new Line2D.Double(start,250,end,250);
+		this.line = new Line2D.Double(start,95,end,95);		
+		this.panel.setPreferredSize(new Dimension(end+55,150));
 	}	
 	
 	/**
@@ -102,10 +109,6 @@ public class TimeLine {
 	 * @param g Graphics to draw on it
 	 */
 	public void draw(Graphics g){
-		//
-		for(DatePoint n:datePoints){
-			n.testDate();
-		}
 		// thickness = 4		
 		Graphics2D g2D = (Graphics2D) g;			
 		g2D.setStroke(new BasicStroke( 4 ));
@@ -126,7 +129,7 @@ public class TimeLine {
 			g2D.drawLine(n.getX()+n.getWidth()/2,
 					   (int)line.getP1().getY(),
 					   n.getX()+n.getWidth()/2,
-					   267);
+					   115);
 		}
 		// Mouse on TimeLine?
 		drawDotOnTimeLine(g2D);
@@ -147,7 +150,7 @@ public class TimeLine {
 				break;
 			}
 		}		
-		g2D.fillOval(mouseOnLine_x-5, 245, 10, 10);						
+		g2D.fillOval(mouseOnLine_x-5, 90, 10, 10);						
 		g2D.setColor(Color.BLACK);
 	}
 	
