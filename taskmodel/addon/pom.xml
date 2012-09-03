@@ -29,6 +29,7 @@
   <modules>
     <module>autotool-addon</module>
     <module>groupingTask-addon</module>
+    <module>timeTask-addon</module>
 	<module>compareTextTask-addon</module>
 	<!--
     <module>junit-addon</module>
