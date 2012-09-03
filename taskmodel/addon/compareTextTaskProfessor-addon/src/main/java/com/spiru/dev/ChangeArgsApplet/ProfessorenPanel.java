@@ -10,23 +10,29 @@ public class ProfessorenPanel extends javax.swing.JPanel {
 
 	private javax.swing.JLabel labelInitialText;
 	private javax.swing.JLabel labelAvaiableTags;
-	private javax.swing.JScrollPane scrollPaneInitialText;
 	private javax.swing.JScrollPane scrollPaneAvaiableTags;
+	private javax.swing.JScrollPane scrollPaneInitialText;
 	private javax.swing.JTextArea textAreaInitialText;
 	private javax.swing.JButton buttonPlus;
 	private javax.swing.JButton buttonMinus;
 	private javax.swing.table.DefaultTableModel tableModel;
 	private javax.swing.JTable tablePanel;
+	private int topPaneHeight;
+	private int bottomPaneHeight;
+	private int paneWidth;
 
 	public ProfessorenPanel(String text, String xmldef, int Width, int Height) {
 		labelInitialText = new javax.swing.JLabel("Initial Text:");
 		labelAvaiableTags = new javax.swing.JLabel("Avaiable Tags:");
-		scrollPaneAvaiableTags = new javax.swing.JScrollPane();
-		textAreaInitialText = new javax.swing.JTextArea(text);
 		scrollPaneInitialText = new javax.swing.JScrollPane();
+		textAreaInitialText = new javax.swing.JTextArea(text);
+		scrollPaneAvaiableTags = new javax.swing.JScrollPane();
 		tablePanel = new javax.swing.JTable();
 		buttonPlus = new javax.swing.JButton();
 		buttonMinus = new javax.swing.JButton();
+		topPaneHeight = Height / 2 - 25;
+		bottomPaneHeight = Height / 2 - 25;
+		paneWidth = Width;
 		initTable();
 		initButtons();
 		initComponents();
@@ -67,18 +73,18 @@ public class ProfessorenPanel extends javax.swing.JPanel {
 		textAreaInitialText.setColumns(20);
 		textAreaInitialText.setRows(5);
 		textAreaInitialText.setLineWrap(true);
-		scrollPaneAvaiableTags.setViewportView(textAreaInitialText);
-		scrollPaneInitialText.setViewportView(tablePanel);
+		scrollPaneInitialText.setViewportView(textAreaInitialText);
+		scrollPaneAvaiableTags.setViewportView(tablePanel);
 
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
 		this.setLayout(layout);
 		layout.setHorizontalGroup(
 				layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addComponent(scrollPaneInitialText)
+				.addComponent(scrollPaneAvaiableTags, javax.swing.GroupLayout.DEFAULT_SIZE, paneWidth, Short.MAX_VALUE)
 				.addGroup(layout.createSequentialGroup()
 						.addComponent(labelInitialText)
 						.addGap(0, 0, Short.MAX_VALUE))
-						.addComponent(scrollPaneAvaiableTags, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+						.addComponent(scrollPaneInitialText, javax.swing.GroupLayout.Alignment.TRAILING)
 						.addGroup(layout.createSequentialGroup()
 								.addComponent(labelAvaiableTags)
 								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -90,12 +96,12 @@ public class ProfessorenPanel extends javax.swing.JPanel {
 				layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 				.addGroup(layout.createSequentialGroup()
 						.addComponent(labelInitialText)
-						.addComponent(scrollPaneAvaiableTags, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+						.addComponent(scrollPaneInitialText, javax.swing.GroupLayout.DEFAULT_SIZE, topPaneHeight, Short.MAX_VALUE)
 						.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
 								.addComponent(labelAvaiableTags)
 								.addComponent(buttonPlus)
 								.addComponent(buttonMinus))
-								.addComponent(scrollPaneInitialText, javax.swing.GroupLayout.DEFAULT_SIZE, 116, Short.MAX_VALUE))
+								.addComponent(scrollPaneAvaiableTags, javax.swing.GroupLayout.DEFAULT_SIZE, bottomPaneHeight, Short.MAX_VALUE))
 				);
 	}
 

@@ -16,8 +16,8 @@ public class CompareTextApplet extends Applet {
 	public void init() {
 		String text = this.getParameter("initialText");
 		String xmldef = this.getParameter("xmlDef");
+		this.setSize(800, 450);
 		jpanel = new ProfessorenPanel(text, xmldef, this.getWidth(), this.getHeight());
-		this.setSize(800, 400);
 		add(jpanel);
 	}
 	public String getInitialText() {
