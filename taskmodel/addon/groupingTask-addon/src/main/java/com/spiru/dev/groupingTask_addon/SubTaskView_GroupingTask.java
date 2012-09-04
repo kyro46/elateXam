@@ -33,9 +33,11 @@ public class SubTaskView_GroupingTask extends SubTaskView{
 
 	public String getRenderedHTML(int relativeTaskNumber, boolean corrected) {
 		final StringBuffer ret = new StringBuffer();
-		String path = "com/spiru/dev/groupingtTask_addon/GroupingTaskAddOnApplet.class";
-		ret.append("<applet archive=\"applet/groupingTask.jar\" code=\"" + path + "\" width=\"710\" height=\"540\" title=\"Java\">\n");
-		
+		String path = "com/spiru/dev/groupingTask_addon/GroupingTaskAddOnApplet.class";
+		ret.append("<applet archive=\"applet/groupingTask.jar,applet/lib/jdom-1.0.jar\" code=\"" + path + "\" width=\"710\" height=\"540\" title=\"Java\">\n");
+		/*
+		 * ret.append( <param name="url" value="http://java-tutor.com/index.html">);
+		 */
 		ret.append("</applet>\n");
 		return ret.toString();
 

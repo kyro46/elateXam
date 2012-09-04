@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -270,6 +271,13 @@ public class SubTasklet_GroupingTaskImpl  extends AbstractAddonSubTasklet implem
 		//Für was wird das benötigt????
 		return "SubTasklet_AnordnungImpl.getAnordnungGradDoc() wurde aufgerufen!!!!";
 	}
+
+	@Override
+	public List<org.jdom.Element> getChildren(org.jdom.Element parent, String name) {		
+		List<org.jdom.Element> xmlList = parent.getChildren(name);
+		return xmlList;
+	}
+
 
 	
 }

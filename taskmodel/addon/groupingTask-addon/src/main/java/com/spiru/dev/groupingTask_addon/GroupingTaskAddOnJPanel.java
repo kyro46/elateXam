@@ -96,7 +96,7 @@ public class GroupingTaskAddOnJPanel extends JPanel {
     	
     	// Panel auf dem Elemente angeordnet werden sollen    	
     	jPanelSpielplatz = new PanelSpielplatz(elementList, listener);    
-    	jPanelSpielplatz.setBackground(Color.GRAY);
+    	jPanelSpielplatz.setBackground(Color.LIGHT_GRAY);
     	jPanelSpielplatz.setBorder(BorderFactory.createLineBorder(Color.black));
     	// jPanelSpielplatz soll auf Drop reagieren
     	new MyDropTargetListener(jPanelSpielplatz);
@@ -127,5 +127,9 @@ public class GroupingTaskAddOnJPanel extends JPanel {
     	this.add(scroll);    
     	
     	this.setDoubleBuffered(false);
-    }    
+    }  
+    
+    public PanelSpielplatz getPlayGround(){
+    	return jPanelSpielplatz;
+    }
 }

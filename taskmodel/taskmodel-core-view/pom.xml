@@ -232,13 +232,13 @@
         	<groupId>com.spiru.dev</groupId>
         	<artifactId>timeTask-addon</artifactId>
         	<version>0.0.30-SNAPSHOT</version>
-        	<type>jar</type>
+        	<scope>provided</scope>
         </dependency>
         <dependency>
         	<groupId>com.spiru.dev</groupId>
         	<artifactId>groupingTask-addon</artifactId>
         	<version>0.0.30-SNAPSHOT</version>
-        	<type>jar</type>
+        	<scope>provided</scope>
         </dependency>
     </dependencies>
    <build>
