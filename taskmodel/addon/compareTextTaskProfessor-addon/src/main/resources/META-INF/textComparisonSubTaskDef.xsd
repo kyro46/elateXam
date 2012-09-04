@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2012 rel. 2 sp1 (http://www.altova.com) by Alfons Eimer (none) -->
+<!-- Mit XMLSpy v2012 rel. 2 sp1 (http://www.altova.com) von Linde (-) bearbeitet -->
+<xs:schema xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" xmlns="http://complex.taskmodel.thorstenberger.de/complexTaskDef" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://complex.taskmodel.thorstenberger.de/complexTaskDef" elementFormDefault="qualified" attributeFormDefault="unqualified" jaxb:version="1.0" jaxb:extensionBindingPrefixes="xjc">
+	<xs:element name="Memento">
+		<xs:annotation>
+			<xs:documentation>Memento XSD für die Bilder-MC-Aufgabe</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="ImageBase64" type="xs:string"/>
+				</xs:choice>
+				<xs:element name="addonConfig">
+					<xs:complexType>
+						<xs:sequence maxOccurs="unbounded">
+							<xs:element name="XML">
+								<xs:complexType>
+									<xs:attribute name="description"/>
+									<xs:attribute name="name"/>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="textComparisonSubTaskDef">
+					<xs:complexType>
+						<xs:sequence minOccurs="3" maxOccurs="3">
+							<xs:element name="initialTextFidlValue">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="category">
+												<xs:annotation>
+													<xs:documentation>Angabe, welches der drei Textfelder es ist. Vorlage, Editierbar oder Korrektur</xs:documentation>
+												</xs:annotation>
+												<xs:simpleType>
+													<xs:restriction base="xs:NMTOKEN">
+														<xs:enumeration value="template"/>
+														<xs:enumeration value="answerField"/>
+														<xs:enumeration value="correctionTemplate"/>
+													</xs:restriction>
+												</xs:simpleType>
+											</xs:attribute>
+											<xs:attribute name="textFieldWidth"/>
+											<xs:attribute name="textFieldHeight"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
