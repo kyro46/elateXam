@@ -71,7 +71,8 @@ public class GroupingTaskAddOnApplet extends Applet{
 
 	    @Override
 	    public void stop() {
-	    	String text = gpanel.getPlayGround().getBase64StringFromImage();
+	    /*	String text = gpanel.getPlayGround().getBase64StringFromImage();
 	    	System.out.println(text);
+	    	*/
 	    }	    	    
 }

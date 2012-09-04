@@ -15,13 +15,13 @@ import de.thorstenberger.taskmodel.view.ViewContext;
 
 public class SubTaskView_GroupingTask extends SubTaskView{
 
-	private SubTasklet_GroupingTask AnordnungSubTasklet;
+	private SubTasklet_GroupingTask groupingSubTasklet;
 
 	/**
 	 *
 	 */
-	public SubTaskView_GroupingTask( SubTasklet_GroupingTask anordnungSubTasklet ) {
-		this.AnordnungSubTasklet = anordnungSubTasklet;
+	public SubTaskView_GroupingTask( SubTasklet_GroupingTask groupingSubTasklet ) {
+		this.groupingSubTasklet = groupingSubTasklet;
 	}
 
 	/**
@@ -36,7 +36,9 @@ public class SubTaskView_GroupingTask extends SubTaskView{
 		String path = "com/spiru/dev/groupingTask_addon/GroupingTaskAddOnApplet.class";
 		ret.append("<applet archive=\"applet/groupingTask.jar,applet/lib/jdom-1.0.jar\" code=\"" + path + "\" width=\"710\" height=\"540\" title=\"Java\">\n");
 		/*
-		 * ret.append( <param name="url" value="http://java-tutor.com/index.html">);
+		 * for(x){
+		 * 	ret.append( <param name="name" value="wert">);
+		 * }
 		 */
 		ret.append("</applet>\n");
 		return ret.toString();
@@ -51,7 +53,7 @@ public class SubTaskView_GroupingTask extends SubTaskView{
 	    StringBuffer ret = new StringBuffer();
 	    ret.append( getRenderedHTML( -1, true ) );
 
-	    ret.append(getCorrectorPointsInputString(actualCorrector, "Anordnung", AnordnungSubTasklet));
+	    ret.append(getCorrectorPointsInputString(actualCorrector, "Grouping", groupingSubTasklet));
 
 	    return ret.toString();
 	}
@@ -65,7 +67,7 @@ public class SubTaskView_GroupingTask extends SubTaskView{
 		Iterator it = postedVarsForTask.keySet().iterator();
 		while( it.hasNext() ) {
 			String key=(String) it.next();
-			if( getMyPart( key ).equals( "Anordnung" ) )
+			if( getMyPart( key ).equals( "Grouping" ) )
 				return new GroupingTaskSubmitData( (String) postedVarsForTask.get(key) );
 		}
 		throw new ParsingException();
