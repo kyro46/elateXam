@@ -109,7 +109,7 @@ public class SubTaskView_Paint extends SubTaskView {
         		"    <param name=\"scriptable\" value=\"true\"> ");
         */
 		String path = "drawing/DrawingApplet.class";
-		ret.append("<applet archive=\"drawTask/drawtask.jar\" code=\"" + path + "\" " +
+		ret.append("<applet archive=\"applet/drawtask.jar\" code=\"" + path + "\" " +
 				"width = \"600\" height = \"" + (corrected ? 355 : 395) + "\" NAME = \"drawTask_" + relativeTaskNumber +  "title=\"Java\">\n" +
 				"    <param name=\"code\" value=\"drawing/DrawingApplet.class\" >\r\n" +
 				"    <param name=\"codebase\" value=\"" + request.getContextPath() + "/drawTask\" >\r\n" +
