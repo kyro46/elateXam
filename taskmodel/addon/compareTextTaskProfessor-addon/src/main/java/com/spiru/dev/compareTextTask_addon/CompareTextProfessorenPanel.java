@@ -1,43 +1,41 @@
 package com.spiru.dev.compareTextTask_addon;
 
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 /**
  * TODO: raise (and handle) Exception if entered tag contains illegal characters
  *
- * @author rrae
+ * @author C.Wilhelm
  */
 @SuppressWarnings("serial")
 public class CompareTextProfessorenPanel extends CompareTextPanel {
 	protected javax.swing.JLabel labelAvaiableTags;
+	protected javax.swing.JLabel labelInitialText;
+	protected javax.swing.JLabel labelSampleSolution;
 	protected javax.swing.JScrollPane scrollPaneAvaiableTags;
 	protected javax.swing.JButton buttonMinus;
 	protected javax.swing.JButton buttonPlus;
 	protected javax.swing.table.DefaultTableModel tableModel;
 	protected javax.swing.JTable tablePanel;
-	protected int topPaneHeight;
-	protected int bottomPaneHeight;
+	protected int componentAvaiableTagsHeight;
+	protected int componentInitialTextHeight;
 	protected int paneWidth;
-	private GridBagConstraints c;
-	private GridBagLayout gbl;
 
 	public CompareTextProfessorenPanel(String text, String xmldef, String solution, int Width, int Height) {
 		super(text, xmldef, Width, Height);
-		//labelInitialText = new javax.swing.JLabel("Initial Text:");
 		labelAvaiableTags = new javax.swing.JLabel("Avaiable Tags:");
-		//labelSampleSolution = new javax.swing.JLabel("Sample Solution:");
+		labelInitialText = new javax.swing.JLabel("Initial Text:");
+		labelSampleSolution = new javax.swing.JLabel("Sample Solution:");
 		scrollPaneAvaiableTags = new javax.swing.JScrollPane();
 		tablePanel = new javax.swing.JTable();
 		buttonMinus = new javax.swing.JButton();
 		buttonPlus = new javax.swing.JButton();
-		topPaneHeight = Height / 2 - 25;
-		bottomPaneHeight = Height / 2 - 25;
+		componentAvaiableTagsHeight = Height / 2 - 25;
+		componentInitialTextHeight = Height / 2 - 25;
 		paneWidth = Width;
 		initTable();
 		initButtons();
-		initProfessorView();
+		initProfessorView(true);
 	}
 
 	protected void initButtons() {
@@ -72,72 +70,73 @@ public class CompareTextProfessorenPanel extends CompareTextPanel {
 		scrollPaneAvaiableTags.setViewportView(tablePanel);
 	}
 
-	protected void initProfessorView() {
+	protected void initProfessorView(boolean textfirst) {
 		textAreaLeft.setEditable(true);
 		toolBar.remove(toggleHelpButton);
+		buttonMinus.setMargin(new Insets(-10,-2,-8,-2));
+		buttonPlus.setMargin(new Insets(-10,-2,-8,-2));
+		int lwidth = paneWidth / 2 - 5;
 
-		/*
-		c = new GridBagConstraints();
-		gbl = new GridBagLayout();
-		this.setLayout(gbl);
+		// fix fontChooser size
+		fontComboBox.setSize(260, 25);
+		fontComboBox.setPreferredSize(fontComboBox.getSize());
+		fontComboBox.setMaximumSize(fontComboBox.getSize());
 
-		addComponent(labelAvaiableTags, 0, 0, 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
-		addComponent(buttonPlus, 0, 1, 1, 1, GridBagConstraints.NONE, GridBagConstraints.EAST);
-		addComponent(buttonMinus, 0, 2, 1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
-		addComponent(tablePanel, 1, 0, 1, 3, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
-		addComponent(toolBar, 2, 0, 1, 3, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER);
-		addComponent(splitPane, 3, 0, 1, 3, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
-		*/
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
 		this.setLayout(layout);
 		layout.setHorizontalGroup(
-				layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addComponent(scrollPaneAvaiableTags, javax.swing.GroupLayout.DEFAULT_SIZE, paneWidth, Short.MAX_VALUE)
-				.addGroup(layout.createSequentialGroup())
-						.addComponent(splitPane, javax.swing.GroupLayout.DEFAULT_SIZE, paneWidth, Short.MAX_VALUE)
-						.addComponent(toolBar, javax.swing.GroupLayout.DEFAULT_SIZE, paneWidth, Short.MAX_VALUE)
-						.addGroup(layout.createSequentialGroup()
-								.addComponent(labelAvaiableTags)
-								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(buttonMinus)
-								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addComponent(buttonPlus))
+			layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+			.addGroup(layout.createSequentialGroup()
+				.addComponent(labelAvaiableTags)
+				.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+				.addComponent(buttonPlus, 25, 25, 25)
+				.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+				.addComponent(buttonMinus, 25, 25, 25))
+			.addComponent(scrollPaneAvaiableTags)
+			.addComponent(toolBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+			.addComponent(splitPane, javax.swing.GroupLayout.DEFAULT_SIZE, paneWidth, Short.MAX_VALUE)
+			.addGroup(layout.createSequentialGroup()
+				.addComponent(labelInitialText, lwidth, lwidth, lwidth)
+				.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+				.addComponent(labelSampleSolution, lwidth, lwidth, lwidth))
 		);
-		layout.setVerticalGroup(
+		if (textfirst) {
+			layout.setVerticalGroup(
 				layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 				.addGroup(layout.createSequentialGroup()
-						.addComponent(toolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-						.addComponent(splitPane, javax.swing.GroupLayout.DEFAULT_SIZE, topPaneHeight, Short.MAX_VALUE)
+					.addComponent(toolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+					.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+						.addComponent(labelInitialText)
+						.addComponent(labelSampleSolution))
+					.addComponent(splitPane, javax.swing.GroupLayout.DEFAULT_SIZE, componentInitialTextHeight, Short.MAX_VALUE)
+					.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 						.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(labelAvaiableTags)
-								.addComponent(buttonPlus)
-								.addComponent(buttonMinus))
-								.addComponent(scrollPaneAvaiableTags, javax.swing.GroupLayout.DEFAULT_SIZE, bottomPaneHeight, Short.MAX_VALUE))
-		);
-	}
-	/*private void addComponent(Component comp,
-			int row, int column,
-			int rowspan, int colspan,
-			int fill, int anchor) {
-		c.gridy = row;
-		c.gridx = column;
-		c.gridwidth = colspan;
-		c.gridheight = rowspan;
-		c.fill = fill; // GridBagConstraints.NONE .HORIZONTAL .VERTICAL .BOTH
-		c.anchor = anchor;
-		if (fill == GridBagConstraints.BOTH) {
-			c.weightx = 1.0f;
-			c.weighty = 1.0f;
+							.addComponent(buttonMinus, 20, 20, 20)
+							.addComponent(buttonPlus, 20, 20, 20))
+						.addComponent(labelAvaiableTags, javax.swing.GroupLayout.Alignment.TRAILING))
+					.addComponent(scrollPaneAvaiableTags, javax.swing.GroupLayout.PREFERRED_SIZE, componentAvaiableTagsHeight, javax.swing.GroupLayout.PREFERRED_SIZE))
+			);
 		} else {
-			c.weightx = 0.0f;
-			c.weighty = 0.0f;
+			layout.setVerticalGroup(
+				layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(layout.createSequentialGroup()
+					.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+						.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+							.addComponent(buttonMinus, 20, 20, 20)
+							.addComponent(buttonPlus, 20, 20, 20))
+						.addComponent(labelAvaiableTags, javax.swing.GroupLayout.Alignment.TRAILING))
+					.addComponent(scrollPaneAvaiableTags, javax.swing.GroupLayout.PREFERRED_SIZE, componentAvaiableTagsHeight, javax.swing.GroupLayout.PREFERRED_SIZE)
+					.addComponent(toolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+					.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+						.addComponent(labelInitialText)
+						.addComponent(labelSampleSolution))
+					.addComponent(splitPane, javax.swing.GroupLayout.DEFAULT_SIZE, componentInitialTextHeight, Short.MAX_VALUE))
+			);
 		}
-		gbl.setConstraints(comp, c);
-		this.add(comp);
-	}*/
+	}
 
 	public String getInitialText() {
-		return "";//textAreaInitialText.getText();
+		return textAreaLeft.getText();
 	}
 
 	public String getAvaiableTags() {
@@ -145,6 +144,6 @@ public class CompareTextProfessorenPanel extends CompareTextPanel {
 	}
 
 	public String getSampleSolution() {
-		return "";//textAreaSampleSolution.getText();
+		return textAreaRight.getText();
 	}
 }

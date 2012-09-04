@@ -81,7 +81,7 @@ public class CompareTextPanel extends JPanel {
 
 		initScrollPanes();
 		//enableAutoCompletion();
-		System.out.println(this.getClass().getName());
+		//System.out.println(this.getClass().getName());
 		if (! this.getClass().getName().contains("CompareTextProfessorenPanel")) {
 			initStudentView();
 		}
@@ -150,7 +150,7 @@ public class CompareTextPanel extends JPanel {
 	 * if they are in sync already, calling sync_scrollbars()
 	 * another time causes them to be independent again
 	 * (works back and forth)
-	 * 
+	 *
 	 * @see com.spiru.dev.compareTextTask_addon.CompareTextPanel.initToolbar().new ActionListener() {...}.actionPerformed(ActionEvent)
 	 */
 	protected void sync_scrollbars() {
@@ -166,8 +166,9 @@ public class CompareTextPanel extends JPanel {
 			scrollPaneLeft.getViewport().setViewPosition(scrollPaneRight.getViewport().getViewPosition());
 		}
 	}
-	
+
 	protected void initToolbar() {
+		toolBar.setFloatable(false);
 		toolBar.add(toggleHelpButton);
 		toolBar.add(toggleSyncButton);
 		toolBar.add(Box.createHorizontalGlue());
@@ -266,6 +267,7 @@ public class CompareTextPanel extends JPanel {
 		this.setLayout(new BorderLayout());
 		this.add(toolBar, BorderLayout.PAGE_START);
 		this.add(splitPane, BorderLayout.CENTER);
+		toolBar.setPreferredSize(new Dimension(splitPaneWidth, 25));
 		splitPane.setPreferredSize(new Dimension(splitPaneWidth, splitPaneHeight));
 	}
 
