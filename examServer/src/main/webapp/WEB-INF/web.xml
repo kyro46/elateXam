@@ -226,7 +226,9 @@ filter-mapping>
   <error-code>404</error-code>
   <location>/404.jsp</location>
  </error-page>
+<!--
  <login-config>
   <auth-method>BASIC</auth-method>
  </login-config>
+ -->
 </web-app>
