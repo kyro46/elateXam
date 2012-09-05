@@ -19,6 +19,7 @@ public class CompareTextProfessorApplet extends Applet {
 		String xmldef = this.getParameter("xmlDef");
 		String solution = this.getParameter("sampleSolution");
 		//this.setSize(800, 450);
+		//xmldef = "<keyword>fisch</keyword><description>Markiert Fisch</description><keyword>hai</keyword><description>Markiert Hai</description>";
 		jpanel = new CompareTextProfessorenPanel(text, xmldef, solution, this.getWidth(), this.getHeight());
 		//jpanel.setSize(800, 450);
 		add(jpanel);

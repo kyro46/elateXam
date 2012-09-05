@@ -23,9 +23,9 @@ public class CompareTextApplet extends Applet {
 		// http://stackoverflow.com/questions/7278626/javascript-to-java-applet-communication
 		String text = this.getParameter("initialText");
 		String xmldef = this.getParameter("xmlDef");
-		this.setSize(800, 400);
+		//this.setSize(800, 400);
 		jpanel = new CompareTextPanel(text, xmldef, this.getWidth(), this.getHeight());
-		jpanel.setSize(800, 400);
+		//jpanel.setSize(800, 400);
 		add(jpanel);
 	}
 	public String getResult() {

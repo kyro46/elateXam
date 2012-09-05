@@ -39,7 +39,7 @@ public class TimeTaskAddOnApplet extends Applet{
 	    
 	    public void save(List<Element> elements, List<DatePoint> datePoints, List<Symbol> symbols){
 	    	try{
-	    		File targetFile = new File("C:\\Users\\Yves\\Desktop\\TimeTest.xml");
+	    		File targetFile = new File("/home/rrae/src/SHK2012/Dropbox/ElateXamV2Team/SHK/Yves/TimeTest.xml");
 	    		FileWriter fw = new FileWriter(targetFile);
 	    		XMLOutputter out = new XMLOutputter(Format.getPrettyFormat());
 	    		

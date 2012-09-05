@@ -38,7 +38,7 @@ public class MyDropTargetListener extends DropTargetAdapter {
         try {              
             Transferable tr = event.getTransferable();
             // erzeuge Element
-            Element element = (Element) tr.getTransferData(TransferableElement.elementFlavor);            
+            DragElement element = (DragElement) tr.getTransferData(TransferableElement.elementFlavor);            
               if (event.isDataFlavorSupported(TransferableElement.elementFlavor)) {
                 event.acceptDrop(DnDConstants.ACTION_COPY);
                 // Element hinzufuegen

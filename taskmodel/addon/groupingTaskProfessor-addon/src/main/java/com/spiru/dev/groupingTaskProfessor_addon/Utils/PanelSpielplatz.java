@@ -16,9 +16,9 @@ import javax.swing.JPanel;
 public class PanelSpielplatz extends JPanel {
 	
 	/** Liste mit allen auf das Panel gezogenen Elementen */
-	private List<Element> elemente;
+	private List<DragElement> elemente;
 	/** Liste mit allen zur Auswahl stehenden Elementen */
-	private final List<Element> auswahlElemente;
+	private final List<DragElement> auswahlElemente;
 	/** MouseListener zur Auswahl von Elementen */
 	private MyMouseListener listener;
 	/** Liste mit allen Verbindungen zwischen zwei Elementen */
@@ -29,8 +29,8 @@ public class PanelSpielplatz extends JPanel {
 	 * @param auswahl zur Auswahl stehender Elemente
 	 * @param listener MouseListener fuer Mausaktionen
 	 */
-	public PanelSpielplatz(List<Element> auswahl, MyMouseListener listener){
-		elemente = new ArrayList<Element>();
+	public PanelSpielplatz(List<DragElement> auswahl, MyMouseListener listener){
+		elemente = new ArrayList<DragElement>();
 		verbindungen = new ArrayList<Verbindung>();
 		auswahlElemente = auswahl;
 		this.listener = listener;
@@ -61,10 +61,10 @@ public class PanelSpielplatz extends JPanel {
 	 * @param e Element welches hinzugefuegt werden soll
 	 * @param pos Point-Objekt mit Koordinaten fuer Position des Elementes
 	 */
-	public void addElement(Element e, Point pos){
-		Element neuesElement = null;
+	public void addElement(DragElement e, Point pos){
+		DragElement neuesElement = null;
 		// element schon auf PanelSpielplatz?
-		for (Element n: elemente){
+		for (DragElement n: elemente){
 			if (n.getId() == e.getId()){			
 				neuesElement = n;
 				break;
@@ -75,7 +75,7 @@ public class PanelSpielplatz extends JPanel {
 	    } // sonst ein neues Element anzeigen
 	    else{
 	    	// vom AuswahlElement Anzahl veringern
-	    	for(Element n:auswahlElemente){
+	    	for(DragElement n:auswahlElemente){
 	    		if (n.getCaption().equals(e.getCaption())){
 	    			// wenn Anzahl = 0, dann abbrechen, da Aktion nicht erlaubt ist
 	    			if (n.getAnz()==0) return;
@@ -84,7 +84,7 @@ public class PanelSpielplatz extends JPanel {
 	    		}
 	    	}
 	    	// neues Element erzeugen
-	    	neuesElement = new Element(e.getCaption(),null, listener);		
+	    	neuesElement = new DragElement(e.getCaption(),null, listener);		
 			//neuesElement.setBounds(0,0, auswahlElemente.get(0).getWidth()+70, auswahlElemente.get(0).getHeight());
 			// passt so besser zur Mausposition ;)
 			pos.y -= 5; 
@@ -103,8 +103,8 @@ public class PanelSpielplatz extends JPanel {
 	 * Loescht ein Element und setzt dessen Anzahl zurueck
 	 * @param e Element welches gelöscht werden soll
 	 */
-	public void removeElement(Element e){			
-		for (Element n:auswahlElemente){
+	public void removeElement(DragElement e){			
+		for (DragElement n:auswahlElemente){
 			if (n.getCaption().equals(e.getCaption()))
 				n.incAnz();
 		}
@@ -136,7 +136,7 @@ public class PanelSpielplatz extends JPanel {
 	 * Loescht alle Verbindungen, die zum Element gehoeren
 	 * @param e Element dessen Verbindungen geloescht werden sollen
 	 */
-	private void deleteVerbindung(Element e){
+	private void deleteVerbindung(DragElement e){
 		List<Verbindung> clear = new ArrayList<Verbindung>();
 		// finde alle Verbindungen zum Element e
 		for(Verbindung n: verbindungen){
@@ -155,7 +155,7 @@ public class PanelSpielplatz extends JPanel {
 	public void clear(){
 		this.removeAll();
 		// Anzahl aller AuswahlElemente zuruecksetzen
-		for(Element n:auswahlElemente){
+		for(DragElement n:auswahlElemente){
 			n.reset();
 		}
 		elemente.clear();
@@ -165,11 +165,11 @@ public class PanelSpielplatz extends JPanel {
 	
 	// getter and setter
 	
-	public List<Element> getElemente() {
+	public List<DragElement> getElemente() {
 		return elemente;
 	}
 
-	public void setElemente(List<Element> elemente) {
+	public void setElemente(List<DragElement> elemente) {
 		this.elemente = elemente;
 	}
 
@@ -189,7 +189,7 @@ public class PanelSpielplatz extends JPanel {
 		this.verbindungen = verbindungen;
 	}
 
-	public List<Element> getAuswahlElemente() {
+	public List<DragElement> getAuswahlElemente() {
 		return auswahlElemente;
 	}
 

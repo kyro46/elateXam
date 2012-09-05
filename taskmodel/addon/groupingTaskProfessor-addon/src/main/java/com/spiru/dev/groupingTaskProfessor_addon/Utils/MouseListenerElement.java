@@ -7,7 +7,7 @@ public class MouseListenerElement implements MouseListener {
 
 	//@Override
 	public void mouseClicked(MouseEvent e) {
-		Element el = (Element)e.getComponent();
+		DragElement el = (DragElement)e.getComponent();
 		el.markiereElement(!el.isElementMarked());
 		
 	}

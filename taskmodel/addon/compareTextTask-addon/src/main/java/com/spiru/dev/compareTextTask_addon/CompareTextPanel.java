@@ -67,7 +67,7 @@ public class CompareTextPanel extends JPanel {
 		toolBar = new JToolBar();
 		fontComboBox = new JComboBox();
 		toggleHelpButton = new JToggleButton("Help", false);
-		toggleSyncButton = new JToggleButton("Sync Scrollbars", true);
+		toggleSyncButton = new JToggleButton("Sync Scrollbars", false);
 
 		initToolbar();
 
@@ -214,6 +214,15 @@ public class CompareTextPanel extends JPanel {
 		});
 	}
 
+	protected void enableAutoCompletion() {
+		AutoCompletion ac = new AutoCompletion(completionp);
+		ac.install(textAreaRight);
+		ac.setAutoActivationEnabled(true);
+		ac.setAutoCompleteEnabled(true);
+		//ac.setParameterAssistanceEnabled(true); // might come as a requirement
+		ac.setShowDescWindow(true); // show help text alongside completions
+	}
+
 	protected void initScrollPanes() {
 		// Adjust Divider of SplitPlane
 		splitPane.setDividerSize(5); // width of the divider
@@ -223,8 +232,6 @@ public class CompareTextPanel extends JPanel {
 		// Configure Scrollbars
 		scrollPaneLeft.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		scrollPaneRight.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		// Sync Scrollbars, hold old Scrollbar Model as a reference
-		sync_scrollbars(); // requires to sync textarea sizes, too...
 		textAreaRight.addComponentListener(new ComponentListener() {
 			@Override public void componentResized(ComponentEvent e) {
 				Dimension d = textAreaRight.getSize();
@@ -254,29 +261,22 @@ public class CompareTextPanel extends JPanel {
 		((RSyntaxTextArea)textAreaRight).setHighlightCurrentLine(false);
 		textAreaLeft.setLineWrap(true);
 		textAreaRight.setLineWrap(true);
-		textAreaLeft.setText(initialText);
-		textAreaRight.setText(initialText);
+		((RSyntaxTextArea)textAreaLeft).setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
+		((RSyntaxTextArea)textAreaRight).setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
 	}
 
 	protected void initStudentView() {
 		// Settings not relevant for Professor
+		textAreaLeft.setText(initialText);
+		textAreaRight.setText(initialText);
 		textAreaLeft.setEditable(false); // left area contains original
-		((RSyntaxTextArea)textAreaLeft).setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
-		((RSyntaxTextArea)textAreaRight).setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
+		toggleSyncButton.setSelected(!toggleSyncButton.isSelected());
+		sync_scrollbars(); // Sync Scrollbars by default
 
 		this.setLayout(new BorderLayout());
 		this.add(toolBar, BorderLayout.PAGE_START);
 		this.add(splitPane, BorderLayout.CENTER);
 		toolBar.setPreferredSize(new Dimension(splitPaneWidth, 25));
 		splitPane.setPreferredSize(new Dimension(splitPaneWidth, splitPaneHeight));
-	}
-
-	protected void enableAutoCompletion() {
-		AutoCompletion ac = new AutoCompletion(completionp);
-		ac.install(textAreaRight);
-		ac.setAutoActivationEnabled(true);
-		ac.setAutoCompleteEnabled(true);
-		//ac.setParameterAssistanceEnabled(true); // might come as a requirement
-		ac.setShowDescWindow(true); // show help text alongside completions
 	}
 }

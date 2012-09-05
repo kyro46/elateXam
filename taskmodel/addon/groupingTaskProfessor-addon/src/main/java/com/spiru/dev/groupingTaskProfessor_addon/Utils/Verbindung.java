@@ -13,9 +13,9 @@ import java.awt.geom.Line2D;
  */
 public class Verbindung {
 	/** Element1 */
-	private Element e1;
+	private DragElement e1;
 	/** Element2 */
-	private Element e2;
+	private DragElement e2;
 	/** Verbindung zwischen Element1 und Element2 */
 	private Line2D linie;
 	/** Wenn markiert, dann in anderer Farbe dargestellt */
@@ -26,7 +26,7 @@ public class Verbindung {
 	 * @param e1 Element1
 	 * @param e2 Element2
 	 */
-	public Verbindung(Element e1, Element e2){
+	public Verbindung(DragElement e1, DragElement e2){
 		this.e1 = e1;
 		this.e2 = e2;
 		this.markiert = false;		
@@ -36,7 +36,7 @@ public class Verbindung {
 	private void adjustLine(){
 		// liegt e1 weiter rechts als e2, dann tausche
 		if (e1.getX()>e2.getX()){
-			Element dummy = e2;
+			DragElement dummy = e2;
 			this.e2 = e1;
 			this.e1 = dummy;
 		}
@@ -120,7 +120,7 @@ public class Verbindung {
 	 * Liefert Element 1 zurueck
 	 * @return e1
 	 */
-	public Element getElement1(){
+	public DragElement getElement1(){
 		return e1;
 	}
 	
@@ -128,7 +128,7 @@ public class Verbindung {
 	 * Liefert Element 2 zurueck
 	 * @return e2
 	 */
-	public Element getElement2(){
+	public DragElement getElement2(){
 		return e2;
 	}
 	
@@ -150,7 +150,7 @@ public class Verbindung {
 	 * @param e Element
 	 * @return true, wenn Element zur Verbindung gehoert; false, wenn nicht 
 	 */
-	public boolean find(Element e){
+	public boolean find(DragElement e){
 		if (e1 == e || e2 == e)
 			return true;
 		return false;

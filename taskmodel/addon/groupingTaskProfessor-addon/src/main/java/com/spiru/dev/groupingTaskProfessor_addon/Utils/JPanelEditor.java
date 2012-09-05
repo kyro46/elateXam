@@ -21,12 +21,12 @@ public class JPanelEditor extends JPanel {
 	private JSpinner count;
 	private JButton buttonAdd;
 	private MyMouseListener listener;
-	private List<Element> elementList;
+	private List<DragElement> elementList;
 	private GroupingTaskAddOnJPanel panel;
 	private JButton buttonSave;
 	private JButton buttonDelete;
 	
-	public JPanelEditor(int x, int y, int breit, int hoch, MyMouseListener listener, List<Element> elementList, GroupingTaskAddOnJPanel panel){
+	public JPanelEditor(int x, int y, int breit, int hoch, MyMouseListener listener, List<DragElement> elementList, GroupingTaskAddOnJPanel panel){
 		this.setLayout(null);		
 		this.setBounds(x,y,breit,hoch);
 		this.listener = listener;
@@ -86,8 +86,8 @@ public class JPanelEditor extends JPanel {
 			String anzahl = count.getValue()+"";
 			if (anzahl.equals("0"))
 				anzahl = "n";
-			Element e = new Element(textfield.getText(),anzahl,listener);
-			for(Element n: elementList){
+			DragElement e = new DragElement(textfield.getText(),anzahl,listener);
+			for(DragElement n: elementList){
 				if (n.getCaption().equals(e.getCaption())){
 					e = null;
 					break;
