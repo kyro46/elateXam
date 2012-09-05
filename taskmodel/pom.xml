@@ -36,6 +36,7 @@
     <module>drawTask</module>
     <module>taskmodel-core-view</module>
     <module>addon</module>
+    <module>taskmodel-moodleTransformator</module>
   </modules>
   
   <distributionManagement>

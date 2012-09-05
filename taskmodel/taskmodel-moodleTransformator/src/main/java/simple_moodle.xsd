@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Mit XMLSpy v2012 rel. 2 sp1 (http://www.altova.com) von Alberich (-) bearbeitet -->
+<!--W3C Schema erstellt mit XMLSpy v2012 rel. 2 sp1 (http://www.altova.com)-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="quiz">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="question" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="name">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="text">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="questiontext">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="text" type="xs:string"/>
+									</xs:sequence>
+									<xs:attribute name="format">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:enumeration value="html"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:attribute>
+								</xs:complexType>
+							</xs:element>
+							<xs:choice>
+								<xs:sequence>
+									<xs:element name="image">
+										<xs:complexType/>
+									</xs:element>
+									<xs:element name="defaultgrade">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:enumeration value="1"/>
+												<xs:enumeration value="2"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="penalty">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:enumeration value="0.1"/>
+												<xs:enumeration value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="hidden">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:enumeration value="0"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:choice>
+										<xs:element name="subquestion" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="text" type="xs:string"/>
+													<xs:element name="answer">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="text">
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:sequence>
+											<xs:choice minOccurs="0">
+												<xs:element name="usecase">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:enumeration value="0"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:sequence>
+													<xs:element name="single">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="correctfeedback">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="text">
+																	<xs:complexType/>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="partiallycorrectfeedback">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="text">
+																	<xs:complexType/>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="incorrectfeedback">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="text">
+																	<xs:complexType/>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="answernumbering">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+												</xs:sequence>
+											</xs:choice>
+											<xs:element name="answer" maxOccurs="unbounded">
+												<xs:complexType>
+													<xs:sequence>
+														<xs:element name="text" type="xs:string"/>
+														<xs:element name="feedback">
+															<xs:complexType>
+																<xs:sequence>
+																	<xs:element name="text" type="xs:string"/>
+																</xs:sequence>
+															</xs:complexType>
+														</xs:element>
+													</xs:sequence>
+													<xs:attribute name="fraction" use="required">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:enumeration value="0"/>
+																<xs:enumeration value="100"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:attribute>
+												</xs:complexType>
+											</xs:element>
+										</xs:sequence>
+									</xs:choice>
+								</xs:sequence>
+							</xs:choice>
+							<xs:element name="category">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="text">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+						<xs:attribute name="type" use="required">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:enumeration value="cloze"/>
+									<xs:enumeration value="matching"/>
+									<xs:enumeration value="multichoice"/>
+									<xs:enumeration value="shortanswer"/>
+									<xs:enumeration value="truefalse"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:attribute>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
