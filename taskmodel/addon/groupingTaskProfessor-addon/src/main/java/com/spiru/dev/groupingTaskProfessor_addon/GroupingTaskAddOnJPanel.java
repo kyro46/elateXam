@@ -7,6 +7,7 @@ import java.awt.ScrollPane;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.xml.bind.DatatypeConverter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -70,11 +72,12 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 	 * Creates new form AddonOnJPanel
 	 * @param initElementList String-Array mit allen Captions fuer Elemente
 	 */
-	public GroupingTaskAddOnJPanel(String[][] allElements) {
+	public GroupingTaskAddOnJPanel(String mementoxml_as_string/*String[][] allElements*/) {
 		this.setDoubleBuffered(false);
 		elementList = new ArrayList<DragElement>();
 		listener = new MyMouseListener();
-		initComponents(allElements);
+		// Jetzt ist alles toll
+		initComponents(load(mementoxml_as_string));
 	}
 
 	/**  
@@ -99,15 +102,13 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 		this.add(jpanelEditor);
 		//******************************
 
-		/*
     	// add Elements
-    	//if (allElements != null)
+    	if (allElements != null)
     		for(int i = 0; i<allElements.length; i++){
-    			Element element = new Element(allElements[i][0],allElements[i][1],null);
+    			DragElement element = new DragElement(allElements[i][0],allElements[i][1],null);
     			jPanelElements.add(element);
     			elementList.add(element);  
-    		}
-		 */     	
+    		}    	
 		// Panel mit allen Buttons
 		JPanel jPanelButtons = new JPanel();
 		// Button zum loeschen des selektierten Elementes
@@ -243,23 +244,34 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			Transformer transformer = transformerFactory.newTransformer();
 			DOMSource source = new DOMSource(document);
-			StringWriter stringWriter=new StringWriter();
+			StringWriter stringWriter = new StringWriter();
 			StreamResult result =  new StreamResult(stringWriter);
 			transformer.transform(source, result);
 			ret = stringWriter.toString();
+			ret = DatatypeConverter.printBase64Binary(ret.getBytes("utf-8"));
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
 		} catch (TransformerConfigurationException e) {
 			e.printStackTrace();
 		} catch (TransformerException e) {
 			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
 		}
-		// für uns: gleich mal probieren zu laden
-		load_moodle(ret);
 		return ret;
 	}
-	public void load_moodle(String xml) {
-		System.out.println(xml);
+	public String[][] load(String xml) {
+		byte[] x = null; // needed for ByteArrayInputStream
+		if (xml == null) { // Ist NULL, wenn Applet nicht von HTML, sondern von Eclipse aus gestartet wird
+			xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Memento><addonConfig /><dragSubTaskDef>" +
+					"<Solution id=\"String\" /><BoxContainer BoxName=\"jhhds\" count=\"5\" />" +
+					"<BoxContainer BoxName=\"aaaajhhds\" count=\"n\" /></dragSubTaskDef></Memento>";
+			try { x = xml.getBytes("utf-8"); } catch (UnsupportedEncodingException e) { e.printStackTrace(); }
+		} else if (xml.length() == 0) {
+			return null; // assumption: Not editing existing-, but adding new Question -> nothing to do
+		} else {
+			x = DatatypeConverter.parseBase64Binary(xml);
+		}
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setIgnoringComments(true);
 		factory.setCoalescing(true); // Convert CDATA to Text nodes
@@ -267,7 +279,7 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 		factory.setValidating(false); // Don't validate DTD: also default
 		try {
 			DocumentBuilder parser = factory.newDocumentBuilder();
-			Document document = parser.parse(new InputSource(new ByteArrayInputStream(xml.getBytes("utf-8"))));
+			Document document = parser.parse(new InputSource(new ByteArrayInputStream(x)));
 			//Document document = parser.parse(new File("/home/rrae/src/SHK2012/Dropbox/ElateXamV2Team/SHK/Yves/Test.xml"));
 			Element Memento = (Element) document.getFirstChild(); //document.getChildNodes().item(0);
 			/* getElementsByTagName always operates in the context of element it is called on.
@@ -276,14 +288,17 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 			 * elements by the given tag name in the hole document. */
 			//Element addonConfig = (Element) Memento.getElementsByTagName("addonConfig").item(0); // not needed yet
 			Element dragSubTaskDef = (Element) Memento.getElementsByTagName("dragSubTaskDef").item(0);
-			Element Solution = (Element) dragSubTaskDef.getElementsByTagName("Solution").item(0);
+			Element Solution = (Element) dragSubTaskDef.getElementsByTagName("Solution").item(0); // TODO was du damit tun willst
 			NodeList boxcontainers = dragSubTaskDef.getElementsByTagName("BoxContainer");
+			String[][] elements = new String[boxcontainers.getLength()][2];
 			for (int i = 0; i < boxcontainers.getLength(); i++) {
 				Element BoxContainer = (Element) boxcontainers.item(i);
 				String BoxName = BoxContainer.getAttribute("BoxName");
 				String Count = BoxContainer.getAttribute("count");
-				System.out.println(BoxName + Count);
+				elements[i][0] = BoxName;
+				elements[i][1] = Count;
 			}
+			return elements;
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
 		} catch (SAXException e) {
@@ -291,5 +306,6 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		return null;
 	}
 }
