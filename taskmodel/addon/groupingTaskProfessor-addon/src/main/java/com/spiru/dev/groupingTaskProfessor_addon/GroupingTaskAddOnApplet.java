@@ -11,9 +11,9 @@ public class GroupingTaskAddOnApplet extends Applet{
 
 	@Override
 	public void init() {	 	    	
-		this.setSize(new Dimension(400,400));
-		this.setMinimumSize(new Dimension(400,400));
-		this.setPreferredSize(new Dimension(400,400));
+		this.setSize(new Dimension(600,400));
+		this.setMinimumSize(new Dimension(600,400));
+		this.setPreferredSize(new Dimension(600,400));
 		this.setLayout(null);    	
 
 		// Get Parameter from HTML <applet> Tag

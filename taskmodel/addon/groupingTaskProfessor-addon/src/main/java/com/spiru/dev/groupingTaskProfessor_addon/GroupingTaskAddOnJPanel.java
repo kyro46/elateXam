@@ -126,7 +126,7 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 		// ScrollPane, falls mehr Elemente auf Panel als dargestellt werden koennen    	
 		scrollPane = new ScrollPane();
 		scrollPane.add(jPanelElements);
-		scrollPane.setSize(400, 75); 	
+		scrollPane.setSize(600, 75); 	
 		scrollPane.setLocation(0,65);
 
 		// Panel auf dem Elemente angeordnet werden sollen    	
@@ -141,14 +141,14 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 
 		// Panels anordnen
 		jPanelElements.setLocation(0,0);
-		jPanelElements.setSize(400,75);
+		jPanelElements.setSize(600,75);
 		jPanelButtons.setLocation(0,jPanelElements.getHeight()+jpanelEditor.getHeight());
-		jPanelButtons.setSize(400,40);
+		jPanelButtons.setSize(600,40);
 		jPanelSpielplatz.setLocation(0,jPanelButtons.getHeight()+jPanelElements.getHeight());   
 
 		this.setLayout(null);
 		this.setLocation(0,0);
-		this.setSize(400,400);
+		this.setSize(600,400);
 		this.add(scrollPane);
 		this.add(jPanelButtons);
 
@@ -158,7 +158,7 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);    	
 		scroll.setMinimumSize(new Dimension(160, 200));
 		scroll.setPreferredSize(new Dimension(160, 200));
-		scroll.setBounds(0,jPanelButtons.getHeight()+jPanelElements.getHeight()+jpanelEditor.getHeight(),400,220);        
+		scroll.setBounds(0,jPanelButtons.getHeight()+jPanelElements.getHeight()+jpanelEditor.getHeight(),600,220);        
 		this.add(scroll);    
 
 		this.setDoubleBuffered(false);
@@ -248,6 +248,7 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 			StreamResult result =  new StreamResult(stringWriter);
 			transformer.transform(source, result);
 			ret = stringWriter.toString();
+			// having it as base64 string so browsers won't complain
 			ret = DatatypeConverter.printBase64Binary(ret.getBytes("utf-8"));
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
@@ -270,6 +271,7 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 		} else if (xml.length() == 0) {
 			return null; // assumption: Not editing existing-, but adding new Question -> nothing to do
 		} else {
+			// from moodle we will get a base64 string
 			x = DatatypeConverter.parseBase64Binary(xml);
 		}
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

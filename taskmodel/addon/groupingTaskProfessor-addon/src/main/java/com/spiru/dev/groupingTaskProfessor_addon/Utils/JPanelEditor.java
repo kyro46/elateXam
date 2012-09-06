@@ -49,16 +49,16 @@ public class JPanelEditor extends JPanel {
 	          }
 	        } );
 	    
-	    buttonSave = new JButton("Save");
+	    /*buttonSave = new JButton("Save");
 	    buttonSave.setBounds(310,35,80,25);
 	    buttonSave.addActionListener( new ActionListener() {
 	          public void actionPerformed(ActionEvent e) {
 	        	 buttonSaveAction();	        	  
 	          }
-	        } );
+	        } );*/
 	    
 	    buttonDelete = new JButton("Delete");
-	    buttonDelete.setBounds(220,35,80,25);
+	    buttonDelete.setBounds(220,35,100,25);
 	    buttonDelete.addActionListener( new ActionListener() {
 	          public void actionPerformed(ActionEvent e) {
 	        	  buttonDeleteAction();	        	  
@@ -77,7 +77,7 @@ public class JPanelEditor extends JPanel {
 		this.add(textfield);
 		this.add(count);
 		this.add(buttonAdd);
-		this.add(buttonSave);
+		//this.add(buttonSave);
 		this.add(buttonDelete);
 	}
 	
