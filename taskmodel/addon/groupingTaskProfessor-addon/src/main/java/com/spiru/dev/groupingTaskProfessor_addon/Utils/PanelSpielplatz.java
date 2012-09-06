@@ -1,10 +1,16 @@
 package com.spiru.dev.groupingTaskProfessor_addon.Utils;
 
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Point;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 /**
@@ -23,6 +29,8 @@ public class PanelSpielplatz extends JPanel {
 	private MyMouseListener listener;
 	/** Liste mit allen Verbindungen zwischen zwei Elementen */
 	private List<Verbindung> verbindungen = null;
+	
+	private String imageAsString;
 	
 	/**
 	 * Konstruktor fuer PanelSpielplatz
@@ -53,7 +61,16 @@ public class PanelSpielplatz extends JPanel {
 	public void paint( Graphics g ){		
 		super.paint( g );	   
 		zeichneVerbindungen();
+		if (this.imageAsString != null){
+			this.setImage();
+			System.out.println("paint");
+		}
 	  }
+	
+	private void setImage(){		
+		Image img = new ImageIcon(Base64.base64ToByteArray(this.imageAsString)).getImage();
+		this.getGraphics().drawImage(img, 0, 0, null);
+	}
 	
 	/**
 	 * Fuegt ein neues Element zur liste hinzu,
@@ -62,6 +79,7 @@ public class PanelSpielplatz extends JPanel {
 	 * @param pos Point-Objekt mit Koordinaten fuer Position des Elementes
 	 */
 	public void addElement(DragElement e, Point pos){
+		this.setBase64String(null);
 		DragElement neuesElement = null;
 		// element schon auf PanelSpielplatz?
 		for (DragElement n: elemente){
@@ -193,6 +211,22 @@ public class PanelSpielplatz extends JPanel {
 		return auswahlElemente;
 	}
 
+	public String getBase64StringFromImage(){
+		BufferedImage img=new BufferedImage(this.getWidth(),this.getHeight(),BufferedImage.TYPE_INT_ARGB);
+		this.paint(img.getGraphics());//dirty hack :)
+		  ByteArrayOutputStream bos=new ByteArrayOutputStream();
+		  try {
+			ImageIO.write(img,"png",bos);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+		  return Base64.byteArrayToBase64(bos.toByteArray());	
+	}
+	
+	public void setBase64String(String base64){
+		this.imageAsString = base64;
+	}
 	
 	
 }

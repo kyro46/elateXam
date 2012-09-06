@@ -67,6 +67,7 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 	private List<DragElement> elementList;
 
 	private ScrollPane scrollPane;
+	private String base64String;
 
 	/**
 	 * Creates new form AddonOnJPanel
@@ -232,7 +233,7 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 			Element dragSubTaskDef = document.createElement("dragSubTaskDef");
 			Memento.appendChild(dragSubTaskDef);
 			Element Solution = document.createElement("Solution");
-			Solution.setAttribute("id","String");
+			Solution.setAttribute("id",jPanelSpielplatz.getBase64StringFromImage());
 			dragSubTaskDef.appendChild(Solution);
 			for(DragElement n:elementList) {
 				Element BoxContainer = document.createElement("BoxContainer");
@@ -261,6 +262,7 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 		}
 		return ret;
 	}
+	
 	public String[][] load(String xml) {
 		byte[] x = null; // needed for ByteArrayInputStream
 		if (xml == null) { // Ist NULL, wenn Applet nicht von HTML, sondern von Eclipse aus gestartet wird
@@ -290,7 +292,8 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 			 * elements by the given tag name in the hole document. */
 			//Element addonConfig = (Element) Memento.getElementsByTagName("addonConfig").item(0); // not needed yet
 			Element dragSubTaskDef = (Element) Memento.getElementsByTagName("dragSubTaskDef").item(0);
-			Element Solution = (Element) dragSubTaskDef.getElementsByTagName("Solution").item(0); // TODO was du damit tun willst
+			Element solution = (Element) dragSubTaskDef.getElementsByTagName("Solution").item(0); // TODO was du damit tun willst
+			this.base64String = solution.getAttribute("id");
 			NodeList boxcontainers = dragSubTaskDef.getElementsByTagName("BoxContainer");
 			String[][] elements = new String[boxcontainers.getLength()][2];
 			for (int i = 0; i < boxcontainers.getLength(); i++) {
