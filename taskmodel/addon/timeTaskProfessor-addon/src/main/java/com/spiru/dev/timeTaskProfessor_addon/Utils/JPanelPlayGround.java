@@ -61,7 +61,7 @@ public class JPanelPlayGround extends JPanel {
 	 * @param e the original Element
 	 * @param maus the Location for the Symbol
 	 */
-	public void addSymbol(Element e, Point maus){	
+	public void addSymbol(DragElement e, Point maus){	
 		if (maus.y<70){
 			for(Symbol n: symbols){
 				if (e.getColor() == n.getBackground()){

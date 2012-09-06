@@ -8,7 +8,7 @@ import javax.swing.JButton;
 
 public class MyMouseListener implements MouseListener {
 
-	private Element selectedElement = null;
+	private DragElement selectedElement = null;
 	private Symbol selectedSymbol = null;
 	private ConnectionLine selectedConnectionLine = null;
 	private JPanelPlayGround panel;
@@ -30,10 +30,10 @@ public class MyMouseListener implements MouseListener {
 	public void mouseClicked(MouseEvent event) {
 		Object objekt = event.getSource();
 		
-		if(objekt instanceof Element){
+		if(objekt instanceof DragElement){
 			if (selectedElement != null)
 				selectedElement.markElement(false);
-			selectedElement = (Element)objekt;
+			selectedElement = (DragElement)objekt;
 			selectedElement.markElement(true);
 			markSymbol(false);
 			if (selectedConnectionLine != null){

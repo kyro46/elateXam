@@ -12,16 +12,14 @@ import javax.swing.border.LineBorder;
  * Element to arrange on TimeLine with Color, Text or Image
  * @author Yves
  */
-public class Element extends JPanel {
+public class DragElement extends JPanel {
 	
 	private JLabel label;
 	private JPanel colorPanel;
-	private boolean isMarked=false;
-	private static int idElement = 0;
+	private boolean isMarked=false;	
 	private int id;
 	
-	public Element(String caption, Color color, MyMouseListener mouseListener){		
-		idElement++;
+	public DragElement(String caption, Color color, MyMouseListener mouseListener, int idElement){				
 		id = idElement;
 		colorPanel = new JPanel();
 		colorPanel.setBackground(color);

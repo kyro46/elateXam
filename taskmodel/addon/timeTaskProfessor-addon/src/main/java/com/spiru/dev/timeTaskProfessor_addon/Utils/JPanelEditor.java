@@ -145,7 +145,7 @@ public class JPanelEditor extends JPanel {
 		String caption = textfieldCaption.getText();
 		Color color = buttonColor.getForeground();
 		if (!caption.equals("")){
-			Element e = new Element(caption,color,listener);
+			DragElement e = new DragElement(caption,color,listener, panel.getCountOfElements());
 			panel.addElement(e);
 		}		
 	}

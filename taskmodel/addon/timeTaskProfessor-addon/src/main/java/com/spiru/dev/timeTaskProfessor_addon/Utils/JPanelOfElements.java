@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 
 public class JPanelOfElements extends JPanel {
 	
-	private List<Element> elementsList = new ArrayList<Element>();
+	private List<DragElement> elementsList = new ArrayList<DragElement>();
 	
 	public JPanelOfElements(List<Object> objects, MyMouseListener mouseListener){
 		this.setBackground(Color.LIGHT_GRAY);
@@ -25,7 +25,7 @@ public class JPanelOfElements extends JPanel {
 		*/
 	}
 	
-	public List<Element> getElementList(){
+	public List<DragElement> getElementList(){
 		return elementsList;
 	}
 }
