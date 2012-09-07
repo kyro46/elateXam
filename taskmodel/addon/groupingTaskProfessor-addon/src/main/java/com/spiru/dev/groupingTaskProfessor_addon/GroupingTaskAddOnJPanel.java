@@ -79,6 +79,7 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 		listener = new MyMouseListener();
 		// Jetzt ist alles toll
 		initComponents(load(mementoxml_as_string));
+		jPanelSpielplatz.setBase64String(base64String);
 	}
 
 	/**  

@@ -63,7 +63,7 @@ public class PanelSpielplatz extends JPanel {
 		zeichneVerbindungen();
 		if (this.imageAsString != null){
 			this.setImage();
-			System.out.println("paint");
+			//System.out.println("paint");
 		}
 	  }
 	

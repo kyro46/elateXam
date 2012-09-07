@@ -19,6 +19,8 @@ import de.thorstenberger.taskmodel.complex.jaxb.*;
 
 import generated.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -34,20 +36,19 @@ public class ElateXMLMain {
 	//Debug: Pfad zur Moodle-XML-Datei explizit angeben.
 	//private static final String QUIZ_XML = "./roma2.xml";
 	//private static final String COMPLEXTASKDEF_XML = "./complexTaskDef.xml";
-	public static void startTransformToElateFormat(String inputXMLFile, String Outputname) throws JAXBException, IOException {
+	public static byte[] startTransformToElateFormat(byte[] input_xml_content) throws JAXBException, IOException {
 
-		//Beispiel: >> XmlTransformatorMoodleToElate.jar input.xml output.xml
+		/*//Beispiel: >> XmlTransformatorMoodleToElate.jar input.xml output.xml
 		final String QUIZ_XML = "./" + inputXMLFile;
-		final String COMPLEXTASKDEF_XML = "./" + Outputname;
+		final String COMPLEXTASKDEF_XML = "./" + Outputname;*/
 
-		// JAXB Context f�r Moodle-Quiz
+		// JAXB Context für Moodle-Quiz
 		JAXBContext context_quiz = JAXBContext.newInstance(Quiz.class);
 		Unmarshaller um_quiz = context_quiz.createUnmarshaller();
-		Quiz quizsammlung = (Quiz) um_quiz.unmarshal(new FileReader(QUIZ_XML));
+		Quiz quizsammlung = (Quiz) um_quiz.unmarshal(new ByteArrayInputStream(input_xml_content));
 
-		// JAXB Context und Marshaller f�r ComplexTaskDef
-		JAXBContext context_complexTaskDef = JAXBContext
-				.newInstance(ComplexTaskDef.class);
+		// JAXB Context und Marshaller für ComplexTaskDef
+		JAXBContext context_complexTaskDef = JAXBContext.newInstance(ComplexTaskDef.class);
 		Marshaller m_complexTaskDef = context_complexTaskDef.createMarshaller();
 
 		// System.out.println("Input from XML File: ");
@@ -68,9 +69,9 @@ public class ElateXMLMain {
 		m_complexTaskDef.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
 		// m_complexTaskDef.marshal(complexTaskDef, System.out);
 
-		Writer w = null;
+		ByteArrayOutputStream w = null;
 		try {
-			w = new FileWriter(COMPLEXTASKDEF_XML);
+			w = new ByteArrayOutputStream();
 			m_complexTaskDef.marshal(complexTaskDef, w);
 		} finally {
 			try {
@@ -78,6 +79,7 @@ public class ElateXMLMain {
 			} catch (Exception e) {
 			}
 		}
+		return w.toByteArray();
 	}
 	public static void main(String[] args) throws JAXBException, IOException {
 
