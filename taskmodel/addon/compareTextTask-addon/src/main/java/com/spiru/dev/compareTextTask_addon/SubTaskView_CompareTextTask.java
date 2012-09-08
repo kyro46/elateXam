@@ -16,16 +16,10 @@ public class SubTaskView_CompareTextTask extends SubTaskView{
 
 	private SubTasklet_CompareTextTask subTasklet;
 
-	/**
-	 *
-	 */
 	public SubTaskView_CompareTextTask( SubTasklet_CompareTextTask subTaskletObject ) {
 		this.subTasklet = subTaskletObject;
 	}
 
-	/**
-	 * @see de.thorstenberger.uebman.services.student.task.complex.SubTaskView#getRenderedHTML(int)
-	 */
 	@Override
 	public String getRenderedHTML( ViewContext context, int relativeTaskNumber) {
 		return getRenderedHTML( relativeTaskNumber, false );
@@ -34,7 +28,7 @@ public class SubTaskView_CompareTextTask extends SubTaskView{
 	public String getRenderedHTML(int relativeTaskNumber, boolean corrected) {
 		final StringBuffer ret = new StringBuffer();
 		String path = "com/spiru/dev/compareTextTask_addon/CompareTextApplet.class";
-		ret.append("<applet archive=\"compareTextTask/compareTextTask.jar\" code=\"" + path + "\" width=\"710\" height=\"540\" title=\"Java\">\n");
+		ret.append("<applet archive=\"applet/compareTextTask.jar\" code=\"" + path + "\" width=\"710\" height=\"540\" title=\"Java\">\n");
 		ret.append("<param name=\"initialText\" value=\"" + subTasklet.getInitialText() + "\">\n");
 		ret.append("<param name=\"xmlDef\" value=\"" + subTasklet.getTagsString() + "\">\n");
 		ret.append("</applet>\n");
@@ -50,9 +44,7 @@ public class SubTaskView_CompareTextTask extends SubTaskView{
 	public String getCorrectionHTML(String actualCorrector, ViewContext context ){
 		StringBuffer ret = new StringBuffer();
 		ret.append( getRenderedHTML( -1, true ) );
-
 		ret.append(getCorrectorPointsInputString(actualCorrector, "Anordnung", subTasklet));
-
 		return ret.toString();
 	}
 
@@ -60,17 +52,17 @@ public class SubTaskView_CompareTextTask extends SubTaskView{
 	 * @see de.thorstenberger.uebman.services.student.task.complex.SubTaskView#getSubmitData(java.util.Map, int)
 	 */
 	@Override
-	public SubmitData getSubmitData(Map postedVarsForTask)
-			throws ParsingException {
-
+	public SubmitData getSubmitData(Map postedVarsForTask) throws ParsingException {
+		String debugstr = "DESCR:";
 		Iterator it = postedVarsForTask.keySet().iterator();
 		while( it.hasNext() ) {
-			String key=(String) it.next();
-			if( getMyPart( key ).equals( "Anordnung" ) )
-				return new CompareTextTaskSubmitData( (String) postedVarsForTask.get(key) );
+			String key = (String) it.next();
+			String value = (String) postedVarsForTask.get(key);
+			debugstr = key + "_" + value + "\n";
+			return new CompareTextTaskSubmitData(value);
 		}
-		throw new ParsingException();
-
+		return new CompareTextTaskSubmitData("LLER");
+		//throw new ParsingException(debugstr);
 	}
 
 	@Override
