@@ -100,6 +100,8 @@ public class SubTasklet_CompareTextTaskImpl extends AbstractAddonSubTasklet impl
 		return ret.toString().hashCode();
 	}
 
+	// METHODS WHICH ARE SPECIFIC FOR THIS TASK FOLLOW FROM HERE:
+
 	@Override
 	public String getTagsString() {
 		// XPath: Memento/addonConfig/avaiableTags -> write into Base64 String

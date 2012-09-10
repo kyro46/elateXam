@@ -35,6 +35,9 @@ public class CompareTextApplet extends Applet {
 	public String getResult() {
 		return jpanel.getRightTextAreaContent();
 	}
+	public boolean hasChanged() {
+		return jpanel.getRightTextAreaContent() != jpanel.getLeftTextAreaContent();
+	}
 	@Override
 	public void start() {
 	}

@@ -106,6 +106,10 @@ public class CompareTextPanel extends JPanel {
 		return textAreaRight.getText();
 	}
 
+	public String getLeftTextAreaContent() {
+		return textAreaLeft.getText();
+	}
+
 	protected int calculateSentenceAtPosition(final char[] txt, final int sentencePosBeg) {
 		int currentSentence = 1;
 		for(int i = 0;i < txt.length; i++) {

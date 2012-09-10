@@ -26,13 +26,32 @@ public class SubTaskView_CompareTextTask extends SubTaskView{
 	}
 
 	public String getRenderedHTML(int relativeTaskNumber, boolean corrected) {
-		final StringBuffer ret = new StringBuffer();
 		String path = "com/spiru/dev/compareTextTask_addon/CompareTextApplet.class";
-		ret.append("<applet archive=\"applet/compareTextTask.jar\" code=\"" + path + "\" width=\"710\" height=\"540\" title=\"Java\">\n");
-		ret.append("<param name=\"initialText\" value=\"" + subTasklet.getInitialText() + "\">\n");
-		ret.append("<param name=\"xmlDef\" value=\"" + subTasklet.getTagsString() + "\">\n");
-		ret.append("</applet>\n");
-		return ret.toString();
+		String ret = "<applet archive=\"applet/compareTextTask.jar\" code=\"" + path + "\""
+				+ " id=\"applet_%s\""
+				+ " width=\"710\" height=\"540\" title=\"Java\">\n";
+		ret += "<param name=\"initialText\" value=\"" + subTasklet.getInitialText() + "\">\n";
+		//ret += "<param name=\"initialResult\" value=\"" + subTasklet.getInitialText() + "\">\n";
+		ret += "<param name=\"xmlDef\" value=\"" + subTasklet.getTagsString() + "\">\n";
+		ret += "</applet>\n";
+		// SavePageAction.getSubmitData() erwartet eine bestimmte Benennung von Element-Name und -ID!
+		ret += "<textarea name=\"task[%s].result\" id=\"task_%s.result\" style=\"display:none;\"></textarea>";
+		if (!corrected) {
+			ret += "<script type=\"text/javascript\">\n";
+			ret += " var preSave_task_%s = function(){\n";
+			ret += " 	document.getElementById(\"task_%s.result\").value = document.applet_%s.getResult();\n";
+			ret += " 	alert(document.getElementById(\"task_%s.result\").value);\n";
+			ret += "};\n";
+			ret += " var leavePage_task_%s = function(){\n";
+			ret += " 	if( document.applet_%s.hasChanged() ){\n";
+			ret += " 		setModified();\n";
+			ret += " 	};\n";
+			ret += " };\n";
+			ret += "preSaveManager.registerCallback( preSave_task_%s );\n";
+			ret += "leavePageManager.registerCallback( leavePage_task_%s );\n";
+			ret += "</script>\n";
+		}
+		return ret.replaceAll("%s",""+relativeTaskNumber);
 	}
 
 	@Override
@@ -53,7 +72,8 @@ public class SubTaskView_CompareTextTask extends SubTaskView{
 	 */
 	@Override
 	public SubmitData getSubmitData(Map postedVarsForTask) throws ParsingException {
-		String debugstr = "DESCR:";
+		// Hier die daten rausholen
+		String debugstr = "DESCR:" + postedVarsForTask.toString();
 		Iterator it = postedVarsForTask.keySet().iterator();
 		while( it.hasNext() ) {
 			String key = (String) it.next();
@@ -61,8 +81,8 @@ public class SubTaskView_CompareTextTask extends SubTaskView{
 			debugstr = key + "_" + value + "\n";
 			return new CompareTextTaskSubmitData(value);
 		}
-		return new CompareTextTaskSubmitData("LLER");
-		//throw new ParsingException(debugstr);
+		//return new CompareTextTaskSubmitData("LLER");
+		throw new ParsingException(debugstr);
 	}
 
 	@Override
