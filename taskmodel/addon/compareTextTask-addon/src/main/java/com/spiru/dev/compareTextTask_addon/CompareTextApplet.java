@@ -11,6 +11,10 @@ import java.applet.Applet;
 
 import javax.xml.bind.DatatypeConverter;
 
+import org.w3c.dom.Element;
+
+import com.spiru.dev.compareTextTask_addon.Utils.XMLBase64;
+
 @SuppressWarnings("serial")
 public class CompareTextApplet extends Applet {
 	private CompareTextPanel jpanel;
@@ -25,10 +29,13 @@ public class CompareTextApplet extends Applet {
 		// http://stackoverflow.com/questions/7278626/javascript-to-java-applet-communication
 		String text = this.getParameter("initialText");
 		String xmldef = this.getParameter("xmlDef"); // is expected to contain Base64 representation of avaiableTasks part in Memento
-		byte[] xmldefs = null; // DocumentBuilder will need it as BytesArray later
-		if(xmldef != null) xmldefs = DatatypeConverter.parseBase64Binary(xmldef);
+		String sofar = this.getParameter("soFarSolution"); // will be "null" (literally!) unless student triggered Save Page
+		if (xmldef == null) // is NULL, when Applet is not loaded from a Webbrowser, but from Eclipse
+			xmldef = DatatypeConverter.printBase64Binary("<avaiableTags><tag name=\"p\"><desc>Markiert einen Absatz.</desc></tag><tag name=\"soundslikefun\"><desc>Tut das und das.</desc></tag></avaiableTags>".getBytes());
+		boolean view_only = Boolean.parseBoolean(this.getParameter("viewOnly")); // correcor shouldn't be able to manipulate result
+		Element avaiableTags = XMLBase64.base64StringToElement(xmldef, null);
 		//this.setSize(800, 400);
-		jpanel = new CompareTextPanel(text, xmldefs, this.getWidth(), this.getHeight());
+		jpanel = new CompareTextPanel(text, sofar, avaiableTags, view_only, this.getWidth(), this.getHeight());
 		//jpanel.setSize(800, 400);
 		add(jpanel);
 	}

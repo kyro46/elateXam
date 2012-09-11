@@ -31,7 +31,8 @@ public class SubTaskView_CompareTextTask extends SubTaskView{
 				+ " id=\"applet_%s\""
 				+ " width=\"710\" height=\"540\" title=\"Java\">\n";
 		ret += "<param name=\"initialText\" value=\"" + subTasklet.getInitialText() + "\">\n";
-		//ret += "<param name=\"initialResult\" value=\"" + subTasklet.getInitialText() + "\">\n";
+		ret += "<param name=\"soFarSolution\" value=\"" + subTasklet.getResult() + "\">\n";
+		ret += "<param name=\"viewOnly\" value=\"" + corrected + "\">\n";
 		ret += "<param name=\"xmlDef\" value=\"" + subTasklet.getTagsString() + "\">\n";
 		ret += "</applet>\n";
 		// SavePageAction.getSubmitData() erwartet eine bestimmte Benennung von Element-Name und -ID!
@@ -40,7 +41,7 @@ public class SubTaskView_CompareTextTask extends SubTaskView{
 			ret += "<script type=\"text/javascript\">\n";
 			ret += " var preSave_task_%s = function(){\n";
 			ret += " 	document.getElementById(\"task_%s.result\").value = document.applet_%s.getResult();\n";
-			ret += " 	alert(document.getElementById(\"task_%s.result\").value);\n";
+			//ret += " 	alert(document.getElementById(\"task_%s.result\").value);\n";
 			ret += "};\n";
 			ret += " var leavePage_task_%s = function(){\n";
 			ret += " 	if( document.applet_%s.hasChanged() ){\n";
@@ -61,10 +62,11 @@ public class SubTaskView_CompareTextTask extends SubTaskView{
 
 	@Override
 	public String getCorrectionHTML(String actualCorrector, ViewContext context ){
-		StringBuffer ret = new StringBuffer();
-		ret.append( getRenderedHTML( -1, true ) );
-		ret.append(getCorrectorPointsInputString(actualCorrector, "Anordnung", subTasklet));
-		return ret.toString();
+		String ret = getRenderedHTML( -1, true );
+		System.out.println(actualCorrector);
+		System.out.println(context.toString());
+		ret += getCorrectorPointsInputString(actualCorrector, "Anordnung", subTasklet);
+		return ret;
 	}
 
 	/**
@@ -72,17 +74,15 @@ public class SubTaskView_CompareTextTask extends SubTaskView{
 	 */
 	@Override
 	public SubmitData getSubmitData(Map postedVarsForTask) throws ParsingException {
-		// Hier die daten rausholen
-		String debugstr = "DESCR:" + postedVarsForTask.toString();
+		String resultstr = null;
 		Iterator it = postedVarsForTask.keySet().iterator();
 		while( it.hasNext() ) {
 			String key = (String) it.next();
-			String value = (String) postedVarsForTask.get(key);
-			debugstr = key + "_" + value + "\n";
-			return new CompareTextTaskSubmitData(value);
+			if (getMyPart(key).equals("result"))
+				resultstr = (String) postedVarsForTask.get(key);
 		}
-		//return new CompareTextTaskSubmitData("LLER");
-		throw new ParsingException(debugstr);
+		if (resultstr == null) throw new ParsingException(postedVarsForTask.toString());
+		return new CompareTextTaskSubmitData(resultstr);
 	}
 
 	@Override
