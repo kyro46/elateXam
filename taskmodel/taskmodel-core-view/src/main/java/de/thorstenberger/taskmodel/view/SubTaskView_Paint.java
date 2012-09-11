@@ -88,7 +88,6 @@ public class SubTaskView_Paint extends SubTaskView {
 		// workaround: textarea nicht disabled
 		// corrected = false;
 
-		/*
 		// This code is not working with Chrome:
 		final String userAgent = request.getHeader("User-Agent");
 		final boolean mozilla = userAgent != null && userAgent.startsWith("Mozilla") && userAgent.indexOf("MSIE") == -1;
@@ -101,14 +100,13 @@ public class SubTaskView_Paint extends SubTaskView {
         				"    WIDTH = \"600\" HEIGHT = \"" + (corrected ? 355 : 395) + "\" NAME = \"drawTask_" + relativeTaskNumber
         				+ "\" >\r\n" +
         				"    <param name=\"code\" value=\"drawing/DrawingApplet.class\" >\r\n" +
-        				"    <param name=\"codebase\" value=\"" + request.getContextPath() + "/drawTask\" >\r\n" +
+        				"    <param name=\"codebase\" value=\"" + request.getContextPath() + "/applet\" >\r\n" +
         				"    <param name=\"archive\" value=\"drawtask.jar\" >\r\n" +
         				"    <param name=\"name\" value=\"drawTask_" + relativeTaskNumber + "\" >\r\n" +
         				"    <param name=\"mayscript\" value=\"true\" >\r\n" +
         				"    <param name=\"type\" value=\"application/x-java-applet;version=1.5\">\r\n" +
         		"    <param name=\"scriptable\" value=\"true\"> ");
-        */
-		String path = "drawing/DrawingApplet.class";
+		/*String path = "drawing/DrawingApplet.class";
 		ret.append("<applet archive=\"applet/drawtask.jar\" code=\"" + path + "\" " +
 				"width = \"600\" height = \"" + (corrected ? 355 : 395) + "\" NAME = \"drawTask_" + relativeTaskNumber +  "title=\"Java\">\n" +
 				//"    <param name=\"code\" value=\"drawing/DrawingApplet.class\" >\r\n" +
@@ -118,7 +116,7 @@ public class SubTaskView_Paint extends SubTaskView {
 				"    <param name=\"mayscript\" value=\"true\" >\r\n" +
 				"    <param name=\"type\" value=\"application/x-java-applet;version=1.5\">\r\n" +
 				"    <param name=\"scriptable\" value=\"true\"> ");
-
+		*/
 		// ret.append("<applet name=\"drawTask_" + relativeTaskNumber + "\" codebase=\"");
 		// ret.append(request.getContextPath()).append("/drawTask\" code=\"drawing/DrawingApplet.class\" archive=\"drawtask-1.0.jar\" width=\"600\" height=\"395\" mayscript>\n");
 		ret.append("<param name=\"mutableForeground\" value=\"").append(paintSubTasklet.getMutablePictureString()).append("\">\n");

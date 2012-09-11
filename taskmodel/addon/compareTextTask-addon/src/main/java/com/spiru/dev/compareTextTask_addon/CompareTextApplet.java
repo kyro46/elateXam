@@ -9,6 +9,8 @@ package com.spiru.dev.compareTextTask_addon;
 
 import java.applet.Applet;
 
+import javax.xml.bind.DatatypeConverter;
+
 @SuppressWarnings("serial")
 public class CompareTextApplet extends Applet {
 	private CompareTextPanel jpanel;
@@ -22,14 +24,19 @@ public class CompareTextApplet extends Applet {
 		// http://docs.oracle.com/javase/tutorial/deployment/applet/invokingAppletMethodsFromJavaScript.html
 		// http://stackoverflow.com/questions/7278626/javascript-to-java-applet-communication
 		String text = this.getParameter("initialText");
-		String xmldef = this.getParameter("xmlDef");
+		String xmldef = this.getParameter("xmlDef"); // is expected to contain Base64 representation of avaiableTasks part in Memento
+		byte[] xmldefs = null; // DocumentBuilder will need it as BytesArray later
+		if(xmldef != null) xmldefs = DatatypeConverter.parseBase64Binary(xmldef);
 		//this.setSize(800, 400);
-		jpanel = new CompareTextPanel(text, xmldef, this.getWidth(), this.getHeight());
+		jpanel = new CompareTextPanel(text, xmldefs, this.getWidth(), this.getHeight());
 		//jpanel.setSize(800, 400);
 		add(jpanel);
 	}
 	public String getResult() {
-		return "";//return jpanel.getRightTextAreaContent();
+		return jpanel.getRightTextAreaContent();
+	}
+	public boolean hasChanged() {
+		return jpanel.getRightTextAreaContent() != jpanel.getLeftTextAreaContent();
 	}
 	@Override
 	public void start() {

@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.text.BadLocationException;
-import javax.swing.text.Element;
 import javax.swing.text.JTextComponent;
 
 import org.fife.ui.autocomplete.Completion;
@@ -22,6 +21,7 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.RSyntaxUtilities;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.TokenTypes;
+import org.w3c.dom.Element;
 
 /**
  * CompletionProvider for AutoCompletion in RSyntaxTextArea
@@ -29,53 +29,27 @@ import org.fife.ui.rsyntaxtextarea.TokenTypes;
  * based on HtmlCompletionProvider:
  * @url http://svn.fifesoft.com/viewvc-1.0.5/bin/cgi/viewvc.cgi/RSTALanguageSupport/trunk/src/org/fife/rsta/ac/html/HtmlCompletionProvider.java?root=RSyntaxTextArea&view=log
  *
- * Requirement: Load Custom XML from String
- * Changed on HtmlCompletionProvider: Constructor, initCompletions()
- * Added: generateHelpHtml()
+ * Only added a view lines in Constructor, subclassing HtmlCompletionProvider was not
+ * possible because of having to substantially change the Constructor
  * 
  * @author C.Wilhelm
  */
-/*
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE api SYSTEM "CompletionXml.dtd">
-<api language="HTML">
-<keywords>
-	<keyword name="var" type="tag">
-		<desc>Defines a variable</desc>
-	</keyword>
-	<keyword name="video" type="tag">
-		<desc>Defines a video</desc>
-	</keyword>
-</keywords>
-</api>
-String s = "<?xml version='1.0' encoding='UTF-8' ?>\n"
-				+ "<!DOCTYPE api SYSTEM 'CompletionXml.dtd'>\n"
-				+ "<api language='HTML'>\n"
-				+ "<keywords>\n"
-				+ "	<keyword name='var' type='tag'>\n"
-				+ "		<desc>Defines a variable</desc>\n"
-				+ "	</keyword>\n"
-				+ "	<keyword name='video' type='tag'>\n"
-				+ "		<desc>Defines a video</desc>\n"
-				+ "	</keyword>\n"
-				+ "</keywords>\n"
-				+ "</api>";
- */
+
 public class CompareTextCompletionProvider extends DefaultCompletionProvider {
 
 	protected Map<String, ArrayList<AttributeCompletion>> tagToAttrs;
 	private boolean isTagName;
 	private String lastTagName;
 
-	private String xmlStr;
+	public CompareTextCompletionProvider(Map<String, String> tagList) {
+		this.completions = new ArrayList<Completion>();
+		for (Map.Entry<String, String> entry : tagList.entrySet()) {
+			MarkupTagCompletion mac = new MarkupTagCompletion(this, entry.getKey());
+			mac.setDescription(entry.getValue());
+			completions.add(mac);
+		}
 
-	public CompareTextCompletionProvider(String tagDefinitionsXml) {
-		// HtmlCompletionProvider uses hard-coded XML-Definition,
-		// we need configurability
-		xmlStr = tagDefinitionsXml;
-
-		initCompletions();
-
+		// rest is unchanged, see HtmlCompletionProvider
 		tagToAttrs = new HashMap<String, ArrayList<AttributeCompletion>>();
 		for (Iterator<?> i=completions.iterator(); i.hasNext(); ) {
 			MarkupTagCompletion c = (MarkupTagCompletion)i.next();
@@ -90,48 +64,6 @@ public class CompareTextCompletionProvider extends DefaultCompletionProvider {
 		setAutoActivationRules(false, "<");
 
 	}
-
-	public String generateHelpHtml() {
-		String htmlStr = "<table border=1 width=260>\n";
-		htmlStr += "<th>Tag</th><th>Beschreibung</th>\n";
-		for (Iterator<?> i=completions.iterator(); i.hasNext(); ) {
-			MarkupTagCompletion c = (MarkupTagCompletion)i.next();
-			String tag = c.getInputText();
-			String desc = c.getDescription();
-			htmlStr += "<tr><td>" + tag + "</td><td>" + desc + "</td></tr>\n";
-		}
-		htmlStr += "</table>";
-		htmlStr += "<br><p width=260>Dies ist ein netter Hinweis. Sie können im rechten Textfeld Änderungen vornehmen und Textstellen mit den entsprechenden Tags umschließen.</p>";
-		return htmlStr;
-	}
-
-	protected void initCompletions() {
-		// alternative way to load that XML (preferably as String)
-		/*if (xmlStr == null) return;
-		try {
-			//loadFromXML(new File("/home/rrae/src/SHK2012/Dokumentation/XMLPlayground/html.xml"));
-			//InputStream is = new ByteArrayInputStream(xmlStr.getBytes("UTF-8"));
-			//System.out.println(xmlStr);
-			//loadFromXML(is);
-			//is.close();
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-		}*/
-	}
-
-
-	/**
-	 * This nasty hack is just a hook for subclasses (e.g.
-	 * <code>PhpCompletionProvider</code>) to be able to get at the
-	 * <code>DefaultCompletionProvider</code> implementation.
-	 *
-	 * @param comp The text component.
-	 * @return The text, or <code>null</code> if none.
-	 */
-	protected String defaultGetAlreadyEnteredText(JTextComponent comp) {
-		return super.getAlreadyEnteredText(comp);
-	}
-
 
 	/**
 	 * Locates the name of the tag a given offset is in.  This method assumes
@@ -170,8 +102,8 @@ public class CompareTextCompletionProvider extends DefaultCompletionProvider {
 
 		if (lastTagName==null && !foundOpenTag) {
 
-			Element root = doc.getDefaultRootElement();
-			int prevLine = root.getElementIndex(offs) - 1;
+			Element root = (Element) doc.getDefaultRootElement();
+			int prevLine = ((javax.swing.text.Element) root).getElementIndex(offs) - 1;
 			while (prevLine>=0) {
 				tokenList = doc.getTokenListForLine(prevLine);
 				for (Token t=tokenList; t!=null; t=t.getNextToken()) {
@@ -318,7 +250,6 @@ public class CompareTextCompletionProvider extends DefaultCompletionProvider {
 
 		List retVal = new ArrayList();
 		String text = getAlreadyEnteredText(comp);
-		List completions = getTagCompletions();
 		if (lastTagName!=null) {
 			lastTagName = lastTagName.toLowerCase();
 			completions = getAttributeCompletionsForTag(lastTagName);
@@ -349,18 +280,6 @@ public class CompareTextCompletionProvider extends DefaultCompletionProvider {
 
 	}
 
-
-	/**
-	 * Returns the completions for the basic tag set.  This method is here so
-	 * subclasses can add to it if they provide additional tags (i.e. JSP).
-	 *
-	 * @return The completions for the standard tag set.
-	 */
-	protected List getTagCompletions() {
-		return this.completions;
-	}
-
-
 	/**
 	 * Returns the token before the specified offset.
 	 *
@@ -382,7 +301,6 @@ public class CompareTextCompletionProvider extends DefaultCompletionProvider {
 		}
 		return null;
 	}
-
 
 	/**
 	 * Returns whether the given offset is inside a markup tag (and not in
@@ -471,7 +389,6 @@ public class CompareTextCompletionProvider extends DefaultCompletionProvider {
 
 		return okay;
 	}
-
 
 	/**
 	 * Returns whether this token's text is "<" or "</".  It is assumed that
