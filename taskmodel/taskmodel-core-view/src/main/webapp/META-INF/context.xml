@@ -1,4 +1,5 @@
-<Context path="/taskmodel-core-view" docBase="taskmodel-core-view" crossContext="true">	
+<Context path="/taskmodel-core-view" docBase="taskmodel-core-view" 
+crossContext="true" >	
 	<!-- disable session persistence -->
 <!--	<Manager className="org.apache.catalina.session.StandardManager" pathname=""/>-->
 </Context>

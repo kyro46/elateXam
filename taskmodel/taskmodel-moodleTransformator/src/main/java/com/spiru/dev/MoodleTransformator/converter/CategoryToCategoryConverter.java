@@ -1,5 +1,5 @@
 /**
- * Programm zur Konvertierung von aus Moodle exportierten �bungsfragen (Moodle-XML)
+ * Programm zur Konvertierung von aus Moodle exportierten Übungsfragen (Moodle-XML)
  * in Elate ComplexTaskDef-XML.
  *
  * @author Christoph Jobst
@@ -20,10 +20,6 @@ public class CategoryToCategoryConverter {
 		RandomIdentifierGenerator rand = new RandomIdentifierGenerator();
 
 		Category category = new Category();
-//		if (question.getType().toString().equals("category")) {
-//			System.out.println("Es ist ein category.");
-//		}
-		
 		
 		category.setTitle(question.getCategory().getText().substring(9));
 		category.setId("Kategorie_" + rand.getRandomID());

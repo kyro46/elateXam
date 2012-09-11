@@ -1,5 +1,5 @@
 /**
- * Programm zur Konvertierung von aus Moodle exportierten �bungsfragen (Moodle-XML)
+ * Programm zur Konvertierung von aus Moodle exportierten Übungsfragen (Moodle-XML)
  * in Elate ComplexTaskDef-XML.
  *
  * @author Christoph Jobst
@@ -22,6 +22,12 @@ import com.spiru.dev.MoodleTransformator.converter.ShortanswerToTextConverter;
 import com.spiru.dev.MoodleTransformator.converter.TruefalseToMcConverter;
 
 
+import com.spiru.dev.addonQuestionGetter.CompareTextTask;
+import com.spiru.dev.addonQuestionGetter.GroupingTask;
+import com.spiru.dev.addonQuestionGetter.TimeTask;
+import com.spiru.dev.MoodleTransformator.main.CategoryAssignment;
+import com.spiru.dev.MoodleTransformator.main.CategoryManager;
+import com.spiru.dev.MoodleTransformator.main.RandomIdentifierGenerator;
 import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskDef;
 import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskDef.Config.CorrectionMode.Regular;
 import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskDef.Config.CorrectionMode;
@@ -31,7 +37,7 @@ public class Inputaufteiler {
 
 	/*
 	 * Quiz-Input nach Knoten der Aufgabentypen durchlaufen und den
-	 * entsprechenden Konvertern zuordnen M�gliche Typen: - Essay - Cloze -
+	 * entsprechenden Konvertern zuordnen Mögliche Typen: - Essay - Cloze -
 	 * Multichoice - Shortanswer - Mapping - Truefalse
 	 */
 	public static ComplexTaskDef inputAufteilen(Quiz quizsammlung) {
@@ -65,10 +71,10 @@ public class Inputaufteiler {
 		complexTaskDef.setTitle("Testklausur");
 
 		/*
-		 * Zuweisungs und Konvertierungsschleife f�r Category-Bl�cke
+		 * Zuweisungs und Konvertierungsschleife für Category-Blöcke
 		 * Funktionsweise: 1. Alle Titel einlesen und in categoryNameList
 		 * speichern Dabei Redundanz entfernen 2. Sofern erstmaliges Auftrten
-		 * einer neuen Category hinzuf�gen eines neuen Objektex im
+		 * einer neuen Category hinzufügen eines neuen Objektex im
 		 * categoryManager
 		 */
 		List<String> categoryNameList = new ArrayList<String>();
@@ -94,9 +100,9 @@ public class Inputaufteiler {
 		}
 
 		/*
-		 * Zuweisungs- und Konvertierungsschleife f�r Fragen Funktionsweise: 1.
+		 * Zuweisungs- und Konvertierungsschleife für Fragen Funktionsweise: 1.
 		 * Gehe alle Fragen im Moodle-Quiz durch. 2. Ist ein Category dabei? ->
-		 * Gehe die Fragen ab da durch und f�ge sie dem entsprechenden Element
+		 * Gehe die Fragen ab da durch und füge sie dem entsprechenden Element
 		 * (categoryManager) hinzu, bis eine neue Category auftaucht.
 		 */
 		int belongingCategoryIndex = 0;
@@ -107,7 +113,7 @@ public class Inputaufteiler {
 						.equals("category")) {
 
 					/*
-					 * Abgleich: Ist zu welchem Objekt im categoryManager geh�rt
+					 * Abgleich: Ist zu welchem Objekt im categoryManager gehört
 					 * die aktuell gefundene Category?
 					 */
 					for (int k = 0; k < categoryManagerList.toArray().length; k++) {
@@ -122,8 +128,8 @@ public class Inputaufteiler {
 					}
 
 					/*
-					 * TaskBlock-Erstellungsschleife Die n�chsten Elemente bis
-					 * zur n�chten Category konvertieren und hinzuf�gen.
+					 * TaskBlock-Erstellungsschleife Die nachsten Elemente bis
+					 * zur nachten Category konvertieren und hinzufügen.
 					 */
 					for (int i = j + 1; i < quizsammlung.getQuestion()
 							.toArray().length; i++) {
@@ -219,27 +225,56 @@ public class Inputaufteiler {
 							categoryManagerList.get(belongingCategoryIndex)
 									.setHasMappingTaskBlock(true);
 						}
+						
+						
+						if (quizsammlung.getQuestion().get(i).getType()
+								.toString().equals("groupingtask")) {
+
+							categoryManagerList
+									.get(belongingCategoryIndex)
+									.getAddonTaskBlock()
+									.getAddonSubTaskDefOrChoice()
+									.add(GroupingTask
+											.processing(quizsammlung
+													.getQuestion().get(i)));
+							categoryManagerList.get(belongingCategoryIndex)
+									.setHasAddonTaskBlock(true);
+						}					
+						
+						if (quizsammlung.getQuestion().get(i).getType()
+								.toString().equals("comparetexttask")) {
+
+							categoryManagerList
+									.get(belongingCategoryIndex)
+									.getAddonTaskBlock()
+									.getAddonSubTaskDefOrChoice()
+									.add(CompareTextTask
+											.processing(quizsammlung
+													.getQuestion().get(i)));
+							categoryManagerList.get(belongingCategoryIndex)
+									.setHasAddonTaskBlock(true);
+						}			
+						
+						if (quizsammlung.getQuestion().get(i).getType()
+								.toString().equals("timetask")) {
+
+							categoryManagerList
+									.get(belongingCategoryIndex)
+									.getAddonTaskBlock()
+									.getAddonSubTaskDefOrChoice()
+									.add(TimeTask
+											.processing(quizsammlung
+													.getQuestion().get(i)));
+							categoryManagerList.get(belongingCategoryIndex)
+									.setHasAddonTaskBlock(true);
+						}			
+						
 						if (quizsammlung.getQuestion().get(i).getType()
 								.toString().equals("category")) {
 							/*
 							 * Wird ein Category gefunden, dann verlasse die
 							 * TaskBlock-Erstellungsschleife und suche dir die
-							 * neue zu f�llende Category aus dem CategoryManager
-							 * 
-							 * TODO Das ruft nach Rekursion:
-							 * 
-							 * Wenn es eine Category ist und zu einer
-							 * Unterkategorie geh�rt verfahre wie bisher mit den
-							 * TaskBl�cken -> f�ge der aktuellen Category eine
-							 * Unterkategorie hinzu.
-							 * 
-							 * Alternative: Category-Bl�cke einzeln erstellen
-							 * (wie bisher) und iterativ gesondert einander
-							 * zuweisen
-							 * 
-							 * In beiden F�llen: Stringparser f�r "/" in
-							 * Category.Title n�tig, um Unterordner zu
-							 * definieren.
+							 * neue zu füllende Category aus dem CategoryManager
 							 */
 							break;
 						}
@@ -251,7 +286,7 @@ public class Inputaufteiler {
 			}
 		}
 
-		// Alle Category in der Liste hinzuf�gen
+		// Alle Category in der Liste hinzufügen
 		// Hier Auswahl, ob flach oder geschachtelt
 		complexTaskDef = CategoryAssignment.assignFlatCategories(
 				complexTaskDef, categoryManagerList);

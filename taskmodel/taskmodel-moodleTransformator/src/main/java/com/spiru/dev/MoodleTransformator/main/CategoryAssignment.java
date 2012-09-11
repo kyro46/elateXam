@@ -1,5 +1,5 @@
 /**
- * Programm zur Konvertierung von aus Moodle exportierten �bungsfragen (Moodle-XML)
+ * Programm zur Konvertierung von aus Moodle exportierten Übungsfragen (Moodle-XML)
  * in Elate ComplexTaskDef-XML.
  *
  * @author Christoph Jobst
@@ -14,7 +14,7 @@ import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskDef;
 
 public class CategoryAssignment {
 
-	// Alle Category-Bl�cke auf einer einzigen Ebene
+	// Alle Category-Blöcke auf einer einzigen Ebene
 	public static ComplexTaskDef assignFlatCategories(
 			ComplexTaskDef complexTaskDef,
 			List<CategoryManager> categoryManagerList) {

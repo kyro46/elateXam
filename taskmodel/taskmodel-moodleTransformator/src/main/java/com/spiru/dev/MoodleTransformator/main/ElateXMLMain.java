@@ -1,14 +1,15 @@
 /**
- * Programm zur Konvertierung von aus Moodle exportierten �bungsfragen (Moodle-XML)
+ * Programm zur Konvertierung von aus Moodle exportierten Übungsfragen (Moodle-XML)
  * in Elate ComplexTaskDef-XML.
  *
  * @author Christoph Jobst
  * @version 1.0
  * 
- * TODO Metadatablock in ComplexTaskDef einf�gen
- * TODO Mehrere Schachtelungsebenen f�r Category �bernehmen, sobald complexTaskDef.xsd final
+ * TODO Metadatablock in ComplexTaskDef einfügen
+ * TODO Mehrere Schachtelungsebenen für Category übernehmen, sobald complexTaskDef.xsd final
  * TODO Weitere Fragetypen einbauen
- * TODO Punkte = Anzahl der L�cken/Matchings - inkonsistent, da in Frageinstanzen nicht einheitlich viele L�cken/Matchings
+ * TODO Punkte = Anzahl der Lücken/Matchings - inkonsistent, da in Frageinstanzen nicht einheitlich viele Lücken/Matchings
+ * TODO Moodlebilder aus Version 2.3 in den HTML-Code schreiben. Siehe: http://aktuell.de.selfhtml.org/artikel/grafik/inline-images/
  */
 
 package com.spiru.dev.MoodleTransformator.main;
