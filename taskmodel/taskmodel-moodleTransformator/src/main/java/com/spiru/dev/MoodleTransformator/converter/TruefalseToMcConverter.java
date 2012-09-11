@@ -1,5 +1,5 @@
 /**
- * Programm zur Konvertierung von aus Moodle exportierten �bungsfragen (Moodle-XML)
+ * Programm zur Konvertierung von aus Moodle exportierten Übungsfragen (Moodle-XML)
  * in Elate ComplexTaskDef-XML.
  *
  * @author Christoph Jobst
@@ -22,9 +22,6 @@ public class TruefalseToMcConverter {
 		McSubTaskDef subTask = new McSubTaskDef();
 		McSubTaskDef.Correct correct = new McSubTaskDef.Correct();
 		McSubTaskDef.Incorrect incorrect = new McSubTaskDef.Incorrect();
-
-//		if (question.getType().toString().equals("truefalse")) {
-//			System.out.println("Es ist ein truefalse.");
 
 			// Allgemeine Angaben pro Frage
 			subTask.setTrash(false);
@@ -57,7 +54,6 @@ public class TruefalseToMcConverter {
 			subTask.getCorrectOrIncorrect().add(incorrect);
 			correct = new McSubTaskDef.Correct();
 			incorrect = new McSubTaskDef.Incorrect();
-//		}
 
 		return subTask;
 	}

@@ -1,5 +1,5 @@
 /**
- * Programm zur Konvertierung von aus Moodle exportierten �bungsfragen (Moodle-XML)
+ * Programm zur Konvertierung von aus Moodle exportierten Übungsfragen (Moodle-XML)
  * in Elate ComplexTaskDef-XML.
  *
  * @author Christoph Jobst

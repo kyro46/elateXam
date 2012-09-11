@@ -1,5 +1,5 @@
 /**
- * Programm zur Konvertierung von aus Moodle exportierten �bungsfragen (Moodle-XML)
+ * Programm zur Konvertierung von aus Moodle exportierten Übungsfragen (Moodle-XML)
  * in Elate ComplexTaskDef-XML.
  *
  * @author Christoph Jobst
@@ -8,6 +8,7 @@
 
 package com.spiru.dev.MoodleTransformator.main;
 
+import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskDef.Category.AddonTaskBlock;
 import de.thorstenberger.taskmodel.complex.jaxb.Config;
 import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskDef.Category;
 import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskDef.Category.ClozeTaskBlock;
@@ -18,7 +19,6 @@ import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskDef.Category.ClozeTas
 import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskDef.Category.MappingTaskBlock.MappingConfig;
 import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskDef.Category.McTaskBlock.McConfig;
 import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskDef.Category.McTaskBlock.McConfig.Different;
-
 public class CategoryManager {
 
 	Category category = new Category();
@@ -26,20 +26,23 @@ public class CategoryManager {
 	boolean hasMcTaskBlock = false;
 	boolean hasClozeTaskBlock = false;
 	boolean hasMappingTaskBlock = false;
+	boolean hasAddonTaskBlock = false;
+
 	String title;
 	MappingTaskBlock mappingTaskBlock = new MappingTaskBlock();
 	McTaskBlock mcTaskBlock = new McTaskBlock();
 	TextTaskBlock textTaskBlock = new TextTaskBlock();
 	ClozeTaskBlock clozeTaskBlock = new ClozeTaskBlock();
+	AddonTaskBlock addonTaskBlock = new AddonTaskBlock();
 
 	public CategoryManager(Category category) {
 		this.title = category.getTitle().toString();
 		this.category = category;
-		// Einheitliche Config f�r alle TaskBlock-Instanzen
+		// Einheitliche Config für alle TaskBlock-Instanzen
 		Config generalTaskBlockConfig = new Config();
 		generalTaskBlockConfig.setNoOfSelectedTasks(100);
-		// TODO Punkte = Anzahl der L�cken/Matchings - inkonsistent, da in
-		// Frageinstanzen nicht einheitlich viele L�cken/Matchings
+		// TODO Punkte = Anzahl der Lücken/Matchings - inkonsistent, da in
+		// Frageinstanzen nicht einheitlich viele Lücken/Matchings
 		generalTaskBlockConfig.setPointsPerTask(5);
 		generalTaskBlockConfig.setPreserveOrder(false);
 
@@ -67,6 +70,10 @@ public class CategoryManager {
 		different.setIncorrectAnswerNegativePoints(0);
 		mcConfig.setDifferent(different);
 		mcTaskBlock.setMcConfig(mcConfig);
+
+		// Vorbereitung AddonTaskBlock
+		addonTaskBlock.setConfig(generalTaskBlockConfig);
+
 	}
 
 	public boolean isHasTextTaskBlock() {
@@ -141,6 +148,18 @@ public class CategoryManager {
 		this.clozeTaskBlock = clozeTaskBlock;
 	}
 
+	public boolean isHasAddonTaskBlock() {
+		return hasAddonTaskBlock;
+	}
+
+	public void setHasAddonTaskBlock(boolean hasAddonTaskBlock) {
+		this.hasAddonTaskBlock = hasAddonTaskBlock;
+	}
+
+	public AddonTaskBlock getAddonTaskBlock() {
+		return addonTaskBlock;
+	}
+
 	public Category generateCategory() {
 		if (hasClozeTaskBlock) {
 			category.getMcTaskBlockOrClozeTaskBlockOrTextTaskBlock().add(
@@ -157,6 +176,10 @@ public class CategoryManager {
 		if (hasMcTaskBlock) {
 			category.getMcTaskBlockOrClozeTaskBlockOrTextTaskBlock().add(
 					mcTaskBlock);
+		}
+		if (hasAddonTaskBlock) {
+			category.getMcTaskBlockOrClozeTaskBlockOrTextTaskBlock().add(
+					addonTaskBlock);
 		}
 		return category;
 	}

@@ -1,5 +1,5 @@
 /**
- * Programm zur Konvertierung von aus Moodle exportierten �bungsfragen (Moodle-XML)
+ * Programm zur Konvertierung von aus Moodle exportierten Übungsfragen (Moodle-XML)
  * in Elate ComplexTaskDef-XML.
  *
  * @author Christoph Jobst
@@ -26,9 +26,6 @@ public class MatchingToMappingConverter {
 
 		MappingSubTaskDef subTask = new MappingSubTaskDef();
 
-//		if (question.getType().toString().equals("matching")) {
-//			System.out.println("Es ist ein matching.");
-
 			// Allgemeine Angaben pro Frage
 			subTask.setTrash(false);
 			subTask.setInteractiveFeedback(false);
@@ -47,7 +44,7 @@ public class MatchingToMappingConverter {
 			/*
 			 * 1. lies alle assignments ein und gib ihnen eine id 2. wenn ein
 			 * string schon vorhanden, tue nichts 3. lies die concepts ein und
-			 * suche bei den assignments nach der L�sung 4. weise die L�sungsID
+			 * suche bei den assignments nach der Lösung 4. weise die LösungsID
 			 * dem concept zu
 			 */
 			List<String> assignmentList = new ArrayList<String>();
@@ -92,7 +89,7 @@ public class MatchingToMappingConverter {
 				concept = new Concept();
 			}
 
-			// Assignments zuf�llig anordnen
+			// Assignments zufällig anordnen
 			Collections.shuffle(assignmentObjectList);
 
 			// Assignemntobjekte der SubTask zuordnen
@@ -100,9 +97,8 @@ public class MatchingToMappingConverter {
 				subTask.getAssignment().add(assignmentObjectList.get(j));
 			}
 
-//		}
-
 		return subTask;
 	}
 
 }
+

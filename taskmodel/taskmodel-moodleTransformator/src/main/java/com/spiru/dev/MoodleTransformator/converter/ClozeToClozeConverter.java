@@ -1,5 +1,5 @@
 /**
- * Programm zur Konvertierung von aus Moodle exportierten öbungsfragen (Moodle-XML)
+ * Programm zur Konvertierung von aus Moodle exportierten Übungsfragen (Moodle-XML)
  * in Elate ComplexTaskDef-XML.
  *
  * @author Christoph Jobst
@@ -37,7 +37,7 @@ public class ClozeToClozeConverter {
 
 		String problem = "Lösen Sie folgenden Lückentext.";
 		// Konvertierung des String in separaten Block,
-		// falls bei höufiger Nutzung Auslagerung nötig
+		// falls bei häufiger Nutzung Auslagerung nötig
 		try {
 			byte[] bytes = problem.getBytes("UTF-8");
 			problem = new String(bytes);

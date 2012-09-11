@@ -1,5 +1,5 @@
 /**
- * Programm zur Konvertierung von aus Moodle exportierten �bungsfragen (Moodle-XML)
+ * Programm zur Konvertierung von aus Moodle exportierten Übungsfragen (Moodle-XML)
  * in Elate ComplexTaskDef-XML.
  *
  * @author Christoph Jobst
@@ -21,9 +21,6 @@ public class EssayToTextConverter {
 
 		TextSubTaskDef subTask = new TextSubTaskDef();
 
-//		if (question.getType().toString().equals("essay")) {
-//			System.out.println("Es ist ein essay.");
-
 			subTask.setProblem(question.getQuestiontext().getText().toString());
 			subTask.setHint(question.getName().getText().toString());
 
@@ -31,8 +28,6 @@ public class EssayToTextConverter {
 			subTask.setInteractiveFeedback(false);
 			subTask.setId(question.getName().getText().toString() + "_"
 					+ rand.getRandomID());
-
-//		}
 
 		return subTask;
 	}
