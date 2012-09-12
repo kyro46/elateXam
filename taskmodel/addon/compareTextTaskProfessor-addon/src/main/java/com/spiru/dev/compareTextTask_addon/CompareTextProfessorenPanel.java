@@ -1,15 +1,23 @@
 package com.spiru.dev.compareTextTask_addon;
 
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Scanner;
 import java.util.Vector;
 
-import javax.swing.JFileChooser;
+import javax.swing.AbstractAction;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import com.spiru.dev.compareTextTask_addon.Utils.TableCellListener;
 
 /**
  * TODO: raise (and handle) Exception if entered tag contains illegal characters
@@ -24,17 +32,15 @@ public class CompareTextProfessorenPanel extends CompareTextPanel {
 	protected javax.swing.JScrollPane scrollPaneAvaiableTags;
 	protected javax.swing.JButton buttonMinus;
 	protected javax.swing.JButton buttonPlus;
-	protected javax.swing.JButton buttonUpload;
 	protected javax.swing.table.DefaultTableModel tableModel;
 	protected javax.swing.JTable tablePanel;
 	protected String sampleSolutionText;
-	//protected JFileChooser fileChooser;
 	protected int componentAvaiableTagsHeight;
 	protected int componentInitialTextHeight;
 	protected int paneWidth;
 
-	public CompareTextProfessorenPanel(String initial_text, String solution, Element xmldefs, int Width, int Height) {
-		super(initial_text, null, xmldefs, false, Width, Height);
+	public CompareTextProfessorenPanel(String text, String xmldef, String solution, int Width, int Height) {
+		super(text, xmldef, Width, Height);
 		labelAvaiableTags = new javax.swing.JLabel("Avaiable Tags:");
 		labelInitialText = new javax.swing.JLabel("Initial Text:");
 		labelSampleSolution = new javax.swing.JLabel("Sample Solution:");
@@ -42,35 +48,17 @@ public class CompareTextProfessorenPanel extends CompareTextPanel {
 		tablePanel = new javax.swing.JTable();
 		buttonMinus = new javax.swing.JButton();
 		buttonPlus = new javax.swing.JButton();
-		buttonUpload = new javax.swing.JButton();
-		//fileChooser = new JFileChooser(System.getProperty("user.home"));
 		componentAvaiableTagsHeight = Height / 2 - 30;
 		componentInitialTextHeight = Height / 2 - 25;
 		paneWidth = Width;
 		sampleSolutionText = solution;
 		initTable();
-		initTagTable();
+		setAvaiableTags(xmldef);
 		initButtons();
 		initProfessorView(true);
 	}
 
 	protected void initButtons() {
-		buttonUpload.setText("Upload Text File");
-		/*buttonUpload.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				int flag = fileChooser.showOpenDialog(null);
-				if (flag == JFileChooser.APPROVE_OPTION)
-					try {
-						System.out.println("You chose to open this file: " + fileChooser.getSelectedFile().getName());
-						String tmp = new Scanner(fileChooser.getSelectedFile()).useDelimiter("\\Z").next();
-						textAreaLeft.setText(tmp);
-						textAreaRight.setText(tmp);
-					} catch (Exception e) {
-						javax.swing.JOptionPane.showMessageDialog(buttonUpload, "Error: No valid Plain-Text File:\n"
-								+ e.fillInStackTrace(), "Invalid File Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-					}
-			}
-		});*/
 		buttonMinus.setText("-");
 		buttonMinus.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -85,6 +73,7 @@ public class CompareTextProfessorenPanel extends CompareTextPanel {
 		buttonPlus.setText("+");
 		buttonPlus.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				getAvaiableTags();
 				tableModel.addRow(new Object [] {null, null});
 			}
 		});
@@ -102,6 +91,21 @@ public class CompareTextProfessorenPanel extends CompareTextPanel {
 		tableModel = new javax.swing.table.DefaultTableModel(new String [] { "Tag Name", "Description" }, 0);
 		tablePanel.setModel(tableModel);
 		scrollPaneAvaiableTags.setViewportView(tablePanel);
+		/*tableModel.addTableModelListener(new TableModelListener() { // no use for this yet
+			@Override public void tableChanged(TableModelEvent e) {
+				//System.out.println(e);
+			}
+		});
+		@SuppressWarnings("unused")
+		TableCellListener tcl = new TableCellListener(tablePanel, new AbstractAction() {
+			@Override public void actionPerformed(ActionEvent e) {
+				TableCellListener tcl = (TableCellListener)e.getSource();
+				System.out.println("Row   : " + tcl.getRow());
+				System.out.println("Column: " + tcl.getColumn());
+				System.out.println("Old   : " + tcl.getOldValue());
+				System.out.println("New   : " + tcl.getNewValue());
+			}
+		});*/
 	}
 
 	protected void initProfessorView(boolean textfirst) {
@@ -109,7 +113,6 @@ public class CompareTextProfessorenPanel extends CompareTextPanel {
 		textAreaRight.setText(sampleSolutionText);
 		textAreaLeft.setEditable(true);
 		toolBar.remove(toggleHelpButton);
-		toolBar.add(buttonUpload, 0);
 		buttonMinus.setMargin(new Insets(-10,-2,-8,-2));
 		buttonPlus.setMargin(new Insets(-10,-2,-8,-2));
 		int lwidth = paneWidth / 2 - 5;
@@ -180,42 +183,65 @@ public class CompareTextProfessorenPanel extends CompareTextPanel {
 		return textAreaRight.getText();
 	}
 
-	public void appendAvaiableTags(Element addonConfig) {
+	public String getAvaiableTags() {
+		String ret = "";
+		Vector<?> rows = tableModel.getDataVector();
+		Iterator<?> iter_rows = rows.iterator();
 		// Fix issue described here: http://stackoverflow.com/questions/1652942/can-a-jtable-save-data-whenever-a-cell-loses-focus
 		if (tablePanel.isEditing())
 			tablePanel.getCellEditor().stopCellEditing();
-		// Write tags and Description into a new avaiableTags Element
-		Document document = addonConfig.getOwnerDocument();
-		Element avaiableTags = document.createElement("avaiableTags");
-		// retrieve information from jTable
-		Vector<?> rows = tableModel.getDataVector();
-		Iterator<?> iter_rows = rows.iterator();
+		//int selected_row = tablePanel.getSelectedRow();
+		//int selected_col = tablePanel.getSelectedColumn();
+		//Object selected_cell = tablePanel.getValueAt(selected_row, selected_col);
+		//System.out.println(tablePanel.getCellEditor(selected_row, selected_col).getCellEditorValue() + " currentCell");
+		//System.out.println(selected_cell);
+		// Go on
 		while(iter_rows.hasNext()) {
 			// ([tag,description],...)
 			Vector<?> row = (Vector<?>) iter_rows.next();
-			String tagname = ((String) row.get(0)).trim();
-			String description = ((String) row.get(1)).trim();
-			if (tagname == null || tagname == "")
+			String keyword = (String) row.get(0);
+			String description = (String) row.get(1);
+			if (keyword == null)
 				continue;
-			if (description == null || description == "")
+			if (description == null)
 				description = "ERROR in getAvaiableTags()";
-			Element Tag = document.createElement("tag");
-			Element desc = document.createElement("desc");
-			Tag.setAttribute("name", tagname);
-			desc.setTextContent(description);
-			Tag.appendChild(desc);
-			avaiableTags.appendChild(Tag);
+			ret += "<keyword>" + keyword + "</keyword><description>" + description + "</description>";
 		}
-		addonConfig.appendChild(avaiableTags);
+		System.out.println(ret);
+		return ret;
 	}
 
-	protected void initTagTable() {
-		// by now, initTagListAndHelp() was already called, so we have access to tagList
-		for (Map.Entry<String, String> entry : tagList.entrySet()) {
-			String tagname = entry.getKey();
-			String description = entry.getValue();
-			tableModel.addRow(new Object[] {tagname, description}); // final step!
+	protected void setAvaiableTags(String xmldef) {
+		// if there are existing tags (when editing existing questions), xmldef must begin with "<keyword>"
+		if (xmldef == null || !xmldef.startsWith("<keyword>")) { // !
+			tableModel.addRow(new Object[] {"example", "Example Tag with Description, please replace this line."});
+			tableModel.addRow(new Object[] {null, null});
+			return; // the other stuff is not relevant in this case
 		}
-		tableModel.addRow(new Object[] {"", ""});
+		String xml = "<?xml version=\"1.0\"?><keywords>" + xmldef + "</keywords>"; // "make it wellformed"
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		factory.setIgnoringComments(true);
+		factory.setCoalescing(true); // Convert CDATA to Text nodes
+		factory.setNamespaceAware(false); // No namespaces: this is default
+		factory.setValidating(false); // Don't validate DTD: also default
+		try {
+			DocumentBuilder parser = factory.newDocumentBuilder();
+			Document document = parser.parse(new InputSource(new ByteArrayInputStream(xml.getBytes("utf-8"))));
+			NodeList keywords = document.getElementsByTagName("keyword");
+			NodeList descriptions = document.getElementsByTagName("description");
+			if(keywords.getLength() != descriptions.getLength())
+				throw new IOException("Number of keywords is different from the Number of descriptions");
+			for (int i = 0; i < keywords.getLength(); i++) {
+				String keyword = keywords.item(i).getTextContent();
+				String description = descriptions.item(i).getTextContent();
+				tableModel.addRow(new Object[] {keyword, description}); // final step!
+			}
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		} catch (SAXException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

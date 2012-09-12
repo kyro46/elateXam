@@ -15,6 +15,8 @@ import org.w3c.dom.NodeList;
 
 import de.thorstenberger.taskmodel.TaskApiException;
 import de.thorstenberger.taskmodel.complex.RandomUtil;
+import de.thorstenberger.taskmodel.complex.complextaskdef.Block;
+import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDefRoot;
 import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDefRoot.CorrectionModeType;
 import de.thorstenberger.taskmodel.complex.complextaskhandling.CorrectionSubmitData;
 import de.thorstenberger.taskmodel.complex.complextaskhandling.SubmitData;
@@ -87,9 +89,9 @@ public class SubTasklet_TimeTaskImpl  extends AbstractAddonSubTasklet implements
 	private AnordnungSubTaskDummy anordnungSubTask;
 
 
-	public SubTasklet_TimeTaskImpl( SubTaskDefType aoSubTaskDef, AddonSubTask atSubTask, CorrectionModeType correctionMode, float reachablePoints ) {
+	public SubTasklet_TimeTaskImpl( ComplexTaskDefRoot root, Block block, SubTaskDefType aoSubTaskDef, AddonSubTask atSubTask ) {
 		
-		super(aoSubTaskDef, atSubTask, correctionMode, reachablePoints);
+		super(root, block,aoSubTaskDef,atSubTask);
 		
 		this.anordnungSubTask = new AnordnungSubTaskDummy(atSubTask);
 	}

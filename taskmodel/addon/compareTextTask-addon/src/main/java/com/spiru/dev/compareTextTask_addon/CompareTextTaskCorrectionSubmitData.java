@@ -9,8 +9,8 @@ public class CompareTextTaskCorrectionSubmitData extends CorrectionSubmitDataImp
 	public CompareTextTaskCorrectionSubmitData(float points) {
 		this.points=points;
 	}
-
 	public float getPoints() {
 		return this.points;
 	}
+
 }

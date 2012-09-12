@@ -48,4 +48,7 @@ public interface Block {
 
 	public float getPointsPerSubTask();
 	
+	//New
+	public float getReachablePoints();
+	
 }

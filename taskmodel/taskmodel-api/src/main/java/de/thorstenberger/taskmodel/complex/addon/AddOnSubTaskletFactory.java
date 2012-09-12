@@ -18,6 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 package de.thorstenberger.taskmodel.complex.addon;
 
+import de.thorstenberger.taskmodel.complex.complextaskdef.Block;
+import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDefRoot;
 import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDefRoot.CorrectionModeType;
 import de.thorstenberger.taskmodel.complex.complextaskhandling.AddOnSubTasklet;
 
@@ -27,7 +29,12 @@ import de.thorstenberger.taskmodel.complex.complextaskhandling.AddOnSubTasklet;
  */
 public interface AddOnSubTaskletFactory {
 
-	public AddOnSubTasklet createAddOnSubTasklet( Object subTaskDef, Object subTask, CorrectionModeType correctionMode, float reachablePoints);
+	
+	//Last commit from Steffen Dienst
+//	public AddOnSubTasklet createAddOnSubTasklet( Object subTaskDef, Object subTask, CorrectionModeType correctionMode, float reachablePoints);
+//
+//	public String getAddonTaskType();
+	public AddOnSubTasklet createAddOnSubTasklet(ComplexTaskDefRoot root, Block block, Object subTaskDef, Object subTask);
 
 	public String getAddonTaskType();
 }

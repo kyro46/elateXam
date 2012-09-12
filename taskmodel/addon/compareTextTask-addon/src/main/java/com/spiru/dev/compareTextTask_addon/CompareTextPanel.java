@@ -6,6 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.HashMap;
 
 import javax.swing.BoundedRangeModel;
@@ -24,12 +26,18 @@ import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.fife.ui.autocomplete.AutoCompletion;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import com.spiru.dev.compareTextTask_addon.Utils.CompareTextCompletionProvider;
 
@@ -45,8 +53,6 @@ public class CompareTextPanel extends JPanel {
 	protected static String defaultFontSize = "13";
 	protected BoundedRangeModel independentScrollbarModel;
 	protected String initialText;
-	protected String sofarResult;
-	protected boolean viewOnly;
 	protected HashMap<String,String> tagList;
 	protected JLabel helpPane;
 	protected JSplitPane splitPane;
@@ -62,7 +68,7 @@ public class CompareTextPanel extends JPanel {
 	protected JToggleButton toggleSyncButton;
 	protected JComboBox fontComboBox;
 
-	public CompareTextPanel(final String initial_text, final String sofar, final Element xmldefs, boolean view_only, final int Width, final int Height) {
+	public CompareTextPanel(final String initial_text, final byte[] xmldefs, final int Width, final int Height) {
 
 		splitPane = new JSplitPane();
 		scrollPaneLeft = new JScrollPane();
@@ -87,8 +93,6 @@ public class CompareTextPanel extends JPanel {
 		splitPaneWidth = Width;
 		splitPaneHeight = Height - 35; //toolBar.getSize().height;
 		initialText = initial_text;
-		sofarResult = sofar;
-		viewOnly = view_only;
 
 		initScrollPanes();
 		//enableAutoCompletion();
@@ -229,18 +233,30 @@ public class CompareTextPanel extends JPanel {
 		});
 	}
 
-	protected String initTagListAndHelp(Element avaiableTags) {
-		if (avaiableTags == null) return null;
+	protected String initTagListAndHelp(byte[] xmlStr) {
+		if (xmlStr == null) xmlStr = "<avaiableTags><tag name=\"p\"><desc>Markiert einen Absatz.</desc></tag><tag name=\"soundslikefun\"><desc>Tut das und das.</desc></tag></avaiableTags>".getBytes();
 		String ret = "<table border=1 width=260>\n";
 		ret += "<th>Tag</th><th>Beschreibung</th>\n";
-		NodeList tags = avaiableTags.getElementsByTagName("tag");
-		for (int i = 0; i < tags.getLength(); i++) {
-			Element tag = (Element) tags.item(i);
-			Element desc = (Element) tag.getElementsByTagName("desc").item(0);
-			String tagname = tag.getAttribute("name");
-			String description = desc.getTextContent();
-			tagList.put(tagname, description);
-			ret += "<tr><td>" + tagname + "</td><td>" + description + "</td></tr>\n";
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		try {
+			DocumentBuilder parser = factory.newDocumentBuilder();
+			Document document = parser.parse(new InputSource(new ByteArrayInputStream(xmlStr)));
+			Element avaiableTags = (Element) document.getFirstChild();
+			NodeList tags = avaiableTags.getElementsByTagName("tag");
+			for (int i = 0; i < tags.getLength(); i++) {
+				Element tag = (Element) tags.item(i);
+				Element desc = (Element) tag.getElementsByTagName("desc").item(0);
+				String tagstr = tag.getAttribute("name");
+				String descstr = desc.getTextContent();
+				tagList.put(tagstr, descstr);
+				ret += "<tr><td>" + tagstr + "</td><td>" + descstr + "</td></tr>\n";
+			}
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		} catch (SAXException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		ret += "</table>";
 		return ret;
@@ -300,15 +316,11 @@ public class CompareTextPanel extends JPanel {
 
 	protected void initStudentView() {
 		// Settings not relevant for the Professor View
+		textAreaLeft.setText(initialText);
+		textAreaRight.setText(initialText);
 		textAreaLeft.setEditable(false); // left area contains original
-		textAreaRight.setEditable(!viewOnly); // correctors won't be able to edit
 		toggleSyncButton.setSelected(!toggleSyncButton.isSelected());
 		sync_scrollbars(); // Sync Scrollbars by default
-
-		textAreaLeft.setText(initialText);
-		if ( sofarResult == null || sofarResult.equals("EMPTY") ) // see SubTasklet_CompareTextTaskImpl.getResult()
-			textAreaRight.setText(initialText);
-		else textAreaRight.setText(sofarResult);
 
 		this.setLayout(new BorderLayout());
 		this.add(toolBar, BorderLayout.PAGE_START);
