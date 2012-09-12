@@ -12,6 +12,7 @@ import org.w3c.dom.NodeList;
 import com.spiru.dev.compareTextTask_addon.Utils.XMLBase64;
 
 import de.thorstenberger.taskmodel.TaskApiException;
+import de.thorstenberger.taskmodel.complex.complextaskdef.Block;
 import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDefRoot;
 import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDefRoot.CorrectionModeType;
 import de.thorstenberger.taskmodel.complex.complextaskhandling.CorrectionSubmitData;
@@ -27,8 +28,8 @@ public class SubTasklet_CompareTextTaskImpl extends AbstractAddonSubTasklet impl
 	private Element mementoTaskDef;
 	private Element mementoTaskHandling;
 
-	public SubTasklet_CompareTextTaskImpl( SubTaskDefType aoSubTaskDef, AddonSubTask atSubTask, CorrectionModeType correctionMode, float reachablePoints ) {
-		super(aoSubTaskDef, atSubTask, correctionMode, reachablePoints);
+	public SubTasklet_CompareTextTaskImpl( ComplexTaskDefRoot root, Block block, SubTaskDefType aoSubTaskDef, AddonSubTask atSubTask ) {
+		super(root, block,aoSubTaskDef,atSubTask);
 		//System.out.println("\n\nConstructor Called");
 		subTaskObject = atSubTask;
 		mementoTaskDef = ((AddonSubTaskDef)aoSubTaskDef).getMemento();
@@ -81,7 +82,7 @@ public class SubTasklet_CompareTextTaskImpl extends AbstractAddonSubTasklet impl
 		//	return;
 
 		List<ManualCorrectionType> manualCorrections = subTaskObject.getManualCorrection();
-		if( correctionMode == ComplexTaskDefRoot.CorrectionModeType.MULTIPLECORRECTORS ){
+		if( complexTaskDefRoot.getCorrectionMode().getType() == ComplexTaskDefRoot.CorrectionModeType.MULTIPLECORRECTORS ) {
 			for( ManualCorrectionType mc : manualCorrections ){
 				if( mc.getCorrector().equals( pcsd.getCorrector() ) ){
 					mc.setPoints( pcsd.getPoints() );
