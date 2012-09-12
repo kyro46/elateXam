@@ -1,22 +1,17 @@
 package com.spiru.dev.compareTextTask_addon;
 
-import java.io.ByteArrayOutputStream;
+import java.util.List;
 
-import javax.xml.bind.DatatypeConverter;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
+import com.spiru.dev.compareTextTask_addon.Utils.XMLBase64;
 
 import de.thorstenberger.taskmodel.TaskApiException;
-import de.thorstenberger.taskmodel.complex.complextaskdef.Block;
 import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDefRoot;
 import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDefRoot.CorrectionModeType;
 import de.thorstenberger.taskmodel.complex.complextaskhandling.CorrectionSubmitData;
@@ -24,21 +19,24 @@ import de.thorstenberger.taskmodel.complex.complextaskhandling.SubmitData;
 import de.thorstenberger.taskmodel.complex.complextaskhandling.subtasklets.impl.AbstractAddonSubTasklet;
 import de.thorstenberger.taskmodel.complex.jaxb.AddonSubTaskDef;
 import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskHandling.Try.Page.AddonSubTask;
+import de.thorstenberger.taskmodel.complex.jaxb.ManualCorrectionType;
 import de.thorstenberger.taskmodel.complex.jaxb.SubTaskDefType;
 
 public class SubTasklet_CompareTextTaskImpl extends AbstractAddonSubTasklet implements SubTasklet_CompareTextTask {
+	private AddonSubTask subTaskObject;
 	private Element mementoTaskDef;
 	private Element mementoTaskHandling;
 
-	public SubTasklet_CompareTextTaskImpl( ComplexTaskDefRoot root, Block block, SubTaskDefType aoSubTaskDef, AddonSubTask atSubTask ) {
-		
-		super(root, block,aoSubTaskDef,atSubTask);
-		System.out.println("\n\nConstructor Called");
+	public SubTasklet_CompareTextTaskImpl( SubTaskDefType aoSubTaskDef, AddonSubTask atSubTask, CorrectionModeType correctionMode, float reachablePoints ) {
+		super(aoSubTaskDef, atSubTask, correctionMode, reachablePoints);
+		//System.out.println("\n\nConstructor Called");
+		subTaskObject = atSubTask;
 		mementoTaskDef = ((AddonSubTaskDef)aoSubTaskDef).getMemento();
 		mementoTaskHandling = atSubTask.getMemento();
-		if(mementoTaskHandling==null) { // null at the first instantiation
+		if (mementoTaskHandling == null) { // null at the first instantiation
 			try {
-				mementoTaskHandling=DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument().createElementNS("http://complex.taskmodel.thorstenberger.de/complexTaskHandling","Memento");
+				mementoTaskHandling = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument()
+						.createElementNS("http://complex.taskmodel.thorstenberger.de/complexTaskHandling", "Memento");
 			} catch (DOMException e) {
 				e.printStackTrace();
 			} catch (ParserConfigurationException e) {
@@ -53,35 +51,65 @@ public class SubTasklet_CompareTextTaskImpl extends AbstractAddonSubTasklet impl
 	public String getAddOnType() {
 		return ((AddonSubTaskDef)this.jaxbSubTaskDef).getTaskType();
 	}
+
 	@Override
 	public void doSave( SubmitData submitData ) throws IllegalStateException{
-		System.out.println("\n\ndoSave() Called");
-		//CompareTextTaskSubmitData tsd = (CompareTextTaskSubmitData) submitData;
-		//anordnungSubTask.setAnswer( tsd.getAnswer() );
+		//System.out.println("\n\ndoSave() Called");
+		CompareTextTaskSubmitData ctSD = (CompareTextTaskSubmitData) submitData;
+		setResult(ctSD.getResultString());
 	}
+
 	@Override
 	public void doAutoCorrection(){
-		System.out.println("\n\ndoAutoCorrection() Called");
+		//System.out.println("\n\ndoAutoCorrection() Called");
 		try {
 			// TODO!
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+
 	@Override
 	public void doManualCorrection( CorrectionSubmitData csd ){
-		System.out.println("\n\ndoManualCorrection() Called");
-		//CompareTextTaskCorrectionSubmitData acsd = (CompareTextTaskCorrectionSubmitData) csd;
+		//System.out.println("\n\ndoManualCorrection() Called");
+		CompareTextTaskCorrectionSubmitData pcsd = (CompareTextTaskCorrectionSubmitData) csd;
 		//super.setAutoCorrection(acsd.getPoints());
-		// TODO!
+
+		//if( isAutoCorrected() )
+		//	throw new IllegalStateException( TaskHandlingConstants.SUBTASK_AUTO_CORRECTED );
+		//if( pcsd.getPoints() < 0 || pcsd.getPoints() > reachablePoints )
+		//	return;
+
+		List<ManualCorrectionType> manualCorrections = subTaskObject.getManualCorrection();
+		if( correctionMode == ComplexTaskDefRoot.CorrectionModeType.MULTIPLECORRECTORS ){
+			for( ManualCorrectionType mc : manualCorrections ){
+				if( mc.getCorrector().equals( pcsd.getCorrector() ) ){
+					mc.setPoints( pcsd.getPoints() );
+					return;
+				}
+			}
+			// corrector not found, so create a new ManualCorrection for him
+			ManualCorrectionType mc;
+			mc = objectFactory.createManualCorrectionType();
+			mc.setCorrector(pcsd.getCorrector());
+			mc.setPoints(pcsd.getPoints());
+			manualCorrections.add(mc);
+		} else {
+			ManualCorrectionType mc;
+			if( manualCorrections.size() > 0 ) {
+				mc = manualCorrections.get(0);
+			} else {
+				mc = objectFactory.createManualCorrectionType();
+				manualCorrections.add(mc);
+			}
+			mc.setCorrector(pcsd.getCorrector());
+			mc.setPoints(pcsd.getPoints());
+		}
 	}
+
 	@Override
 	public boolean isProcessed(){
-		System.out.println("\n\nisProcessed() Called");
-		//return getAnswer()!=null
-		//		&& getAnswer().length() > 0
-		//		&& !getAnswer().equals(getText(memento,"defaultAnswer",null));
-		return false;
+		return getResult() != null && getResult().length() > 0 && !getResult().equals(getInitialText());
 	}
 
 	/*
@@ -90,17 +118,13 @@ public class SubTasklet_CompareTextTaskImpl extends AbstractAddonSubTasklet impl
 	 */
 	@Override
 	public void build(long randomSeed) throws TaskApiException {
-		System.out.println("\n\nbuild() Called");
+		//System.out.println("\n\nbuild() Called");
 	}
 
 	@Override
 	public int getHash(){
-		System.out.println("\n\ngetHash() Called");
-		StringBuffer ret = new StringBuffer();
-		ret.append( subTaskType.getRefId() );
-		//ret.append( getAnswer() );
-		ret.append( getVirtualSubtaskNumber() );
-		return ret.toString().hashCode();
+		String ret = subTaskType.getRefId() + getResult() + getVirtualSubtaskNumber();
+		return ret.hashCode();
 	}
 
 	// METHODS WHICH ARE SPECIFIC FOR THIS TASK FOLLOW FROM HERE:
@@ -108,29 +132,30 @@ public class SubTasklet_CompareTextTaskImpl extends AbstractAddonSubTasklet impl
 	@Override
 	public String getTagsString() {
 		// XPath: Memento/addonConfig/avaiableTags -> write into Base64 String
-		Element avaiableTags = (Element)mementoTaskDef.getElementsByTagName("avaiableTags").item(0);
-		try {
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			Transformer transformer;
-			transformer = transformerFactory.newTransformer();
-			DOMSource source = new DOMSource(avaiableTags);
-			ByteArrayOutputStream bytewriter = new ByteArrayOutputStream();
-			transformer.transform(source, new StreamResult(bytewriter));
-			// having it as base64 string so browsers won't complain
-			String ret = DatatypeConverter.printBase64Binary(bytewriter.toByteArray());
-			return ret;
-		} catch (TransformerConfigurationException e) {
-			e.printStackTrace();
-		} catch (TransformerException e) {
-			e.printStackTrace();
-		}
-		return "ERROR";
+		return XMLBase64.elementToBase64String(mementoTaskDef, "avaiableTags");
 	}
 
 	@Override
 	public String getInitialText() {
 		// XPath: Memento/textComparisonSubTaskDef/initialText
-		Element initialText = (Element)mementoTaskDef.getElementsByTagName("initialText").item(0);
+		Element initialText = (Element) mementoTaskDef.getElementsByTagName("initialText").item(0);
 		return initialText.getTextContent();
+	}
+
+	@Override
+	public String getResult() {
+		NodeList resultElement = mementoTaskHandling.getElementsByTagName("answer");
+		if(resultElement.getLength() == 1)
+			return resultElement.item(0).getTextContent();
+		return "EMPTY";
+	}
+
+	private void setResult(String resultString) {
+		Element resultElement = (Element) mementoTaskHandling.getElementsByTagName("answer").item(0);
+		if(resultElement == null) {
+			resultElement = mementoTaskHandling.getOwnerDocument().createElement("answer");
+			mementoTaskHandling.appendChild(resultElement);
+		}
+		resultElement.setTextContent(resultString);
 	}
 }
