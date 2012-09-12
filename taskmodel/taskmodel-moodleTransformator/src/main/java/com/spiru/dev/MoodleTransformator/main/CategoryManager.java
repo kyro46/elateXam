@@ -19,6 +19,7 @@ import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskDef.Category.ClozeTas
 import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskDef.Category.MappingTaskBlock.MappingConfig;
 import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskDef.Category.McTaskBlock.McConfig;
 import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskDef.Category.McTaskBlock.McConfig.Different;
+
 public class CategoryManager {
 
 	Category category = new Category();

@@ -275,6 +275,21 @@ public class Inputaufteiler {
 							 * Wird ein Category gefunden, dann verlasse die
 							 * TaskBlock-Erstellungsschleife und suche dir die
 							 * neue zu füllende Category aus dem CategoryManager
+							 * 
+							 * TODO Das ruft nach Rekursion:
+							 * 
+							 * Wenn es eine Category ist und zu einer
+							 * Unterkategorie gehört verfahre wie bisher mit den
+							 * TaskBlöcken -> füge der aktuellen Category eine
+							 * Unterkategorie hinzu.
+							 * 
+							 * Alternative: Category-Blöcke einzeln erstellen
+							 * (wie bisher) und iterativ gesondert einander
+							 * zuweisen
+							 * 
+							 * In beiden Fällen: Stringparser für "/" in
+							 * Category.Title nötig, um Unterordner zu
+							 * definieren.
 							 */
 							break;
 						}

@@ -14,6 +14,7 @@ import java.io.StringReader;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -22,12 +23,14 @@ import org.xml.sax.SAXException;
 
 import generated.Quiz.Question;
 import com.spiru.dev.MoodleTransformator.main.RandomIdentifierGenerator;
+
+import com.spiru.dev.MoodleTransformator.main.Base64Relocator;
 import de.thorstenberger.taskmodel.complex.jaxb.AddonSubTaskDef;
 
 public class TimeTask {
 
 	public static AddonSubTaskDef processing(Question question)
-			throws ParserConfigurationException, SAXException, IOException {
+			throws ParserConfigurationException, SAXException, IOException, TransformerException {
 
 		RandomIdentifierGenerator rand = new RandomIdentifierGenerator();
 
@@ -42,7 +45,7 @@ public class TimeTask {
 		// Spezielle Angaben pro Frage
 		subTask.setId(question.getName().getText().toString() + "_"
 				+ rand.getRandomID());
-		subTask.setProblem(question.getQuestiontext().getText());
+		subTask.setProblem(Base64Relocator.relocateBase64(question.getQuestiontext()));
 
 		
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

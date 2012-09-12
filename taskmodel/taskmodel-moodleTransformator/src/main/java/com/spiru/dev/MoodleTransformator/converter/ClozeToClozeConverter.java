@@ -8,18 +8,25 @@
 
 package com.spiru.dev.MoodleTransformator.converter;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+
+import org.xml.sax.SAXException;
 
 import com.spiru.dev.MoodleTransformator.main.RandomIdentifierGenerator;
 
 import generated.Quiz.Question;
+import com.spiru.dev.MoodleTransformator.main.Base64Relocator;
 import de.thorstenberger.taskmodel.complex.jaxb.ClozeSubTaskDef.Cloze;
 import de.thorstenberger.taskmodel.complex.jaxb.ClozeSubTaskDef.Cloze.Gap;
 import de.thorstenberger.taskmodel.complex.jaxb.ClozeSubTaskDef;
 
 public class ClozeToClozeConverter {
 
-	public static ClozeSubTaskDef processing(Question question) {
+	public static ClozeSubTaskDef processing(Question question) throws ParserConfigurationException, SAXException, IOException, TransformerException {
 
 		RandomIdentifierGenerator rand = new RandomIdentifierGenerator();
 
@@ -36,19 +43,20 @@ public class ClozeToClozeConverter {
 				+ rand.getRandomID());
 
 		String problem = "Lösen Sie folgenden Lückentext.";
-		// Konvertierung des String in separaten Block,
-		// falls bei häufiger Nutzung Auslagerung nötig
-		try {
-			byte[] bytes = problem.getBytes("UTF-8");
-			problem = new String(bytes);
-			// System.out.println(problem);
-			subTask.setProblem(problem);
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
 
-		subTask.setCloze(clozeParser(question.getQuestiontext().getText()));
+			// Konvertierung des String in separaten Block,
+			// falls bei häufiger Nutzung Auslagerung nötig
+			try {
+				byte[] bytes = problem.getBytes("UTF-8");
+				problem = new String(bytes);
+				// System.out.println(problem);
+				subTask.setProblem(problem);
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
 
+		
+		subTask.setCloze(clozeParser(Base64Relocator.relocateBase64(question.getQuestiontext())));
 
 		return subTask;
 	}
@@ -63,45 +71,48 @@ public class ClozeToClozeConverter {
 		int multichoiceindex = 0;
 		int numericalindex = 0;
 		int gapIndexToUse = 0;
-		
+
 		shortanswerindex = moodleText.indexOf(":SHORTANSWER:");
 		multichoiceindex = moodleText.indexOf(":MULTICHOICE:");
-		numericalindex = moodleText.indexOf(":NUMERICAL:");		
-		
-		
+		numericalindex = moodleText.indexOf(":NUMERICAL:");
+
 		// Die { und } suchen nachdem man :SHORTANSWER: :MULTICHOICE: oder
 		// :NUMERICAL: gefunden hat
 
 		do {
-			gapIndexToUse = Math.max(shortanswerindex, Math.max(multichoiceindex, numericalindex));
+			gapIndexToUse = Math.max(shortanswerindex,
+					Math.max(multichoiceindex, numericalindex));
 
-				klammeraufindex = moodleText.lastIndexOf("{", gapIndexToUse);
+			klammeraufindex = moodleText.lastIndexOf("{", gapIndexToUse);
 
-				if (klammeraufindex != -1) {
+			if (klammeraufindex != -1) {
 
-					if (klammerzuindex == 0) {
-						cloze.getTextOrGap().add(
-								moodleText.substring(klammerzuindex,
-										klammeraufindex));
-					} else {
-						cloze.getTextOrGap().add(
-								moodleText.substring(klammerzuindex + 1,
-										klammeraufindex));
-					}
-
-					klammerzuindex = moodleText.indexOf("}", klammeraufindex);
+				if (klammerzuindex == 0) {
 					cloze.getTextOrGap().add(
-							gapBuilder(moodleText.substring(klammeraufindex+1,
-									klammerzuindex)));
+							moodleText.substring(klammerzuindex,
+									klammeraufindex));
 				} else {
 					cloze.getTextOrGap().add(
-							moodleText.substring(klammerzuindex + 1));
+							moodleText.substring(klammerzuindex + 1,
+									klammeraufindex));
 				}
 
-			shortanswerindex = moodleText.indexOf(":SHORTANSWER:",gapIndexToUse+1);
-			multichoiceindex = moodleText.indexOf(":MULTICHOICE:",gapIndexToUse+1);
-			numericalindex = moodleText.indexOf(":NUMERICAL:", gapIndexToUse+1);
-			
+				klammerzuindex = moodleText.indexOf("}", klammeraufindex);
+				cloze.getTextOrGap().add(
+						gapBuilder(moodleText.substring(klammeraufindex + 1,
+								klammerzuindex)));
+			} else {
+				cloze.getTextOrGap().add(
+						moodleText.substring(klammerzuindex + 1));
+			}
+
+			shortanswerindex = moodleText.indexOf(":SHORTANSWER:",
+					gapIndexToUse + 1);
+			multichoiceindex = moodleText.indexOf(":MULTICHOICE:",
+					gapIndexToUse + 1);
+			numericalindex = moodleText.indexOf(":NUMERICAL:",
+					gapIndexToUse + 1);
+
 		} while (klammeraufindex != -1);
 		return cloze;
 	}
@@ -114,22 +125,23 @@ public class ClozeToClozeConverter {
 
 		int nextAnswer = 0;
 		System.out.println(input);
-		while((nextAnswer = input.indexOf("=",nextAnswer+1)) != -1){
+		while ((nextAnswer = input.indexOf("=", nextAnswer + 1)) != -1) {
 
-			if (input.indexOf("=",nextAnswer+1) == -1){
-			correctAnswer = input.substring(nextAnswer+1);
-			System.out.println(correctAnswer);
+			if (input.indexOf("=", nextAnswer + 1) == -1) {
+				correctAnswer = input.substring(nextAnswer + 1);
+				System.out.println(correctAnswer);
 			} else {
-				correctAnswer = input.substring(nextAnswer+1, input.indexOf("=",nextAnswer+1));
+				correctAnswer = input.substring(nextAnswer + 1,
+						input.indexOf("=", nextAnswer + 1));
 				System.out.println(correctAnswer);
 			}
 
 			gap.getCorrect().add(correctAnswer);
-			
+
 			correctAnswer = new String();
 
 		}
-		
+
 		return gap;
 	}
 

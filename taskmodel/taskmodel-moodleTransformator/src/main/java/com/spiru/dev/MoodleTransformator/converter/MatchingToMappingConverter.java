@@ -8,19 +8,26 @@
 
 package com.spiru.dev.MoodleTransformator.converter;
 
+import java.io.IOException;
 import java.util.*;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+
+import org.xml.sax.SAXException;
 
 import com.spiru.dev.MoodleTransformator.main.RandomIdentifierGenerator;
 
 import generated.Quiz.Question;
 
+import com.spiru.dev.MoodleTransformator.main.Base64Relocator;
 import de.thorstenberger.taskmodel.complex.jaxb.MappingSubTaskDef.Concept;
 import de.thorstenberger.taskmodel.complex.jaxb.MappingSubTaskDef.Assignment;
 import de.thorstenberger.taskmodel.complex.jaxb.MappingSubTaskDef;
 
 public class MatchingToMappingConverter {
 
-	public static MappingSubTaskDef processing(Question question) {
+	public static MappingSubTaskDef processing(Question question) throws ParserConfigurationException, SAXException, IOException, TransformerException {
 
 		RandomIdentifierGenerator rand = new RandomIdentifierGenerator();
 
@@ -36,7 +43,7 @@ public class MatchingToMappingConverter {
 			subTask.setId(question.getName().getText().toString() + "_"
 					+ rand.getRandomID());
 
-			subTask.setProblem(question.getQuestiontext().getText());
+			subTask.setProblem(Base64Relocator.relocateBase64(question.getQuestiontext()));
 
 			Concept concept = new Concept();
 			Assignment assignment = new Assignment();
@@ -101,4 +108,3 @@ public class MatchingToMappingConverter {
 	}
 
 }
-

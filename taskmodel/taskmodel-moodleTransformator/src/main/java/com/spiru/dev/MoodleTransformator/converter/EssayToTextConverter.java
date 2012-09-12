@@ -8,20 +8,28 @@
 
 package com.spiru.dev.MoodleTransformator.converter;
 
+import java.io.IOException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+
+import org.xml.sax.SAXException;
+
 import com.spiru.dev.MoodleTransformator.main.RandomIdentifierGenerator;
 
+import com.spiru.dev.MoodleTransformator.main.Base64Relocator;
 import de.thorstenberger.taskmodel.complex.jaxb.TextSubTaskDef;
 import generated.Quiz.Question;
 
 public class EssayToTextConverter {
 
-	public static TextSubTaskDef processing(Question question) {
+	public static TextSubTaskDef processing(Question question) throws ParserConfigurationException, SAXException, IOException, TransformerException {
 
 		RandomIdentifierGenerator rand = new RandomIdentifierGenerator();
 
 		TextSubTaskDef subTask = new TextSubTaskDef();
 
-			subTask.setProblem(question.getQuestiontext().getText().toString());
+			subTask.setProblem(Base64Relocator.relocateBase64(question.getQuestiontext()));
 			subTask.setHint(question.getName().getText().toString());
 
 			subTask.setTrash(false);
