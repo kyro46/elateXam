@@ -6,7 +6,7 @@
  * @version 1.0
  */
 
-package com.spiru.dev.MoodleTransformator.converter;
+package de.christophjobst.converter;
 
 import java.io.IOException;
 
@@ -15,10 +15,10 @@ import javax.xml.transform.TransformerException;
 
 import org.xml.sax.SAXException;
 
-import com.spiru.dev.MoodleTransformator.main.RandomIdentifierGenerator;
+import de.christophjobst.main.Base64Relocator;
 
-import com.spiru.dev.MoodleTransformator.main.Base64Relocator;
-import de.thorstenberger.taskmodel.complex.jaxb.TextSubTaskDef;
+import de.christophjobst.main.RandomIdentifierGenerator;
+import de.thorstenberger.taskmodel.complex.complextaskdef.TextSubTaskDef;
 import generated.Quiz.Question;
 
 public class ShortanswerToTextConverter {

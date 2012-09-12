@@ -1,5 +1,5 @@
 /**
- * Programm zur Konvertierung von aus Moodle exportierten Übungsfragen (Moodle-XML)
+ * Programm zur Konvertierung von aus Moodle exportierten �bungsfragen (Moodle-XML)
  * in Elate ComplexTaskDef-XML.
  *
  * @author Christoph Jobst
@@ -12,16 +12,14 @@
  * TODO Moodlebilder aus Version 2.3 in den HTML-Code schreiben. Siehe: http://aktuell.de.selfhtml.org/artikel/grafik/inline-images/
  */
 
-package com.spiru.dev.MoodleTransformator.main;
+package de.christophjobst.main;
 
 //import de.christophjobst.test.*;
-import com.spiru.dev.MoodleTransformator.main.Inputaufteiler;
-
-import de.thorstenberger.taskmodel.complex.jaxb.*;
-
+import de.thorstenberger.taskmodel.complex.complextaskdef.*;
 
 import generated.*;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileReader;
@@ -38,8 +36,9 @@ import javax.xml.bind.Unmarshaller;
 public class ElateXMLMain {
 
 	//Debug: Pfad zur Moodle-XML-Datei explizit angeben.
-	//private static final String QUIZ_XML = "./roma2.xml";
-	//private static final String COMPLEXTASKDEF_XML = "./complexTaskDef.xml";
+	private static final String QUIZ_XML = "./test_time_task.xml";
+	private static final String COMPLEXTASKDEF_XML = "./complexTaskDef.xml";
+
 	public static byte[] startTransformToElateFormat(byte[] input_xml_content) throws JAXBException, IOException {
 
 		/*//Beispiel: >> XmlTransformatorMoodleToElate.jar input.xml output.xml
@@ -79,13 +78,35 @@ public class ElateXMLMain {
 		//Dieser ist bei neu erstellten und eingefügten
 		//Elementen nicht als zusätzliches Attribut erwünscht.
 		StringWriter sw = new StringWriter();
-        m_complexTaskDef.marshal(complexTaskDef, sw);
-        String result = sw.toString();
-        result = result.replaceAll(" xmlns=\"\" xmlns:ns2=\"http://complex.taskmodel.thorstenberger.de/complexTaskDef\"", "");
+       m_complexTaskDef.marshal(complexTaskDef, sw);
+       String base = sw.toString();
+       //System.out.println(result);
+       base = base.replaceAll(" xmlns=\"\" xmlns:ns2=\"http://complex.taskmodel.thorstenberger.de/complexTaskDef\"", "");
+       
+       String anfang = base.substring(0, 71);
+       String ende = base.substring(72);
+       String namespace = " xmlns=\"http://complex.taskmodel.thorstenberger.de/complexTaskDef\"> ";
+       
+       String result = anfang + namespace + ende;
+//		 result = result.replaceAll(" xmlns=\"\"", "");
+
+
+        //System.out.println(result);
+// 		Writer wr = null;
+// 		try {
+// 			wr = new FileWriter("C:\\Users\\Chris\\Videos");
+// 			wr.write(result.getBytes("UTF-8").toString());
+// 		} finally {
+// 			try {
+// 				wr.flush();
+// 				wr.close();
+// 			} catch (Exception e) {
+// 			}
+// 		}		
+//		
 		
-
-		result.getBytes("UTF-8");
-
+		
+		
 //		ByteArrayOutputStream w = null;
 //		try {
 //			w = new ByteArrayOutputStream();
@@ -98,15 +119,23 @@ public class ElateXMLMain {
 //			}
 //		}
 //		return w.toByteArray();
-		return result.getBytes("UTF-8");
-	}
+       
+       byte[] bytes = result.getBytes("UTF-8");
+       
+		return bytes;
+	}	
 	
-
+	
+	
+	
+	
+	
+	
 	public static void main(String[] args) throws JAXBException, IOException {
 
 		//Beispiel: >> XmlTransformatorMoodleToElate.jar input.xml output.xml
-		final String QUIZ_XML = "./" + args[0];
-		final String COMPLEXTASKDEF_XML = "./" + args[1];
+		//final String QUIZ_XML = "./" + args[0];
+		//final String COMPLEXTASKDEF_XML = "./" + args[1];
 
 		// JAXB Context f�r Moodle-Quiz
 		JAXBContext context_quiz = JAXBContext.newInstance(Quiz.class);
@@ -163,5 +192,4 @@ public class ElateXMLMain {
 	
 	System.out.println("Done");
 	}	
-	
 }

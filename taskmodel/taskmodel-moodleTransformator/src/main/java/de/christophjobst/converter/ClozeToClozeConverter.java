@@ -6,7 +6,7 @@
  * @version 1.0
  */
 
-package com.spiru.dev.MoodleTransformator.converter;
+package de.christophjobst.converter;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -16,13 +16,12 @@ import javax.xml.transform.TransformerException;
 
 import org.xml.sax.SAXException;
 
-import com.spiru.dev.MoodleTransformator.main.RandomIdentifierGenerator;
-
 import generated.Quiz.Question;
-import com.spiru.dev.MoodleTransformator.main.Base64Relocator;
-import de.thorstenberger.taskmodel.complex.jaxb.ClozeSubTaskDef.Cloze;
-import de.thorstenberger.taskmodel.complex.jaxb.ClozeSubTaskDef.Cloze.Gap;
-import de.thorstenberger.taskmodel.complex.jaxb.ClozeSubTaskDef;
+import de.christophjobst.main.Base64Relocator;
+import de.christophjobst.main.RandomIdentifierGenerator;
+import de.thorstenberger.taskmodel.complex.complextaskdef.ClozeSubTaskDef.Cloze;
+import de.thorstenberger.taskmodel.complex.complextaskdef.ClozeSubTaskDef.Cloze.Gap;
+import de.thorstenberger.taskmodel.complex.complextaskdef.ClozeSubTaskDef;
 
 public class ClozeToClozeConverter {
 

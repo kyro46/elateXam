@@ -1,12 +1,12 @@
 /**
- * Programm zur Konvertierung von aus Moodle exportierten Ãœbungsfragen (Moodle-XML)
+ * Programm zur Konvertierung von aus Moodle exportierten Übungsfragen (Moodle-XML)
  * in Elate ComplexTaskDef-XML.
  *
  * @author Christoph Jobst
  * @version 1.0
  */
 
-package com.spiru.dev.MoodleTransformator.main;
+package de.christophjobst.main;
 
 import java.security.SecureRandom;
 import java.math.BigInteger;

@@ -6,19 +6,19 @@
  * @version 1.0
  */
 
-package com.spiru.dev.MoodleTransformator.main;
+package de.christophjobst.main;
 
-import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskDef.Category.AddonTaskBlock;
-import de.thorstenberger.taskmodel.complex.jaxb.Config;
-import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskDef.Category;
-import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskDef.Category.ClozeTaskBlock;
-import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskDef.Category.MappingTaskBlock;
-import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskDef.Category.McTaskBlock;
-import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskDef.Category.TextTaskBlock;
-import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskDef.Category.ClozeTaskBlock.ClozeConfig;
-import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskDef.Category.MappingTaskBlock.MappingConfig;
-import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskDef.Category.McTaskBlock.McConfig;
-import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskDef.Category.McTaskBlock.McConfig.Different;
+import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef.Category.AddonTaskBlock;
+import de.thorstenberger.taskmodel.complex.complextaskdef.Config;
+import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef.Category;
+import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef.Category.ClozeTaskBlock;
+import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef.Category.MappingTaskBlock;
+import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef.Category.McTaskBlock;
+import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef.Category.TextTaskBlock;
+import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef.Category.ClozeTaskBlock.ClozeConfig;
+import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef.Category.MappingTaskBlock.MappingConfig;
+import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef.Category.McTaskBlock.McConfig;
+import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef.Category.McTaskBlock.McConfig.Different;
 
 public class CategoryManager {
 

@@ -6,12 +6,11 @@
  * @version 1.0
  */
 
-package com.spiru.dev.MoodleTransformator.converter;
-
-import com.spiru.dev.MoodleTransformator.main.RandomIdentifierGenerator;
+package de.christophjobst.converter;
 
 import generated.Quiz.Question;
-import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskDef.Category;
+import de.christophjobst.main.RandomIdentifierGenerator;
+import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef.Category;
 
 public class CategoryToCategoryConverter {
 

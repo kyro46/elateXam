@@ -1,12 +1,12 @@
 /**
- * Programm zur Konvertierung von aus Moodle exportierten Übungsfragen (Moodle-XML)
+ * Programm zur Konvertierung von aus Moodle exportierten �bungsfragen (Moodle-XML)
  * in Elate ComplexTaskDef-XML.
  *
  * @author Christoph Jobst
  * @version 1.0
  */
 
-package com.spiru.dev.MoodleTransformator.converter;
+package de.christophjobst.converter;
 
 import java.io.IOException;
 import java.util.*;
@@ -16,14 +16,13 @@ import javax.xml.transform.TransformerException;
 
 import org.xml.sax.SAXException;
 
-import com.spiru.dev.MoodleTransformator.main.RandomIdentifierGenerator;
-
 import generated.Quiz.Question;
 
-import com.spiru.dev.MoodleTransformator.main.Base64Relocator;
-import de.thorstenberger.taskmodel.complex.jaxb.MappingSubTaskDef.Concept;
-import de.thorstenberger.taskmodel.complex.jaxb.MappingSubTaskDef.Assignment;
-import de.thorstenberger.taskmodel.complex.jaxb.MappingSubTaskDef;
+import de.christophjobst.main.Base64Relocator;
+import de.christophjobst.main.RandomIdentifierGenerator;
+import de.thorstenberger.taskmodel.complex.complextaskdef.MappingSubTaskDef.Concept;
+import de.thorstenberger.taskmodel.complex.complextaskdef.MappingSubTaskDef.Assignment;
+import de.thorstenberger.taskmodel.complex.complextaskdef.MappingSubTaskDef;
 
 public class MatchingToMappingConverter {
 

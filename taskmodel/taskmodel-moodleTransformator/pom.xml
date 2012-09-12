@@ -8,7 +8,7 @@
     <version>1.0.0-SNAPSHOT</version>
   </parent>
   
-  <groupId>com.spiru.dev</groupId>
+  <groupId>de.christophjobst</groupId>
   <artifactId>MoodleTransformator</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>

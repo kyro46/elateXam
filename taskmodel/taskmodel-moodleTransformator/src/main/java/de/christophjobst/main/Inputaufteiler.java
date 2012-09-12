@@ -7,30 +7,25 @@
  *
  */
 
-package com.spiru.dev.MoodleTransformator.main;
+package de.christophjobst.main;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.spiru.dev.MoodleTransformator.converter.CategoryToCategoryConverter;
-import com.spiru.dev.MoodleTransformator.converter.ClozeToClozeConverter;
-import com.spiru.dev.MoodleTransformator.converter.EssayToTextConverter;
-import com.spiru.dev.MoodleTransformator.converter.MatchingToMappingConverter;
-import com.spiru.dev.MoodleTransformator.converter.MultichoiceToMcConverter;
-import com.spiru.dev.MoodleTransformator.converter.ShortanswerToTextConverter;
-import com.spiru.dev.MoodleTransformator.converter.TruefalseToMcConverter;
-
-
-import com.spiru.dev.addonQuestionGetter.CompareTextTask;
-import com.spiru.dev.addonQuestionGetter.GroupingTask;
-import com.spiru.dev.addonQuestionGetter.TimeTask;
-import com.spiru.dev.MoodleTransformator.main.CategoryAssignment;
-import com.spiru.dev.MoodleTransformator.main.CategoryManager;
-import com.spiru.dev.MoodleTransformator.main.RandomIdentifierGenerator;
-import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskDef;
-import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskDef.Config.CorrectionMode.Regular;
-import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskDef.Config.CorrectionMode;
+import de.christophjobst.addonQuestionGetter.CompareTextTask;
+import de.christophjobst.addonQuestionGetter.GroupingTask;
+import de.christophjobst.addonQuestionGetter.TimeTask;
+import de.christophjobst.converter.CategoryToCategoryConverter;
+import de.christophjobst.converter.ClozeToClozeConverter;
+import de.christophjobst.converter.EssayToTextConverter;
+import de.christophjobst.converter.MatchingToMappingConverter;
+import de.christophjobst.converter.MultichoiceToMcConverter;
+import de.christophjobst.converter.ShortanswerToTextConverter;
+import de.christophjobst.converter.TruefalseToMcConverter;
+import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef;
+import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef.Config.CorrectionMode.Regular;
+import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef.Config.CorrectionMode;
 import generated.*;
 
 public class Inputaufteiler {

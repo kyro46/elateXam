@@ -6,7 +6,7 @@
  * @version 1.0
  *
  */
-package com.spiru.dev.addonQuestionGetter;
+package de.christophjobst.addonQuestionGetter;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -22,12 +22,11 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import generated.Quiz.Question;
-import com.spiru.dev.MoodleTransformator.main.RandomIdentifierGenerator;
+import de.christophjobst.main.Base64Relocator;
+import de.christophjobst.main.RandomIdentifierGenerator;
+import de.thorstenberger.taskmodel.complex.complextaskdef.AddonSubTaskDef;
 
-import com.spiru.dev.MoodleTransformator.main.Base64Relocator;
-import de.thorstenberger.taskmodel.complex.jaxb.AddonSubTaskDef;
-
-public class TimeTask {
+public class CompareTextTask {
 
 	public static AddonSubTaskDef processing(Question question)
 			throws ParserConfigurationException, SAXException, IOException, TransformerException {
@@ -45,8 +44,10 @@ public class TimeTask {
 		// Spezielle Angaben pro Frage
 		subTask.setId(question.getName().getText().toString() + "_"
 				+ rand.getRandomID());
-		subTask.setProblem(Base64Relocator.relocateBase64(question.getQuestiontext()));
+		subTask.setProblem(Base64Relocator.relocateBase64(question.getQuestiontext()));		
 
+
+		
 		
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
@@ -57,7 +58,7 @@ public class TimeTask {
 				
 	     Element root = document.getDocumentElement();
 
-	     subTask.setTaskType("timeTask");
+	     subTask.setTaskType("CompareText");
 	     
 	     subTask.setMemento(root);
 		

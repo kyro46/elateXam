@@ -35,7 +35,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
-import com.spiru.dev.MoodleTransformator.main.ElateXMLMain;
+import de.christophjobst.main.ElateXMLMain;
 
 import de.thorstenberger.examServer.tasks.TaskFactoryImpl;
 import de.thorstenberger.examServer.webapp.form.TaskDefUploadForm;
@@ -57,7 +57,7 @@ public class TaskUploadAction extends BaseAction {
 		DocumentBuilder parser = factory.newDocumentBuilder();
 		Document document = parser.parse(new InputSource(new ByteArrayInputStream(file_data)));
 		Node root_element = document.getFirstChild();
-		if(root_element.getNodeName() == "quiz") {
+		if(root_element.getNodeName().equals("quiz")) {
 			file_data = ElateXMLMain.startTransformToElateFormat(file_data);
 			//System.out.println(new String(file_data));
 		}

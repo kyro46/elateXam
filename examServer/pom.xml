@@ -607,7 +607,7 @@
     	<version>0.0.30-SNAPSHOT</version>
     </dependency>
     <dependency>
-    	<groupId>com.spiru.dev</groupId>
+    	<groupId>de.christophjobst</groupId>
     	<artifactId>MoodleTransformator</artifactId>
     	<version>0.0.1-SNAPSHOT</version>
     </dependency>

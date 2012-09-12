@@ -6,7 +6,7 @@
  * @version 1.0
  *
  */
-package com.spiru.dev.addonQuestionGetter;
+package de.christophjobst.addonQuestionGetter;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -22,10 +22,9 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import generated.Quiz.Question;
-import com.spiru.dev.MoodleTransformator.main.RandomIdentifierGenerator;
-
-import com.spiru.dev.MoodleTransformator.main.Base64Relocator;
-import de.thorstenberger.taskmodel.complex.jaxb.AddonSubTaskDef;
+import de.christophjobst.main.Base64Relocator;
+import de.christophjobst.main.RandomIdentifierGenerator;
+import de.thorstenberger.taskmodel.complex.complextaskdef.AddonSubTaskDef;
 
 public class GroupingTask {
 

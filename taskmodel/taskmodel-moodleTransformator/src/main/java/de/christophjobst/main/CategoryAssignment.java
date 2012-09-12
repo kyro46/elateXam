@@ -6,11 +6,11 @@
  * @version 1.0
  */
 
-package com.spiru.dev.MoodleTransformator.main;
+package de.christophjobst.main;
 
 import java.util.List;
 
-import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskDef;
+import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef;
 
 public class CategoryAssignment {
 
