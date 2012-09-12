@@ -1,8 +1,5 @@
 package com.spiru.dev.timeTask_addon;
 
-
-
-
 import de.thorstenberger.taskmodel.complex.addon.AddOnSubTaskletFactory;
 import de.thorstenberger.taskmodel.complex.complextaskdef.Block;
 import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDefRoot;
@@ -14,14 +11,15 @@ import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskHandling.Try.Page.Add
 public class TimeTaskAddOnSubTaskletFactoryImpl  implements
 AddOnSubTaskletFactory {
 
-public AddOnSubTasklet createAddOnSubTasklet(ComplexTaskDefRoot root, Block block, Object subTaskDef, Object subTask) {
-	return new SubTasklet_TimeTaskImpl(root,block,(AddonSubTaskDef)subTaskDef,(AddonSubTask)subTask);
-}
+	@Override
+	public AddOnSubTasklet createAddOnSubTasklet(ComplexTaskDefRoot root,Block block, Object subTaskDef, Object subTask) {
+		return new SubTasklet_TimeTaskImpl(root,block,(AddonSubTaskDef)subTaskDef,(AddonSubTask)subTask);
+	}
 
-public String getAddonTaskType() {
-System.out.println("Subtasklet CompareTextTask successfully loaded");
+	public String getAddonTaskType() {
+		System.out.println("Subtasklet CompareTextTask successfully loaded");
 
-return "timeTask";
-}
+		return "timeTask";
+	}
 
 }

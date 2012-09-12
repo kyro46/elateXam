@@ -30,7 +30,7 @@ public class PanelSpielplatz extends JPanel {
 	/** Liste mit allen Verbindungen zwischen zwei Elementen */
 	private List<Verbindung> verbindungen = null;
 	
-	private String imageAsString;
+	private Image imageAsString = null;
 	
 	/**
 	 * Konstruktor fuer PanelSpielplatz
@@ -51,25 +51,24 @@ public class PanelSpielplatz extends JPanel {
 	/**
 	 * zeichnet alle Verbindungen
 	 */
-	private void zeichneVerbindungen(){		
+	private void zeichneVerbindungen(Graphics g){		
 		for(Verbindung n:verbindungen){			
-			n.draw(this.getGraphics());
+			n.draw(g);
 		}			
 	}
 	
 	@Override
 	public void paint( Graphics g ){		
 		super.paint( g );	   
-		zeichneVerbindungen();
+		zeichneVerbindungen(g);
 		if (this.imageAsString != null){
 			this.setImage();
 			//System.out.println("paint");
 		}
 	  }
 	
-	private void setImage(){		
-		Image img = new ImageIcon(Base64.base64ToByteArray(this.imageAsString)).getImage();
-		this.getGraphics().drawImage(img, 0, 0, null);
+	private void setImage(){				
+		this.getGraphics().drawImage(imageAsString, 0, 0, null);
 	}
 	
 	/**
@@ -212,6 +211,7 @@ public class PanelSpielplatz extends JPanel {
 	}
 
 	public String getBase64StringFromImage(){
+		repaint();
 		BufferedImage img=new BufferedImage(this.getWidth(),this.getHeight(),BufferedImage.TYPE_INT_ARGB);
 		this.paint(img.getGraphics());//dirty hack :)
 		  ByteArrayOutputStream bos=new ByteArrayOutputStream();
@@ -224,8 +224,9 @@ public class PanelSpielplatz extends JPanel {
 		  return Base64.byteArrayToBase64(bos.toByteArray());	
 	}
 	
-	public void setBase64String(String base64){
-		this.imageAsString = base64;
+	public void setBase64String(String base64){		
+		if (base64 != null)
+			imageAsString = new ImageIcon(Base64.base64ToByteArray(base64)).getImage();
 	}
 	
 	

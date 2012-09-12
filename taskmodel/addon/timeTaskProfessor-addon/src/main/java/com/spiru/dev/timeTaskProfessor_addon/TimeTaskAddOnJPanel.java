@@ -95,34 +95,13 @@ public class TimeTaskAddOnJPanel extends JPanel {
     	JPanelEditor panelInput = new JPanelEditor(this, mouseListener);
     	panelInput.setBounds(0,0,400,130);
     	
-    	JButton buttonSave = new JButton("Save");
-    	buttonSave.addActionListener(new ActionListener(){
-
-			public void actionPerformed(ActionEvent evt) {
-				buttonActionSave();
-				
-			}
-    		
-    	});
-    	buttonSave.setBounds(
-    			10,
-    			scrollPanePlayground.getY()+scrollPanePlayground.getHeight()+5,
-    			370,
-    			25
-    			);
-    	
     	this.add(panelInput);
     	this.add(scrollPane);
     	this.add(jpanelButtons);
     	this.add(scrollPanePlayground);
-    	this.add(buttonSave);
     	this.setLayout(null);    	
     	this.setBounds(0,0,400,460);
-    }
-    
-    private void buttonActionSave(){
-    	save();
-    }
+    }    
     
     public void addElement(String id, String name, String color){
     	Color c = new Color(Integer.parseInt(color));
@@ -151,6 +130,16 @@ public class TimeTaskAddOnJPanel extends JPanel {
     		}
     	}
     	elementList.removeAll(deleteList);
+    	for(int i=0; i<jpanelPlayground.getSymbols().size(); i++){
+			Symbol n = jpanelPlayground.getSymbols().get(i);
+			for(int j=0; j<deleteList.size(); j++){
+				DragElement k = deleteList.get(j);
+				if(n.getBackground() == k.getColor()){
+					jpanelPlayground.removeSymbol(n);
+					break;
+				}
+			}
+		}
     	scrollPane.paintAll(scrollPane.getGraphics());
     }
     

@@ -3,9 +3,8 @@ package com.spiru.dev.timeTask_addon;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
-
-
 import de.thorstenberger.taskmodel.MethodNotSupportedException;
 import de.thorstenberger.taskmodel.complex.ParsingException;
 import de.thorstenberger.taskmodel.complex.complextaskhandling.CorrectionSubmitData;
@@ -15,13 +14,13 @@ import de.thorstenberger.taskmodel.view.ViewContext;
 
 public class SubTaskView_TimeTask extends SubTaskView{
 
-	private SubTasklet_TimeTask AnordnungSubTasklet;
+	private SubTasklet_TimeTask timeSubTasklet;
 
 	/**
 	 *
 	 */
-	public SubTaskView_TimeTask( SubTasklet_TimeTask anordnungSubTasklet ) {
-		this.AnordnungSubTasklet = anordnungSubTasklet;
+	public SubTaskView_TimeTask( SubTasklet_TimeTask timeSubTasklet ) {
+		this.timeSubTasklet = timeSubTasklet;
 	}
 
 	/**
@@ -31,28 +30,49 @@ public class SubTaskView_TimeTask extends SubTaskView{
 		return getRenderedHTML( relativeTaskNumber, false );
 	}
 
-	public String getRenderedHTML(int relativeTaskNumber, boolean corrected) {
-		StringBuffer ret = new StringBuffer();
-
-		// workaround: textarea nicht disabled
-		//corrected = false;
-
-		ret.append("<div align=\"left\">\n");
-		ret.append("<textarea name=\"task[" + relativeTaskNumber + "].Anordnung\" cols=\"" +
-						AnordnungSubTasklet.getTextFieldWidth() + "\" rows=\"" + AnordnungSubTasklet.getTextFieldHeight() + "\" onChange=\"setModified()\"" +
-						( corrected ? "disabled=\"disabled\"" : "" ) + ">\n");
-		ret.append( corrected?AnordnungSubTasklet.getLastCorrectedAnswer():AnordnungSubTasklet.getAnswer() );
-		ret.append("</textarea></div>\n");
-
-		if(corrected) {
-			ret.append("<div class=\"problem\">\n");
-			ret.append("Anordnungantwort:<br><br>");
-			ret.append(AnordnungSubTasklet.getAnordnungGradeDoc());
-			ret.append("</div><br>");
+	public String getRenderedHTML(int relativeTaskNumber, boolean corrected) {		
+		String path = "com/spiru/dev/timeTask_addon/TimeTaskAddOnApplet.class";
+		String ret = "<applet archive=\"applet/timeTask.jar\" code=\"" + path + "\""
+				+ " id=\"applet_%s\""
+				+ " width=\"710\" height=\"540\" title=\"Java\">\n";
+		ret += "<param name=\"param\" value=\""+timeSubTasklet.getXML()+"\">";
+		if (timeSubTasklet.fromHandling()){
+			ret += "<param name=\"handling\" value=\"true\">";			
 		}
-
-		return ret.toString();
-
+		else{
+			ret += "<param name=\"handling\" value=\"false\">";
+		}
+		
+		/*
+		List<String> dragElements = timeSubTasklet.getDragElements();
+		for(int i=0; i<dragElements.size(); i++){
+			ret += "<param name=\"e"+i+"\" value=\""+dragElements.get(i)+"\">";
+		}
+		List<String> datePoints = timeSubTasklet.getDatePoints();
+		System.out.println("********** add DatePoints to HTML");
+		for(int i=0; i<datePoints.size(); i++){
+			ret += "<param name=\"dp"+i+"\" value=\""+datePoints.get(i)+"\">";
+		}
+		*/
+		
+		ret+= "</applet>\n";
+		ret += "<textarea name=\"task[%s].result\" id=\"task_%s.result\" style=\"display:none;\"></textarea>";
+		if (!corrected) {
+			ret += "<script type=\"text/javascript\">\n";
+			ret += " var preSave_task_%s = function(){\n";
+			ret += " 	document.getElementById(\"task_%s.result\").value = document.applet_%s.getResult();\n";
+			//ret += " 	alert(document.getElementById(\"task_%s.result\").value);\n";
+			ret += "};\n";
+			ret += " var leavePage_task_%s = function(){\n";
+			ret += " 	if( document.applet_%s.hasChanged() ){\n";
+			ret += " 		setModified();\n";
+			ret += " 	};\n";
+			ret += " };\n";
+			ret += "preSaveManager.registerCallback( preSave_task_%s );\n";
+			ret += "leavePageManager.registerCallback( leavePage_task_%s );\n";
+			ret += "</script>\n";
+		}
+		return ret.replaceAll("%s",""+relativeTaskNumber);
 	}
 
 	public String getCorrectedHTML( ViewContext context, int relativeTaskNumber ){
@@ -63,7 +83,7 @@ public class SubTaskView_TimeTask extends SubTaskView{
 	    StringBuffer ret = new StringBuffer();
 	    ret.append( getRenderedHTML( -1, true ) );
 
-	    ret.append(getCorrectorPointsInputString(actualCorrector, "Anordnung", AnordnungSubTasklet));
+	    ret.append(getCorrectorPointsInputString(actualCorrector, "Time", timeSubTasklet));
 
 	    return ret.toString();
 	}
@@ -71,17 +91,14 @@ public class SubTaskView_TimeTask extends SubTaskView{
 	/**
 	 * @see de.thorstenberger.uebman.services.student.task.complex.SubTaskView#getSubmitData(java.util.Map, int)
 	 */
-	public SubmitData getSubmitData(Map postedVarsForTask)
-	throws ParsingException {
-
+	public SubmitData getSubmitData(Map postedVarsForTask) throws ParsingException {
 		Iterator it = postedVarsForTask.keySet().iterator();
 		while( it.hasNext() ) {
 			String key=(String) it.next();
-			if( getMyPart( key ).equals( "Anordnung" ) )
-				return new TimeTaskSubmitData( (String) postedVarsForTask.get(key) );
+			String value = (String) postedVarsForTask.get(key);	
+			return new TimeTaskSubmitData( value );
 		}
 		throw new ParsingException();
-
 	}
 
 	public CorrectionSubmitData getCorrectionSubmitData( Map postedVars ) throws ParsingException, MethodNotSupportedException{

@@ -22,10 +22,9 @@ public class JPanelPlayGround extends JPanel {
 		this.mouseListener = mouseListener;
 		this.addMouseListener(mouseListener);		
 		this.addMouseMotionListener(new MyMouseMotionListener(this));		
-		timeLine = new TimeLine(this);		
+		this.timeLine = new TimeLine(this);				
+		this.setLayout(null);			
 		this.setPreferredSize(new Dimension((int)timeLine.getLine().getP2().getX()+40,300));
-		this.setLayout(null);	
-		
 	}
 	
 	@Override
@@ -58,14 +57,14 @@ public class JPanelPlayGround extends JPanel {
 	 * @param e the original Element
 	 * @param maus the Location for the Symbol
 	 */
-	public void addSymbol(Element e, Point maus){	
+	public void addSymbol(DragElement e, Point maus){	
 		if (maus.y<220){
 			for(Symbol n: symbols){
 				if (e.getColor() == n.getBackground()){
 					return; // Element schon vorhanden
 				}
 			}		
-			Symbol symbol = new Symbol(maus, e.getColor());
+			Symbol symbol = new Symbol(maus, e.getColor(),e.getId());
 			symbol.addMouseListener(mouseListener);
 			symbols.add(symbol);
 			this.add(symbol);
@@ -143,6 +142,10 @@ public class JPanelPlayGround extends JPanel {
 	
 	public TimeLine getTimeLine(){
 		return timeLine;
+	}
+	
+	public List<Symbol> getSymbols(){
+		return symbols;
 	}
 	
 	/**

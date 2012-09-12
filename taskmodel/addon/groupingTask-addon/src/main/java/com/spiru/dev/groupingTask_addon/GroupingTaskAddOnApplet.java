@@ -2,17 +2,8 @@ package com.spiru.dev.groupingTask_addon;
 
 import java.applet.Applet;
 import java.awt.Dimension;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
-
-import com.spiru.dev.groupingTask_addon.Utils.PanelSpielplatz;
 
 
 public class GroupingTaskAddOnApplet extends Applet{
@@ -24,9 +15,30 @@ public class GroupingTaskAddOnApplet extends Applet{
 	    	this.setSize(new Dimension(400,400));
 	    	this.setMinimumSize(new Dimension(400,400));
 	    	this.setPreferredSize(new Dimension(400,400));
-	    	this.setLayout(null);
+	    	this.setLayout(null);	    		    		    
 	    	
-	    	String[][] elements = new String[2][2]; 
+	    	List<String> params = new ArrayList<String>();
+	    	String param = this.getParameter("e0");
+	    	int anz = 0;
+	    	while(param != null){
+	    		params.add(param);
+	    		anz++;
+	    		param = this.getParameter("e"+anz);	    		
+	    	}
+	    	
+	    	String[][] elements = new String[params.size()/2][2];
+	    	int j = 0;
+	    	for(int k=0; k<params.size(); k++){	    		
+	    		if(k % 2 == 0){
+	    			// caption
+	    			elements[j][0] = params.get(k);	    				    				    			
+	    		}else{ 
+	    			// count
+	    			elements[j][1] = params.get(k);
+	    			j++;
+	    		}
+	    	}
+	    		    	 
 	    	/*
 	    //	try{
 	    		File targetFile = new File("C:\\Users\\Yves\\Desktop\\Test.xml");
@@ -50,12 +62,14 @@ public class GroupingTaskAddOnApplet extends Applet{
 					elements[i][0] = " "+name+" ";
 					elements[i][1] = count;
 				}
-				*/
+				*//*
 	    	elements[0][0] = "name";
 	    	elements[0][1] = "6";
 	    	elements[1][0] = "name323";
 	    	elements[1][1] = "98";
-				gpanel = new GroupingTaskAddOnJPanel(elements);	        
+	    	*/
+	    		String image = this.getParameter("handling");
+				gpanel = new GroupingTaskAddOnJPanel(elements, image);	        
 		        add(gpanel);		        
 		        
 	    //	}
@@ -71,8 +85,12 @@ public class GroupingTaskAddOnApplet extends Applet{
 
 	    @Override
 	    public void stop() {
-	    /*	String text = gpanel.getPlayGround().getBase64StringFromImage();
-	    	System.out.println(text);
-	    	*/
-	    }	    	    
+	    }	  
+	    
+		public String getResult() {
+			return gpanel.getPlayGround().getBase64StringFromImage();
+		}
+		public boolean hasChanged() {
+			return true;//jpanel.getRightTextAreaContent() != jpanel.getLeftTextAreaContent();
+		}
 }

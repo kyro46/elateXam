@@ -51,6 +51,20 @@ public class DatePoint extends JPanel{
 		}				
 	}		
 	
+	public String getDateFromStudent(){
+		if (visible){
+			return "";
+		}
+		return textfield.getText();
+	}
+	
+	public void setDateFromStudent(String input){
+		if (visible){
+			return;
+		}
+		textfield.setText(input);
+	}
+	
 	/**
 	 * if format is correct?
 	 *  if dd.mm.jjjj then Color is black,
@@ -63,6 +77,14 @@ public class DatePoint extends JPanel{
 			}
 			else textfield.setForeground(Color.BLACK);
 		}
+	}
+	
+	public String getCaption(){
+		return caption;
+	}
+	
+	public boolean isDateVisible(){
+		return this.visible;
 	}
 	
 	public Date getDate(){			
@@ -78,31 +100,6 @@ public class DatePoint extends JPanel{
 		
 		
 	}
-	
-	private void irgendetwas(){		
-		String str = "19.08.0001";
-		String zwei = "18.08.1991";
-		String drei = "01.01.1900";
-		ArrayList<Date> dates = new ArrayList<Date>();		
-	
-		DateFormat datForm = DateFormat.getDateInstance();
-		datForm.setLenient(false);
-		try {
-			Date date = datForm.parse(str);
-			dates.add(date);
-			Date date2 = datForm.parse(zwei);
-			dates.add(date2);
-			Date date3 = datForm.parse(drei);
-			dates.add(date3);
-			Collections.sort(dates);
-			for(int i=0; i<dates.size(); i++){
-				System.out.println(dates.get(i));
-			}
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
+
 
 }

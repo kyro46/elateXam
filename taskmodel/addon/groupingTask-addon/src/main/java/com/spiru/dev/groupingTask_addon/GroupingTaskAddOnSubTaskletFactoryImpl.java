@@ -12,13 +12,13 @@ import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskHandling.Try.Page.Add
 public class GroupingTaskAddOnSubTaskletFactoryImpl  implements
 AddOnSubTaskletFactory {
 
-public AddOnSubTasklet createAddOnSubTasklet(ComplexTaskDefRoot root, Block block, Object subTaskDef, Object subTask) {
-	return new SubTasklet_GroupingTaskImpl(root,block,(AddonSubTaskDef)subTaskDef,(AddonSubTask)subTask);
-}
+	public AddOnSubTasklet createAddOnSubTasklet(ComplexTaskDefRoot root, Block block, Object subTaskDef, Object subTask) {
+		return new SubTasklet_GroupingTaskImpl(root,block,(AddonSubTaskDef)subTaskDef,(AddonSubTask)subTask);
+	}
 
-public String getAddonTaskType() {
-	System.out.println("Subtasklet groupingTask successfully loaded");
-return "groupingTask";
-}
+	public String getAddonTaskType() {
+		System.out.println("Subtasklet groupingTask successfully loaded");
+		return "groupingTask";
+	}
 
 }

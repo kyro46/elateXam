@@ -67,7 +67,7 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 	private List<DragElement> elementList;
 
 	private ScrollPane scrollPane;
-	private String base64String;
+	private String base64String = null;
 
 	/**
 	 * Creates new form AddonOnJPanel
@@ -180,47 +180,40 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 
 	public void deleteElement(){
 		List<DragElement> deleteList = new ArrayList<DragElement>();
+		List<DragElement> deleteListPlayGround = new ArrayList<DragElement>();
 		for(DragElement n: elementList){
 			if (n.isElementMarked()){
 				jPanelElements.remove(n);
-				deleteList.add(n);
+				for(int i=0; i<jPanelSpielplatz.getElemente().size(); i++){
+					DragElement de = jPanelSpielplatz.getElemente().get(i); 
+					if (de.getCaption().equals(n.getCaption())){						
+						deleteListPlayGround.add(de);
+					}
+				}
+				deleteList.add(n);				
 			}
-		}    	
+		}
+		boolean del = true;
+		while(del){
+			del=false;
+			for(int i=0; i<jPanelSpielplatz.getElemente().size(); i++){
+				DragElement n = jPanelSpielplatz.getElemente().get(i);
+				for(int j=0; j<deleteListPlayGround.size(); j++){
+					DragElement k = deleteListPlayGround.get(j);
+					if(k.getCaption().equals(n.getCaption())){
+						deleteListPlayGround.remove(k);
+						jPanelSpielplatz.removeElement(k);
+						del=true;
+						break;
+					}
+				}
+			}
+		}
 		elementList.removeAll(deleteList);
 		jPanelElements.paintAll(jPanelElements.getGraphics());
 	}
 
-	/*public void save(){
-		org.jdom.Element memento = new org.jdom.Element("Memento");
-		org.jdom.Document doc = new org.jdom.Document( memento );
-		org.jdom.Element addonConfig = new org.jdom.Element("addonConfig");
-		memento.addContent(addonConfig);
-		org.jdom.Element dragSubTaskDef = new org.jdom.Element("dragSubTaskDef");
-		memento.addContent(dragSubTaskDef);
-		org.jdom.Element solution = new org.jdom.Element("Solution");
-		solution.setAttribute("id","String");
-		dragSubTaskDef.addContent(solution);
-
-		for(DragElement n:elementList){
-			org.jdom.Element boxcontainer = new org.jdom.Element("BoxContainer");
-			boxcontainer.setAttribute("BoxName",n.getCaption());
-			boxcontainer.setAttribute("count",n.getMaxCount());
-			dragSubTaskDef.addContent(boxcontainer);
-		}
-
-		File targetFile = new File("/home/rrae/src/SHK2012/Dropbox/ElateXamV2Team/SHK/Yves/Test.xml");
-		try {
-			FileWriter a = new FileWriter(targetFile);
-			XMLOutputter out = new XMLOutputter(Format.getPrettyFormat());
-			out.output( doc, a );			
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}  	    	
-		// irgendwie speichern, aber wie? -> in solution
-		//List<Verbindung> connectionLines = jPanelSpielplatz.getVerbindungen();
-		Image image = jPanelSpielplatz.createImage(400,400);
-	}*/
+	
 	public String save() {
 		String ret = "";
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -268,7 +261,7 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 		byte[] x = null; // needed for ByteArrayInputStream
 		if (xml == null) { // Ist NULL, wenn Applet nicht von HTML, sondern von Eclipse aus gestartet wird
 			xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Memento><addonConfig /><dragSubTaskDef>" +
-					"<Solution id=\"String\" /><BoxContainer BoxName=\"jhhds\" count=\"5\" />" +
+					"<Solution id=\"\" /><BoxContainer BoxName=\"jhhds\" count=\"5\" />" +
 					"<BoxContainer BoxName=\"aaaajhhds\" count=\"n\" /></dragSubTaskDef></Memento>";
 			try { x = xml.getBytes("utf-8"); } catch (UnsupportedEncodingException e) { e.printStackTrace(); }
 		} else if (xml.length() == 0) {

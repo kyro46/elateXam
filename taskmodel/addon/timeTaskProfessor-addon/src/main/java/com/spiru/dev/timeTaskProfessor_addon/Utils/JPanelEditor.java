@@ -150,7 +150,7 @@ public class JPanelEditor extends JPanel {
 		}		
 	}
 	
-	private void deleteElement(){
+	private void deleteElement(){		
 		panel.deleteElement();
 	}
 }

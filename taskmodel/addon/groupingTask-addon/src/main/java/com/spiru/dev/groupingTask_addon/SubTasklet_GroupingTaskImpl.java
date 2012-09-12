@@ -1,21 +1,24 @@
 package com.spiru.dev.groupingTask_addon;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
+import javax.xml.bind.DatatypeConverter;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import de.thorstenberger.taskmodel.TaskApiException;
-import de.thorstenberger.taskmodel.complex.RandomUtil;
 import de.thorstenberger.taskmodel.complex.complextaskdef.Block;
 import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDefRoot;
 import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDefRoot.CorrectionModeType;
@@ -23,263 +26,124 @@ import de.thorstenberger.taskmodel.complex.complextaskhandling.CorrectionSubmitD
 import de.thorstenberger.taskmodel.complex.complextaskhandling.SubmitData;
 import de.thorstenberger.taskmodel.complex.complextaskhandling.subtasklets.impl.AbstractAddonSubTasklet;
 import de.thorstenberger.taskmodel.complex.jaxb.AddonSubTaskDef;
-import de.thorstenberger.taskmodel.complex.jaxb.SubTaskDefType;
-import de.thorstenberger.taskmodel.complex.jaxb.SubTaskType;
 import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskHandling.Try.Page.AddonSubTask;
+import de.thorstenberger.taskmodel.complex.jaxb.SubTaskDefType;
 
-public class SubTasklet_GroupingTaskImpl  extends AbstractAddonSubTasklet implements SubTasklet_GroupingTask {
-	
-
-	
-	//Irgendwie strange hier mit Innerclass rumzubasteln, aber erstmal den Workflow durchgehen und dann schaun
-	//;-)
-	private class AnordnungSubTaskDummy{
-		private Element memento;
-
-
-		public AnordnungSubTaskDummy(AddonSubTask atSubTask) {
-			parseSubTask(atSubTask);
-			atSubTask.setTaskType(getAddOnType());
-		}
-
-		private void parseSubTask(AddonSubTask atSubTask) {
-			this.memento=atSubTask.getMemento();
-			if(memento==null) {
-				try {
-          memento=DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument().createElementNS("http://complex.taskmodel.thorstenberger.de/complexTaskHandling","Memento");
-        } catch (Exception e) {
-          // TODO make sure there is always a memento element!
-          e.printStackTrace();
-        }
-				atSubTask.setMemento(memento);
-			}
-		}
-
-		public String getAnswer() {
-			return getText(memento,"answer",null);
-		}
-		public void setAnswer(String value) {
-			setText(memento,"answer",value);
-		}
-		public String getLastCorrectedAnswer() {
-			return getText(memento,"lastCorrectedAnswer",null);
-		}
-		public void setLastCorrectedAnswer(String value) {
-			setText(memento,"lastCorrectedAnswer",value);
-		}
-		
-		public String getDefaultAnswer() {
-			return getText(memento,"defaultAnswer",null);
-		}
-
-		public void setDefaultAnswer(String defaultAnswer) {
-			setText(memento,"defaultAnswer",defaultAnswer);
-		}
-
-		public void setAnordnungScore(double score) {
-			setText(memento,"score",Double.toString(score));
-		}
-		public double getAnordnungScore() {
-			return Double.parseDouble(getText(memento,"score","-1"));
-		}
-
-
-	}
-	
-
-	private AnordnungSubTaskDummy anordnungSubTask;
-
+public class SubTasklet_GroupingTaskImpl extends AbstractAddonSubTasklet implements SubTasklet_GroupingTask {
+	private Element mementoTaskDef;
+	private Element mementoTaskHandling;
 
 	public SubTasklet_GroupingTaskImpl( ComplexTaskDefRoot root, Block block, SubTaskDefType aoSubTaskDef, AddonSubTask atSubTask ) {
-		
 		super(root, block,aoSubTaskDef,atSubTask);
-		
-		this.anordnungSubTask = new AnordnungSubTaskDummy(atSubTask);
+		mementoTaskDef = ((AddonSubTaskDef)aoSubTaskDef).getMemento();
+		mementoTaskHandling = atSubTask.getMemento();
+		if (mementoTaskHandling == null) { // null at the first instantiation
+			try {
+				mementoTaskHandling = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument()
+						.createElementNS("http://complex.taskmodel.thorstenberger.de/complexTaskHandling", "Memento");
+			} catch (DOMException e) {
+				e.printStackTrace();
+			} catch (ParserConfigurationException e) {
+				e.printStackTrace();
+			}
+			atSubTask.setMemento(mementoTaskHandling); // won't be null next time
+		}
+		atSubTask.setTaskType(getAddOnType());
 	}
 
 	@Override
-    public String getProblem(){
-		
-		//ruft die Methode von AddonSubtasklet auf, dort wird auch das Problem in der XML Version gespeichert
-		//muss nicht überschrieben werden!!!!
-		return super.getProblem();
-		
+	public String getAddOnType() {
+		return ((AddonSubTaskDef)this.jaxbSubTaskDef).getTaskType();
 	}
 
-	public String getAnswer(){
-		String answer=anordnungSubTask.getAnswer();
-		if(answer==null) {
-            answer=anordnungSubTask.getDefaultAnswer();
-        }
-		return answer;
-	}
-	public String getLastCorrectedAnswer(){
-		String answer=anordnungSubTask.getLastCorrectedAnswer();
-		if(answer==null) {
-            answer=getAnswer();
-        }
-		return answer;
-	}
-
+	@Override
 	public void doSave( SubmitData submitData ) throws IllegalStateException{
-		GroupingTaskSubmitData tsd = (GroupingTaskSubmitData) submitData;
-		anordnungSubTask.setAnswer( tsd.getAnswer() );
+		GroupingTaskSubmitData ctSD = (GroupingTaskSubmitData) submitData;
+		setAnswer(ctSD.getAnswer());
 	}
 
+	@Override
 	public void doAutoCorrection(){
 		try {
-			
-			//Dummywert FRAGE WOHER NEHMEN WENN NICHT STEHLEN????
-			anordnungSubTask.setAnordnungScore(334);
-			anordnungSubTask.setLastCorrectedAnswer(getAnswer());
-		} catch (Exception e) {//TODO bloed
+			// TODO!
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-
+	@Override
 	public void doManualCorrection( CorrectionSubmitData csd ){
-		GroupingTaskCorrectionSubmitData acsd=(GroupingTaskCorrectionSubmitData) csd;
-		setCorrection(acsd.getPoints(), "manually corrected", false);
+		//CompareTextTaskCorrectionSubmitData acsd = (CompareTextTaskCorrectionSubmitData) csd;
+		//super.setAutoCorrection(acsd.getPoints());
+		// TODO!
 	}
 
-	protected void setCorrection( float points, String doc, boolean auto ){
-		if(auto) {
-            super.setAutoCorrection(points);
-        }
-        else {
-            ;//TODO
-        }
-		//Für was ist AutotoolDoc bzw. AnordnungsDoc??????????
-		//anordnungSubTask.setAutotoolDoc(doc);
-	}
-
-
+	@Override
 	public boolean isProcessed(){
-		return anordnungSubTask.getAnswer()!=null
-		&& anordnungSubTask.getAnswer().length() > 0
-		&& !anordnungSubTask.getAnswer().equals(anordnungSubTask.getDefaultAnswer());//mmh, was wenn die aber die richtige ist? wohl unwahrscheinlich
+		return getAnswer() != null && getAnswer().length() > 0;// && !getResult().equals(getText(memento,"defaultAnswer",null));
 	}
 
 	/*
 	 *  (non-Javadoc)
 	 * @see de.thorstenberger.taskmodel.complex.complextaskhandling.SubTasklet#build()
 	 */
-    public void build(long randomSeed) throws TaskApiException {
-    	// nothing to build :)
-    	// except: 
-    	anordnungSubTask.setAnswer( "Hier wurde die Methode build aufgerufen!!!!!!! Was macht sie es und wann?" );
-    	
-	}
-
-	private byte[] serialize(Object obj) {
-		try {
-			ByteArrayOutputStream bos=new ByteArrayOutputStream();
-			ObjectOutputStream oos=new ObjectOutputStream(bos);
-			oos.writeObject(obj);
-			oos.close();
-			byte[] arr=bos.toByteArray();
-			bos.close();
-			return arr;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-	private Object deserialize(byte[] arr) {
-		try {
-			ByteArrayInputStream bos=new ByteArrayInputStream(arr);
-			ObjectInputStream oos=new ObjectInputStream(bos);
-			Object o=oos.readObject();
-			oos.close();
-			bos.close();
-			return o;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-
-
-	
-
-	public int getHash(){
-		StringBuffer ret = new StringBuffer();
-		ret.append( subTaskType.getRefId() );
-		ret.append( getAnswer() );
-		ret.append( getVirtualSubtaskNumber() );
-		return ret.toString().hashCode();
-	}
-
-//Helper methods........................................................
-
-	private Element getElement(Element memento, String string) {
-		Element e=null;
-		NodeList nl=memento.getElementsByTagName(string);
-		if(nl.getLength()>0) {
-            e=(Element) nl.item(0);
-        }
-		return e;
-	}
-
-	private String getText(Element memento, String nodeName, String dflt) {
-		Element element=getElement(memento,nodeName);
-		if(element!=null) {
-			String text = element.getFirstChild().getTextContent();
-			return text;
-		}
-		return dflt;
-	}
-
-	private String deEscapeXML(String text) {
-		return text.replaceAll("&amp;", "&")
-		.replaceAll("&lt;", "<")
-		.replaceAll("&gt;", ">")
-		.replaceAll("&apos;", "\\'")
-		.replaceAll("&quot;", "\\\"");
-	}
-
-	private String escapeXML(String text) {
-		return text.replaceAll("&", "&amp;")
-		.replaceAll("<", "&lt;")
-		.replaceAll(">", "&gt;")
-		.replaceAll("\\'", "&apos;")
-		.replaceAll("\\\"", "&quot;");
-	}
-
-	private void setText(Element memento, String nodeName, String text) {
-		Element element=getElement(memento,nodeName);
-		if(element==null) {
-			element=memento.getOwnerDocument().createElement(nodeName);
-			memento.appendChild(element);
-		}
-		element.setTextContent(text);//setTextContent() laesst sich mit maven nicht kompilieren??? dom3 nicht im classpath?
-
-	}
-
-
-	public String getAddOnType() {
-		return ((AddonSubTaskDef)this.jaxbSubTaskDef).getTaskType();
-	}
-
-	
-	public double getAnordnungScore() {
-		return anordnungSubTask.getAnordnungScore();
-	}
-
-	public String getAnordnungGradeDoc() {
-		// TODO Auto-generated method stub
-		//Für was wird das benötigt????
-		return "SubTasklet_AnordnungImpl.getAnordnungGradDoc() wurde aufgerufen!!!!";
+	@Override
+	public void build(long randomSeed) throws TaskApiException {
+		//System.out.println("\n\nbuild() Called");
 	}
 
 	@Override
-	public List<org.jdom.Element> getChildren(org.jdom.Element parent, String name) {		
-		List<org.jdom.Element> xmlList = parent.getChildren(name);
-		return xmlList;
+	public int getHash(){
+		String ret = subTaskType.getRefId() + getAnswer() + getVirtualSubtaskNumber();
+		return ret.hashCode();
 	}
 
+	// METHODS WHICH ARE SPECIFIC FOR THIS TASK FOLLOW FROM HERE:	
 
-	
+	@Override
+	public String getAnswer() {
+		NodeList resultText = mementoTaskHandling.getElementsByTagName("answer");
+		if(resultText.getLength() == 1)
+			return resultText.item(0).getTextContent();
+		return "";
+	}
+
+	private void setAnswer(String resultString) {
+		Element resultText = (Element) mementoTaskHandling.getElementsByTagName("answer").item(0);
+		if(resultText == null) {
+			resultText = mementoTaskHandling.getOwnerDocument().createElement("answer");
+			mementoTaskHandling.appendChild(resultText);
+		}
+		resultText.setTextContent(resultString);
+	}
+		
+	@Override
+	public List<String> getBoxContainerAttributes() {		
+		// dragSubTaskDef Element herausfiltern
+		Element dragSubTaskDef = (Element)mementoTaskDef.getElementsByTagName("dragSubTaskDef").item(0);				
+		// alle BoxContainer aus dragSubTaskDef filtern		
+		NodeList boxContainer = dragSubTaskDef.getElementsByTagName("BoxContainer");		
+		// Attribute der BoxContainer auslesen
+		List<String> stringList = new ArrayList<String>();
+		for(int i=0; i<boxContainer.getLength(); i++){
+			Element container = (Element)boxContainer.item(i);
+			stringList.add(container.getAttribute("BoxName"));
+			stringList.add(container.getAttribute("count"));
+		}		
+		return stringList;
+	}
+
+	@Override
+	public boolean loadFromHandling() {
+		if (mementoTaskHandling.getElementsByTagName("answer").item(0) != null){
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public String getImage() {		
+		return mementoTaskHandling.getElementsByTagName("answer").item(0).getTextContent();
+	}
+
 }

@@ -31,11 +31,14 @@ public class TimeLine {
 	public TimeLine(JPanelPlayGround panel/* List of DatePoints *//* groesse mit angeben */){	
 		// create DatePoints
 		datePoints = new ArrayList<DatePoint>();
-		this.line = new Line2D.Double(10,250,400-10,250);	
+		this.line = new Line2D.Double(10,250,400-10,250);
+		/*
 		// StartDatePoint
 		DatePoint start = new DatePoint("19.08.0001",true); 
 		panel.add(start);
 		datePoints.add(start);
+		*/
+		/*
 		// Test Points
 		int year = 1010;
 		for(int i=0; i<5; i++){
@@ -52,9 +55,10 @@ public class TimeLine {
 		
 		// arrange DatePoints on Line
 		sortDatePoints();
+		*/
 	}
 	
-	private void sortDatePoints(){
+	public void sortDatePoints(){
 		Date[] dates = new Date[datePoints.size()];
 		for(int i=0; i<dates.length; i++){
 			dates[i] = datePoints.get(i).getDate();

@@ -47,10 +47,10 @@ public class GroupingTaskAddOnJPanel extends JPanel {
      * Creates new form AddonOnJPanel
      * @param initElementList String-Array mit allen Captions fuer Elemente
      */
-    public GroupingTaskAddOnJPanel(String[][] allElements) {
+    public GroupingTaskAddOnJPanel(String[][] allElements, String image) {
     	elementList = new ArrayList<Element>();
     	listener = new MyMouseListener();
-        initComponents(allElements);
+        initComponents(allElements, image);
     }
     
     /**  
@@ -65,7 +65,7 @@ public class GroupingTaskAddOnJPanel extends JPanel {
      * initialisiert alle Komponenten
      * @param initElementList String-Array mit allen Captions fuer Elemente
      */
-    private void initComponents(String[][] allElements) {
+    private void initComponents(String[][] allElements, String image) {
     	// Panel mit zur Auswahl stehenden Elementen
     	jPanelElements = new JPanel();      	    	    	
     	// add Elements
@@ -119,6 +119,7 @@ public class GroupingTaskAddOnJPanel extends JPanel {
     	
     	// Groesse des Panels fuer ScrollPane wichtig, sonst wird es nicht angezeigt
     	jPanelSpielplatz.setPreferredSize(new Dimension(600,600));
+    	jPanelSpielplatz.setBase64String(image);
     	JScrollPane scroll = new JScrollPane(jPanelSpielplatz,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
     			JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);    	
     	scroll.setMinimumSize(new Dimension(160, 200));

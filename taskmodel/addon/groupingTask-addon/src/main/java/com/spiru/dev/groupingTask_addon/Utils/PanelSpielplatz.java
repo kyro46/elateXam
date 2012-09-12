@@ -31,6 +31,7 @@ public class PanelSpielplatz extends JPanel {
 	private MyMouseListener listener;
 	/** Liste mit allen Verbindungen zwischen zwei Elementen */
 	private List<Verbindung> verbindungen = null;
+	private Image imageAsString = null;
 	
 	/**
 	 * Konstruktor fuer PanelSpielplatz
@@ -62,9 +63,14 @@ public class PanelSpielplatz extends JPanel {
 	public void paint( Graphics g ){		
 		super.paint( g );			
 		zeichneVerbindungen(g);
-		//g.drawLine(0,0,100,200);
-		//this.setImage();
+		if (this.imageAsString != null){
+			this.setImage();
+		}
 	  }
+	
+	private void setImage(){				
+		this.getGraphics().drawImage(imageAsString, 0, 0, null);
+	}
 	
 	/**
 	 * Fuegt ein neues Element zur liste hinzu,
@@ -73,6 +79,7 @@ public class PanelSpielplatz extends JPanel {
 	 * @param pos Point-Objekt mit Koordinaten fuer Position des Elementes
 	 */
 	public void addElement(Element e, Point pos){
+		imageAsString = null;
 		Element neuesElement = null;
 		// element schon auf PanelSpielplatz?
 		for (Element n: elemente){
@@ -114,7 +121,8 @@ public class PanelSpielplatz extends JPanel {
 	 * Loescht ein Element und setzt dessen Anzahl zurueck
 	 * @param e Element welches gelöscht werden soll
 	 */
-	public void removeElement(Element e){			
+	public void removeElement(Element e){	
+		imageAsString = null;
 		for (Element n:auswahlElemente){
 			if (n.getCaption().equals(e.getCaption()))
 				n.incAnz();
@@ -132,6 +140,7 @@ public class PanelSpielplatz extends JPanel {
 	 * @param linie Verbindung welche hinzugefuegt werden soll
 	 */
 	public void addVerbindung(Verbindung linie){
+		imageAsString = null;
 		// prüfen, dass sie nicht schon vorhanden ist...***********************************************************
 		for(Verbindung n:verbindungen){
 			if (n.find(linie)){
@@ -148,6 +157,7 @@ public class PanelSpielplatz extends JPanel {
 	 * @param e Element dessen Verbindungen geloescht werden sollen
 	 */
 	private void deleteVerbindung(Element e){
+		imageAsString = null;
 		List<Verbindung> clear = new ArrayList<Verbindung>();
 		// finde alle Verbindungen zum Element e
 		for(Verbindung n: verbindungen){
@@ -164,6 +174,7 @@ public class PanelSpielplatz extends JPanel {
 	 * und setzt Anzahl der AuswahlElemente zurueck
 	 */
 	public void clear(){
+		imageAsString = null;
 		this.removeAll();
 		// Anzahl aller AuswahlElemente zuruecksetzen
 		for(Element n:auswahlElemente){
@@ -215,6 +226,11 @@ public class PanelSpielplatz extends JPanel {
 			return null;
 		}
 		  return Base64.byteArrayToBase64(bos.toByteArray());	
+	}
+	
+	public void setBase64String(String base64){		
+		if (base64 != null)
+			imageAsString = new ImageIcon(Base64.base64ToByteArray(base64)).getImage();
 	}
 	
 /*	public void setImage(){		

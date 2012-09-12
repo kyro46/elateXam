@@ -2,14 +2,22 @@ package com.spiru.dev.timeTask_addon;
 
 import java.applet.Applet;
 import java.awt.Dimension;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
+import javax.xml.bind.DatatypeConverter;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 
 public class TimeTaskAddOnApplet extends Applet{
@@ -18,35 +26,96 @@ public class TimeTaskAddOnApplet extends Applet{
 	
 	    @Override
 	    public void init() {	 	    	
-	    	this.setSize(new Dimension(600,600));
-	    	this.setMinimumSize(new Dimension(600,600));
-	    	this.setPreferredSize(new Dimension(600,600));
-	    	this.setLayout(null);	  
-	    	
-	    	String[][] elements; 
-	    	try{
-	    		File targetFile = new File("C:\\Users\\wikjichess\\Dropbox\\ElateXamV2Team\\SHK\\Yves\\TimeTest.xml");
-	    		Document doc;				
-			    doc = new SAXBuilder().build(targetFile);				
-	    		Element memento = doc.getRootElement();
-	    		Element timelineSubTaskDef = memento.getChild("timelineSubTaskDef");
-	    		List<Element> assignedEvent = timelineSubTaskDef.getChildren("assignedEvent");
-	    		elements = new String[assignedEvent.size()][2];	    		
-				for (int i = 0; i < assignedEvent.size(); i++) {
-					String name = assignedEvent.get(i).getAttributeValue("name");
-					String color = assignedEvent.get(i).getAttributeValue("color");
-					elements[i][0] = name;
-					elements[i][1] = color;
-					System.out.println("s");
-				}
-				gpanel = new TimeTaskAddOnJPanel(elements);	        
-		        add(gpanel);	
-	    	}
-	    	catch(Exception e){
-		        e.printStackTrace();
-	    	}	    	
+	    	this.setSize(new Dimension(400,420));
+	    	this.setMinimumSize(new Dimension(400,420));
+	    	this.setPreferredSize(new Dimension(400,420));
+	    	this.setLayout(null);	  	    
+	    	gpanel = new TimeTaskAddOnJPanel(/*dragElements, datePoints*/);	  
+	    	load();
+	        add(gpanel);   	
 	    }
 
+	    public void load(){	    	
+				String xml = getParameter("param");
+				String loadFromHandling = null; 
+				loadFromHandling = getParameter("handling");
+				byte[] x = null; // needed for ByteArrayInputStream
+				if (xml == null) return;
+				// assumption: Not editing existing-, but adding new Question -> nothing to do
+				if (xml.length() == 0) return;
+				// from moodle we will get a base64 string
+				x = DatatypeConverter.parseBase64Binary(xml);
+				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+				factory.setIgnoringComments(true);
+				factory.setCoalescing(true); // Convert CDATA to Text nodes
+				factory.setNamespaceAware(false); // No namespaces: this is default
+				factory.setValidating(false); // Don't validate DTD: also default
+				
+				try{					
+					DocumentBuilder parser = factory.newDocumentBuilder();
+					Document document = parser.parse(new InputSource(new ByteArrayInputStream(x)));
+					Element memento = (Element) document.getElementsByTagName("Memento").item(0);									
+					Element timelineSubTaskDef = (Element) memento.getElementsByTagName("timelineSubTaskDef").item(0);
+					NodeList assignedEventList = timelineSubTaskDef.getElementsByTagName("assignedEvent");									
+					for (int i = 0; i < assignedEventList.getLength(); i++) {
+						Element assignedEvent = (Element) assignedEventList.item(i);						
+						String id = assignedEvent.getAttribute("id");
+						String name = assignedEvent.getAttribute("name");
+						String color = assignedEvent.getAttribute("color");
+						gpanel.addElement(id, name, color);						
+					}
+					NodeList dateList = timelineSubTaskDef.getElementsByTagName("date");
+					for(int i=0; i<dateList.getLength(); i++){
+						Element date = (Element) dateList.item(i);
+						String datePoint1 = date.getAttribute("datePoint1");
+						String datePoint2 = date.getAttribute("datePoint2");
+						String dPasTextbox = date.getAttribute("whichDatePointAsTextbox");																			
+						if (dPasTextbox == null){
+						// visible = true bei beiden
+							gpanel.addDatePoint(datePoint1, true, null);
+							gpanel.addDatePoint(datePoint2, true, null);
+						}
+						else if (dPasTextbox.equals("all")){
+						// visible = false bei beiden
+							String datePointStudent1 = date.getAttribute("datePointStudent1");
+							String datePointStudent2 = date.getAttribute("datePointStudent2");
+							gpanel.addDatePoint(datePoint1, false, datePointStudent1);
+							gpanel.addDatePoint(datePoint2, false, datePointStudent2);
+						}
+						else if (dPasTextbox.equals("datePoint1")){
+						// datePoint1 as Textbox
+							String datePointStudent1 = date.getAttribute("datePointStudent1");
+							gpanel.addDatePoint(datePoint1, false,datePointStudent1);
+							gpanel.addDatePoint(datePoint2, true, null);
+						}
+						else{
+						// datePoint2 as Textbox
+							String datePointStudent2 = date.getAttribute("datePointStudent2");
+							gpanel.addDatePoint(datePoint1, true, null);
+							gpanel.addDatePoint(datePoint2, false, datePointStudent2);
+						}
+						if(loadFromHandling != null && loadFromHandling.equals("true")){
+							NodeList correctAssignmentIDList = date.getElementsByTagName("correctAssignmentID");
+							for(int k=0; k<correctAssignmentIDList.getLength(); k++){
+								Element n = (Element) correctAssignmentIDList.item(k);
+								String eventID = n.getAttribute("eventId");
+								String posX = n.getAttribute("PosX");
+								String posY = n.getAttribute("PosY");
+								String lineX = n.getAttribute("LineX");
+								gpanel.addSymbol(eventID, posX, posY, lineX);
+							}
+						}
+					}
+				} catch (ParserConfigurationException e) {
+					e.printStackTrace();
+				} catch (SAXException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+	    }
+
+	    
 	    @Override
 	    public void start() {	   	    	
 	    }
@@ -54,4 +123,12 @@ public class TimeTaskAddOnApplet extends Applet{
 	    @Override
 	    public void stop() {
 	    }	    
+	    
+		public String getResult() {		
+			return gpanel.save();
+		}
+		
+		public boolean hasChanged() {
+			return true;
+		}
 }

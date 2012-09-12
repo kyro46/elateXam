@@ -23,7 +23,6 @@ public class JPanelEditor extends JPanel {
 	private MyMouseListener listener;
 	private List<DragElement> elementList;
 	private GroupingTaskAddOnJPanel panel;
-	private JButton buttonSave;
 	private JButton buttonDelete;
 	
 	public JPanelEditor(int x, int y, int breit, int hoch, MyMouseListener listener, List<DragElement> elementList, GroupingTaskAddOnJPanel panel){
@@ -47,15 +46,7 @@ public class JPanelEditor extends JPanel {
 	          public void actionPerformed(ActionEvent e) {
 	            buttonAddAction();
 	          }
-	        } );
-	    
-	    /*buttonSave = new JButton("Save");
-	    buttonSave.setBounds(310,35,80,25);
-	    buttonSave.addActionListener( new ActionListener() {
-	          public void actionPerformed(ActionEvent e) {
-	        	 buttonSaveAction();	        	  
-	          }
-	        } );*/
+	        } );	    
 	    
 	    buttonDelete = new JButton("Delete");
 	    buttonDelete.setBounds(220,35,100,25);
@@ -77,7 +68,6 @@ public class JPanelEditor extends JPanel {
 		this.add(textfield);
 		this.add(count);
 		this.add(buttonAdd);
-		//this.add(buttonSave);
 		this.add(buttonDelete);
 	}
 	
@@ -97,10 +87,6 @@ public class JPanelEditor extends JPanel {
 				elementList.add(e);		
 			panel.addElements();
 		}
-	}
-	
-	private void buttonSaveAction(){
-		panel.save();
 	}
 	
 	private void buttonDeleteAction(){
