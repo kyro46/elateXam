@@ -69,7 +69,7 @@ public class DatePoint extends JPanel{
 		return caption;
 	}
 	
-	public void setMarked(boolean mark){
+	public void setMarked(boolean mark){		
 		Border border = this.getBorder();
 		Border margin;
 		

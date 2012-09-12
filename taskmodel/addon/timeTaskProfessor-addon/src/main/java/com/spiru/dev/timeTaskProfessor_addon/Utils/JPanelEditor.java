@@ -3,6 +3,8 @@ package com.spiru.dev.timeTaskProfessor_addon.Utils;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DateFormat;
+import java.util.Date;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -137,6 +139,14 @@ public class JPanelEditor extends JPanel {
 	private void addDate(){
 		if (textfieldDate.getText().equals(""))
 			return;
+		try{
+			DateFormat datForm = DateFormat.getDateInstance();
+			datForm.setLenient(false);
+			Date date = datForm.parse(textfieldDate.getText());
+		}
+		catch(Exception e){
+			return;
+		}
 		DatePoint d = new DatePoint(textfieldDate.getText(),checkboxVisible.isSelected());		
 		panel.addDatePoint(d);
 	}

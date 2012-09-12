@@ -11,10 +11,12 @@ public class GroupingTaskAddOnApplet extends Applet{
 	private GroupingTaskAddOnJPanel gpanel;
 	
 	    @Override
-	    public void init() {	 	    	
-	    	this.setSize(new Dimension(400,400));
-	    	this.setMinimumSize(new Dimension(400,400));
-	    	this.setPreferredSize(new Dimension(400,400));
+	    public void init() {	
+	    	int width = this.getWidth();
+	    	int height = this.getHeight();
+	    	this.setSize(new Dimension(width,height));
+	    	this.setMinimumSize(new Dimension(width,height));
+	    	this.setPreferredSize(new Dimension(width,height));
 	    	this.setLayout(null);	    		    		    
 	    	
 	    	List<String> params = new ArrayList<String>();
@@ -38,44 +40,9 @@ public class GroupingTaskAddOnApplet extends Applet{
 	    			j++;
 	    		}
 	    	}
-	    		    	 
-	    	/*
-	    //	try{
-	    		File targetFile = new File("C:\\Users\\Yves\\Desktop\\Test.xml");
-	    		Document doc = null;
-				try {
-					doc = new SAXBuilder().build(targetFile);
-				} catch (JDOMException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-	    		Element memento = doc.getRootElement();
-	    		Element dragSubTaskDef = memento.getChild("dragSubTaskDef");
-	    		List<Element> xmlList = dragSubTaskDef.getChildren("BoxContainer");
-	    		elements = new String[xmlList.size()][2];
-				for (int i = 0; i < xmlList.size(); i++) {
-					String name = xmlList.get(i).getAttributeValue("BoxName");
-					String count = xmlList.get(i).getAttributeValue("count");
-					elements[i][0] = " "+name+" ";
-					elements[i][1] = count;
-				}
-				*//*
-	    	elements[0][0] = "name";
-	    	elements[0][1] = "6";
-	    	elements[1][0] = "name323";
-	    	elements[1][1] = "98";
-	    	*/
 	    		String image = this.getParameter("handling");
-				gpanel = new GroupingTaskAddOnJPanel(elements, image);	        
-		        add(gpanel);		        
-		        
-	    //	}
-	    	//catch(Exception e){
-	    		
-	    	//}	    		       
+				gpanel = new GroupingTaskAddOnJPanel(elements, image, width, height);	        
+		        add(gpanel);	    		       
 	    }
 
 	    @Override

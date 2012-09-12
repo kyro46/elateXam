@@ -25,12 +25,13 @@ public class TimeTaskAddOnApplet extends Applet{
 	private TimeTaskAddOnJPanel gpanel;
 	
 	    @Override
-	    public void init() {	 	    	
-	    	this.setSize(new Dimension(400,420));
-	    	this.setMinimumSize(new Dimension(400,420));
-	    	this.setPreferredSize(new Dimension(400,420));
+	    public void init() {
+	    	int width = this.getWidth();
+	    	this.setSize(new Dimension(width,420));
+	    	this.setMinimumSize(new Dimension(width,420));
+	    	this.setPreferredSize(new Dimension(width,420));
 	    	this.setLayout(null);	  	    
-	    	gpanel = new TimeTaskAddOnJPanel(/*dragElements, datePoints*/);	  
+	    	gpanel = new TimeTaskAddOnJPanel(width);	  
 	    	load();
 	        add(gpanel);   	
 	    }

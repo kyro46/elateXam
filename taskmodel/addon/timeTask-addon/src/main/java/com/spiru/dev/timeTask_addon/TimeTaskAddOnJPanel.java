@@ -52,8 +52,8 @@ public class TimeTaskAddOnJPanel extends JPanel {
 	private JScrollPane scrollPanePlayground;
 	private JScrollPane scrollPane;
 	
-    public TimeTaskAddOnJPanel(/*String[][] elements, String[][] dates*/) {
-    	init();
+    public TimeTaskAddOnJPanel(int width) {
+    	init(width);
     }
     
     @Override
@@ -62,7 +62,7 @@ public class TimeTaskAddOnJPanel extends JPanel {
     	super.paint(g);
     }
     
-    private void init(/*String[][] elements, String[][] dates*/){
+    private void init(int width){
     	mouseListener = new MyMouseListener();    	
     	jpanelOfElements = new JPanelOfElements(mouseListener);
     	jpanelButtons = new JPanel();
@@ -79,17 +79,17 @@ public class TimeTaskAddOnJPanel extends JPanel {
     	mouseListener.setPlayGround(jpanelPlayground);
     	new MyDropTargetListener(jpanelPlayground);
     	scrollPane = new JScrollPane(jpanelOfElements);
-    	scrollPane.setBounds(0,0,400,60);
-    	jpanelButtons.setBounds(0,60,400,40);
+    	scrollPane.setBounds(0,0,width,60);
+    	jpanelButtons.setBounds(0,60,width,40);
     	    	
     	scrollPanePlayground = new JScrollPane(jpanelPlayground);
-    	scrollPanePlayground.setBounds(0,100,400,320);
+    	scrollPanePlayground.setBounds(0,100,width,320);
     	
     	this.add(scrollPane);
     	this.add(jpanelButtons);
     	this.add(scrollPanePlayground);
     	this.setLayout(null);
-    	this.setBounds(0,0,400,420);
+    	this.setBounds(0,0,width,420);
     }    
     
     public void addElement(String id, String name, String color){

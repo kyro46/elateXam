@@ -56,9 +56,9 @@ public class TimeTaskAddOnJPanel extends JPanel {
 	private JScrollPane scrollPane;
 	private TimeTaskAddOnApplet applet;
 	
-    public TimeTaskAddOnJPanel(TimeTaskAddOnApplet applet) {
+    public TimeTaskAddOnJPanel(TimeTaskAddOnApplet applet, int width) {
     	this.applet = applet;
-    	init();
+    	init(width);
     }
     
     @Override
@@ -67,7 +67,7 @@ public class TimeTaskAddOnJPanel extends JPanel {
     	super.paint(g);
     }
     
-    private void init(){
+    private void init(int width){
     	mouseListener = new MyMouseListener();
     	// The elements 
     	List<Object> objects = new ArrayList<Object>(); 
@@ -86,21 +86,21 @@ public class TimeTaskAddOnJPanel extends JPanel {
     	mouseListener.setPlayGround(jpanelPlayground);
     	new MyDropTargetListener(jpanelPlayground);
     	scrollPane = new JScrollPane(jpanelOfElements);
-    	scrollPane.setBounds(0,130,400,60);
-    	jpanelButtons.setBounds(0,190,400,40);
+    	scrollPane.setBounds(0,130,width,60);
+    	jpanelButtons.setBounds(0,190,width,40);
     	    	
     	scrollPanePlayground = new JScrollPane(jpanelPlayground);
-    	scrollPanePlayground.setBounds(0,230,400,170);
+    	scrollPanePlayground.setBounds(0,230,width,170);
     	
     	JPanelEditor panelInput = new JPanelEditor(this, mouseListener);
-    	panelInput.setBounds(0,0,400,130);
+    	panelInput.setBounds(0,0,width,130);
     	
     	this.add(panelInput);
     	this.add(scrollPane);
     	this.add(jpanelButtons);
     	this.add(scrollPanePlayground);
     	this.setLayout(null);    	
-    	this.setBounds(0,0,400,460);
+    	this.setBounds(0,0,width,460);
     }    
     
     public void addElement(String id, String name, String color){
@@ -205,12 +205,27 @@ public class TimeTaskAddOnJPanel extends JPanel {
     public void deleteDate(){
     	List<DatePoint> datePoints = jpanelPlayground.getTimeLine().getDatePoints();
     	List<DatePoint> dates = new ArrayList<DatePoint>();
-    	for(DatePoint n:datePoints){
+    	for(int i=0; i<datePoints.size(); i++){
+    		DatePoint n = datePoints.get(i);
     		if(n.isMarked()){
     			dates.add(n);
     			jpanelPlayground.remove(n);
+    			List<Symbol> symbols = jpanelPlayground.getSymbols();
+    			for(Symbol k:symbols){
+    				if(k.getConnectionLine() != null){
+    					DatePoint datePos;
+    					if (i>1)
+    						datePos = datePoints.get(i-1);
+    					else
+    						datePos = n;
+    					if(k.getConnectionLine().getLine().getP2().getX()>datePos.getX()+n.getWidth()/2){
+    						k.setConnectionLine(null);
+    					}    					
+    				}
+    			}
     		}
-    	}
+    	}    	
+    	
     	datePoints.removeAll(dates);
     	jpanelPlayground.getTimeLine().sortDatePoints();   
     	scrollPanePlayground.paintAll(scrollPanePlayground.getGraphics()); 

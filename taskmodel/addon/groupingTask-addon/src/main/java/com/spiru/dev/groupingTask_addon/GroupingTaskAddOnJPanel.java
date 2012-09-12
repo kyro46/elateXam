@@ -47,10 +47,10 @@ public class GroupingTaskAddOnJPanel extends JPanel {
      * Creates new form AddonOnJPanel
      * @param initElementList String-Array mit allen Captions fuer Elemente
      */
-    public GroupingTaskAddOnJPanel(String[][] allElements, String image) {
+    public GroupingTaskAddOnJPanel(String[][] allElements, String image, int width, int height) {
     	elementList = new ArrayList<Element>();
     	listener = new MyMouseListener();
-        initComponents(allElements, image);
+        initComponents(allElements, image, width, height);
     }
     
     /**  
@@ -65,8 +65,9 @@ public class GroupingTaskAddOnJPanel extends JPanel {
      * initialisiert alle Komponenten
      * @param initElementList String-Array mit allen Captions fuer Elemente
      */
-    private void initComponents(String[][] allElements, String image) {
+    private void initComponents(String[][] allElements, String image, int width, int height) {
     	// Panel mit zur Auswahl stehenden Elementen
+    	int spielpaltzHeight = height;
     	jPanelElements = new JPanel();      	    	    	
     	// add Elements
     	if (allElements != null)
@@ -92,8 +93,8 @@ public class GroupingTaskAddOnJPanel extends JPanel {
     	// ScrollPane, falls mehr Elemente auf Panel als dargestellt werden koennen
     	ScrollPane scrollPane = new ScrollPane();
     	scrollPane.add(jPanelElements);
-    	scrollPane.setSize(400, 75); 	   
-    	
+    	scrollPane.setSize(width, 75); 	   
+    	spielpaltzHeight-=75;
     	// Panel auf dem Elemente angeordnet werden sollen    	
     	jPanelSpielplatz = new PanelSpielplatz(elementList, listener);    
     	jPanelSpielplatz.setBackground(Color.LIGHT_GRAY);
@@ -106,25 +107,27 @@ public class GroupingTaskAddOnJPanel extends JPanel {
     	
     	// Panels anordnen
     	jPanelElements.setLocation(0,0);
-    	jPanelElements.setSize(400,75);
+    	jPanelElements.setSize(width,75);
+    	spielpaltzHeight-=75;
     	jPanelButtons.setLocation(0,jPanelElements.getHeight());
-    	jPanelButtons.setSize(400,40);
+    	jPanelButtons.setSize(width,40);
+    	spielpaltzHeight-=40;
     	jPanelSpielplatz.setLocation(0,jPanelButtons.getHeight()+jPanelElements.getHeight());
     	
     	this.setLayout(null);
     	this.setLocation(0,0);
-    	this.setSize(400,400);
+    	this.setSize(width,height);
     	this.add(scrollPane);
     	this.add(jPanelButtons);
     	
     	// Groesse des Panels fuer ScrollPane wichtig, sonst wird es nicht angezeigt
-    	jPanelSpielplatz.setPreferredSize(new Dimension(600,600));
+    	jPanelSpielplatz.setPreferredSize(new Dimension(1000,1000));
     	jPanelSpielplatz.setBase64String(image);
     	JScrollPane scroll = new JScrollPane(jPanelSpielplatz,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
     			JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);    	
-    	scroll.setMinimumSize(new Dimension(160, 200));
-        scroll.setPreferredSize(new Dimension(160, 200));
-        scroll.setBounds(0,jPanelButtons.getHeight()+jPanelElements.getHeight(),400,275);        
+    	scroll.setMinimumSize(new Dimension(width, spielpaltzHeight));
+        scroll.setPreferredSize(new Dimension(width, spielpaltzHeight));
+        scroll.setBounds(0,jPanelButtons.getHeight()+jPanelElements.getHeight(),width,spielpaltzHeight);        
     	this.add(scroll);    
     	
     	this.setDoubleBuffered(false);
