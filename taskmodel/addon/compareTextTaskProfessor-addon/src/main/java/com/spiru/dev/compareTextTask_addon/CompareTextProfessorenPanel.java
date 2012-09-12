@@ -1,12 +1,11 @@
 package com.spiru.dev.compareTextTask_addon;
 
 import java.awt.Insets;
+import java.io.File;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Vector;
-
-import javax.swing.JFileChooser;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -28,7 +27,7 @@ public class CompareTextProfessorenPanel extends CompareTextPanel {
 	protected javax.swing.table.DefaultTableModel tableModel;
 	protected javax.swing.JTable tablePanel;
 	protected String sampleSolutionText;
-	//protected JFileChooser fileChooser;
+	protected String lastDirectory;
 	protected int componentAvaiableTagsHeight;
 	protected int componentInitialTextHeight;
 	protected int paneWidth;
@@ -43,12 +42,11 @@ public class CompareTextProfessorenPanel extends CompareTextPanel {
 		buttonMinus = new javax.swing.JButton();
 		buttonPlus = new javax.swing.JButton();
 		buttonUpload = new javax.swing.JButton();
-		//fileChooser = new JFileChooser(System.getProperty("user.home"));
 		componentAvaiableTagsHeight = Height / 2 - 30;
 		componentInitialTextHeight = Height / 2 - 25;
 		paneWidth = Width;
 		sampleSolutionText = solution;
-		initTable();
+		lastDirectory = null;
 		initTagTable();
 		initButtons();
 		initProfessorView(true);
@@ -56,21 +54,37 @@ public class CompareTextProfessorenPanel extends CompareTextPanel {
 
 	protected void initButtons() {
 		buttonUpload.setText("Upload Text File");
-		/*buttonUpload.addActionListener(new java.awt.event.ActionListener() {
+		buttonUpload.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				int flag = fileChooser.showOpenDialog(null);
-				if (flag == JFileChooser.APPROVE_OPTION)
-					try {
-						System.out.println("You chose to open this file: " + fileChooser.getSelectedFile().getName());
-						String tmp = new Scanner(fileChooser.getSelectedFile()).useDelimiter("\\Z").next();
+				String tmp = "";
+				try {
+					if (lastDirectory == null) lastDirectory = System.getProperty("user.home");
+					javax.swing.JFileChooser fileChooser = new javax.swing.JFileChooser(lastDirectory);
+					int flag = fileChooser.showOpenDialog(null);
+					if (flag == javax.swing.JFileChooser.APPROVE_OPTION) {
+						File tmpfile =  fileChooser.getSelectedFile();
+						tmp = new Scanner(tmpfile).useDelimiter("\\Z").next();
+						/*int len;
+						char[] chr = new char[4096];
+						final StringBuffer buffer = new StringBuffer();
+						final FileReader reader = new FileReader(tmpfile);
+						while ((len = reader.read(chr)) > 0)
+							buffer.append(chr, 0, len);
+						reader.close();
+						tmp = buffer.toString();*/
 						textAreaLeft.setText(tmp);
 						textAreaRight.setText(tmp);
-					} catch (Exception e) {
-						javax.swing.JOptionPane.showMessageDialog(buttonUpload, "Error: No valid Plain-Text File:\n"
-								+ e.fillInStackTrace(), "Invalid File Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+						// scroll to the top on both sides
+						textAreaLeft.setCaretPosition(0);
+						textAreaRight.setCaretPosition(0);
 					}
+				} catch (Exception e) {
+					javax.swing.JOptionPane.showMessageDialog(buttonUpload, "Error: No valid Plain-Text File:\n"
+							+ e.fillInStackTrace(), "Invalid File Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
+				}
 			}
-		});*/
+		});
 		buttonMinus.setText("-");
 		buttonMinus.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -90,18 +104,17 @@ public class CompareTextProfessorenPanel extends CompareTextPanel {
 		});
 	}
 
-	protected void initTable() {
-		//tableAvaiableTags.setAutoCreateRowSorter(true);
-		/*tableModel = new javax.swing.table.DefaultTableModel(
-				new Object [][] {
-						{"example", "Example Tag with Description, please replace this line."},
-						{null, null}
-				},
-				new String [] { "Tag Name", "Description" }
-				);*/
+	protected void initTagTable() {
 		tableModel = new javax.swing.table.DefaultTableModel(new String [] { "Tag Name", "Description" }, 0);
 		tablePanel.setModel(tableModel);
 		scrollPaneAvaiableTags.setViewportView(tablePanel);
+		// by now, initTagListAndHelp() was already called, so we have access to tagList
+		for (Map.Entry<String, String> entry : tagList.entrySet()) {
+			String tagname = entry.getKey();
+			String description = entry.getValue();
+			tableModel.addRow(new Object[] {tagname, description}); // final step!
+		}
+		tableModel.addRow(new Object[] {"", ""});
 	}
 
 	protected void initProfessorView(boolean textfirst) {
@@ -207,15 +220,5 @@ public class CompareTextProfessorenPanel extends CompareTextPanel {
 			avaiableTags.appendChild(Tag);
 		}
 		addonConfig.appendChild(avaiableTags);
-	}
-
-	protected void initTagTable() {
-		// by now, initTagListAndHelp() was already called, so we have access to tagList
-		for (Map.Entry<String, String> entry : tagList.entrySet()) {
-			String tagname = entry.getKey();
-			String description = entry.getValue();
-			tableModel.addRow(new Object[] {tagname, description}); // final step!
-		}
-		tableModel.addRow(new Object[] {"", ""});
 	}
 }

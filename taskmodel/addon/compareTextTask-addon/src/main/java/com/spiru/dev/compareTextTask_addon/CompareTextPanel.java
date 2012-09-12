@@ -141,23 +141,27 @@ public class CompareTextPanel extends JPanel {
 	public void onCaretMove(final int dot, final int mark) {
 		// check if still in the same sentence (in the right Pane)
 		char[] text_between;
-		if (dot > lastCaretPosRight) {
-			text_between = textAreaRight.getText().substring(lastCaretPosRight, dot).toCharArray();
-		} else {
-			text_between = textAreaRight.getText().substring(dot, lastCaretPosRight).toCharArray();
-		}
-		//System.out.println(text_between);
-		for(int i = 0;i < text_between.length; i++) {
-			if (sentenceEndingCharacters.indexOf(text_between[i]) != -1) {
-				//System.out.println(text_between);
-				char[] right_text = textAreaRight.getText().toCharArray();
-				int sentenceNumber = calculateSentenceAtPosition(right_text, dot);
-				textAreaLeft.getHighlighter().removeAllHighlights();
-				highlightSentence(sentenceNumber);
-				break;
+		try {
+			if (dot > lastCaretPosRight) {
+				text_between = textAreaRight.getText().substring(lastCaretPosRight, dot).toCharArray();
+			} else {
+				text_between = textAreaRight.getText().substring(dot, lastCaretPosRight).toCharArray();
 			}
+			//System.out.println(text_between);
+			for(int i = 0;i < text_between.length; i++) {
+				if (sentenceEndingCharacters.indexOf(text_between[i]) != -1) {
+					//System.out.println(text_between);
+					char[] right_text = textAreaRight.getText().toCharArray();
+					int sentenceNumber = calculateSentenceAtPosition(right_text, dot);
+					textAreaLeft.getHighlighter().removeAllHighlights();
+					highlightSentence(sentenceNumber);
+					break;
+				}
+			}
+			lastCaretPosRight = dot;
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		lastCaretPosRight = dot;
 	}
 
 	/**
