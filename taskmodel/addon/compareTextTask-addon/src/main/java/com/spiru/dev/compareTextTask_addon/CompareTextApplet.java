@@ -11,10 +11,6 @@ import java.applet.Applet;
 
 import javax.xml.bind.DatatypeConverter;
 
-import org.w3c.dom.Element;
-
-import com.spiru.dev.compareTextTask_addon.Utils.XMLBase64;
-
 @SuppressWarnings("serial")
 public class CompareTextApplet extends Applet {
 	private CompareTextPanel jpanel;
@@ -27,16 +23,18 @@ public class CompareTextApplet extends Applet {
 		//this.getParameter("..."); // HTML: <parma name="" value=""></param>
 		// http://docs.oracle.com/javase/tutorial/deployment/applet/invokingAppletMethodsFromJavaScript.html
 		// http://stackoverflow.com/questions/7278626/javascript-to-java-applet-communication
-		String text = this.getParameter("initialText");
+		//String text = this.getParameter("initialText");
+		String text = "Der Schwarze Montag am 19. Oktober 1987 war der erste Börsenkrach nach dem Zweiten Weltkrieg. Der Dow Jones fiel innerhalb eines Tages um 22,6 % (508 Punkte), was den größten prozentualen Abrutsch innerhalb eines Tages in dessen Geschichte darstellt. Der Sturz breitete sich schnell auf alle wichtigen internationalen Handelsplätze aus. Bis Ende Oktober waren die Börsenkurse in Australien um 41,8 % gefallen, in Kanada um 22,5 %, in Hong Kong um 45,8 %, und im Vereinigten Königreich um 26,4 %.";
+		text += text;
+		text += text;
+
+		
 		String xmldef = this.getParameter("xmlDef"); // is expected to contain Base64 representation of avaiableTasks part in Memento
-		String sofar = this.getParameter("soFarSolution"); // will be "null" (literally!) unless student triggered Save Page
-		if (xmldef == null) // is NULL, when Applet is not loaded from a Webbrowser, but from Eclipse
-			xmldef = DatatypeConverter.printBase64Binary("<avaiableTags><tag name=\"p\"><desc>Markiert einen Absatz.</desc></tag><tag name=\"soundslikefun\"><desc>Tut das und das.</desc></tag></avaiableTags>".getBytes());
-		boolean view_only = Boolean.parseBoolean(this.getParameter("viewOnly")); // correcor shouldn't be able to manipulate result
-		Element avaiableTags = XMLBase64.base64StringToElement(xmldef, null);
-		//this.setSize(800, 400);
-		jpanel = new CompareTextPanel(text, sofar, avaiableTags, view_only, this.getWidth(), this.getHeight());
-		//jpanel.setSize(800, 400);
+		byte[] xmldefs = null; // DocumentBuilder will need it as BytesArray later
+		if(xmldef != null) xmldefs = DatatypeConverter.parseBase64Binary(xmldef);
+		this.setSize(800, 400);
+		jpanel = new CompareTextPanel(text, xmldefs, this.getWidth(), this.getHeight());
+		jpanel.setSize(800, 400);
 		add(jpanel);
 	}
 	public String getResult() {

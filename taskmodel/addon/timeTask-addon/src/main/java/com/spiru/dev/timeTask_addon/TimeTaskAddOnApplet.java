@@ -18,14 +18,14 @@ public class TimeTaskAddOnApplet extends Applet{
 	
 	    @Override
 	    public void init() {	 	    	
-	    	this.setSize(new Dimension(400,420));
-	    	this.setMinimumSize(new Dimension(400,420));
-	    	this.setPreferredSize(new Dimension(400,420));
+	    	this.setSize(new Dimension(600,600));
+	    	this.setMinimumSize(new Dimension(600,600));
+	    	this.setPreferredSize(new Dimension(600,600));
 	    	this.setLayout(null);	  
 	    	
 	    	String[][] elements; 
 	    	try{
-	    		File targetFile = new File("C:\\Users\\Yves\\Desktop\\TimeTest.xml");
+	    		File targetFile = new File("C:\\Users\\wikjichess\\Dropbox\\ElateXamV2Team\\SHK\\Yves\\TimeTest.xml");
 	    		Document doc;				
 			    doc = new SAXBuilder().build(targetFile);				
 	    		Element memento = doc.getRootElement();

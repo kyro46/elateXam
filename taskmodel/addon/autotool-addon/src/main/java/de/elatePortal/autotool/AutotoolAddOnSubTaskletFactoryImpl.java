@@ -19,7 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package de.elatePortal.autotool;
 
 import de.thorstenberger.taskmodel.complex.addon.AddOnSubTaskletFactory;
-import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDefRoot.CorrectionModeType;
+import de.thorstenberger.taskmodel.complex.complextaskdef.Block;
+import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDefRoot;
 import de.thorstenberger.taskmodel.complex.complextaskhandling.AddOnSubTasklet;
 import de.thorstenberger.taskmodel.complex.jaxb.AddonSubTaskDef;
 import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskHandling.Try.Page.AddonSubTask;
@@ -27,8 +28,8 @@ import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskHandling.Try.Page.Add
 public class AutotoolAddOnSubTaskletFactoryImpl implements
 		AddOnSubTaskletFactory {
 
-	public AddOnSubTasklet createAddOnSubTasklet( Object subTaskDef, Object subTask, CorrectionModeType correctionMode, float reachablePoints) {
-		return new SubTasklet_AutotoolImpl((AddonSubTaskDef)subTaskDef,(AddonSubTask)subTask, correctionMode, reachablePoints);
+	public AddOnSubTasklet createAddOnSubTasklet(ComplexTaskDefRoot root,Block block, Object subTaskDef, Object subTask) {
+		return new SubTasklet_AutotoolImpl(root,block,(AddonSubTaskDef)subTaskDef,(AddonSubTask)subTask);
 	}
 
 	public String getAddonTaskType() {

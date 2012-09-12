@@ -30,6 +30,7 @@
     <module>autotool-addon</module>
     <module>groupingTask-addon</module>
     <module>timeTask-addon</module>
+    <module>timeTaskProfessor-addon</module>
 	<module>compareTextTask-addon</module>
 	<module>compareTextTaskProfessor-addon</module>
 	<module>groupingTaskProfessor-addon</module>

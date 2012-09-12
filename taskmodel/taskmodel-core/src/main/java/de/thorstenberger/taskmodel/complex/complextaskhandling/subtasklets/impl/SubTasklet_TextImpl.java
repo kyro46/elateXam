@@ -25,13 +25,15 @@ import java.util.List;
 
 import de.thorstenberger.taskmodel.TaskApiException;
 import de.thorstenberger.taskmodel.complex.TaskHandlingConstants;
+import de.thorstenberger.taskmodel.complex.complextaskdef.Block;
 import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDefRoot;
-import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDefRoot.CorrectionModeType;
+import de.thorstenberger.taskmodel.complex.complextaskdef.blocks.impl.GenericBlockImpl;
 import de.thorstenberger.taskmodel.complex.complextaskhandling.CorrectionSubmitData;
 import de.thorstenberger.taskmodel.complex.complextaskhandling.SubmitData;
 import de.thorstenberger.taskmodel.complex.complextaskhandling.correctionsubmitdata.TextCorrectionSubmitData;
 import de.thorstenberger.taskmodel.complex.complextaskhandling.submitdata.TextSubmitData;
 import de.thorstenberger.taskmodel.complex.complextaskhandling.subtasklets.SubTasklet_Text;
+import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskDef.Category.TextTaskBlock;
 import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskHandling.Try.Page.TextSubTask;
 import de.thorstenberger.taskmodel.complex.jaxb.ManualCorrectionType;
 import de.thorstenberger.taskmodel.complex.jaxb.SubTaskDefType;
@@ -43,14 +45,16 @@ import de.thorstenberger.taskmodel.complex.jaxb.TextSubTaskDef;
  */
 public class SubTasklet_TextImpl extends AbstractSubTasklet implements SubTasklet_Text {
 
+	private TextTaskBlock textTaskBlock;
 	private TextSubTaskDef textSubTaskDef;
 	private TextSubTask textSubTask;
 
 	/**
 	 *
 	 */
-	public SubTasklet_TextImpl( float reachablePoints, SubTaskDefType textSubTaskDef, TextSubTask textSubTask, CorrectionModeType correctionMode ) {
-		super( textSubTaskDef, textSubTask, correctionMode, reachablePoints );
+	public SubTasklet_TextImpl( Block block, SubTaskDefType textSubTaskDef, TextSubTask textSubTask, ComplexTaskDefRoot complexTaskDefRoot ) {
+		super( complexTaskDefRoot, block, textSubTaskDef, textSubTask );
+		this.textTaskBlock = (TextTaskBlock) ((GenericBlockImpl)block).getJaxbTaskBlock();
 		this.textSubTaskDef = (TextSubTaskDef) textSubTaskDef;
 		this.textSubTask = textSubTask;
 	}
@@ -108,11 +112,11 @@ public class SubTasklet_TextImpl extends AbstractSubTasklet implements SubTaskle
 
 		TextCorrectionSubmitData tcsd = (TextCorrectionSubmitData) csd;
 
-		if( tcsd.getPoints() <0 || tcsd.getPoints() > reachablePoints )
+		if( tcsd.getPoints() <0 || tcsd.getPoints() > textTaskBlock.getConfig().getPointsPerTask() )
 			return;
 
 		List<ManualCorrectionType> manualCorrections = textSubTask.getManualCorrection();
-		if( correctionMode == ComplexTaskDefRoot.CorrectionModeType.MULTIPLECORRECTORS ){
+		if( complexTaskDefRoot.getCorrectionMode().getType() == ComplexTaskDefRoot.CorrectionModeType.MULTIPLECORRECTORS ){
 
 			for( ManualCorrectionType mc : manualCorrections ){
 				if( mc.getCorrector().equals( tcsd.getCorrector() ) ){

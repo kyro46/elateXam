@@ -110,5 +110,10 @@ public class GenericBlockImpl implements Block{
 	public Object getJaxbTaskBlock() {
 		return jaxbTaskBlock;
 	}
-
+	
+	public float getReachablePoints() {
+		  	
+		    return getConfig().getPointsPerTask();
+			  	
+		  }
 }

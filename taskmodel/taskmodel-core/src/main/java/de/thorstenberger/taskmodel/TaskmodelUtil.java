@@ -21,9 +21,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 package de.thorstenberger.taskmodel;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+
+import de.thorstenberger.taskmodel.complex.ComplexTaskletCorrectorImpl.CorrectorIndexCount;
 
 /**
  * @author Thorsten Berger
@@ -38,7 +42,7 @@ public class TaskmodelUtil {
 		}
 		throw new TaskModelPersistenceException( "Invalid status value \"" + status + "\"!" );
 	}
-	
+
 	/**
 	 * Assume you have a list of CorrectorIndexCount and you want do determine an order of
 	 * correctors that fits best. I.e. if Corrector c1 is most often at position (index) 1, he should also
@@ -46,14 +50,14 @@ public class TaskmodelUtil {
 	 *
 	 */
 	public static String[] determineOrder( List<CorrectorIndexCount> correctorIndexCounts, int correctors ){
-		
+
 		// sort by index, count and corrector (in this priority)
 		Collections.sort( correctorIndexCounts );
 		String[] correctorOrder = new String[ correctors ];
 		for( int j = 0; j < correctors; j++ ){
 			CorrectorIndexCount cic = correctorIndexCounts.get( 0 );
 			correctorOrder[ j ] = cic.getCorrector();
-			
+
 			// remove the index and the corrector from the list
 			List<CorrectorIndexCount> toRemove2 = new LinkedList<CorrectorIndexCount>();
 			for( CorrectorIndexCount c : correctorIndexCounts )
@@ -61,21 +65,21 @@ public class TaskmodelUtil {
 					toRemove2.add( c );
 			for( CorrectorIndexCount c : toRemove2 )
 				correctorIndexCounts.remove( c );
-			
+
 		}
-		
+
 		return correctorOrder;
-		
+
 	}
-	
-	
-	
+
+
+
 	public static class CorrectorIndexCount implements Comparable<CorrectorIndexCount>{
-		
+
 		private String corrector;
 		private int index;
 		private int count;
-		
+
 		/**
 		 * @param corrector
 		 * @param index
@@ -141,9 +145,9 @@ public class TaskmodelUtil {
 				}
 			}
 		}
-		
-		
-		
+
+
+
 	}
-	
+
 }

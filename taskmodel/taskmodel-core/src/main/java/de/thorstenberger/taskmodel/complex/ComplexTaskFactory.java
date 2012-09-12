@@ -46,9 +46,11 @@ public interface ComplexTaskFactory {
 	public Block instantiateBlock( TaskBlockType block, int index );
 
 	public SubTasklet createSubTaskletForSubTaskDef( SubTaskDef subTaskDef, ComplexTaskDefRoot complexTaskDefRoot, String categoryId ) throws TaskApiException;
-
-	public SubTasklet instantiateSubTasklet( SubTaskType jaxbSubTask, ComplexTaskDefRoot complexTaskDefRoot, String categoryId );
 	
+	//OLD
+	//public SubTasklet instantiateSubTasklet( SubTaskType jaxbSubTask, ComplexTaskDefRoot complexTaskDefRoot, String categoryId );
+	
+	public SubTasklet instantiateSubTasklet( Object subTask, ComplexTaskDefRoot complexTaskDefRoot, String categoryId );
   /**
    * A student starts a new try.
    *

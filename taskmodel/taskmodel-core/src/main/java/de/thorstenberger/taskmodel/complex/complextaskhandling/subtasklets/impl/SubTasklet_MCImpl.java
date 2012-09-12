@@ -30,12 +30,14 @@ import de.thorstenberger.taskmodel.TaskApiException;
 import de.thorstenberger.taskmodel.TaskModelPersistenceException;
 import de.thorstenberger.taskmodel.complex.RandomUtil;
 import de.thorstenberger.taskmodel.complex.TaskHandlingConstants;
-import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDefRoot.CorrectionModeType;
+import de.thorstenberger.taskmodel.complex.complextaskdef.Block;
+import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDefRoot;
+import de.thorstenberger.taskmodel.complex.complextaskdef.blocks.impl.GenericBlockImpl;
 import de.thorstenberger.taskmodel.complex.complextaskhandling.CorrectionSubmitData;
 import de.thorstenberger.taskmodel.complex.complextaskhandling.SubmitData;
 import de.thorstenberger.taskmodel.complex.complextaskhandling.submitdata.McSubmitData;
 import de.thorstenberger.taskmodel.complex.complextaskhandling.subtasklets.SubTasklet_MC;
-import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskDef.Category.McTaskBlock.McConfig;
+import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskDef.Category.McTaskBlock;
 import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskHandling;
 import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskHandling.Try.Page.McSubTask;
 import de.thorstenberger.taskmodel.complex.jaxb.McSubTaskDef;
@@ -49,18 +51,18 @@ import de.thorstenberger.taskmodel.complex.jaxb.SubTaskDefType;
  */
 public class SubTasklet_MCImpl extends AbstractSubTasklet implements SubTasklet_MC {
 
+	private McTaskBlock mcTaskBlock;
 	private McSubTaskDef mcSubTaskDef;
 	private McSubTask mcSubTask;
-  private McConfig config;
 
 	/**
 	 *
 	 */
-	public SubTasklet_MCImpl( SubTaskDefType mcSubTaskDef, McSubTask mcSubTask, CorrectionModeType correctionMode, float reachablePoints, McConfig config ) {
-		super( mcSubTaskDef, mcSubTask, correctionMode, reachablePoints );
+	public SubTasklet_MCImpl( Block block, SubTaskDefType mcSubTaskDef, McSubTask mcSubTask, ComplexTaskDefRoot complexTaskDefRoot ) {
+		super( complexTaskDefRoot, block, mcSubTaskDef, mcSubTask );
+		this.mcTaskBlock = (McTaskBlock) ((GenericBlockImpl)block).getJaxbTaskBlock();
 		this.mcSubTaskDef = (McSubTaskDef) mcSubTaskDef;
 		this.mcSubTask = mcSubTask;
-		this.config = config;
 	}
 
 	public String getMcCategory(){
@@ -117,7 +119,7 @@ public class SubTasklet_MCImpl extends AbstractSubTasklet implements SubTasklet_
 	 */
 	public void doAutoCorrection() {
 
-		float pointsPerTask = getReachablePoints();
+		float pointsPerTask = block.getPointsPerSubTask();
 
 		// Single Select
 		if( mcSubTaskDef.getCategory().equals( CAT_SINGLESELECT ) ){
@@ -149,17 +151,17 @@ public class SubTasklet_MCImpl extends AbstractSubTasklet implements SubTasklet_
 			float points = pointsPerTask;
 
 			// Bewertung abh. vom Korrekturschema:
-			if( config.getRegular() != null ){
+			if( mcTaskBlock.getMcConfig().getRegular() != null ){
 
 				// kein Unterschied zw. richtigen und falschen Antworten
-				float negativePoints = config.getRegular().getNegativePoints();
+				float negativePoints = mcTaskBlock.getMcConfig().getRegular().getNegativePoints();
 				points -=  negativePoints * getNumOfIncorrectSolvedAnswers() ;
 
 			}else{
 
 				// richtige und falsche Antworten werden unterschiedlich behandelt
-				float correctAnswerNegativePoints = config.getDifferent().getCorrectAnswerNegativePoints();
-				float incorrectAnswerNegativePoints = config.getDifferent().getIncorrectAnswerNegativePoints();
+				float correctAnswerNegativePoints = mcTaskBlock.getMcConfig().getDifferent().getCorrectAnswerNegativePoints();
+				float incorrectAnswerNegativePoints = mcTaskBlock.getMcConfig().getDifferent().getIncorrectAnswerNegativePoints();
 
 				List<Answer> answers = getAnswers();
 				for( Answer answer : answers )
