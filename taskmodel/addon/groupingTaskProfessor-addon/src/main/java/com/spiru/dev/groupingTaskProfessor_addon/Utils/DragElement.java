@@ -2,6 +2,7 @@ package com.spiru.dev.groupingTaskProfessor_addon.Utils;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.GridLayout;
@@ -28,12 +29,13 @@ import com.spiru.dev.groupingTaskProfessor_addon.GroupingTaskAddOnJPanel;
  * @author Yves
  *
  */
-public class DragElement extends JPanel implements DragGestureListener{		
+public class DragElement extends JPanel implements DragGestureListener, Comparable<DragElement>{		
 		
 	/** jedes Objekt erhoeht die id */
-	private static int id = 0;
+	private static int id = 1;
 	/** zur Identifikation eines Elementes */
 	private int idElement;
+	private int idOrder;
 	/** Anzahl an Elementen, die momentan zur Verfuegung stehen */
 	private String anz;
 	/** wieviele Elemente es maximal gibt */
@@ -54,8 +56,8 @@ public class DragElement extends JPanel implements DragGestureListener{
 	 * @param anz Anzahl Objekte von diesem Element
 	 * @param listener MyMouseListener fuer Mausaktionen
 	 */
-	public DragElement (String name, String anz, MyMouseListener listener){
-		labelCaption = new JLabel(name, JLabel.CENTER);
+	public DragElement (String name, String anz, String listId, MyMouseListener listener){				
+		labelCaption = new JLabel(" "+name+" ", JLabel.CENTER);
 		labelCaption.setBorder(BorderFactory.createLineBorder(Color.black));	
 		this.add(labelCaption);		
 		// Element liegt auf ElementePanel
@@ -63,7 +65,7 @@ public class DragElement extends JPanel implements DragGestureListener{
 			// 2 Labels untereinander
 			this.setLayout(new GridLayout(2,1,5,2));
 			labelAnz = new JLabel(""+anz, JLabel.CENTER);
-			labelAnz.setBorder(BorderFactory.createLineBorder(Color.black));
+			labelAnz.setBorder(BorderFactory.createLineBorder(Color.black));			
 			this.add(labelAnz);
 			this.addMouseListener(new MouseListenerElement());
 		}
@@ -71,7 +73,7 @@ public class DragElement extends JPanel implements DragGestureListener{
 		else{
 			// Label mit Caption links, kleiner Button fuer Verbindung rechts
 			this.setLayout(null);
-			FontMetrics fm = getFontMetrics(getFont());
+			FontMetrics fm = getFontMetrics(getFont());			
 			labelCaption.setBounds(5,5,fm.stringWidth(name)+10,20);
 			// Verbindungsbutton
 			jButtonVerbindung = new JButton("+");
@@ -94,11 +96,14 @@ public class DragElement extends JPanel implements DragGestureListener{
 		// fuer Spielplatz, wenn mehrer gleiche Elemente vorhanden sind
 		this.idElement = id;
 		// erhoeht zaehler 
-		id++;			
+		id++;		
+		if(listId != null){
+			this.idElement = Integer.parseInt(listId);
+		}
 		// Element kann Drag
 		DragSource ds = new DragSource();
         ds.createDefaultDragGestureRecognizer(this,
-            DnDConstants.ACTION_COPY, this);              
+            DnDConstants.ACTION_COPY, this);                     
 	}	
 
 	//@Override
@@ -118,7 +123,7 @@ public class DragElement extends JPanel implements DragGestureListener{
 	 * Markiert ein Element oder hebt Markierung auf
 	 * @param mark true, Markierung wird gesetzt; false, Markierung wird aufgehoben
 	 */
-	public void markiereElement(boolean mark){
+	public void markiereElement(boolean mark){		
 		Border border = this.getBorder();
 		Border margin;
 		
@@ -160,7 +165,7 @@ public class DragElement extends JPanel implements DragGestureListener{
 	 * veringert Anzahl an vorhandenen Elementen 
 	 */
 	public void decAnz(){
-		if (!anz.equals("n"))
+		if (!anz.equals("\u221e"))
 			anz = (Integer.parseInt(anz)-1)+"";	
 		labelAnz.setText(""+anz);		
 	}
@@ -169,7 +174,7 @@ public class DragElement extends JPanel implements DragGestureListener{
 	 * erhoeht Anzahl an vorhandenen Elementen
 	 */
 	public void incAnz(){
-		if (!anz.equals("n"))
+		if (!anz.equals("\u221e"))
 			anz = (Integer.parseInt(anz)+1)+"";
 		labelAnz.setText(""+anz);
 	}
@@ -179,7 +184,7 @@ public class DragElement extends JPanel implements DragGestureListener{
 	 * @return Anzahl momentan vorhandener Elemente
 	 */
 	public int getAnz(){
-		if (anz.equals("n"))
+		if (anz.equals("\u221e"))
 			return 200;
 		return Integer.parseInt(anz);
 	}
@@ -194,5 +199,23 @@ public class DragElement extends JPanel implements DragGestureListener{
 	
 	public String getMaxCount(){
 		return anzAnfang;
+	}
+	
+	public void setOrderID(int id){
+		this.idOrder = id;
+	}
+	
+	public int getOrderID(){
+		return idOrder;
+	}
+
+	@Override
+	public int compareTo(DragElement a) {
+        if( this.getX() < a.getX() )
+            return -1;
+        if( this.getX() > a.getX() )
+            return 1;
+            
+        return 0;
 	}
 }

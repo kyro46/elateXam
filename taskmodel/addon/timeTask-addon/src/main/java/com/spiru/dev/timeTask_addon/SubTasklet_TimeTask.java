@@ -16,10 +16,10 @@ public interface SubTasklet_TimeTask extends AddOnSubTasklet {
 	public int getTextFieldWidth();
 	public int getTextFieldHeight();
 	
-	public List<String> getDragElements();
-	public List<String> getDatePoints();
+	//public List<String> getDragElements();
+	//public List<String> getDatePoints();
 	
-	public String getXML();
+	public String getMemento();
 	public boolean fromHandling();
 
 

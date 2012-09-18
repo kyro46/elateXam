@@ -19,6 +19,7 @@ public interface SubTasklet_GroupingTask extends AddOnSubTasklet {
 	public List<String> getBoxContainerAttributes();
 	public boolean loadFromHandling();
 	public String getImage();
+	public String getMemento();
 	
 }
 

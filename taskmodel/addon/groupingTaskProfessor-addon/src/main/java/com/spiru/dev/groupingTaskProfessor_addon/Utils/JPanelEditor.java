@@ -1,7 +1,10 @@
 package com.spiru.dev.groupingTaskProfessor_addon.Utils;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -13,7 +16,7 @@ import javax.swing.SpinnerNumberModel;
 
 import com.spiru.dev.groupingTaskProfessor_addon.GroupingTaskAddOnJPanel;
 
-public class JPanelEditor extends JPanel {
+public class JPanelEditor extends JPanel implements MouseMotionListener {
 
 	private JLabel labelCaption;
 	private JLabel labelCount;
@@ -24,6 +27,7 @@ public class JPanelEditor extends JPanel {
 	private List<DragElement> elementList;
 	private GroupingTaskAddOnJPanel panel;
 	private JButton buttonDelete;
+	private JLabel labelDuplicate;
 	
 	public JPanelEditor(int x, int y, int breit, int hoch, MyMouseListener listener, List<DragElement> elementList, GroupingTaskAddOnJPanel panel){
 		this.setLayout(null);		
@@ -31,6 +35,7 @@ public class JPanelEditor extends JPanel {
 		this.listener = listener;
 		this.elementList = elementList;
 		this.panel = panel;
+		this.addMouseMotionListener(this);
 		labelCaption = new JLabel("Text: ");
 		labelCaption.setBounds(10,10,50,10);		
 		labelCount = new JLabel("Anzahl:");		
@@ -63,6 +68,12 @@ public class JPanelEditor extends JPanel {
 		model.setValue(0);
 		count.setModel(model);	
 		
+		labelDuplicate = new JLabel("Name schon vorhanden!");
+		labelDuplicate.setForeground(Color.RED);
+		labelDuplicate.setBounds(buttonDelete.getX()+buttonDelete.getWidth()+10, buttonDelete.getY(),200,20);
+		labelDuplicate.setVisible(false);
+		this.add(labelDuplicate);
+		
 		this.add(labelCaption);
 		this.add(labelCount);
 		this.add(textfield);
@@ -71,25 +82,41 @@ public class JPanelEditor extends JPanel {
 		this.add(buttonDelete);
 	}
 	
-	private void buttonAddAction(){
+	private void buttonAddAction(){		
 		if (!textfield.getText().equals("")){
 			String anzahl = count.getValue()+"";
 			if (anzahl.equals("0"))
-				anzahl = "n";
-			DragElement e = new DragElement(textfield.getText(),anzahl,listener);
+				anzahl = "\u221e";
+			DragElement e = new DragElement(textfield.getText(),anzahl, null, listener);
 			for(DragElement n: elementList){
 				if (n.getCaption().equals(e.getCaption())){
 					e = null;
+					labelDuplicate.setVisible(true);
 					break;
 				}
 			}
 			if (e != null)
 				elementList.add(e);		
 			panel.addElements();
-		}
+		}		
+		textfield.setText("");
+		count.setValue(0);
+		textfield.requestFocus();
 	}
 	
 	private void buttonDeleteAction(){
 		panel.deleteElement();
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent arg0) {
+		labelDuplicate.setVisible(false);
+		
 	}
 }

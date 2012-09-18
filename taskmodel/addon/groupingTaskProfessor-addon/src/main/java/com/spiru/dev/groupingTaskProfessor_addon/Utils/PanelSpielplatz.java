@@ -45,7 +45,7 @@ public class PanelSpielplatz extends JPanel {
 		this.setLayout(null);
 		this.addMouseListener(listener);
 				
-		this.setDoubleBuffered(false);
+		//this.setDoubleBuffered(false);
 	}
 	
 	/**
@@ -58,8 +58,11 @@ public class PanelSpielplatz extends JPanel {
 	}
 	
 	@Override
-	public void paint( Graphics g ){		
+	public void paint( Graphics g ){
 		super.paint( g );	   
+		for(int i=0; i<this.getHeight()/60; i++){
+			g.drawLine(0,i*60, this.getWidth(), i*60);
+		}
 		zeichneVerbindungen(g);
 		if (this.imageAsString != null){
 			this.setImage();
@@ -71,6 +74,8 @@ public class PanelSpielplatz extends JPanel {
 		this.getGraphics().drawImage(imageAsString, 0, 0, null);
 	}
 	
+	
+	
 	/**
 	 * Fuegt ein neues Element zur liste hinzu,
 	 * falls es nicht schon vorhanden ist
@@ -81,8 +86,8 @@ public class PanelSpielplatz extends JPanel {
 		this.setBase64String(null);
 		DragElement neuesElement = null;
 		// element schon auf PanelSpielplatz?
-		for (DragElement n: elemente){
-			if (n.getId() == e.getId()){			
+		for (DragElement n: elemente){			
+			if (n.getId() == e.getId() && n.getOrderID() == e.getOrderID() && n.getCaption().equals(e.getCaption())){			
 				neuesElement = n;
 				break;
 			}
@@ -101,7 +106,7 @@ public class PanelSpielplatz extends JPanel {
 	    		}
 	    	}
 	    	// neues Element erzeugen
-	    	neuesElement = new DragElement(e.getCaption(),null, listener);		
+	    	neuesElement = new DragElement(e.getCaption(),null, null, listener);		
 			//neuesElement.setBounds(0,0, auswahlElemente.get(0).getWidth()+70, auswahlElemente.get(0).getHeight());
 			// passt so besser zur Mausposition ;)
 			pos.y -= 5; 

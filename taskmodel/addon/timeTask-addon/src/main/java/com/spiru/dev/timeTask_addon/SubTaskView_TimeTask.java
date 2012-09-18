@@ -35,7 +35,7 @@ public class SubTaskView_TimeTask extends SubTaskView{
 		String ret = "<applet archive=\"applet/timeTask.jar\" code=\"" + path + "\""
 				+ " id=\"applet_%s\""
 				+ " width=\"710\" height=\"540\" title=\"Java\">\n";
-		ret += "<param name=\"param\" value=\""+timeSubTasklet.getXML()+"\">";
+		ret += "<param name=\"param\" value=\""+timeSubTasklet.getMemento()+"\">";
 		if (timeSubTasklet.fromHandling()){
 			ret += "<param name=\"handling\" value=\"true\">";			
 		}

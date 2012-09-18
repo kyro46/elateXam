@@ -18,7 +18,7 @@ public class GroupingTaskAddOnApplet extends Applet{
 	    	this.setMinimumSize(new Dimension(width,height));
 	    	this.setPreferredSize(new Dimension(width,height));
 	    	this.setLayout(null);	    		    		    
-	    	
+	    	/*
 	    	List<String> params = new ArrayList<String>();
 	    	String param = this.getParameter("e0");
 	    	int anz = 0;
@@ -39,9 +39,10 @@ public class GroupingTaskAddOnApplet extends Applet{
 	    			elements[j][1] = params.get(k);
 	    			j++;
 	    		}
-	    	}
-	    		String image = this.getParameter("handling");
-				gpanel = new GroupingTaskAddOnJPanel(elements, image, width, height);	        
+	    	}*/
+	    		boolean isHandling = Boolean.parseBoolean(this.getParameter("handling"));
+				gpanel = new GroupingTaskAddOnJPanel(width, height);
+				gpanel.load(isHandling, this.getParameter("memento"));
 		        add(gpanel);	    		       
 	    }
 
@@ -55,7 +56,7 @@ public class GroupingTaskAddOnApplet extends Applet{
 	    }	  
 	    
 		public String getResult() {
-			return gpanel.getPlayGround().getBase64StringFromImage();
+			return gpanel.save();
 		}
 		public boolean hasChanged() {
 			return true;//jpanel.getRightTextAreaContent() != jpanel.getLeftTextAreaContent();

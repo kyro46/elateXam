@@ -8,25 +8,25 @@ import java.io.IOException;
 public class TransferableElement implements Transferable {
 
 	protected static DataFlavor elementFlavor =
-	        new DataFlavor(Element.class, "A Element Object");
+	        new DataFlavor(DragElement.class, "A Element Object");
 	
     protected static DataFlavor[] supportedFlavors = {
         elementFlavor
     };
 	
     /** Element, das uebertragen werden soll */
-    private Element element;
+    private DragElement element;
     
     /**
      * Konstruktor eines zu uebertragendes Objektes
      * @param element Elemnt mit Drag'n Drop
      */
-    public TransferableElement(Element element) { 
+    public TransferableElement(DragElement element) { 
     	this.element = element;     	
     }
     
 	//@Override
-	public Element getTransferData(DataFlavor flavor)
+	public DragElement getTransferData(DataFlavor flavor)
 			throws UnsupportedFlavorException, IOException {
 		if (flavor.equals(elementFlavor))
 	         return element;

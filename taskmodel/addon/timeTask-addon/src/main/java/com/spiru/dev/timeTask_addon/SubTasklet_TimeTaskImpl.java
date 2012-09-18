@@ -111,7 +111,8 @@ public class SubTasklet_TimeTaskImpl extends AbstractAddonSubTasklet implements 
 
 	@Override
 	public String getAnswer() {		
-		return mementoTaskHandling.getTextContent();/*
+		return mementoTaskHandling.getTextContent();
+		/*
 		NodeList resultText = mementoTaskHandling.getElementsByTagName("timelineSubTaskDef");
 		if(resultText.getLength() == 1)
 			return resultText.item(0).getTextContent();
@@ -151,7 +152,7 @@ public class SubTasklet_TimeTaskImpl extends AbstractAddonSubTasklet implements 
 				e.printStackTrace();
 			}	
 	}
-
+/*
 	@Override
 	public List<String> getDragElements() {
 		// timelineSubTaskDef Element herausfiltern
@@ -166,7 +167,8 @@ public class SubTasklet_TimeTaskImpl extends AbstractAddonSubTasklet implements 
 		}		
 		return stringList;		
 	}
-
+	*/
+/*
 	@Override
 	public List<String> getDatePoints() {
 		// timelineSubTaskDef Element herausfiltern
@@ -203,9 +205,9 @@ public class SubTasklet_TimeTaskImpl extends AbstractAddonSubTasklet implements 
 		}	
 		return stringList;	
 	}
-
+*/
 	@Override
-	public String getXML() {
+	public String getMemento() {
 		Element memento = null;
 		if ((Element)mementoTaskHandling.getElementsByTagName("timelineSubTaskDef").item(0) != null){			
 			memento = (Element)mementoTaskHandling;			

@@ -10,16 +10,18 @@ public class GroupingTaskAddOnApplet extends Applet{
 	private GroupingTaskAddOnJPanel gpanel;
 
 	@Override
-	public void init() {	 	    	
-		this.setSize(new Dimension(600,400));
-		this.setMinimumSize(new Dimension(600,400));
-		this.setPreferredSize(new Dimension(600,400));
+	public void init() {
+		int width = this.getWidth();
+		int height = this.getHeight();
+		this.setSize(new Dimension(width,height));
+		this.setMinimumSize(new Dimension(width,height));
+		this.setPreferredSize(new Dimension(width,height));
 		this.setLayout(null);    	
 
 		// Get Parameter from HTML <applet> Tag
 		String mementostr = getParameter("memento");
 
-		gpanel = new GroupingTaskAddOnJPanel(mementostr);	        
+		gpanel = new GroupingTaskAddOnJPanel(width, height, mementostr);	        
 		add(gpanel);
 	}
 

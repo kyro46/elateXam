@@ -22,10 +22,11 @@ public class TimeTaskAddOnApplet extends Applet{
 	    @Override
 	    public void init() {	
 	    	int width = this.getWidth();
-	    	width = 400;
-	    	this.setSize(new Dimension(400,width));
-	    	this.setMinimumSize(new Dimension(400,width));
-	    	this.setPreferredSize(new Dimension(400,width));
+	    	int height = this.getHeight();
+	    	height = 400;
+	    	this.setSize(new Dimension(400,height));
+	    	this.setMinimumSize(new Dimension(400,height));
+	    	this.setPreferredSize(new Dimension(400,height));
 	    	this.setLayout(null);	    	
 	    	gpanel = new TimeTaskAddOnJPanel(this, width);	  
 	    	load();
@@ -38,14 +39,13 @@ public class TimeTaskAddOnApplet extends Applet{
 				if (xml == null) return;
 				// assumption: Not editing existing-, but adding new Question -> nothing to do
 				if (xml.length() == 0) return;
-				// from moodle we will get a base64 string
+				// from moodle we will get a base64 string			
 				x = DatatypeConverter.parseBase64Binary(xml);
 				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 				factory.setIgnoringComments(true);
 				factory.setCoalescing(true); // Convert CDATA to Text nodes
 				factory.setNamespaceAware(false); // No namespaces: this is default
-				factory.setValidating(false); // Don't validate DTD: also default
-				
+				factory.setValidating(false); // Don't validate DTD: also default				
 				try{
 					DocumentBuilder parser = factory.newDocumentBuilder();
 					Document document = parser.parse(new InputSource(new ByteArrayInputStream(x)));

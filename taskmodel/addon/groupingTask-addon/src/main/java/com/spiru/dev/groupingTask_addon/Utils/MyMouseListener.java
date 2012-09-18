@@ -17,9 +17,9 @@ import com.spiru.dev.groupingTask_addon.GroupingTaskAddOnJPanel;
 public class MyMouseListener implements MouseListener {
 
 	/** selektiertes Element */
-	private Element element = null;
+	private DragElement element = null;
 	/** Zweites selektiertes Element. Fuer das Erstellen einer Verbindung wichtig. */
-	private Element element2 = null;
+	private DragElement element2 = null;
 	/** Panel auf dem sich Aktionen auswirken sollen */
 	private PanelSpielplatz spielplatz;
 	
@@ -65,12 +65,12 @@ public class MyMouseListener implements MouseListener {
 			return;
 		}
 		// wenn ein Element, dann markiere dieses 
-		if (objekt instanceof Element){
+		if (objekt instanceof DragElement){
 			// letzte Markierung aufheben
 			if (element != null)
 				element.markiereElement(false);
 			// neue Markierung setzen
-			element = (Element) objekt;
+			element = (DragElement) objekt;
 			element.markiereElement(true);	
 			if (element == element2){
 				element.markiereElement(false);
@@ -113,7 +113,7 @@ public class MyMouseListener implements MouseListener {
 			}	
 			if (button.getActionCommand().equals(GroupingTaskAddOnJPanel.PLUS_ACTION)){
 				// siehe oben, geht aber nicht...
-				element2 = ((Element)(button.getParent()));				
+				element2 = ((DragElement)(button.getParent()));				
 				if (element != null)
 					element.markiereElement(false);
 				element = null;

@@ -38,14 +38,14 @@ public class SubTaskView_GroupingTask extends SubTaskView{
 		String ret = "<applet archive=\"applet/groupingTask.jar\" code=\"" + path + "\""
 				+ " id=\"applet_%s\""
 				+ " width=\"710\" height=\"540\" title=\"Java\">\n";			
-		
-		if(groupingSubTasklet.loadFromHandling()){			
-			ret += "<param name=\"handling\" value=\""+groupingSubTasklet.getImage()+"\">";
-		}
+				
+		ret += "<param name=\"handling\" value=\""+groupingSubTasklet.loadFromHandling()+"\">";
+		ret += "<param name=\"memento\" value=\""+groupingSubTasklet.getMemento()+"\" >";
+		/*
 		List<String> items = groupingSubTasklet.getBoxContainerAttributes();
 		for(int i=0; i<items.size(); i++){
 			ret += "<param name=\"e"+i+"\" value=\""+items.get(i)+"\">";
-		}
+		}*/
 		
 		ret+= "</applet>\n";
 		ret += "<textarea name=\"task[%s].result\" id=\"task_%s.result\" style=\"display:none;\"></textarea>";

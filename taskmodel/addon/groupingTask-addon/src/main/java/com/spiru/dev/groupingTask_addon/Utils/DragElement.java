@@ -25,12 +25,13 @@ import com.spiru.dev.groupingTask_addon.GroupingTaskAddOnJPanel;
  * @author Yves
  *
  */
-public class Element extends JPanel implements DragGestureListener{		
+public class DragElement extends JPanel implements DragGestureListener, Comparable<DragElement>{		
 		
 	/** jedes Objekt erhoeht die id */
-	private static int id = 0;
+	private static int id = 1;
 	/** zur Identifikation eines Elementes */
 	private int idElement;
+	private int idOrder;
 	/** Anzahl an Elementen, die momentan zur Verfuegung stehen */
 	private String anz;
 	/** wieviele Elemente es maximal gibt */
@@ -50,7 +51,7 @@ public class Element extends JPanel implements DragGestureListener{
 	 * @param anz Anzahl Objekte von diesem Element
 	 * @param listener MyMouseListener fuer Mausaktionen
 	 */
-	public Element (String name, String anz, MyMouseListener listener){
+	public DragElement (String name, String anz,String listId, MyMouseListener listener){
 		labelCaption = new JLabel(name, JLabel.CENTER);
 		labelCaption.setBorder(BorderFactory.createLineBorder(Color.black));	
 		this.add(labelCaption);
@@ -90,16 +91,27 @@ public class Element extends JPanel implements DragGestureListener{
 		this.idElement = id;
 		// erhoeht zaehler 
 		id++;			
+		if(listId != null){
+			this.idElement = Integer.parseInt(listId);
+		}
 		// Element kann Drag
 		DragSource ds = new DragSource();
         ds.createDefaultDragGestureRecognizer(this,
             DnDConstants.ACTION_COPY, this);              
 	}	
+	
+	public void setOrderID(int id){
+		this.idOrder = id;
+	}
+	
+	public int getOrderID(){
+		return idOrder;
+	}
 
 	//@Override
 	public void dragGestureRecognized(DragGestureEvent event) {
         Cursor cursor = null;
-        Element element = this;        
+        DragElement element = this;        
         // Element soll nur kopiert werden
         if (event.getDragAction() == DnDConstants.ACTION_COPY) {
             cursor = DragSource.DefaultCopyDrop;
@@ -180,4 +192,18 @@ public class Element extends JPanel implements DragGestureListener{
 		anz = anzAnfang;
 		labelAnz.setText(anz);
 	}	
+	
+	public String getMaxCount(){
+		return anzAnfang;
+	}
+
+	@Override
+	public int compareTo(DragElement a) {
+        if( this.getX() < a.getX() )
+            return -1;
+        if( this.getX() > a.getX() )
+            return 1;
+            
+        return 0;
+	}
 }
