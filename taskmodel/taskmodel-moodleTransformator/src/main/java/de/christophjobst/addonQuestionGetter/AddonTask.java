@@ -8,6 +8,8 @@
  */
 package de.christophjobst.addonQuestionGetter;
 
+import generated.Quiz.Question;
+
 import java.io.IOException;
 import java.io.StringReader;
 
@@ -21,13 +23,12 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import generated.Quiz.Question;
 import de.christophjobst.main.Base64Relocator;
 import de.christophjobst.main.RandomIdentifierGenerator;
 import de.thorstenberger.taskmodel.complex.complextaskdef.AddonSubTaskDef;
 
-public class CompareTextTask {
-
+public class AddonTask {
+	
 	public static AddonSubTaskDef processing(Question question)
 			throws ParserConfigurationException, SAXException, IOException, TransformerException {
 
@@ -58,7 +59,12 @@ public class CompareTextTask {
 				
 	     Element root = document.getDocumentElement();
 
-	     subTask.setTaskType("CompareText");
+	     
+	     //TODO Cornelius in Moodle: 
+//	     timetask -> timeTask
+//	     comparetexttask -> compareText -> compareTextTask
+//	     groupingtask -> groupingTask
+	     subTask.setTaskType(question.getType());
 	     
 	     subTask.setMemento(root);
 		

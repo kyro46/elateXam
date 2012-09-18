@@ -314,6 +314,21 @@ public class CompareTextPanel extends JPanel {
 			textAreaRight.setText(initialText);
 		else textAreaRight.setText(sofarResult);
 
+		if (viewOnly) {
+			splitPane.remove(scrollPaneLeft);
+			splitPane.remove(scrollPaneRight);
+			JLabel labelLeft = new JLabel("Sample Solution:");
+			JSplitPane horizontalSplitPaneLeft = new JSplitPane(JSplitPane.VERTICAL_SPLIT, labelLeft, scrollPaneLeft);
+			horizontalSplitPaneLeft.setDividerSize(0);
+			horizontalSplitPaneLeft.setEnabled(false);
+			JLabel labelRight = new JLabel("Student Solution:");
+			JSplitPane horizontalSplitPaneRight = new JSplitPane(JSplitPane.VERTICAL_SPLIT, labelRight, scrollPaneRight);
+			horizontalSplitPaneRight.setDividerSize(0);
+			horizontalSplitPaneRight.setEnabled(false);
+			splitPane.setLeftComponent(horizontalSplitPaneLeft);
+			splitPane.setRightComponent(horizontalSplitPaneRight);
+		}
+
 		this.setLayout(new BorderLayout());
 		this.add(toolBar, BorderLayout.PAGE_START);
 		this.add(splitPane, BorderLayout.CENTER);

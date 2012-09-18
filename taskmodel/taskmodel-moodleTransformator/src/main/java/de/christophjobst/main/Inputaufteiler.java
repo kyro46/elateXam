@@ -13,9 +13,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import de.christophjobst.addonQuestionGetter.CompareTextTask;
-import de.christophjobst.addonQuestionGetter.GroupingTask;
-import de.christophjobst.addonQuestionGetter.TimeTask;
+import de.christophjobst.addonQuestionGetter.AddonTask;
 import de.christophjobst.converter.CategoryToCategoryConverter;
 import de.christophjobst.converter.ClozeToClozeConverter;
 import de.christophjobst.converter.EssayToTextConverter;
@@ -24,6 +22,8 @@ import de.christophjobst.converter.MultichoiceToMcConverter;
 import de.christophjobst.converter.ShortanswerToTextConverter;
 import de.christophjobst.converter.TruefalseToMcConverter;
 import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef;
+import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef.Config.CorrectionMode.CorrectOnlyProcessedTasks;
+import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef.Config.CorrectionMode.MultipleCorrectors;
 import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef.Config.CorrectionMode.Regular;
 import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef.Config.CorrectionMode;
 import generated.*;
@@ -39,31 +39,52 @@ public class Inputaufteiler {
 
 		RandomIdentifierGenerator rand = new RandomIdentifierGenerator();
 		Date date = new Date();
-
+		boolean hasAExamConfigTask = false;
+		
 		// Klausurdatei aufsetzen - Allgemeine Angaben
 		ComplexTaskDef complexTaskDef = new ComplexTaskDef();
 		CorrectionMode correctionMode = new CorrectionMode();
 		Regular regular = new Regular();
+		MultipleCorrectors multipleCorrectors = new MultipleCorrectors();
+		CorrectOnlyProcessedTasks correctOnlyProcessedTasks = new CorrectOnlyProcessedTasks();
 		ComplexTaskDef.Config config = new ComplexTaskDef.Config();
 		ComplexTaskDef.Revisions.Revision revision = new ComplexTaskDef.Revisions.Revision();
 		ComplexTaskDef.Revisions revisions = new ComplexTaskDef.Revisions();
+		
+		
+		//################################################
+		//TODO in KonfigTaskType-Knoten einlagern
+		complexTaskDef.setTitle("Testklausur");
+		
+		config.setTime(30);
+		config.setKindnessExtensionTime(2);
+		config.setTasksPerPage(30);
+		config.setTries(5);
+		complexTaskDef.setConfig(config);
+		complexTaskDef.setID(rand.getRandomID());
+
+		
+		complexTaskDef.setShowHandlingHintsBeforeStart(true);
+		complexTaskDef.setStartText("Starttext.");
+		complexTaskDef.setDescription("Eine Testklausur");
 
 		correctionMode.setRegular(regular);
-		config.setKindnessExtensionTime(2);
-		config.setCorrectionMode(correctionMode);
-		config.setTries(5);
-		config.setTasksPerPage(30);
-		complexTaskDef.setConfig(config);
-		complexTaskDef.setDescription("Eine Testklausur");
-		complexTaskDef.setID(rand.getRandomID());
-		complexTaskDef.setShowHandlingHintsBeforeStart(false);
+		
+//		multipleCorrectors.setNumberOfCorrectors(2);
+//		correctionMode.setMultipleCorrectors(multipleCorrectors);
+//		
+//		correctOnlyProcessedTasks.setNumberOfTasks(10);
+//		correctionMode.setCorrectOnlyProcessedTasks(correctOnlyProcessedTasks);
+//		config.setCorrectionMode(correctionMode);
 
-		revisions.getRevision().add(revision);
+		//############Ende Einlagerungsdaten
+
 		revision.setAuthor("Christoph Jobst");
 		revision.setDate(date.getTime());
 		revision.setSerialNumber(1);
+		revisions.getRevision().add(revision);
 		complexTaskDef.setRevisions(revisions);
-		complexTaskDef.setTitle("Testklausur");
+
 
 		/*
 		 * Zuweisungs und Konvertierungsschleife für Category-Blöcke
@@ -104,8 +125,7 @@ public class Inputaufteiler {
 		for (int j = 0; j < quizsammlung.getQuestion().toArray().length; j++) {
 			try {
 
-				if (quizsammlung.getQuestion().get(j).getType().toString()
-						.equals("category")) {
+				if (quizsammlung.getQuestion().get(j).getType().equals("category")) {
 
 					/*
 					 * Abgleich: Ist zu welchem Objekt im categoryManager gehört
@@ -126,11 +146,25 @@ public class Inputaufteiler {
 					 * TaskBlock-Erstellungsschleife Die nachsten Elemente bis
 					 * zur nachten Category konvertieren und hinzufügen.
 					 */
+					String questionType = "";
+
 					for (int i = j + 1; i < quizsammlung.getQuestion()
 							.toArray().length; i++) {
 
-						if (quizsammlung.getQuestion().get(i).getType()
-								.toString().equals("essay")) {
+						questionType = quizsammlung.getQuestion().get(i).getType();
+						
+						if (questionType.equals("examConfigTask")) {
+							if (hasAExamConfigTask == false){
+							
+								//TODO examConfig in die CompelexTaskDef schreiben
+
+								hasAExamConfigTask = true;
+							} else {
+								System.err.println("Zu viele Klausurkonfigurationen vorhanden. Es wird die zuerst gefundene genutzt.");
+							}
+						}
+		
+						if (questionType.equals("essay")) {
 
 							categoryManagerList
 									.get(belongingCategoryIndex)
@@ -152,8 +186,7 @@ public class Inputaufteiler {
 							// .toArray().length + " textfragen");
 						}
 
-						if (quizsammlung.getQuestion().get(i).getType()
-								.toString().equals("cloze")) {
+						if (questionType.equals("cloze")) {
 							categoryManagerList
 									.get(belongingCategoryIndex)
 									.getClozeTaskBlock()
@@ -165,8 +198,7 @@ public class Inputaufteiler {
 									.setHasClozeTaskBlock(true);
 						}
 
-						if (quizsammlung.getQuestion().get(i).getType()
-								.toString().equals("truefalse")) {
+						if (questionType.equals("truefalse")) {
 							categoryManagerList
 									.get(belongingCategoryIndex)
 									.getMcTaskBlock()
@@ -178,8 +210,7 @@ public class Inputaufteiler {
 									.setHasMcTaskBlock(true);
 						}
 
-						if (quizsammlung.getQuestion().get(i).getType()
-								.toString().equals("multichoice")) {
+						if (questionType.equals("multichoice")) {
 							categoryManagerList
 									.get(belongingCategoryIndex)
 									.getMcTaskBlock()
@@ -192,8 +223,7 @@ public class Inputaufteiler {
 
 						}
 
-						if (quizsammlung.getQuestion().get(i).getType()
-								.toString().equals("shortanswer")) {
+						if (questionType.equals("shortanswer")) {
 
 							categoryManagerList
 									.get(belongingCategoryIndex)
@@ -207,8 +237,7 @@ public class Inputaufteiler {
 
 						}
 
-						if (quizsammlung.getQuestion().get(i).getType()
-								.toString().equals("matching")) {
+						if (questionType.equals("matching")) {
 
 							categoryManagerList
 									.get(belongingCategoryIndex)
@@ -222,50 +251,26 @@ public class Inputaufteiler {
 						}
 						
 						
-						if (quizsammlung.getQuestion().get(i).getType()
-								.toString().equals("groupingtask")) {
+						if (!questionType.equals("category") &&
+								!questionType.equals("matching") &&
+								!questionType.equals("shortanswer") &&
+								!questionType.equals("multichoice") &&
+								!questionType.equals("truefalse") &&
+								!questionType.equals("cloze") &&
+								!questionType.equals("essay")) {
 
-							categoryManagerList
-									.get(belongingCategoryIndex)
-									.getAddonTaskBlock()
-									.getAddonSubTaskDefOrChoice()
-									.add(GroupingTask
-											.processing(quizsammlung
-													.getQuestion().get(i)));
-							categoryManagerList.get(belongingCategoryIndex)
-									.setHasAddonTaskBlock(true);
-						}					
-						
-						if (quizsammlung.getQuestion().get(i).getType()
-								.toString().equals("comparetexttask")) {
+								categoryManagerList
+										.get(belongingCategoryIndex)
+										.getAddonTaskBlock()
+										.getAddonSubTaskDefOrChoice()
+										.add(AddonTask
+												.processing(quizsammlung
+														.getQuestion().get(i)));
+								categoryManagerList.get(belongingCategoryIndex)
+										.setHasAddonTaskBlock(true);
+}
 
-							categoryManagerList
-									.get(belongingCategoryIndex)
-									.getAddonTaskBlock()
-									.getAddonSubTaskDefOrChoice()
-									.add(CompareTextTask
-											.processing(quizsammlung
-													.getQuestion().get(i)));
-							categoryManagerList.get(belongingCategoryIndex)
-									.setHasAddonTaskBlock(true);
-						}			
-						
-						if (quizsammlung.getQuestion().get(i).getType()
-								.toString().equals("timetask")) {
-
-							categoryManagerList
-									.get(belongingCategoryIndex)
-									.getAddonTaskBlock()
-									.getAddonSubTaskDefOrChoice()
-									.add(TimeTask
-											.processing(quizsammlung
-													.getQuestion().get(i)));
-							categoryManagerList.get(belongingCategoryIndex)
-									.setHasAddonTaskBlock(true);
-						}			
-						
-						if (quizsammlung.getQuestion().get(i).getType()
-								.toString().equals("category")) {
+						if (questionType.equals("category")) {
 							/*
 							 * Wird ein Category gefunden, dann verlasse die
 							 * TaskBlock-Erstellungsschleife und suche dir die
@@ -301,6 +306,8 @@ public class Inputaufteiler {
 		complexTaskDef = CategoryAssignment.assignFlatCategories(
 				complexTaskDef, categoryManagerList);
 
+		
+		
 		return complexTaskDef;
 	}
 

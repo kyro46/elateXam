@@ -144,6 +144,13 @@ public class SubTasklet_CompareTextTaskImpl extends AbstractAddonSubTasklet impl
 	}
 
 	@Override
+	public String getSampleSolution() {
+		// XPath: Memento/textComparisonSubTaskDef/sampleSolution
+		Element sampleSolution = (Element) mementoTaskDef.getElementsByTagName("sampleSolution").item(0);
+		return sampleSolution.getTextContent();
+	}
+
+	@Override
 	public String getResult() {
 		NodeList resultElement = mementoTaskHandling.getElementsByTagName("answer");
 		if(resultElement.getLength() == 1)

@@ -30,7 +30,9 @@ public class SubTaskView_CompareTextTask extends SubTaskView{
 		String ret = "<applet archive=\"applet/compareTextTask.jar\" code=\"" + path + "\""
 				+ " id=\"applet_%s\""
 				+ " width=\"710\" height=\"540\" title=\"Java\">\n";
-		ret += "<param name=\"initialText\" value=\"" + subTasklet.getInitialText() + "\">\n";
+		if (!corrected)
+			ret += "<param name=\"initialText\" value=\"" + subTasklet.getInitialText() + "\">\n";
+		else ret += "<param name=\"initialText\" value=\"" + subTasklet.getSampleSolution() + "\">\n";
 		ret += "<param name=\"soFarSolution\" value=\"" + subTasklet.getResult() + "\">\n";
 		ret += "<param name=\"viewOnly\" value=\"" + corrected + "\">\n";
 		ret += "<param name=\"xmlDef\" value=\"" + subTasklet.getTagsString() + "\">\n";

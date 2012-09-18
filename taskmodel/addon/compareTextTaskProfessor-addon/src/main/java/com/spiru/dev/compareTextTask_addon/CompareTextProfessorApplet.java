@@ -27,10 +27,11 @@ public class CompareTextProfessorApplet extends Applet {
 	@Override
 	public void init() {
 		String mementostr = getParameter("memento");
-		if (mementostr == null) { // is NULL, when Applet is not loaded from a Webbrowser, but from Eclipse
+		if (mementostr == null && this.getWidth() < 300) { // is NULL, when Applet is not loaded from a Webbrowser, but from Eclipse
 			mementostr = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Memento><addonConfig><avaiableTags><tag name=\"example\"><desc>Example Tag with Description, please replace this line.</desc></tag></avaiableTags></addonConfig>"
 					+ "<textComparisonSubTaskDef><initialText>Lorem ipsum dolor sit amet.</initialText><sampleSolution>Lorem ipsum dolor sit amet.</sampleSolution></textComparisonSubTaskDef></Memento>";
 			mementostr = DatatypeConverter.printBase64Binary(mementostr.getBytes());
+			this.setSize(800, 400);
 		}
 		Element avaiableTags = null;
 		String initial_text = "";
@@ -42,7 +43,6 @@ public class CompareTextProfessorApplet extends Applet {
 			initial_text = Memento.getElementsByTagName("initialText").item(0).getTextContent();
 			sample_solution = Memento.getElementsByTagName("sampleSolution").item(0).getTextContent();
 		}
-		//this.setSize(800, 450);
 		jpanel = new CompareTextProfessorenPanel(initial_text, sample_solution, avaiableTags, this.getWidth(), this.getHeight());
 		//jpanel.setSize(800, 450);
 		add(jpanel);

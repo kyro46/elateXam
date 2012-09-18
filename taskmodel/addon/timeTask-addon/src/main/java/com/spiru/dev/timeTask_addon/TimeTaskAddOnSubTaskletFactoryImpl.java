@@ -17,9 +17,9 @@ AddOnSubTaskletFactory {
 	}
 
 	public String getAddonTaskType() {
-		System.out.println("Subtasklet CompareTextTask successfully loaded");
+		System.out.println("Subtasklet timetask successfully loaded");
 
-		return "timeTask";
+		return "timetask";
 	}
 
 }

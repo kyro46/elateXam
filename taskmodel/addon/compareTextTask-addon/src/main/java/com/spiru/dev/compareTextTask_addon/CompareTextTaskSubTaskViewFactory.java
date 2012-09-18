@@ -10,7 +10,7 @@ public class CompareTextTaskSubTaskViewFactory implements AddonSubTaskViewFactor
 	@Override
 	public String getAddonTaskType() {
 		System.out.println("SubtaskletViewFactory CompareTextTask successfully loaded");
-		return "CompareText";
+		return "comparetexttask";
 	}
 
 	/*
