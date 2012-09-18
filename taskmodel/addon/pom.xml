@@ -33,6 +33,7 @@
     <module>timeTaskProfessor-addon</module>
 	<module>compareTextTask-addon</module>
 	<module>compareTextTaskProfessor-addon</module>
+	<module>rtypeTask-addon</module>
 	<module>groupingTaskProfessor-addon</module>
 	<!--
     <module>junit-addon</module>
