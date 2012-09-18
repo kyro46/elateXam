@@ -1,0 +1,6 @@
+<component name="Autotool-Subtasklets">
+    <implementation class="com.spiru.dev.rtypeTask_addon.RtypeTaskSubTaskViewFactory"/>
+    <service>
+        <provide interface="de.thorstenberger.taskmodel.view.AddonSubTaskViewFactory"/>
+    </service>
+</component>
