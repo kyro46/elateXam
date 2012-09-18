@@ -19,7 +19,6 @@ public class CategoryToCategoryConverter {
 		RandomIdentifierGenerator rand = new RandomIdentifierGenerator();
 
 		Category category = new Category();
-		
 		category.setTitle(question.getCategory().getText().substring(9));
 		category.setId("Kategorie_" + rand.getRandomID());
 		category.setIgnoreOrderOfBlocks(false);

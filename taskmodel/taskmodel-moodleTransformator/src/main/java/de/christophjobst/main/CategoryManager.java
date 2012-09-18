@@ -8,8 +8,15 @@
 
 package de.christophjobst.main;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef.Category.AddonTaskBlock;
+import de.thorstenberger.taskmodel.complex.complextaskdef.AddonSubTaskDef;
+import de.thorstenberger.taskmodel.complex.complextaskdef.ClozeSubTaskDef;
 import de.thorstenberger.taskmodel.complex.complextaskdef.Config;
+import de.thorstenberger.taskmodel.complex.complextaskdef.McSubTaskDef;
+import de.thorstenberger.taskmodel.complex.complextaskdef.TextSubTaskDef;
 import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef.Category;
 import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef.Category.ClozeTaskBlock;
 import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef.Category.MappingTaskBlock;
@@ -19,6 +26,7 @@ import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef.Categor
 import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef.Category.MappingTaskBlock.MappingConfig;
 import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef.Category.McTaskBlock.McConfig;
 import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef.Category.McTaskBlock.McConfig.Different;
+import de.thorstenberger.taskmodel.complex.complextaskdef.MappingSubTaskDef;
 
 public class CategoryManager {
 
@@ -29,6 +37,9 @@ public class CategoryManager {
 	boolean hasMappingTaskBlock = false;
 	boolean hasAddonTaskBlock = false;
 
+	public int defaultgrade = 0;
+	
+	
 	String title;
 	MappingTaskBlock mappingTaskBlock = new MappingTaskBlock();
 	McTaskBlock mcTaskBlock = new McTaskBlock();
@@ -36,12 +47,19 @@ public class CategoryManager {
 	ClozeTaskBlock clozeTaskBlock = new ClozeTaskBlock();
 	AddonTaskBlock addonTaskBlock = new AddonTaskBlock();
 
+	List<TextTaskBlock> textTaskBlockList = new ArrayList<TextTaskBlock>();
+	List<McTaskBlock> mcTaskBlockList = new ArrayList<McTaskBlock>();
+	List<ClozeTaskBlock> clozeTaskBlockList = new ArrayList<ClozeTaskBlock>();
+	List<MappingTaskBlock> mappingTaskBlockList = new ArrayList<MappingTaskBlock>();
+	List<AddonTaskBlock> addonTaskBlockList = new ArrayList<AddonTaskBlock>();
+
+	
 	public CategoryManager(Category category) {
 		this.title = category.getTitle().toString();
 		this.category = category;
 		// Einheitliche Config für alle TaskBlock-Instanzen
 		Config generalTaskBlockConfig = new Config();
-		generalTaskBlockConfig.setNoOfSelectedTasks(100);
+		generalTaskBlockConfig.setNoOfSelectedTasks(1);
 		// TODO Punkte = Anzahl der Lücken/Matchings - inkonsistent, da in
 		// Frageinstanzen nicht einheitlich viele Lücken/Matchings
 		generalTaskBlockConfig.setPointsPerTask(5);
@@ -118,35 +136,153 @@ public class CategoryManager {
 	}
 
 	public MappingTaskBlock getMappingTaskBlock() {
+		mappingTaskBlock = new MappingTaskBlock();
+		Config generalTaskBlockConfig = new Config();
+		generalTaskBlockConfig.setNoOfSelectedTasks(1);
+		// TODO Punkte = Anzahl der Lücken/Matchings - inkonsistent, da in
+		// Frageinstanzen nicht einheitlich viele Lücken/Matchings
+		generalTaskBlockConfig.setPointsPerTask(5);
+		generalTaskBlockConfig.setPreserveOrder(false);
+		
+		mappingTaskBlock.setConfig(generalTaskBlockConfig);
+		MappingConfig mappingConfig = new MappingConfig();
+		mappingConfig.setNegativePoints(0);
+		mappingTaskBlock.setMappingConfig(mappingConfig);
+		
 		return mappingTaskBlock;
 	}
 
-	public void setMappingTaskBlock(MappingTaskBlock mappingTaskBlock) {
-		this.mappingTaskBlock = mappingTaskBlock;
+	public void setMappingTaskBlock(MappingSubTaskDef mappingSubTaskDef,String defaultgrade) {
+		
+		this.mappingTaskBlock = new MappingTaskBlock();
+		Config generalTaskBlockConfig = new Config();
+		generalTaskBlockConfig.setNoOfSelectedTasks(1);
+		// TODO Punkte = Anzahl der Lücken/Matchings - inkonsistent, da in
+		// Frageinstanzen nicht einheitlich viele Lücken/Matchings
+		generalTaskBlockConfig.setPointsPerTask(Float.parseFloat(defaultgrade));
+		generalTaskBlockConfig.setPreserveOrder(false);
+		this.mappingTaskBlock.setConfig(generalTaskBlockConfig);
+		MappingConfig mappingConfig = new MappingConfig();
+		mappingConfig.setNegativePoints(0);
+		this.mappingTaskBlock.setMappingConfig(mappingConfig);
+		
+		this.mappingTaskBlock.getMappingSubTaskDefOrChoice().add(mappingSubTaskDef);
+		
+		this.mappingTaskBlockList.add(mappingTaskBlock);
 	}
 
 	public McTaskBlock getMcTaskBlock() {
+		mcTaskBlock = new McTaskBlock();
+		Config generalTaskBlockConfig = new Config();
+		generalTaskBlockConfig.setNoOfSelectedTasks(1);
+		// TODO Punkte = Anzahl der Lücken/Matchings - inkonsistent, da in
+		// Frageinstanzen nicht einheitlich viele Lücken/Matchings
+		generalTaskBlockConfig.setPointsPerTask(5);
+		generalTaskBlockConfig.setPreserveOrder(false);
+		
+		mcTaskBlock.setConfig(generalTaskBlockConfig);
+		McConfig mcConfig = new McConfig();
+		Different different = new Different();
+		different.setCorrectAnswerNegativePoints(0);
+		different.setIncorrectAnswerNegativePoints(0);
+		mcConfig.setDifferent(different);
+		mcTaskBlock.setMcConfig(mcConfig);
+		
 		return mcTaskBlock;
 	}
 
-	public void setMcTaskBlock(McTaskBlock mcTaskBlock) {
-		this.mcTaskBlock = mcTaskBlock;
+	public void setMcTaskBlock(McSubTaskDef mcSubTaskDef,String defaultgrade) {
+		mcTaskBlock = new McTaskBlock();
+		Config generalTaskBlockConfig = new Config();
+		generalTaskBlockConfig.setNoOfSelectedTasks(1);
+		// TODO Punkte = Anzahl der Lücken/Matchings - inkonsistent, da in
+		// Frageinstanzen nicht einheitlich viele Lücken/Matchings
+		generalTaskBlockConfig.setPointsPerTask(Float.parseFloat(defaultgrade));
+		generalTaskBlockConfig.setPreserveOrder(false);
+		
+		mcTaskBlock.setConfig(generalTaskBlockConfig);
+		McConfig mcConfig = new McConfig();
+		Different different = new Different();
+		different.setCorrectAnswerNegativePoints(0);
+		different.setIncorrectAnswerNegativePoints(0);
+		mcConfig.setDifferent(different);
+		mcTaskBlock.setMcConfig(mcConfig);
+		
+		mcTaskBlock.getMcSubTaskDefOrChoice().add(mcSubTaskDef);
+		
+		this.mcTaskBlockList.add(mcTaskBlock);
 	}
 
 	public TextTaskBlock getTextTaskBlock() {
+		textTaskBlock = new TextTaskBlock();
+		Config generalTaskBlockConfig = new Config();
+		generalTaskBlockConfig.setNoOfSelectedTasks(1);
+		// TODO Punkte = Anzahl der Lücken/Matchings - inkonsistent, da in
+		// Frageinstanzen nicht einheitlich viele Lücken/Matchings
+		generalTaskBlockConfig.setPointsPerTask(5);
+		generalTaskBlockConfig.setPreserveOrder(false);
+		
+		textTaskBlock.setConfig(generalTaskBlockConfig);
+
 		return textTaskBlock;
 	}
 
-	public void setTextTaskBlock(TextTaskBlock textTaskBlock) {
-		this.textTaskBlock = textTaskBlock;
+	public void setTextTaskBlock(TextSubTaskDef textSubTaskDef,String defaultgrade) {
+		
+		System.out.println("category manager settexttaskblock");
+		
+		textTaskBlock = new TextTaskBlock();
+		Config generalTaskBlockConfig = new Config();
+		generalTaskBlockConfig.setNoOfSelectedTasks(1);
+		// TODO Punkte = Anzahl der Lücken/Matchings - inkonsistent, da in
+		// Frageinstanzen nicht einheitlich viele Lücken/Matchings
+		generalTaskBlockConfig.setPointsPerTask(Float.parseFloat(defaultgrade));
+		generalTaskBlockConfig.setPreserveOrder(false);
+		
+		textTaskBlock.setConfig(generalTaskBlockConfig);
+
+		textTaskBlock.getTextSubTaskDefOrChoice().add(textSubTaskDef);
+		
+		this.textTaskBlockList.add(textTaskBlock);
 	}
 
 	public ClozeTaskBlock getClozeTaskBlock() {
+		clozeTaskBlock = new ClozeTaskBlock();
+		Config generalTaskBlockConfig = new Config();
+		generalTaskBlockConfig.setNoOfSelectedTasks(1);
+		// TODO Punkte = Anzahl der Lücken/Matchings - inkonsistent, da in
+		// Frageinstanzen nicht einheitlich viele Lücken/Matchings
+		generalTaskBlockConfig.setPointsPerTask(5);
+		generalTaskBlockConfig.setPreserveOrder(false);
+
+		// Vorbereitung ClozeTaskBlock
+		clozeTaskBlock.setConfig(generalTaskBlockConfig);
+		ClozeConfig clozeConfig = new ClozeConfig();
+		clozeConfig.setIgnoreCase(true);
+		clozeConfig.setNegativePoints(0);
+		clozeTaskBlock.setClozeConfig(clozeConfig);
 		return clozeTaskBlock;
 	}
 
-	public void setClozeTaskBlock(ClozeTaskBlock clozeTaskBlock) {
-		this.clozeTaskBlock = clozeTaskBlock;
+	public void setClozeTaskBlock(ClozeSubTaskDef clozeSubTaskDef,String defaultgrade) {
+		clozeTaskBlock = new ClozeTaskBlock();
+		Config generalTaskBlockConfig = new Config();
+		generalTaskBlockConfig.setNoOfSelectedTasks(1);
+		// TODO Punkte = Anzahl der Lücken/Matchings - inkonsistent, da in
+		// Frageinstanzen nicht einheitlich viele Lücken/Matchings
+		generalTaskBlockConfig.setPointsPerTask(Float.parseFloat(defaultgrade));
+		generalTaskBlockConfig.setPreserveOrder(false);
+		
+		// Vorbereitung ClozeTaskBlock
+		clozeTaskBlock.setConfig(generalTaskBlockConfig);
+		ClozeConfig clozeConfig = new ClozeConfig();
+		clozeConfig.setIgnoreCase(true);
+		clozeConfig.setNegativePoints(0);
+		clozeTaskBlock.setClozeConfig(clozeConfig);
+
+		clozeTaskBlock.getClozeSubTaskDefOrChoice().add(clozeSubTaskDef);
+		
+		this.clozeTaskBlockList.add(clozeTaskBlock);
 	}
 
 	public boolean isHasAddonTaskBlock() {
@@ -158,29 +294,70 @@ public class CategoryManager {
 	}
 
 	public AddonTaskBlock getAddonTaskBlock() {
+		addonTaskBlock = new AddonTaskBlock();
+		Config generalTaskBlockConfig = new Config();
+		generalTaskBlockConfig.setNoOfSelectedTasks(1);
+		/* TODO Punkte = Anzahl der Lücken/Matchings - inkonsistent, da in
+		 * Frageinstanzen nicht einheitlich viele Lücken/Matchings
+		 */
+		generalTaskBlockConfig.setPointsPerTask(5);
+		generalTaskBlockConfig.setPreserveOrder(false);
+		
+		addonTaskBlock.setConfig(generalTaskBlockConfig);
+
 		return addonTaskBlock;
+	}
+	
+	public void setAddonTaskBlock(AddonSubTaskDef addonSubTaskDef,String defaultgrade){
+		addonTaskBlock = new AddonTaskBlock();
+		Config generalTaskBlockConfig = new Config();
+		generalTaskBlockConfig.setNoOfSelectedTasks(1);
+		/* TODO Punkte = Anzahl der Lücken/Matchings - inkonsistent, da in
+		 * Frageinstanzen nicht einheitlich viele Lücken/Matchings
+		 */
+		generalTaskBlockConfig.setPointsPerTask(Float.parseFloat(defaultgrade));
+		generalTaskBlockConfig.setPreserveOrder(false);
+		
+		addonTaskBlock.setConfig(generalTaskBlockConfig);
+
+		addonTaskBlock.getAddonSubTaskDefOrChoice().add(addonSubTaskDef);
+		
+		this.addonTaskBlockList.add(addonTaskBlock);
+		
 	}
 
 	public Category generateCategory() {
 		if (hasClozeTaskBlock) {
-			category.getMcTaskBlockOrClozeTaskBlockOrTextTaskBlock().add(
-					clozeTaskBlock);
+			for (int i = 0; i < clozeTaskBlockList.toArray().length; i ++){
+				category.getMcTaskBlockOrClozeTaskBlockOrTextTaskBlock().add(
+						clozeTaskBlockList.get(i));
+			}
+
 		}
 		if (hasTextTaskBlock) {
-			category.getMcTaskBlockOrClozeTaskBlockOrTextTaskBlock().add(
-					textTaskBlock);
+						
+			for (int i = 0; i < textTaskBlockList.toArray().length; i ++){
+				category.getMcTaskBlockOrClozeTaskBlockOrTextTaskBlock().add(
+						textTaskBlockList.get(i));
+			}
 		}
 		if (hasMappingTaskBlock) {
-			category.getMcTaskBlockOrClozeTaskBlockOrTextTaskBlock().add(
-					mappingTaskBlock);
+			for (int i = 0; i < mappingTaskBlockList.toArray().length; i ++){
+				category.getMcTaskBlockOrClozeTaskBlockOrTextTaskBlock().add(
+						mappingTaskBlockList.get(i));
+			}
 		}
 		if (hasMcTaskBlock) {
-			category.getMcTaskBlockOrClozeTaskBlockOrTextTaskBlock().add(
-					mcTaskBlock);
+			for (int i = 0; i < mcTaskBlockList.toArray().length; i ++){
+				category.getMcTaskBlockOrClozeTaskBlockOrTextTaskBlock().add(
+						mcTaskBlockList.get(i));
+			}
 		}
 		if (hasAddonTaskBlock) {
-			category.getMcTaskBlockOrClozeTaskBlockOrTextTaskBlock().add(
-					addonTaskBlock);
+			for (int i = 0; i < addonTaskBlockList.toArray().length; i ++){
+				category.getMcTaskBlockOrClozeTaskBlockOrTextTaskBlock().add(
+						addonTaskBlockList.get(i));
+			}
 		}
 		return category;
 	}

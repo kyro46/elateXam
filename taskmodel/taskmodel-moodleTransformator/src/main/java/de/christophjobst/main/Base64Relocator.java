@@ -58,8 +58,11 @@ public class Base64Relocator {
 				document = builder.parse(new InputSource(new StringReader(
 						problem_string)));
 				Element root = document.getDocumentElement();
-
 				for (int i = 0; i < root.getChildNodes().getLength(); i++) {
+					
+					System.out.println(root.getChildNodes().item(i).getNodeName());
+
+					
 					if (root.getChildNodes().item(i).getNodeName()
 							.equals("img")) {
 						for (int j = 0; j < fileList.toArray().length; j++) {
@@ -96,9 +99,36 @@ public class Base64Relocator {
 
 			} catch (org.xml.sax.SAXParseException e) {
 				System.out.println(problem_string + "(catch block)");
-				text = problem_string;
+				System.out.println("****Versuche manuellen Parser für Aufgabentsellungstext.****");
 				e.printStackTrace();
-				System.out.println("++++Nutze unbearbeiteten Aufgabentsellungstext.++++");
+
+				int start = 0;
+				int ende = 0;
+				String fileName = "";
+				while (start != -1) {
+					start = problem_string.indexOf("@@PLUGINFILE@@/",ende);
+					ende = problem_string.indexOf("\" alt=\"");
+					if (start == -1 || ende == -1) break;
+					fileName = problem_string.substring(start+15, ende);
+					System.out.println(fileName + " FileName");
+					for (int j = 0; j < fileList.toArray().length; j++) {
+						System.out.println(fileList.get(j).getName() + " FileList");
+						if (fileList.get(j).getName().equals(fileName)) {
+							problem_string = problem_string.replace("@@PLUGINFILE@@/" + fileName, "data:image/gif;base64,"
+									+ questiontext
+									.getFile()
+									.get(j)
+									.getValue());
+						}
+					}					
+				}
+				
+				
+				
+				text = problem_string;
+	
+				
+				
 			}
 		} else {
 			 text = "Aufgabenstellung - Platzhalter";
