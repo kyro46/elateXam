@@ -18,7 +18,7 @@ AddOnSubTaskletFactory {
 
 	public String getAddonTaskType() {
 		System.out.println("Subtasklet groupingTask successfully loaded");
-		return "groupingTask";
+		return "groupingtask";
 	}
 
 }
