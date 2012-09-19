@@ -19,8 +19,12 @@ public class CategoryAssignment {
 			ComplexTaskDef complexTaskDef,
 			List<CategoryManager> categoryManagerList) {
 		for (CategoryManager categoryManager : categoryManagerList) {
-			complexTaskDef.getCategory()
-					.add(categoryManager.generateCategory());
+			// Nur Categorien übernehmen, die mindestens 1 Taskblock haben
+			categoryManager.generateCategory();
+			if (categoryManager.getCategory()
+					.getMcTaskBlockOrClozeTaskBlockOrTextTaskBlock().toArray().length != 0) {
+				complexTaskDef.getCategory().add(categoryManager.getCategory());
+			}
 		}
 		return complexTaskDef;
 	}

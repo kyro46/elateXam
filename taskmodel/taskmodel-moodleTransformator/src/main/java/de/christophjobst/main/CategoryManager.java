@@ -229,7 +229,7 @@ public class CategoryManager {
 
 	public void setTextTaskBlock(TextSubTaskDef textSubTaskDef,String defaultgrade) {
 		
-		System.out.println("category manager settexttaskblock");
+//		System.out.println("category manager settexttaskblock");
 		
 		textTaskBlock = new TextTaskBlock();
 		Config generalTaskBlockConfig = new Config();
@@ -264,13 +264,13 @@ public class CategoryManager {
 		return clozeTaskBlock;
 	}
 
-	public void setClozeTaskBlock(ClozeSubTaskDef clozeSubTaskDef,String defaultgrade) {
+	public void setClozeTaskBlock(ClozeSubTaskDef clozeSubTaskDef,float defaultgrade) {
 		clozeTaskBlock = new ClozeTaskBlock();
 		Config generalTaskBlockConfig = new Config();
 		generalTaskBlockConfig.setNoOfSelectedTasks(1);
 		// TODO Punkte = Anzahl der Lücken/Matchings - inkonsistent, da in
 		// Frageinstanzen nicht einheitlich viele Lücken/Matchings
-		generalTaskBlockConfig.setPointsPerTask(Float.parseFloat(defaultgrade));
+		generalTaskBlockConfig.setPointsPerTask(defaultgrade);
 		generalTaskBlockConfig.setPreserveOrder(false);
 		
 		// Vorbereitung ClozeTaskBlock
@@ -326,7 +326,7 @@ public class CategoryManager {
 		
 	}
 
-	public Category generateCategory() {
+	public void generateCategory() {
 		if (hasClozeTaskBlock) {
 			for (int i = 0; i < clozeTaskBlockList.toArray().length; i ++){
 				category.getMcTaskBlockOrClozeTaskBlockOrTextTaskBlock().add(
@@ -359,7 +359,12 @@ public class CategoryManager {
 						addonTaskBlockList.get(i));
 			}
 		}
-		return category;
 	}
 
+	public Category getCategory(){
+		return category;
+	}
+	
+	
+	
 }

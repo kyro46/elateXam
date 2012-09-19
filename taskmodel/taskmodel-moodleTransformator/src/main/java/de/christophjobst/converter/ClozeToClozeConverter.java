@@ -25,6 +25,10 @@ import de.thorstenberger.taskmodel.complex.complextaskdef.ClozeSubTaskDef;
 
 public class ClozeToClozeConverter {
 
+	
+	public static float punktzahl = 0;
+
+	
 	public static ClozeSubTaskDef processing(Question question) throws ParserConfigurationException, SAXException, IOException, TransformerException {
 
 		RandomIdentifierGenerator rand = new RandomIdentifierGenerator();
@@ -63,6 +67,8 @@ public class ClozeToClozeConverter {
 	private static Cloze clozeParser(String moodleText) {
 
 		Cloze cloze = new Cloze();
+			
+		punktzahl = 0;
 		int klammeraufindex = 0;
 		int klammerzuindex = 0;
 
@@ -83,14 +89,16 @@ public class ClozeToClozeConverter {
 					Math.max(multichoiceindex, numericalindex));
 
 			klammeraufindex = moodleText.lastIndexOf("{", gapIndexToUse);
-
+		
 			if (klammeraufindex != -1) {
 
+				//Text am Anfang der Aufgabe
 				if (klammerzuindex == 0) {
 					cloze.getTextOrGap().add(
 							moodleText.substring(klammerzuindex,
 									klammeraufindex));
 				} else {
+					//Text zwischen 2 Lücken
 					cloze.getTextOrGap().add(
 							moodleText.substring(klammerzuindex + 1,
 									klammeraufindex));
@@ -101,6 +109,7 @@ public class ClozeToClozeConverter {
 						gapBuilder(moodleText.substring(klammeraufindex + 1,
 								klammerzuindex)));
 			} else {
+				//Text nach der letzten Lücke
 				cloze.getTextOrGap().add(
 						moodleText.substring(klammerzuindex + 1));
 			}
@@ -113,6 +122,9 @@ public class ClozeToClozeConverter {
 					gapIndexToUse + 1);
 
 		} while (klammeraufindex != -1);
+		
+//		System.out.println("Gesamtpunktzahl für die Aufgabe: " + punktzahl);
+		
 		return cloze;
 	}
 
@@ -122,17 +134,19 @@ public class ClozeToClozeConverter {
 		gap.setIgnoreCase(true);
 		String correctAnswer;
 
+		punktzahl += Float.parseFloat(input.substring(0, input.indexOf(":")));
+
 		int nextAnswer = 0;
-		System.out.println(input);
+//		System.out.println(input);
 		while ((nextAnswer = input.indexOf("=", nextAnswer + 1)) != -1) {
 
 			if (input.indexOf("=", nextAnswer + 1) == -1) {
 				correctAnswer = input.substring(nextAnswer + 1);
-				System.out.println(correctAnswer);
+//				System.out.println(correctAnswer);
 			} else {
 				correctAnswer = input.substring(nextAnswer + 1,
 						input.indexOf("=", nextAnswer + 1));
-				System.out.println(correctAnswer);
+//				System.out.println(correctAnswer);
 			}
 
 			gap.getCorrect().add(correctAnswer);
@@ -140,6 +154,10 @@ public class ClozeToClozeConverter {
 			correctAnswer = new String();
 
 		}
+		
+		
+		
+
 
 		return gap;
 	}

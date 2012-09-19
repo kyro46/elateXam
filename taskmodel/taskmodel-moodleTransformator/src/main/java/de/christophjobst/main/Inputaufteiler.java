@@ -195,7 +195,7 @@ public class Inputaufteiler {
 							
 							categoryManagerList.get(belongingCategoryIndex).setClozeTaskBlock(ClozeToClozeConverter
 									.processing(quizsammlung
-											.getQuestion().get(i)),"11");
+											.getQuestion().get(i)), ClozeToClozeConverter.punktzahl);
 							
 //							categoryManagerList
 //									.get(belongingCategoryIndex)
