@@ -273,7 +273,11 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 			for(DragElement n:elementList) {
 				Element BoxContainer = document.createElement("BoxContainer");
 				BoxContainer.setAttribute("boxName",n.getCaption());
-				BoxContainer.setAttribute("count",n.getMaxCount());
+				String count = n.getMaxCount();
+				if(count.equals("\u221e")){
+					count = "n";
+				}
+				BoxContainer.setAttribute("count", count);
 				BoxContainer.setAttribute("boxID",""+n.getId());
 				dragSubTaskDef.appendChild(BoxContainer);
 			}
@@ -315,8 +319,8 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 					Element solution = document.createElement("Solution");					
 					solution.setAttribute("fromID",""+el.getOrderID());
 					solution.setAttribute("toIDs",""+kanten);
-					dragSubTaskDef.appendChild(solution);
-					
+					if (!kanten.equals(""))
+						dragSubTaskDef.appendChild(solution);					
 				}
 			}
 			

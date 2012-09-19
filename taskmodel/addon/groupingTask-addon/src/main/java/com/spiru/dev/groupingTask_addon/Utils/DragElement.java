@@ -59,6 +59,9 @@ public class DragElement extends JPanel implements DragGestureListener, Comparab
 		if (anz!=null){
 			// 2 Labels untereinander
 			this.setLayout(new GridLayout(2,1,5,2));
+			if(anz.equals("n")){
+				anz = "\u221e";
+			}
 			labelAnz = new JLabel(""+anz, JLabel.CENTER);
 			labelAnz.setBorder(BorderFactory.createLineBorder(Color.black));
 			this.add(labelAnz);
@@ -161,7 +164,7 @@ public class DragElement extends JPanel implements DragGestureListener, Comparab
 	 * veringert Anzahl an vorhandenen Elementen 
 	 */
 	public void decAnz(){
-		if (!anz.equals("n"))
+		if (!anz.equals("\u221e"))
 			anz = (Integer.parseInt(anz)-1)+"";	
 		labelAnz.setText(""+anz);		
 	}
@@ -170,7 +173,7 @@ public class DragElement extends JPanel implements DragGestureListener, Comparab
 	 * erhoeht Anzahl an vorhandenen Elementen
 	 */
 	public void incAnz(){
-		if (!anz.equals("n"))
+		if (!anz.equals("\u221e"))
 			anz = (Integer.parseInt(anz)+1)+"";
 		labelAnz.setText(""+anz);
 	}
@@ -180,7 +183,7 @@ public class DragElement extends JPanel implements DragGestureListener, Comparab
 	 * @return Anzahl momentan vorhandener Elemente
 	 */
 	public int getAnz(){
-		if (anz.equals("n"))
+		if (anz.equals("\u221e"))
 			return 200;
 		return Integer.parseInt(anz);
 	}

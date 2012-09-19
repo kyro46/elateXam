@@ -186,7 +186,7 @@ public class SubTasklet_GroupingTaskImpl extends AbstractAddonSubTasklet impleme
 
 	@Override
 	public boolean loadFromHandling() {
-		if (mementoTaskHandling.getElementsByTagName("answer").item(0) != null){
+		if (mementoTaskHandling.getElementsByTagName("dragSubTaskDef").item(0) != null){
 			return true;
 		}
 		return false;

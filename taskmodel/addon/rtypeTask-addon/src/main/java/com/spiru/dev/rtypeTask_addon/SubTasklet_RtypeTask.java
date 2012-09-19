@@ -1,4 +1,4 @@
-package com.spriu.dev.rtypeTask_addon;
+package com.spiru.dev.rtypeTask_addon;
 
 import java.util.List;
 
@@ -16,9 +16,10 @@ public interface SubTasklet_RtypeTask extends AddOnSubTasklet {
 	public int getTextFieldWidth();
 	public int getTextFieldHeight();
 	
-	
+	public List<String> getBoxContainerAttributes();
 	public boolean loadFromHandling();
 	public String getImage();
+	public String getMemento();
 	
 }
 

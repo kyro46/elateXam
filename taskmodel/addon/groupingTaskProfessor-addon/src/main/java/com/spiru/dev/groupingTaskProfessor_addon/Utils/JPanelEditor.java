@@ -87,7 +87,7 @@ public class JPanelEditor extends JPanel implements MouseMotionListener {
 			String anzahl = count.getValue()+"";
 			if (anzahl.equals("0"))
 				anzahl = "\u221e";
-			DragElement e = new DragElement(textfield.getText(),anzahl, null, listener);
+			DragElement e = new DragElement(textfield.getText(),anzahl, ""+elementList.size(), listener);
 			for(DragElement n: elementList){
 				if (n.getCaption().equals(e.getCaption())){
 					e = null;

@@ -244,7 +244,11 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 			for(DragElement n:elementList) {
 				Element BoxContainer = document.createElement("BoxContainer");
 				BoxContainer.setAttribute("boxName",n.getCaption());
-				BoxContainer.setAttribute("count",n.getMaxCount());
+				String count = n.getMaxCount();
+				if(count.equals("\u221e")){
+					count = "n";
+				}
+				BoxContainer.setAttribute("count", count);
 				BoxContainer.setAttribute("boxID",""+n.getId());
 				dragSubTaskDef.appendChild(BoxContainer);
 			}
@@ -286,7 +290,8 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 					Element solution = document.createElement("Solution");					
 					solution.setAttribute("fromID",""+el.getOrderID());
 					solution.setAttribute("toIDs",""+kanten);
-					dragSubTaskDef.appendChild(solution);
+					if (!kanten.equals(""))
+						dragSubTaskDef.appendChild(solution);
 					
 				}
 			}
@@ -424,33 +429,30 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 	"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"+
 	"<Memento>"+
 	    "<dragSubTaskDef>"+
-	        "<BoxContainer boxID=\"9\" boxName=\"Lebewesen\" count=\"1\"/>"+
-	        "<BoxContainer boxID=\"10\" boxName=\"Tier\" count=\"2\"/>"+
-	        "<BoxContainer boxID=\"11\" boxName=\"Pflanze\" count=\"3\"/>"+
-	        "<BoxContainer boxID=\"12\" boxName=\"Mensch\" count=\"4\"/>"+
-	        "<BoxContainer boxID=\"13\" boxName=\"Pilze\" count=\"5\"/>"+
-	        "<BoxContainer boxID=\"19\" boxName=\"Saeugetier\" count=\"5\"/>"+
-	        "<BoxContainer boxID=\"20\" boxName=\"Eierleger\" count=\"8\"/>"+
-	        "<BoxContainer boxID=\"25\" boxName=\"Fliegenpilz\" count=\"11\"/>"+
-	        "<BoxContainer boxID=\"26\" boxName=\"Elefantenfuss\" count=\"100\"/>"+
-	        "<DragElement boxID=\"9\" id=\"0\" x=\"241\" y=\"22\"/>"+
-	        "<DragElement boxID=\"10\" id=\"1\" x=\"164\" y=\"80\"/>"+
-	        "<DragElement boxID=\"11\" id=\"2\" x=\"288\" y=\"82\"/>"+
-	        "<DragElement boxID=\"13\" id=\"3\" x=\"463\" y=\"78\"/>"+
-	        "<DragElement boxID=\"20\" id=\"4\" x=\"44\" y=\"152\"/>"+
-	        "<DragElement boxID=\"12\" id=\"7\" x=\"153\" y=\"253\"/>"+
-	        "<DragElement boxID=\"19\" id=\"6\" x=\"184\" y=\"198\"/>"+
-	        "<DragElement boxID=\"26\" id=\"5\" x=\"303\" y=\"144\"/>"+
-	        "<DragElement boxID=\"25\" id=\"8\" x=\"457\" y=\"326\"/>"+
-	        "<Solution fromID=\"0\" toIDs=\"1,2,3,\"/>"+
-	        "<Solution fromID=\"1\" toIDs=\"4,6,\"/>"+
-	        "<Solution fromID=\"2\" toIDs=\"5,\"/>"+
-	        "<Solution fromID=\"3\" toIDs=\"8,\"/>"+
-	        "<Solution fromID=\"4\" toIDs=\"\"/>"+
-	        "<Solution fromID=\"5\" toIDs=\"\"/>"+
-	        "<Solution fromID=\"6\" toIDs=\"7,\"/>"+
-	        "<Solution fromID=\"7\" toIDs=\"\"/>"+
-	        "<Solution fromID=\"8\" toIDs=\"\"/>"+
+        "<BoxContainer boxID=\"0\" boxName=\"Lebewesen\" count=\"1\"/>"+
+        "<BoxContainer boxID=\"1\" boxName=\"Tier\" count=\"2\"/>"+
+        "<BoxContainer boxID=\"2\" boxName=\"Pflanze\" count=\"3\"/>"+
+        "<BoxContainer boxID=\"3\" boxName=\"Mensch\" count=\"4\"/>"+
+        "<BoxContainer boxID=\"4\" boxName=\"Pilze\" count=\"5\"/>"+
+        "<BoxContainer boxID=\"5\" boxName=\"Saeugetier\" count=\"5\"/>"+
+        "<BoxContainer boxID=\"6\" boxName=\"Eierleger\" count=\"8\"/>"+
+        "<BoxContainer boxID=\"7\" boxName=\"Fliegenpilz\" count=\"11\"/>"+
+        "<BoxContainer boxID=\"8\" boxName=\"Elefantenfuss\" count=\"100\"/>"+
+        "<BoxContainer boxID=\"9\" boxName=\"AAAAAAAAA\" count=\"n\"/>"+
+        "<DragElement boxID=\"0\" id=\"0\" x=\"261\" y=\"11\"/>"+
+        "<DragElement boxID=\"1\" id=\"1\" x=\"128\" y=\"74\"/>"+
+        "<DragElement boxID=\"2\" id=\"2\" x=\"267\" y=\"70\"/>"+
+        "<DragElement boxID=\"3\" id=\"7\" x=\"112\" y=\"200\"/>"+
+        "<DragElement boxID=\"4\" id=\"3\" x=\"447\" y=\"72\"/>"+
+        "<DragElement boxID=\"5\" id=\"4\" x=\"66\" y=\"134\"/>"+
+        "<DragElement boxID=\"6\" id=\"5\" x=\"213\" y=\"137\"/>"+
+        "<DragElement boxID=\"7\" id=\"6\" x=\"420\" y=\"142\"/>"+
+        "<DragElement boxID=\"8\" id=\"8\" x=\"323\" y=\"192\"/>"+
+        "<Solution fromID=\"0\" toIDs=\"2,1,3,\"/>"+
+        "<Solution fromID=\"1\" toIDs=\"4,5,\"/>"+
+        "<Solution fromID=\"2\" toIDs=\"8,\"/>"+
+        "<Solution fromID=\"3\" toIDs=\"6,\"/>"+
+        "<Solution fromID=\"4\" toIDs=\"7,\"/>"+
 	    "</dragSubTaskDef>"+
 	"</Memento>";
 	

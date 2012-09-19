@@ -1,4 +1,4 @@
-package com.spriu.dev.rtypeTask_addon;
+package com.spiru.dev.rtypeTask_addon;
 
 
 import de.thorstenberger.taskmodel.complex.addon.AddOnSubTaskletFactory;
@@ -17,8 +17,8 @@ AddOnSubTaskletFactory {
 	}
 
 	public String getAddonTaskType() {
-		System.out.println("Subtasklet rtypTask successfully loaded");
-		return "rtyptask";
+		System.out.println("Subtasklet rtypeTask successfully loaded");
+		return "rtypetask";
 	}
 
 }

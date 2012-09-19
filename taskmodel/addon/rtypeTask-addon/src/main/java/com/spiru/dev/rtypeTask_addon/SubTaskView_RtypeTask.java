@@ -1,4 +1,4 @@
-package com.spriu.dev.rtypeTask_addon;
+package com.spiru.dev.rtypeTask_addon;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -6,22 +6,24 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+
 import de.thorstenberger.taskmodel.MethodNotSupportedException;
 import de.thorstenberger.taskmodel.complex.ParsingException;
 import de.thorstenberger.taskmodel.complex.complextaskhandling.CorrectionSubmitData;
 import de.thorstenberger.taskmodel.complex.complextaskhandling.SubmitData;
+import de.thorstenberger.taskmodel.complex.complextaskhandling.subtasklets.SubTasklet_MC;
 import de.thorstenberger.taskmodel.view.SubTaskView;
 import de.thorstenberger.taskmodel.view.ViewContext;
 
 public class SubTaskView_RtypeTask extends SubTaskView{
 
-	private SubTasklet_RtypeTask rtypSubTasklet;
+	private SubTasklet_RtypeTask rtypeSubTasklet;
 
 	/**
 	 *
 	 */
-	public SubTaskView_RtypeTask( SubTasklet_RtypeTask rtypSubTasklet ) {
-		this.rtypSubTasklet = rtypSubTasklet;
+	public SubTaskView_RtypeTask( SubTasklet_RtypeTask rtypeSubTasklet ) {
+		this.rtypeSubTasklet = rtypeSubTasklet;
 		
 	}
 
@@ -33,9 +35,21 @@ public class SubTaskView_RtypeTask extends SubTaskView{
 	}
 
 	public String getRenderedHTML(int relativeTaskNumber, boolean corrected) {
-		
-		
-		return "MyImplementation";
+		//HttpServletRequest request=(HttpServletRequest) context.getViewContextObject();
+		StringBuffer ret = new StringBuffer();
+
+		ret.append("\n");
+		ret.append("<table>");
+		ret.append("\n");
+		ret.append("<tr>");
+		ret.append("\n  <td nowrap valign=top> <input type=\"radio\" name=\"task[" + relativeTaskNumber +
+						"].ss\" value=\"A\"</td>");
+		ret.append("\n");
+		ret.append("</tr>");
+		ret.append("\n");
+		ret.append("</table>");
+
+		return ret.toString();
 	}
 
 	public String getCorrectedHTML( ViewContext context, int relativeTaskNumber ){		
@@ -46,7 +60,7 @@ public class SubTaskView_RtypeTask extends SubTaskView{
 	    StringBuffer ret = new StringBuffer();
 	    ret.append( getRenderedHTML( -1, true ) );
 
-	    ret.append(getCorrectorPointsInputString(actualCorrector, "Grouping", rtypSubTasklet));
+	    ret.append(getCorrectorPointsInputString(actualCorrector, "Rtype", rtypeSubTasklet));
 
 	    return ret.toString();
 	}

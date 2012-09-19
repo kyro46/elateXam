@@ -64,6 +64,9 @@ public class DragElement extends JPanel implements DragGestureListener, Comparab
 		if (anz!=null){
 			// 2 Labels untereinander
 			this.setLayout(new GridLayout(2,1,5,2));
+			if(anz.equals("n")){
+				anz = "\u221e";
+			}
 			labelAnz = new JLabel(""+anz, JLabel.CENTER);
 			labelAnz.setBorder(BorderFactory.createLineBorder(Color.black));			
 			this.add(labelAnz);

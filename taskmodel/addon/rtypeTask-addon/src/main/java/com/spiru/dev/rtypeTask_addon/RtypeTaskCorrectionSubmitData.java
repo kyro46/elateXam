@@ -1,4 +1,4 @@
-package com.spriu.dev.rtypeTask_addon;
+package com.spiru.dev.rtypeTask_addon;
 
 import de.thorstenberger.taskmodel.complex.complextaskhandling.correctionsubmitdata.CorrectionSubmitDataImpl;
 
