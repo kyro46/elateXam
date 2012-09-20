@@ -145,7 +145,7 @@ public class ClozeToClozeConverter {
 //				System.out.println(correctAnswer);
 			} else {
 				correctAnswer = input.substring(nextAnswer + 1,
-						input.indexOf("=", nextAnswer + 1));
+						input.indexOf("=", nextAnswer + 1)-1);
 //				System.out.println(correctAnswer);
 			}
 

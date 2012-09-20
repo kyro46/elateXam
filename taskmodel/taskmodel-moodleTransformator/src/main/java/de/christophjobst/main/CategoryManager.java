@@ -60,8 +60,6 @@ public class CategoryManager {
 		// Einheitliche Config für alle TaskBlock-Instanzen
 		Config generalTaskBlockConfig = new Config();
 		generalTaskBlockConfig.setNoOfSelectedTasks(1);
-		// TODO Punkte = Anzahl der Lücken/Matchings - inkonsistent, da in
-		// Frageinstanzen nicht einheitlich viele Lücken/Matchings
 		generalTaskBlockConfig.setPointsPerTask(5);
 		generalTaskBlockConfig.setPreserveOrder(false);
 
@@ -139,8 +137,6 @@ public class CategoryManager {
 		mappingTaskBlock = new MappingTaskBlock();
 		Config generalTaskBlockConfig = new Config();
 		generalTaskBlockConfig.setNoOfSelectedTasks(1);
-		// TODO Punkte = Anzahl der Lücken/Matchings - inkonsistent, da in
-		// Frageinstanzen nicht einheitlich viele Lücken/Matchings
 		generalTaskBlockConfig.setPointsPerTask(5);
 		generalTaskBlockConfig.setPreserveOrder(false);
 		
@@ -157,8 +153,6 @@ public class CategoryManager {
 		this.mappingTaskBlock = new MappingTaskBlock();
 		Config generalTaskBlockConfig = new Config();
 		generalTaskBlockConfig.setNoOfSelectedTasks(1);
-		// TODO Punkte = Anzahl der Lücken/Matchings - inkonsistent, da in
-		// Frageinstanzen nicht einheitlich viele Lücken/Matchings
 		generalTaskBlockConfig.setPointsPerTask(Float.parseFloat(defaultgrade));
 		generalTaskBlockConfig.setPreserveOrder(false);
 		this.mappingTaskBlock.setConfig(generalTaskBlockConfig);
@@ -175,8 +169,6 @@ public class CategoryManager {
 		mcTaskBlock = new McTaskBlock();
 		Config generalTaskBlockConfig = new Config();
 		generalTaskBlockConfig.setNoOfSelectedTasks(1);
-		// TODO Punkte = Anzahl der Lücken/Matchings - inkonsistent, da in
-		// Frageinstanzen nicht einheitlich viele Lücken/Matchings
 		generalTaskBlockConfig.setPointsPerTask(5);
 		generalTaskBlockConfig.setPreserveOrder(false);
 		
@@ -195,8 +187,6 @@ public class CategoryManager {
 		mcTaskBlock = new McTaskBlock();
 		Config generalTaskBlockConfig = new Config();
 		generalTaskBlockConfig.setNoOfSelectedTasks(1);
-		// TODO Punkte = Anzahl der Lücken/Matchings - inkonsistent, da in
-		// Frageinstanzen nicht einheitlich viele Lücken/Matchings
 		generalTaskBlockConfig.setPointsPerTask(Float.parseFloat(defaultgrade));
 		generalTaskBlockConfig.setPreserveOrder(false);
 		
@@ -217,8 +207,6 @@ public class CategoryManager {
 		textTaskBlock = new TextTaskBlock();
 		Config generalTaskBlockConfig = new Config();
 		generalTaskBlockConfig.setNoOfSelectedTasks(1);
-		// TODO Punkte = Anzahl der Lücken/Matchings - inkonsistent, da in
-		// Frageinstanzen nicht einheitlich viele Lücken/Matchings
 		generalTaskBlockConfig.setPointsPerTask(5);
 		generalTaskBlockConfig.setPreserveOrder(false);
 		
@@ -229,13 +217,9 @@ public class CategoryManager {
 
 	public void setTextTaskBlock(TextSubTaskDef textSubTaskDef,String defaultgrade) {
 		
-//		System.out.println("category manager settexttaskblock");
-		
 		textTaskBlock = new TextTaskBlock();
 		Config generalTaskBlockConfig = new Config();
 		generalTaskBlockConfig.setNoOfSelectedTasks(1);
-		// TODO Punkte = Anzahl der Lücken/Matchings - inkonsistent, da in
-		// Frageinstanzen nicht einheitlich viele Lücken/Matchings
 		generalTaskBlockConfig.setPointsPerTask(Float.parseFloat(defaultgrade));
 		generalTaskBlockConfig.setPreserveOrder(false);
 		
@@ -250,8 +234,6 @@ public class CategoryManager {
 		clozeTaskBlock = new ClozeTaskBlock();
 		Config generalTaskBlockConfig = new Config();
 		generalTaskBlockConfig.setNoOfSelectedTasks(1);
-		// TODO Punkte = Anzahl der Lücken/Matchings - inkonsistent, da in
-		// Frageinstanzen nicht einheitlich viele Lücken/Matchings
 		generalTaskBlockConfig.setPointsPerTask(5);
 		generalTaskBlockConfig.setPreserveOrder(false);
 
@@ -268,8 +250,6 @@ public class CategoryManager {
 		clozeTaskBlock = new ClozeTaskBlock();
 		Config generalTaskBlockConfig = new Config();
 		generalTaskBlockConfig.setNoOfSelectedTasks(1);
-		// TODO Punkte = Anzahl der Lücken/Matchings - inkonsistent, da in
-		// Frageinstanzen nicht einheitlich viele Lücken/Matchings
 		generalTaskBlockConfig.setPointsPerTask(defaultgrade);
 		generalTaskBlockConfig.setPreserveOrder(false);
 		
@@ -297,9 +277,6 @@ public class CategoryManager {
 		addonTaskBlock = new AddonTaskBlock();
 		Config generalTaskBlockConfig = new Config();
 		generalTaskBlockConfig.setNoOfSelectedTasks(1);
-		/* TODO Punkte = Anzahl der Lücken/Matchings - inkonsistent, da in
-		 * Frageinstanzen nicht einheitlich viele Lücken/Matchings
-		 */
 		generalTaskBlockConfig.setPointsPerTask(5);
 		generalTaskBlockConfig.setPreserveOrder(false);
 		
@@ -312,9 +289,6 @@ public class CategoryManager {
 		addonTaskBlock = new AddonTaskBlock();
 		Config generalTaskBlockConfig = new Config();
 		generalTaskBlockConfig.setNoOfSelectedTasks(1);
-		/* TODO Punkte = Anzahl der Lücken/Matchings - inkonsistent, da in
-		 * Frageinstanzen nicht einheitlich viele Lücken/Matchings
-		 */
 		generalTaskBlockConfig.setPointsPerTask(Float.parseFloat(defaultgrade));
 		generalTaskBlockConfig.setPreserveOrder(false);
 		
