@@ -59,7 +59,7 @@ public class ClozeToClozeConverter {
 			}
 
 		
-		subTask.setCloze(clozeParser(Base64Relocator.relocateBase64(question.getQuestiontext())));
+		subTask.setCloze(clozeParser(Base64Relocator.relocateBase64(question.getQuestiontext().getText(),question.getQuestiontext().getFile())));
 
 		return subTask;
 	}

@@ -41,7 +41,7 @@ public class MultichoiceToMcConverter {
 				: "multipleSelect");
 
 		// Spezielle Angaben pro Frage
-		subTask.setProblem(Base64Relocator.relocateBase64(question.getQuestiontext()));
+		subTask.setProblem(Base64Relocator.relocateBase64(question.getQuestiontext().getText(),question.getQuestiontext().getFile()));
 		subTask.setHint(question.getName().getText().toString());
 		subTask.setId(question.getName().getText().toString() + "_"
 				+ rand.getRandomID());
@@ -49,14 +49,14 @@ public class MultichoiceToMcConverter {
 		for (int j = 0; j < question.getAnswer().toArray().length; j++) {
 
 			if (!question.getAnswer().get(j).getFraction().equals("0")) {
-				correct.setValue(question.getAnswer().get(j).getText());
+				correct.setValue(Base64Relocator.relocateBase64(question.getAnswer().get(j).getText(),question.getAnswer().get(j).getFile()));
 				correct.setId(rand.getRandomID());
 				correctAnswerCount++;
 				subTask.getCorrectOrIncorrect().add(correct);
 				correct = new McSubTaskDef.Correct();
 
 			} else {
-				incorrect.setValue(question.getAnswer().get(j).getText());
+				incorrect.setValue(Base64Relocator.relocateBase64(question.getAnswer().get(j).getText(),question.getAnswer().get(j).getFile()));
 				incorrect.setId(rand.getRandomID());
 				subTask.getCorrectOrIncorrect().add(incorrect);
 				incorrect = new McSubTaskDef.Incorrect();

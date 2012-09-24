@@ -34,7 +34,7 @@ import javax.xml.bind.Unmarshaller;
 public class ElateXMLMain {
 
 	//Debug: Pfad zur Moodle-XML-Datei explizit angeben.
-	private static final String QUIZ_XML = "./unsere_fragen_aus_moodle.xml";
+	private static final String QUIZ_XML = "./base64-2.xml";
 	private static final String COMPLEXTASKDEF_XML = "./complexTaskDef.xml";
 
 	public static void main(String[] args) throws JAXBException, IOException {
@@ -79,7 +79,7 @@ public class ElateXMLMain {
 		StringWriter sw = new StringWriter();
         m_complexTaskDef.marshal(complexTaskDef, sw);
         String result = sw.toString();
-//        System.out.println(result);
+        //System.out.println(result);
         result = result.replaceAll(" xmlns=\"\" xmlns:ns2=\"http://complex.taskmodel.thorstenberger.de/complexTaskDef\"", "");
 		
 		Writer w = null;

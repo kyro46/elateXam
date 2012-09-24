@@ -45,7 +45,7 @@ public class AddonTask {
 		// Spezielle Angaben pro Frage
 		subTask.setId(question.getName().getText().toString() + "_"
 				+ rand.getRandomID());
-		subTask.setProblem(Base64Relocator.relocateBase64(question.getQuestiontext()));		
+		subTask.setProblem(Base64Relocator.relocateBase64(question.getQuestiontext().getText(),question.getQuestiontext().getFile()));		
 
 
 		

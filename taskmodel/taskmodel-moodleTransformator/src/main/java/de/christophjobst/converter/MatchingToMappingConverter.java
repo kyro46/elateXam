@@ -16,6 +16,7 @@ import javax.xml.transform.TransformerException;
 
 import org.xml.sax.SAXException;
 
+import generated.Quiz;
 import generated.Quiz.Question;
 
 import de.christophjobst.main.Base64Relocator;
@@ -42,7 +43,7 @@ public class MatchingToMappingConverter {
 			subTask.setId(question.getName().getText().toString() + "_"
 					+ rand.getRandomID());
 
-			subTask.setProblem(Base64Relocator.relocateBase64(question.getQuestiontext()));
+			subTask.setProblem(Base64Relocator.relocateBase64(question.getQuestiontext().getText(),question.getQuestiontext().getFile()));
 
 			Concept concept = new Concept();
 			Assignment assignment = new Assignment();
@@ -63,7 +64,8 @@ public class MatchingToMappingConverter {
 					assignmentList.add(question.getSubquestion().get(j)
 							.getAnswer().getText());
 				}
-				conceptList.add(question.getSubquestion().get(j).getText());
+				if (!question.getSubquestion().get(j).getText().equals("")){
+				conceptList.add(question.getSubquestion().get(j).getText());}
 				conceptAnswerListRaw.add(question.getSubquestion().get(j)
 						.getAnswer().getText());
 			}
@@ -89,10 +91,12 @@ public class MatchingToMappingConverter {
 			}
 
 			for (int j = 0; j < conceptList.toArray().length; j++) {
-				concept.setName(conceptList.get(j));
-				concept.getCorrectAssignmentID().add(conceptIDList.get(j));
-				subTask.getConcept().add(concept);
-				concept = new Concept();
+						concept.setName(Base64Relocator.relocateBase64(conceptList.get(j),question.getSubquestion().get(j).getFile()));
+						concept.getCorrectAssignmentID().add(conceptIDList.get(j));
+						subTask.getConcept().add(concept);
+						concept = new Concept();
+	
+
 			}
 
 			// Assignments zufällig anordnen

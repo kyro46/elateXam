@@ -141,13 +141,10 @@ public class Inputaufteiler {
 								complexTaskDef.setConfig(config);
 								complexTaskDef.setID(rand.getRandomID());
 
-								
 								complexTaskDef.setShowHandlingHintsBeforeStart(quizsammlung.getQuestion().get(i).getShowhandlinghintsbeforestart().equals("1") ? true : false);
-								complexTaskDef.setStartText(quizsammlung.getQuestion().get(i).getGeneralfeedback().getText());
-								complexTaskDef.setDescription(quizsammlung.getQuestion().get(i).getQuestiontext().getText());
+								complexTaskDef.setStartText(Base64Relocator.relocateBase64(quizsammlung.getQuestion().get(i).getGeneralfeedback().getText(),quizsammlung.getQuestion().get(i).getGeneralfeedback().getFile()));;
+								complexTaskDef.setDescription(Base64Relocator.relocateBase64(quizsammlung.getQuestion().get(i).getQuestiontext().getText(),quizsammlung.getQuestion().get(i).getQuestiontext().getFile()));
 
-								
-								
 								int numberOfCorrectors = Integer.parseInt(quizsammlung.getQuestion().get(i).getNumberofcorrectors());
 								
 								if (numberOfCorrectors == 1) {

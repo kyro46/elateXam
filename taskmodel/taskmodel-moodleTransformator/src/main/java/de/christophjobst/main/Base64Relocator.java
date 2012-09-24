@@ -8,21 +8,19 @@
  */
 package de.christophjobst.main;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import generated.Quiz.Question.Questiontext;
-import generated.Quiz.Question.Questiontext.File;
+import generated.File;
 
 public class Base64Relocator {
 
-	public static String relocateBase64(Questiontext questiontext) {
+	public static String relocateBase64(String inputText, List<File> fileList) {
 
 		String text = "";
-		String problem_string = questiontext.getText();
+		String problem_string =  inputText;
 
-		List<File> fileList = new ArrayList<File>();
-		fileList = questiontext.getFile();
+//		List<File> fileList = new ArrayList<File>();
+//		fileList = input.getFile();
 		// fileList.get(0).getValue(); //Base64-String
 		// fileList.get(0).getEncoding(); //base64
 		// fileList.get(0).getName(); //Dateiname, der im Text zu ersetzen ist
@@ -41,7 +39,7 @@ public class Base64Relocator {
 			}
 		} else {
 			// Keine Aufgabenstellung angegeben
-			text = "Aufgabenstellung - Platzhalter";
+			text = " ";
 		}
 		// System.out.println(root.getChildNodes().item(0).getNodeName());//img
 		// System.out.println(root.getChildNodes().item(0).getAttributes().item(0).getNodeValue());//alt

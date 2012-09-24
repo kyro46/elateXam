@@ -25,19 +25,21 @@
 									<xs:sequence>
 										<xs:element name="text"
 											type="xs:string" />
-										<xs:element name="file"
+										<xs:element ref="file"
 											maxOccurs="unbounded">
-											<xs:complexType>
-												<xs:simpleContent>
-													<xs:extension
-														base="xs:string">
-														<xs:attribute
-															name="name" use="required" />
-														<xs:attribute
-															name="encoding" use="required" />
-													</xs:extension>
-												</xs:simpleContent>
-											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+									<xs:attribute name="format"
+										use="required" />
+								</xs:complexType>
+							</xs:element>
+								<xs:element name="graderinfo">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="text"
+											type="xs:string" />
+										<xs:element ref="file"
+											maxOccurs="unbounded">
 										</xs:element>
 									</xs:sequence>
 									<xs:attribute name="format"
@@ -87,20 +89,19 @@
 												<xs:sequence>
 													<xs:element
 														name="text" type="xs:string" />
+														<xs:element
+																	ref="file" maxOccurs="unbounded">
+																</xs:element>
 													<xs:element
 														name="answer">
 														<xs:complexType>
 															<xs:sequence>
 																<xs:element
-																	name="text">
-																	<xs:simpleType>
-																		<xs:restriction
-																			base="xs:string">
-
-																		</xs:restriction>
-																	</xs:simpleType>
-																</xs:element>
+																	name="text" type="xs:string" />
+															
 															</xs:sequence>
+															<xs:attribute
+																name="format" use="required" />
 														</xs:complexType>
 													</xs:element>
 												</xs:sequence>
@@ -132,10 +133,13 @@
 														<xs:complexType>
 															<xs:sequence>
 																<xs:element
-																	name="text">
-																	<xs:complexType />
+																	name="text" type="xs:string" />
+																<xs:element
+																	ref="file" maxOccurs="unbounded">
 																</xs:element>
 															</xs:sequence>
+															<xs:attribute
+																name="format" use="required" />
 														</xs:complexType>
 													</xs:element>
 													<xs:element
@@ -143,10 +147,13 @@
 														<xs:complexType>
 															<xs:sequence>
 																<xs:element
-																	name="text">
-																	<xs:complexType />
+																	name="text" type="xs:string" />
+																<xs:element
+																	ref="file" maxOccurs="unbounded">
 																</xs:element>
 															</xs:sequence>
+															<xs:attribute
+																name="format" use="required" />
 														</xs:complexType>
 													</xs:element>
 													<xs:element
@@ -154,10 +161,13 @@
 														<xs:complexType>
 															<xs:sequence>
 																<xs:element
-																	name="text">
-																	<xs:complexType />
+																	name="text" type="xs:string" />
+																<xs:element
+																	ref="file" maxOccurs="unbounded">
 																</xs:element>
 															</xs:sequence>
+															<xs:attribute
+																name="format" use="required" />
 														</xs:complexType>
 													</xs:element>
 													<xs:element
@@ -176,13 +186,21 @@
 													<xs:sequence>
 														<xs:element
 															name="text" type="xs:string" />
+																															<xs:element
+																	ref="file" maxOccurs="unbounded">
+																</xs:element>
 														<xs:element
 															name="feedback">
 															<xs:complexType>
 																<xs:sequence>
 																	<xs:element
 																		name="text" type="xs:string" />
+																	<xs:element
+																		ref="file" maxOccurs="unbounded">
+																	</xs:element>
 																</xs:sequence>
+																<xs:attribute
+																	name="format" use="required" />
 															</xs:complexType>
 														</xs:element>
 													</xs:sequence>
@@ -218,14 +236,18 @@
 									</xs:sequence>
 								</xs:complexType>
 							</xs:element>
-							<xs:element name="generalfeedback"
-								>
-																<xs:complexType>
+							<xs:element name="generalfeedback">
+								<xs:complexType>
 									<xs:sequence>
 										<xs:element name="text"
 											type="xs:string" />
-											</xs:sequence>
-																</xs:complexType>
+										<xs:element ref="file"
+											maxOccurs="unbounded">
+										</xs:element>
+									</xs:sequence>
+									<xs:attribute name="format"
+										use="required" />
+								</xs:complexType>
 							</xs:element>
 							<xs:element name="time" type="xs:string">
 							</xs:element>
@@ -265,6 +287,16 @@
 					</xs:complexType>
 				</xs:element>
 			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="file">
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:string">
+					<xs:attribute name="name" use="required" />
+					<xs:attribute name="encoding" use="required" />
+				</xs:extension>
+			</xs:simpleContent>
 		</xs:complexType>
 	</xs:element>
 </xs:schema>

@@ -39,7 +39,7 @@ public class TruefalseToMcConverter {
 			subTask.setCategory("singleSelect");
 
 			// Spezielle Angaben pro Frage
-			subTask.setProblem(Base64Relocator.relocateBase64(question.getQuestiontext()));
+			subTask.setProblem(Base64Relocator.relocateBase64(question.getQuestiontext().getText(),question.getQuestiontext().getFile()));
 			subTask.setHint(question.getName().getText().toString());
 			subTask.setTrash(false);
 			subTask.setInteractiveFeedback(false);
