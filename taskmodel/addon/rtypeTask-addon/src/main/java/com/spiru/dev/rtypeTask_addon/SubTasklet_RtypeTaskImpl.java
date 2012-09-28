@@ -1,10 +1,7 @@
 package com.spiru.dev.rtypeTask_addon;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,13 +9,6 @@ import javax.xml.bind.DatatypeConverter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -30,22 +20,24 @@ import org.xml.sax.SAXException;
 import de.thorstenberger.taskmodel.TaskApiException;
 import de.thorstenberger.taskmodel.complex.complextaskdef.Block;
 import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDefRoot;
-import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDefRoot.CorrectionModeType;
 import de.thorstenberger.taskmodel.complex.complextaskhandling.CorrectionSubmitData;
 import de.thorstenberger.taskmodel.complex.complextaskhandling.SubmitData;
 import de.thorstenberger.taskmodel.complex.complextaskhandling.subtasklets.impl.AbstractAddonSubTasklet;
 import de.thorstenberger.taskmodel.complex.jaxb.AddonSubTaskDef;
+import de.thorstenberger.taskmodel.complex.jaxb.ManualCorrectionType;
 import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskHandling.Try.Page.AddonSubTask;
 import de.thorstenberger.taskmodel.complex.jaxb.SubTaskDefType;
 
 public class SubTasklet_RtypeTaskImpl extends AbstractAddonSubTasklet implements SubTasklet_RtypeTask {
 	private Element mementoTaskDef;
 	private Element mementoTaskHandling;
+	private AddonSubTask subTaskObject;
 
 	public SubTasklet_RtypeTaskImpl( ComplexTaskDefRoot root, Block block, SubTaskDefType aoSubTaskDef, AddonSubTask atSubTask ) {
 		super(root, block,aoSubTaskDef,atSubTask);
 		mementoTaskDef = ((AddonSubTaskDef)aoSubTaskDef).getMemento();
 		mementoTaskHandling = atSubTask.getMemento();
+		subTaskObject = atSubTask;
 		if (mementoTaskHandling == null) { // null at the first instantiation
 			try {
 				mementoTaskHandling = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument()
@@ -82,9 +74,34 @@ public class SubTasklet_RtypeTaskImpl extends AbstractAddonSubTasklet implements
 
 	@Override
 	public void doManualCorrection( CorrectionSubmitData csd ){
-		//CompareTextTaskCorrectionSubmitData acsd = (CompareTextTaskCorrectionSubmitData) csd;
+		RtypeTaskCorrectionSubmitData pcsd = (RtypeTaskCorrectionSubmitData) csd;
 		//super.setAutoCorrection(acsd.getPoints());
 		// TODO!
+		List<ManualCorrectionType> manualCorrections = subTaskObject.getManualCorrection();
+		if( complexTaskDefRoot.getCorrectionMode().getType() == ComplexTaskDefRoot.CorrectionModeType.MULTIPLECORRECTORS ) {
+			for( ManualCorrectionType mc : manualCorrections ){
+				if( mc.getCorrector().equals( pcsd.getCorrector() ) ){
+					mc.setPoints( pcsd.getPoints() );
+					return;
+				}
+			}
+			// corrector not found, so create a new ManualCorrection for him
+			ManualCorrectionType mc;
+			mc = objectFactory.createManualCorrectionType();
+			mc.setCorrector(pcsd.getCorrector());
+			mc.setPoints(pcsd.getPoints());
+			manualCorrections.add(mc);
+		} else {
+			ManualCorrectionType mc;
+			if( manualCorrections.size() > 0 ) {
+				mc = manualCorrections.get(0);
+			} else {
+				mc = objectFactory.createManualCorrectionType();
+				manualCorrections.add(mc);
+			}
+			mc.setCorrector(pcsd.getCorrector());
+			mc.setPoints(pcsd.getPoints());
+		}
 	}
 
 	@Override
@@ -111,120 +128,92 @@ public class SubTasklet_RtypeTaskImpl extends AbstractAddonSubTasklet implements
 
 	@Override
 	public String getAnswer() {
-		return mementoTaskHandling.getTextContent();
-		/*
+		/*return mementoTaskHandling.getTextContent();*/
+		
 		NodeList resultText = mementoTaskHandling.getElementsByTagName("answer");
 		if(resultText.getLength() == 1)
 			return resultText.item(0).getTextContent();
-		return "";
-		*/
+		return "";		
 	}
 
-	private void setAnswer(String resultString) {
-		System.out.println("********** resultString - start");
-		System.out.println("********** "+resultString);
-		
-		byte[] text = DatatypeConverter.parseBase64Binary(resultString);		
-		/*
+	private void setAnswer(String resultString) {		
+
 		Element resultText = (Element) mementoTaskHandling.getElementsByTagName("answer").item(0);
 		if(resultText == null) {
 			resultText = mementoTaskHandling.getOwnerDocument().createElement("answer");
 			mementoTaskHandling.appendChild(resultText);
 		}
 		resultText.setTextContent(resultString);
-		*/
 		
-		Element resultText = (Element) mementoTaskHandling;//.getElementsByTagName("timelineSubTaskDef").item(0);
-		if(mementoTaskHandling.getElementsByTagName("dragSubTaskDef").item(0) != null) {
-			mementoTaskHandling.removeChild(mementoTaskHandling.getElementsByTagName("dragSubTaskDef").item(0));
-		}	
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		factory.setIgnoringComments(true);
-		factory.setCoalescing(true); // Convert CDATA to Text nodes
-		factory.setNamespaceAware(false); // No namespaces: this is default
-		factory.setValidating(false); // Don't validate DTD: also default
-			DocumentBuilder parser;
-			try {				
-				parser = factory.newDocumentBuilder();
-				Document document;				
-				document = parser.parse(new InputSource(new ByteArrayInputStream(text)));				
-				Element memento = (Element) document.getElementsByTagName("dragSubTaskDef").item(0);
-				System.out.println("try 1");
-				try{					
-					Node firstDocImportedNode = mementoTaskHandling.getOwnerDocument().importNode(memento, true);
-					resultText.appendChild(firstDocImportedNode );
-					//resultText.appendChild(memento);
-					System.out.println("try 2");
-				}
-				catch(Exception e){					
-					e.printStackTrace();
-				}
-			} catch (ParserConfigurationException e) {
-				e.printStackTrace();			
-			} catch (SAXException e) {				
-				e.printStackTrace();
-			} catch (IOException e) {		
-				e.printStackTrace();
-			}
-	}
-		
-	@Override
-	public List<String> getBoxContainerAttributes() {		
-		// dragSubTaskDef Element herausfiltern
-		Element dragSubTaskDef = (Element)mementoTaskDef.getElementsByTagName("dragSubTaskDef").item(0);				
-		// alle BoxContainer aus dragSubTaskDef filtern		
-		NodeList boxContainer = dragSubTaskDef.getElementsByTagName("BoxContainer");		
-		// Attribute der BoxContainer auslesen
-		List<String> stringList = new ArrayList<String>();
-		for(int i=0; i<boxContainer.getLength(); i++){
-			Element container = (Element)boxContainer.item(i);
-			stringList.add(container.getAttribute("BoxName"));
-			stringList.add(container.getAttribute("count"));
-		}		
-		return stringList;
 	}
 
 	@Override
-	public boolean loadFromHandling() {
-		if (mementoTaskHandling.getElementsByTagName("dragSubTaskDef").item(0) != null){
-			return true;
-		}
-		return false;
+	public String getSelectionText(){
+		Element child = (Element)(mementoTaskDef.getElementsByTagName("selection").item(0));		
+		return child.getElementsByTagName("text").item(0).getTextContent();
+	}
+	
+	@Override
+	public String getSelectionHint(){
+		Element child = (Element)(mementoTaskDef.getElementsByTagName("selection").item(0));		
+		return child.getElementsByTagName("hint").item(0).getTextContent();
 	}
 
 	@Override
-	public String getImage() {		
-		return mementoTaskHandling.getElementsByTagName("answer").item(0).getTextContent();
+	public List<String> getSelectionAnswers(){
+		List<String> list = new ArrayList<String>();
+		Element child = (Element)(mementoTaskDef.getElementsByTagName("selection").item(0));
+		NodeList nodes = child.getElementsByTagName("answer");
+		for(int i=0; i<nodes.getLength(); i++){
+			Element node = (Element)nodes.item(i);			
+			String a = node.getAttribute("symbol")+node.getTextContent();
+			list.add(a);
+		}
+		return list;
 	}
 
 	@Override
-	public String getMemento() {
-		Element memento = null;
-		if ((Element)mementoTaskHandling.getElementsByTagName("dragSubTaskDef").item(0) != null){			
-			memento = (Element)mementoTaskHandling;			
+	public int getCountQuestions() {
+		Element child = (Element)(mementoTaskDef.getElementsByTagName("mcList").item(0));
+		return child.getElementsByTagName("question").getLength();
+	}
+
+	@Override
+	public String getQuestionProblem(int number) {
+		Element child = (Element)(mementoTaskDef.getElementsByTagName("mcList").item(0));
+		NodeList list = child.getElementsByTagName("question");
+		Element el = (Element)list.item(number);
+		return el.getElementsByTagName("problem").item(0).getTextContent();
+	}
+
+	@Override
+	public String getQuestionHint(int number) {
+		Element child = (Element)(mementoTaskDef.getElementsByTagName("mcList").item(0));
+		NodeList list = child.getElementsByTagName("question");
+		Element el = (Element)list.item(number);
+		return el.getElementsByTagName("hint").item(0).getTextContent();
+	}
+
+	@Override
+	public List<String> getQuestionsAnswers(int question) {
+		List<String> answerList = new ArrayList<String>();
+		Element child = (Element)(mementoTaskDef.getElementsByTagName("mcList").item(0));
+		NodeList list = child.getElementsByTagName("question");
+		Element el = (Element)list.item(question);
+		NodeList answers = el.getElementsByTagName("answer");
+		for(int i=0; i<answers.getLength(); i++){
+			Element a = (Element)answers.item(i);
+			answerList.add(a.getAttribute("symbol"));
 		}
-		else{
-			memento = (Element)mementoTaskDef;
-		}
-		TransformerFactory transformerFactory = TransformerFactory.newInstance();
-		Transformer transformer;
-		try {
-			transformer = transformerFactory.newTransformer();
-			DOMSource source = new DOMSource(memento/*.getOwnerDocument()*/);
-			StringWriter stringWriter = new StringWriter();
-			StreamResult result =  new StreamResult(stringWriter);
-			transformer.transform(source, result);
-			String ret = stringWriter.toString();
-			return DatatypeConverter.printBase64Binary(ret.getBytes("utf-8"));
-		} catch (TransformerConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TransformerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		return answerList;
+	}
+
+	@Override
+	public String getHandlingSolution() {
+		Element el = (Element)mementoTaskHandling.getElementsByTagName("answer").item(0);		
+		if (el != null){
+			String str = el.getTextContent(); 			
+			return str;
 		}
 		return null;
 	}

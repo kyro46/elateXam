@@ -3,7 +3,6 @@ package com.spiru.dev.rtypeTask_addon;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 
@@ -11,17 +10,13 @@ import de.thorstenberger.taskmodel.MethodNotSupportedException;
 import de.thorstenberger.taskmodel.complex.ParsingException;
 import de.thorstenberger.taskmodel.complex.complextaskhandling.CorrectionSubmitData;
 import de.thorstenberger.taskmodel.complex.complextaskhandling.SubmitData;
-import de.thorstenberger.taskmodel.complex.complextaskhandling.subtasklets.SubTasklet_MC;
 import de.thorstenberger.taskmodel.view.SubTaskView;
 import de.thorstenberger.taskmodel.view.ViewContext;
 
 public class SubTaskView_RtypeTask extends SubTaskView{
 
-	private SubTasklet_RtypeTask rtypeSubTasklet;
+	private SubTasklet_RtypeTask rtypeSubTasklet;	
 
-	/**
-	 *
-	 */
 	public SubTaskView_RtypeTask( SubTasklet_RtypeTask rtypeSubTasklet ) {
 		this.rtypeSubTasklet = rtypeSubTasklet;
 		
@@ -30,35 +25,136 @@ public class SubTaskView_RtypeTask extends SubTaskView{
 	/**
 	 * @see de.thorstenberger.uebman.services.student.task.complex.SubTaskView#getRenderedHTML(int)
 	 */
-	public String getRenderedHTML( ViewContext context, int relativeTaskNumber) {
+	public String getRenderedHTML( ViewContext context, int relativeTaskNumber) {		
 		return getRenderedHTML( relativeTaskNumber, false );
 	}
 
-	public String getRenderedHTML(int relativeTaskNumber, boolean corrected) {
+	public String getRenderedHTML(int relativeTaskNumber, boolean corrected) {		
 		//HttpServletRequest request=(HttpServletRequest) context.getViewContextObject();
-		StringBuffer ret = new StringBuffer();
-
+		StringBuffer ret = new StringBuffer();		
 		ret.append("\n");
 		ret.append("<table>");
 		ret.append("\n");
-		ret.append("<tr>");
-		ret.append("\n  <td nowrap valign=top> <input type=\"radio\" name=\"task[" + relativeTaskNumber +
-						"].ss\" value=\"A\"</td>");
+		// selection->text
+		ret.append("<tr>");		
+		//ret.append("\n  <td nowrap valign=top><b>"+rtypeSubTasklet.getSelectionText()+"</b></td>");
+		//ret.append("\n  <td nowrap valign=top>  "+"<input type=\"radio\" name=\"task["+relativeTaskNumber+"]\" value=\"MIKE\" > SILKE </td>");
+		ret.append("<td nowrap valign=top><textarea name=\"task["+relativeTaskNumber+"]\" id=\"task_"+relativeTaskNumber+".result\" style=\"display:none;\">clear</textarea></td>");
 		ret.append("\n");
 		ret.append("</tr>");
+		// selection->answers	
+		/*
+		for(String n:rtypeSubTasklet.getSelectionAnswers()){
+			ret.append("<tr>");
+			ret.append("\n  <td nowrap valign=top>  "+n+"</td>");			
+			ret.append("\n");
+			ret.append("</tr>");
+		}*/				
+		// selection->hint
+		ret.append("<tr>");
+		//ret.append("\n  <td nowrap valign=top><i>"+rtypeSubTasklet.getSelectionHint()+"</i></td>");
+		ret.append("\n");
+		ret.append("</tr>\n");		
+		ret.append("</table>");				
+		String solution = rtypeSubTasklet.getHandlingSolution();		
+		String[] text = null;
+		String[][] list = null;		
+		if (solution != null){			
+			text = solution.split("//");			
+			list = new String[text.length][2]; 
+			for(int i=0; i<text.length;i++){				
+				String[] a = text[i].split("--");
+				list[i][0] = a[0];
+				list[i][1] = a[1];
+			}
+		}		
+		/*for(int i=0; i<list.length; i++){
+			System.out.println(list[i][0]+"  "+list[i][1]);
+		}*/
+		// mcList->questions		
+		for(int i=0; i<rtypeSubTasklet.getCountQuestions(); i++){			
+			//SubTasklet_MC als Übergabe, der bekommt relativeTasknumber			
+		//	SubTaskView_MC a = new SubTaskView_MC(null, rtypeSubTasklet,i);
+			//ret.append(a.getRenderedHTML(context, relativeTaskNumber+i));
+			if (list!=null){								
+				ret.append(setQuestions(i, relativeTaskNumber, list[i][0], corrected));				
+			}
+			else{				
+				ret.append(setQuestions(i, relativeTaskNumber, null, corrected));
+			}
+		}		
+		
+		if (!corrected) {
+			ret.append("<script type=\"text/javascript\">\n");
+			ret.append(" var preSave_task_"+relativeTaskNumber+" = function(){\n");
+			ret.append(
+		    "var sol = \"\";\n"+
+		    "var relativeTaskNumber = \""+relativeTaskNumber+"\";\n"+	
+			"for(var i = 0; i<"+rtypeSubTasklet.getCountQuestions()+"; i++){\n"+			
+			"var clear = \"\";\n"+
+	        "  for(var k = 0; k<document.getElementsByName(\"[\"+i+\"]\").length; k++){\n"+	        
+	        "    if(document.getElementsByName(\"[\"+i+\"]\")[k].checked && document.getElementsByName(\"[\"+i+\"]\")[k].id == relativeTaskNumber ){\n"+	        
+	        "        clear += document.getElementsByName(\"[\"+i+\"]\")[k].value+\"--\"+i+\"//\" ;\n"+
+	        "        document.getElementsByName(\"[\"+i+\"]\")[k].checked = false;\n"+
+	        "    }\n"+                        
+	        "  }\n"+
+	        "if (clear == \"\")\n"+
+	        "  clear = \"null--\"+i+\"//\"\n"+
+	        "sol += clear;\n"+
+	        "}\n"	
+		   // "alert(\"Text: \"+sol)\n"
+		    );
+			ret.append("document.getElementById(\"task_"+relativeTaskNumber+".result\").value = sol;\n");		
+			ret.append("};\n");
+			ret.append("preSaveManager.registerCallback( preSave_task_"+relativeTaskNumber+" );\n");
+			ret.append("leavePageManager.registerCallback( leavePage_task_"+relativeTaskNumber+" );\n");
+			ret.append("</script>\n");
+		}
+		return ret.toString();
+	}
+	
+	private String setQuestions(int num, int relativ, String param, boolean disabled){		
+		StringBuffer ret = new StringBuffer();
+		// problem			
+		ret.append("<hr>\n");
+		ret.append("<table>");
+		ret.append("\n<tr>\n  <td nowrap valign=top><b>"+rtypeSubTasklet.getQuestionProblem(num)+"</b></td>");
+		ret.append("\n"); ret.append("</tr>");			
+		// hint
+		ret.append("<tr>\n  <td nowrap valign=top><i>"+rtypeSubTasklet.getQuestionHint(num)+"</i></td>");
+		ret.append("\n"); ret.append("</tr>");
+		// answers						
+		for(String n:rtypeSubTasklet.getQuestionsAnswers(num)){
+			ret.append("<tr>");				
+			String sel = "";
+			if (n.equals(param)){
+				sel = "checked";
+			}
+			if (disabled){
+				sel += " disabled";
+			}
+			ret.append("\n  <td nowrap valign=top> <input type=\"radio\" name=\"["+num+"]\"" +					
+					   " id=\""+relativ+"\" value=\""+n+"\" "+sel+">"+n+"</td>");
+			ret.append("\n");
+			ret.append("</tr>");			
+		}
+		
 		ret.append("\n");
 		ret.append("</table>");
 
 		return ret.toString();
 	}
 
-	public String getCorrectedHTML( ViewContext context, int relativeTaskNumber ){		
-		return getRenderedHTML( -1, true );
+	public String getCorrectedHTML( ViewContext context, int relativeTaskNumber ){
+		StringBuffer ret = new StringBuffer();		
+		ret.append(getRenderedHTML( -1, true ));
+		return ret.toString();
+		
 	}
 
 	public String getCorrectionHTML(String actualCorrector, ViewContext context ){	
 	    StringBuffer ret = new StringBuffer();
-	    ret.append( getRenderedHTML( -1, true ) );
+	    ret.append( getRenderedHTML( -1, true ) );	    	   
 
 	    ret.append(getCorrectorPointsInputString(actualCorrector, "Rtype", rtypeSubTasklet));
 
@@ -69,6 +165,7 @@ public class SubTaskView_RtypeTask extends SubTaskView{
 	 * @see de.thorstenberger.uebman.services.student.task.complex.SubTaskView#getSubmitData(java.util.Map, int)
 	 */
 	public SubmitData getSubmitData(Map postedVarsForTask) throws ParsingException {
+		
 		Iterator it = postedVarsForTask.keySet().iterator();
 		while( it.hasNext() ) {
 			String key=(String) it.next();

@@ -16,10 +16,14 @@ public interface SubTasklet_RtypeTask extends AddOnSubTasklet {
 	public int getTextFieldWidth();
 	public int getTextFieldHeight();
 	
-	public List<String> getBoxContainerAttributes();
-	public boolean loadFromHandling();
-	public String getImage();
-	public String getMemento();
+	public String getSelectionText();
+	public String getSelectionHint();
+	public List<String> getSelectionAnswers();
+	public int getCountQuestions();
+	public String getQuestionProblem(int number);
+	public String getQuestionHint(int number);
+	public List<String> getQuestionsAnswers(int question);
+	public String getHandlingSolution();
 	
 }
 
