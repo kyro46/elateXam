@@ -57,6 +57,9 @@ public class GroupingTaskAddOnJPanel extends JPanel {
     private JButton jButtonDelete;
     /** Button zum loeschen aller Objekte auf der Arbeitsflaeche*/
     private JButton jButtonDeleteAll;
+    private JPanel jPanelButtons;
+    private ScrollPane scrollPane;
+    private JScrollPane scroll;
     /** Panel auf dem die zur Auswahl stehenden Elemente stehen */
     private JPanel jPanelElements;
     /** Panel auf das Elemente gezogen werden */
@@ -68,10 +71,10 @@ public class GroupingTaskAddOnJPanel extends JPanel {
      * Creates new form AddonOnJPanel
      * @param initElementList String-Array mit allen Captions fuer Elemente
      */
-    public GroupingTaskAddOnJPanel(int width, int height) {
+    public GroupingTaskAddOnJPanel(int width, int height, boolean corrected) {
     	elementList = new ArrayList<DragElement>();
-    	listener = new MyMouseListener();
-        initComponents(width, height);
+    	listener = new MyMouseListener();    	
+        initComponents(width, height, corrected);
     }
     
     /**  
@@ -86,12 +89,12 @@ public class GroupingTaskAddOnJPanel extends JPanel {
      * initialisiert alle Komponenten
      * @param initElementList String-Array mit allen Captions fuer Elemente
      */
-    private void initComponents(int width, int height) {
+    private void initComponents(int width, int height, boolean corrected) {
     	// Panel mit zur Auswahl stehenden Elementen
     	int spielpaltzHeight = height;
     	jPanelElements = new JPanel();      	    	    	    	
     	// Panel mit allen Buttons
-    	JPanel jPanelButtons = new JPanel();
+    	jPanelButtons = new JPanel();
     	// Button zum loeschen des selektierten Elementes
     	jButtonDelete = new JButton("Selektion entfernen");
     	jButtonDelete.setActionCommand(DELETE_ACTION);
@@ -105,7 +108,7 @@ public class GroupingTaskAddOnJPanel extends JPanel {
     	jPanelButtons.add(jButtonDeleteAll);
     	
     	// ScrollPane, falls mehr Elemente auf Panel als dargestellt werden koennen
-    	ScrollPane scrollPane = new ScrollPane();
+    	scrollPane = new ScrollPane();
     	scrollPane.add(jPanelElements);
     	scrollPane.setSize(width, 75); 	   
     	spielpaltzHeight-=75;
@@ -114,7 +117,9 @@ public class GroupingTaskAddOnJPanel extends JPanel {
     	jPanelSpielplatz.setBackground(Color.LIGHT_GRAY);
     	jPanelSpielplatz.setBorder(BorderFactory.createLineBorder(Color.black));
     	// jPanelSpielplatz soll auf Drop reagieren
-    	new MyDropTargetListener(jPanelSpielplatz);
+    	if (!corrected){
+    		new MyDropTargetListener(jPanelSpielplatz);
+    	}
     	// damit Listener Methoden aufrufen kann
     	listener.setPanel(jPanelSpielplatz);
     	
@@ -137,14 +142,14 @@ public class GroupingTaskAddOnJPanel extends JPanel {
     	// Groesse des Panels fuer ScrollPane wichtig, sonst wird es nicht angezeigt
     	jPanelSpielplatz.setPreferredSize(new Dimension(1000,1000));
     	//jPanelSpielplatz.setBase64String(image);
-    	JScrollPane scroll = new JScrollPane(jPanelSpielplatz,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+    	scroll = new JScrollPane(jPanelSpielplatz,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
     			JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);    	
     	scroll.setMinimumSize(new Dimension(width, spielpaltzHeight));
         scroll.setPreferredSize(new Dimension(width, spielpaltzHeight));
         scroll.setBounds(0,jPanelButtons.getHeight()+jPanelElements.getHeight(),width,spielpaltzHeight);        
     	this.add(scroll);    
     	
-    	this.setDoubleBuffered(false);
+    	//this.setDoubleBuffered(false);
     }  
     
     public PanelSpielplatz getPlayGround(){
@@ -157,7 +162,7 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 		jPanelElements.add(de);
 	}
     
-    public void load(boolean isHandling, String xml){
+    public void load(boolean isHandling, String xml, boolean corrected){
 		byte[] text = null; // needed for ByteArrayInputStream
 		if (xml == null) { // Ist NULL, wenn Applet nicht von HTML, sondern von Eclipse aus gestartet wird
 			return;			
@@ -181,17 +186,16 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 			 * Do not confuse this with Document.getElementsByTagName(), which returns all 
 			 * elements by the given tag name in the hole document. */
 			Element dragSubTaskDef = (Element) Memento.getElementsByTagName("dragSubTaskDef").item(0);
-			// list all BoxContainer
-			NodeList boxcontainers = dragSubTaskDef.getElementsByTagName("BoxContainer");			
-			for (int i = 0; i < boxcontainers.getLength(); i++) {
-				Element boxContainer = (Element) boxcontainers.item(i);
-				String name = boxContainer.getAttribute("boxName");
-				String count = boxContainer.getAttribute("count");
-				String id = boxContainer.getAttribute("boxID");
-				addElement(name, count, id);
-			}
-			if (!isHandling){
-				System.out.println("********** "+isHandling);
+			// list all BoxContainer			
+				NodeList boxcontainers = dragSubTaskDef.getElementsByTagName("BoxContainer");			
+				for (int i = 0; i < boxcontainers.getLength(); i++) {
+					Element boxContainer = (Element) boxcontainers.item(i);
+					String name = boxContainer.getAttribute("boxName");
+					String count = boxContainer.getAttribute("count");
+					String id = boxContainer.getAttribute("boxID");
+					addElement(name, count, id);
+				}
+			if (!isHandling){				
 				return;
 			}
 			// list all used DragElements
@@ -205,8 +209,13 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 				// add Element
 				for(DragElement n:elementList){
 					if(n.getId() == Integer.parseInt(boxID)){
-						DragElement de = new DragElement(n.getCaption(), null, null, listener);
-						de.addMouseListener(listener);
+						DragElement de;
+				    	if (corrected)
+				    		 de = new DragElement(n.getCaption(), null, null, null);
+				    	else {
+				    		de = new DragElement(n.getCaption(), null, null, listener);
+				    		de.addMouseListener(listener);
+				    	}											
 						n.decAnz();
 						de.setOrderID(id);
 						jPanelSpielplatz.getElemente().add(de);
@@ -247,7 +256,19 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 						jPanelSpielplatz.addVerbindung(ver);
 					}
 				}				
+			}		
+			if (corrected){
+				jPanelElements.setVisible(false);
+				this.remove(jPanelElements);
+				jPanelButtons.setVisible(false);
+				this.remove(jPanelButtons);
+				scrollPane.setVisible(false);
+				this.remove(scrollPane);
+				scroll.setBounds(0, 0, this.getWidth(), this.getHeight());			
+				this.jPanelSpielplatz.removeMouseListener(listener);
+				this.repaint();
 			}
+			
 			return;
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
@@ -270,6 +291,9 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 			document.appendChild(Memento);
 			Element dragSubTaskDef = document.createElement("dragSubTaskDef");
 			Memento.appendChild(dragSubTaskDef);
+			Element img = document.createElement("image");
+			img.setTextContent(jPanelSpielplatz.getBase64StringFromImage());
+			dragSubTaskDef.appendChild(img);
 			for(DragElement n:elementList) {
 				Element BoxContainer = document.createElement("BoxContainer");
 				BoxContainer.setAttribute("boxName",n.getCaption());
@@ -333,7 +357,7 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 			transformer.transform(source, result);
 			ret = stringWriter.toString();
 			// having it as base64 string so browsers won't complain
-			System.out.println(ret);
+			//System.out.println(ret);
 			ret = DatatypeConverter.printBase64Binary(ret.getBytes("utf-8"));
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();

@@ -1,10 +1,21 @@
 package com.spiru.dev.groupingTask_addon;
 
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+
+import com.spiru.dev.groupingTask_addon.Utils.Base64;
 
 import de.thorstenberger.taskmodel.MethodNotSupportedException;
 import de.thorstenberger.taskmodel.complex.ParsingException;
@@ -28,7 +39,7 @@ public class SubTaskView_GroupingTask extends SubTaskView{
 	/**
 	 * @see de.thorstenberger.uebman.services.student.task.complex.SubTaskView#getRenderedHTML(int)
 	 */
-	public String getRenderedHTML( ViewContext context, int relativeTaskNumber) {
+	public String getRenderedHTML( ViewContext context, int relativeTaskNumber) {		
 		return getRenderedHTML( relativeTaskNumber, false );
 	}
 
@@ -40,6 +51,7 @@ public class SubTaskView_GroupingTask extends SubTaskView{
 				+ " width=\"710\" height=\"540\" title=\"Java\">\n";			
 				
 		ret += "<param name=\"handling\" value=\""+groupingSubTasklet.loadFromHandling()+"\">";
+		ret += "<param name=\"correction\" value=\""+corrected+"\">";
 		ret += "<param name=\"memento\" value=\""+groupingSubTasklet.getMemento()+"\" >";
 		/*
 		List<String> items = groupingSubTasklet.getBoxContainerAttributes();
@@ -67,14 +79,41 @@ public class SubTaskView_GroupingTask extends SubTaskView{
 		return ret.replaceAll("%s",""+relativeTaskNumber);
 	}
 
-	public String getCorrectedHTML( ViewContext context, int relativeTaskNumber ){		
-		return getRenderedHTML( -1, true );
+	public String getCorrectedHTML( ViewContext context, int relativeTaskNumber ){
+		/*
+		 * getImage from handling (base64)
+		 */				
+		String base = groupingSubTasklet.getImage();		
+		Image img = new ImageIcon(Base64.base64ToByteArray(base)).getImage();
+		BufferedImage bufferedImage = new BufferedImage( img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_RGB );
+		Graphics2D g = bufferedImage.createGraphics();
+		g.drawImage(img, 0,0, null);
+		g.dispose();		
+		// save Image
+		String typ = "png";
+		/*
+		 * nameJava -> tomcatServer->webapps -> absolutePfath!!!!!!!
+		 */
+		//String nameJava = "C:\\Users\\Yves\\Desktop\\Praktikum\\apache-tomcat-7.0.28\\webapps\\taskmodel-core-view\\pics\\Grouping"+relativeTaskNumber+".".concat(typ);
+		//String name = "/taskmodel-core-view/pics/Grouping"+relativeTaskNumber+".".concat(typ);
+		String name = "\\opt\\apache-tomcat-7.0.29\\webapps\\taskmodel-core-view\\pdfimgexport\\Grouping"+relativeTaskNumber+".".concat(typ);
+		File datei = new File( name );		
+		try {
+			ImageIO.write( bufferedImage, typ, datei );
+		} catch (IOException e) { 
+			e.printStackTrace();
+		}			
+		int width = bufferedImage.getWidth();
+		int height = bufferedImage.getHeight();
+		if (width>600) width = 600;
+		if (height>600) height = 600;	
+		String imgTag = "<img src=\""+name+"\" alt=\"groupingImg\" width=\""+width+"\" height=\""+height+"\">";		
+		return imgTag;
 	}
 
-	public String getCorrectionHTML(String actualCorrector, ViewContext context ){	
+	public String getCorrectionHTML(String actualCorrector, ViewContext context ){		
 	    StringBuffer ret = new StringBuffer();
-	    ret.append( getRenderedHTML( -1, true ) );
-
+	    ret.append( getRenderedHTML( -1, true ) );	    
 	    ret.append(getCorrectorPointsInputString(actualCorrector, "Grouping", groupingSubTasklet));
 
 	    return ret.toString();

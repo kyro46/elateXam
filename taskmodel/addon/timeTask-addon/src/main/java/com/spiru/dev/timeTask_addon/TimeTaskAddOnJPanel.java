@@ -48,12 +48,12 @@ public class TimeTaskAddOnJPanel extends JPanel {
 	private JPanel jpanelButtons;
 	private JButton jbuttonDelete;
 	private JButton jbuttonDeleteAll;
-	private MyMouseListener mouseListener;	
+	private MyMouseListener mouseListener = null;	
 	private JScrollPane scrollPanePlayground;
 	private JScrollPane scrollPane;
 	
-    public TimeTaskAddOnJPanel(int width) {
-    	init(width);
+    public TimeTaskAddOnJPanel(int width, boolean corrected) {
+    	init(width, corrected);
     }
     
     @Override
@@ -62,7 +62,7 @@ public class TimeTaskAddOnJPanel extends JPanel {
     	super.paint(g);
     }
     
-    private void init(int width){
+    private void init(int width, boolean corrected){   
     	mouseListener = new MyMouseListener();    	
     	jpanelOfElements = new JPanelOfElements(mouseListener);
     	jpanelButtons = new JPanel();
@@ -76,17 +76,21 @@ public class TimeTaskAddOnJPanel extends JPanel {
     	jpanelButtons.add(jbuttonDeleteAll);
     	
     	jpanelPlayground = new JPanelPlayGround(mouseListener);
-    	mouseListener.setPlayGround(jpanelPlayground);
-    	new MyDropTargetListener(jpanelPlayground);
+    	mouseListener.setPlayGround(jpanelPlayground);    	
     	scrollPane = new JScrollPane(jpanelOfElements);
     	scrollPane.setBounds(0,0,width,60);
     	jpanelButtons.setBounds(0,60,width,40);
     	    	
     	scrollPanePlayground = new JScrollPane(jpanelPlayground);
     	scrollPanePlayground.setBounds(0,100,width,320);
+    	    	
+    	if(!corrected){
+    		this.add(scrollPane);
+    		this.add(jpanelButtons);
+    		new MyDropTargetListener(jpanelPlayground);    		
+    	}
+    	mouseListener.setCorrected(corrected);
     	
-    	this.add(scrollPane);
-    	this.add(jpanelButtons);
     	this.add(scrollPanePlayground);
     	this.setLayout(null);
     	this.setBounds(0,0,width,420);
@@ -109,10 +113,11 @@ public class TimeTaskAddOnJPanel extends JPanel {
     	scrollPane.paintAll(scrollPane.getGraphics());
     }
     
-    public void addDatePoint(String caption, boolean visible, String input){
+    public void addDatePoint(String caption, boolean visible, String input, boolean isCorrected){
     	DatePoint dp = new DatePoint(caption, visible);
     	if (!visible){
     		dp.setDateFromStudent(input);
+    		dp.setCorrected(isCorrected);
     	}
     	addDatePoint(dp);
     }
@@ -188,6 +193,9 @@ public class TimeTaskAddOnJPanel extends JPanel {
 			memento.appendChild(addonConfig);	    		
     		Element timelineSubTaskDef = document.createElement("timelineSubTaskDef");
     		memento.appendChild(timelineSubTaskDef);	
+    		Element img = document.createElement("image");
+			img.setTextContent(jpanelPlayground.getBase64StringFromImage());
+			timelineSubTaskDef.appendChild(img);
     		for(DragElement n:elements){
     			Element assignedEvent = document.createElement("assignedEvent");
     			assignedEvent.setAttribute("id", ""+n.getId());

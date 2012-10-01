@@ -41,8 +41,9 @@ public class GroupingTaskAddOnApplet extends Applet{
 	    		}
 	    	}*/
 	    		boolean isHandling = Boolean.parseBoolean(this.getParameter("handling"));
-				gpanel = new GroupingTaskAddOnJPanel(width, height);
-				gpanel.load(isHandling, this.getParameter("memento"));
+	    		boolean isCorrected = Boolean.parseBoolean(this.getParameter("correction"));
+				gpanel = new GroupingTaskAddOnJPanel(width, height, isCorrected);
+				gpanel.load(isHandling, this.getParameter("memento"), isCorrected);
 		        add(gpanel);	    		       
 	    }
 
@@ -62,3 +63,4 @@ public class GroupingTaskAddOnApplet extends Applet{
 			return true;//jpanel.getRightTextAreaContent() != jpanel.getLeftTextAreaContent();
 		}
 }
+

@@ -31,13 +31,15 @@ public class TimeTaskAddOnApplet extends Applet{
 	    	this.setMinimumSize(new Dimension(width,420));
 	    	this.setPreferredSize(new Dimension(width,420));
 	    	this.setLayout(null);	  	    
-	    	gpanel = new TimeTaskAddOnJPanel(width);	  
+	    	boolean isCorrected = Boolean.parseBoolean(this.getParameter("corrected"));
+	    	gpanel = new TimeTaskAddOnJPanel(width, isCorrected);	  
 	    	load();
 	        add(gpanel);   	
 	    }
 
 	    public void load(){	    	
-				String xml = getParameter("param");
+				String xml = getParameter("param");		
+				boolean isCorrected = Boolean.parseBoolean(this.getParameter("corrected"));
 				String loadFromHandling = null; 
 				loadFromHandling = getParameter("handling");
 				byte[] x = null; // needed for ByteArrayInputStream
@@ -73,27 +75,27 @@ public class TimeTaskAddOnApplet extends Applet{
 						String dPasTextbox = date.getAttribute("whichDatePointAsTextbox");																			
 						if (dPasTextbox == null){
 						// visible = true bei beiden
-							gpanel.addDatePoint(datePoint1, true, null);
-							gpanel.addDatePoint(datePoint2, true, null);
+							gpanel.addDatePoint(datePoint1, true, null, isCorrected);
+							gpanel.addDatePoint(datePoint2, true, null, isCorrected);
 						}
 						else if (dPasTextbox.equals("all")){
 						// visible = false bei beiden
 							String datePointStudent1 = date.getAttribute("datePointStudent1");
 							String datePointStudent2 = date.getAttribute("datePointStudent2");
-							gpanel.addDatePoint(datePoint1, false, datePointStudent1);
-							gpanel.addDatePoint(datePoint2, false, datePointStudent2);
+							gpanel.addDatePoint(datePoint1, false, datePointStudent1, isCorrected);
+							gpanel.addDatePoint(datePoint2, false, datePointStudent2, isCorrected);
 						}
 						else if (dPasTextbox.equals("datePoint1")){
 						// datePoint1 as Textbox
 							String datePointStudent1 = date.getAttribute("datePointStudent1");
-							gpanel.addDatePoint(datePoint1, false,datePointStudent1);
-							gpanel.addDatePoint(datePoint2, true, null);
+							gpanel.addDatePoint(datePoint1, false,datePointStudent1, isCorrected);
+							gpanel.addDatePoint(datePoint2, true, null, isCorrected);
 						}
 						else{
 						// datePoint2 as Textbox
 							String datePointStudent2 = date.getAttribute("datePointStudent2");
-							gpanel.addDatePoint(datePoint1, true, null);
-							gpanel.addDatePoint(datePoint2, false, datePointStudent2);
+							gpanel.addDatePoint(datePoint1, true, null, isCorrected);
+							gpanel.addDatePoint(datePoint2, false, datePointStudent2, isCorrected);
 						}
 						if(loadFromHandling != null && loadFromHandling.equals("true")){
 							NodeList correctAssignmentIDList = date.getElementsByTagName("correctAssignmentID");

@@ -12,6 +12,7 @@ public class MyMouseListener implements MouseListener {
 	private Symbol selectedSymbol = null;
 	private ConnectionLine selectedConnectionLine = null;
 	private JPanelPlayGround panel;
+	private boolean corrected = false;
 	
 	public void setPlayGround(JPanelPlayGround panel){
 		this.panel = panel;
@@ -27,7 +28,13 @@ public class MyMouseListener implements MouseListener {
 		}
 	}
 	
+	public void setCorrected(boolean value){
+		this.corrected = value;
+	}
+	
 	public void mouseClicked(MouseEvent event) {
+		if (corrected)
+			return;
 		Object objekt = event.getSource();
 		
 		if(objekt instanceof DragElement){

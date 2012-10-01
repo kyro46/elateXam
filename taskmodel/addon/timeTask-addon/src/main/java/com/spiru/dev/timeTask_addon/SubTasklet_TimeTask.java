@@ -21,6 +21,7 @@ public interface SubTasklet_TimeTask extends AddOnSubTasklet {
 	
 	public String getMemento();
 	public boolean fromHandling();
+	public String getImage();
 
 
 

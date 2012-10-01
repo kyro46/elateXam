@@ -305,7 +305,7 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 			transformer.transform(source, result);
 			ret = stringWriter.toString();
 			// having it as base64 string so browsers won't complain
-			System.out.println(ret);
+			//System.out.println(ret);
 			ret = DatatypeConverter.printBase64Binary(ret.getBytes("utf-8"));
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();

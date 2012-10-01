@@ -49,7 +49,16 @@ public class DatePoint extends JPanel{
 			textfield.addKeyListener(new MyKeyListener());
 			this.add(textfield);			
 		}				
-	}		
+	}	
+	
+	public void setCorrected(boolean value){
+		if (value == true){
+			if (textfield != null){
+				//textfield.setEnabled(false);
+				textfield.setEditable(false);
+			}
+		}
+	}
 	
 	public String getDateFromStudent(){
 		if (visible){

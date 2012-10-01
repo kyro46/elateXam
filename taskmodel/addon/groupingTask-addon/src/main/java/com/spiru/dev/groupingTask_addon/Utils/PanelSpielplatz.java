@@ -64,8 +64,7 @@ public class PanelSpielplatz extends JPanel {
 		super.paintComponent(g);
 		for(int i=0; i<this.getHeight()/60; i++){
 			g.drawLine(0,i*60, this.getWidth(), i*60);
-		}
-		System.out.println("ja paint");
+		}		
 	}
 	
 	@Override

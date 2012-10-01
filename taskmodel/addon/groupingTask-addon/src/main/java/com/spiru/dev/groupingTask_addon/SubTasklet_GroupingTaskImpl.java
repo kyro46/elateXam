@@ -35,17 +35,20 @@ import de.thorstenberger.taskmodel.complex.complextaskhandling.CorrectionSubmitD
 import de.thorstenberger.taskmodel.complex.complextaskhandling.SubmitData;
 import de.thorstenberger.taskmodel.complex.complextaskhandling.subtasklets.impl.AbstractAddonSubTasklet;
 import de.thorstenberger.taskmodel.complex.jaxb.AddonSubTaskDef;
+import de.thorstenberger.taskmodel.complex.jaxb.ManualCorrectionType;
 import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskHandling.Try.Page.AddonSubTask;
 import de.thorstenberger.taskmodel.complex.jaxb.SubTaskDefType;
 
 public class SubTasklet_GroupingTaskImpl extends AbstractAddonSubTasklet implements SubTasklet_GroupingTask {
 	private Element mementoTaskDef;
 	private Element mementoTaskHandling;
+	private AddonSubTask subTaskObject;
 
 	public SubTasklet_GroupingTaskImpl( ComplexTaskDefRoot root, Block block, SubTaskDefType aoSubTaskDef, AddonSubTask atSubTask ) {
 		super(root, block,aoSubTaskDef,atSubTask);
 		mementoTaskDef = ((AddonSubTaskDef)aoSubTaskDef).getMemento();
 		mementoTaskHandling = atSubTask.getMemento();
+		subTaskObject = atSubTask;
 		if (mementoTaskHandling == null) { // null at the first instantiation
 			try {
 				mementoTaskHandling = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument()
@@ -82,9 +85,34 @@ public class SubTasklet_GroupingTaskImpl extends AbstractAddonSubTasklet impleme
 
 	@Override
 	public void doManualCorrection( CorrectionSubmitData csd ){
-		//CompareTextTaskCorrectionSubmitData acsd = (CompareTextTaskCorrectionSubmitData) csd;
+		GroupingTaskCorrectionSubmitData pcsd = (GroupingTaskCorrectionSubmitData) csd;
 		//super.setAutoCorrection(acsd.getPoints());
 		// TODO!
+		List<ManualCorrectionType> manualCorrections = subTaskObject.getManualCorrection();
+		if( complexTaskDefRoot.getCorrectionMode().getType() == ComplexTaskDefRoot.CorrectionModeType.MULTIPLECORRECTORS ) {
+			for( ManualCorrectionType mc : manualCorrections ){
+				if( mc.getCorrector().equals( pcsd.getCorrector() ) ){
+					mc.setPoints( pcsd.getPoints() );
+					return;
+				}
+			}
+			// corrector not found, so create a new ManualCorrection for him
+			ManualCorrectionType mc;
+			mc = objectFactory.createManualCorrectionType();
+			mc.setCorrector(pcsd.getCorrector());
+			mc.setPoints(pcsd.getPoints());
+			manualCorrections.add(mc);
+		} else {
+			ManualCorrectionType mc;
+			if( manualCorrections.size() > 0 ) {
+				mc = manualCorrections.get(0);
+			} else {
+				mc = objectFactory.createManualCorrectionType();
+				manualCorrections.add(mc);
+			}
+			mc.setCorrector(pcsd.getCorrector());
+			mc.setPoints(pcsd.getPoints());
+		}
 	}
 
 	@Override
@@ -98,7 +126,7 @@ public class SubTasklet_GroupingTaskImpl extends AbstractAddonSubTasklet impleme
 	 */
 	@Override
 	public void build(long randomSeed) throws TaskApiException {
-		//System.out.println("\n\nbuild() Called");
+		//
 	}
 
 	@Override
@@ -120,10 +148,7 @@ public class SubTasklet_GroupingTaskImpl extends AbstractAddonSubTasklet impleme
 		*/
 	}
 
-	private void setAnswer(String resultString) {
-		System.out.println("********** resultString - start");
-		System.out.println("********** "+resultString);
-		
+	private void setAnswer(String resultString) {						
 		byte[] text = DatatypeConverter.parseBase64Binary(resultString);		
 		/*
 		Element resultText = (Element) mementoTaskHandling.getElementsByTagName("answer").item(0);
@@ -148,13 +173,11 @@ public class SubTasklet_GroupingTaskImpl extends AbstractAddonSubTasklet impleme
 				parser = factory.newDocumentBuilder();
 				Document document;				
 				document = parser.parse(new InputSource(new ByteArrayInputStream(text)));				
-				Element memento = (Element) document.getElementsByTagName("dragSubTaskDef").item(0);
-				System.out.println("try 1");
+				Element memento = (Element) document.getElementsByTagName("dragSubTaskDef").item(0);				
 				try{					
 					Node firstDocImportedNode = mementoTaskHandling.getOwnerDocument().importNode(memento, true);
 					resultText.appendChild(firstDocImportedNode );
-					//resultText.appendChild(memento);
-					System.out.println("try 2");
+					//resultText.appendChild(memento);					
 				}
 				catch(Exception e){					
 					e.printStackTrace();
@@ -193,8 +216,9 @@ public class SubTasklet_GroupingTaskImpl extends AbstractAddonSubTasklet impleme
 	}
 
 	@Override
-	public String getImage() {		
-		return mementoTaskHandling.getElementsByTagName("answer").item(0).getTextContent();
+	public String getImage() {
+		Element dragSubTaskDef = (Element)mementoTaskHandling.getElementsByTagName("dragSubTaskDef").item(0);		
+		return dragSubTaskDef.getElementsByTagName("image").item(0).getTextContent();
 	}
 
 	@Override

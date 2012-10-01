@@ -4,9 +4,13 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 public class JPanelPlayGround extends JPanel {
@@ -172,5 +176,18 @@ public class JPanelPlayGround extends JPanel {
 			}
 		}
 		repaint();
+	}
+	
+	public String getBase64StringFromImage(){
+		BufferedImage img=new BufferedImage(this.getWidth(),this.getHeight(),BufferedImage.TYPE_INT_ARGB);
+		this.paint(img.getGraphics());//dirty hack :)
+		  ByteArrayOutputStream bos=new ByteArrayOutputStream();
+		  try {
+			ImageIO.write(img,"png",bos);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+		  return Base64.byteArrayToBase64(bos.toByteArray());	
 	}
 }

@@ -35,16 +35,19 @@ import de.thorstenberger.taskmodel.complex.complextaskhandling.CorrectionSubmitD
 import de.thorstenberger.taskmodel.complex.complextaskhandling.SubmitData;
 import de.thorstenberger.taskmodel.complex.complextaskhandling.subtasklets.impl.AbstractAddonSubTasklet;
 import de.thorstenberger.taskmodel.complex.jaxb.AddonSubTaskDef;
+import de.thorstenberger.taskmodel.complex.jaxb.ManualCorrectionType;
 import de.thorstenberger.taskmodel.complex.jaxb.ComplexTaskHandling.Try.Page.AddonSubTask;
 import de.thorstenberger.taskmodel.complex.jaxb.SubTaskDefType;
 
 public class SubTasklet_TimeTaskImpl extends AbstractAddonSubTasklet implements SubTasklet_TimeTask {
 	private Element mementoTaskDef;
 	private Element mementoTaskHandling;
+	private AddonSubTask subTaskObject;
 
 	public SubTasklet_TimeTaskImpl(ComplexTaskDefRoot root, Block block, SubTaskDefType aoSubTaskDef, AddonSubTask atSubTask ) {
 		super(root, block,aoSubTaskDef,atSubTask);
 		mementoTaskDef = ((AddonSubTaskDef)aoSubTaskDef).getMemento();
+		subTaskObject = atSubTask;
 		mementoTaskHandling = atSubTask.getMemento();
 		if (mementoTaskHandling == null) { // null at the first instantiation
 			try {
@@ -82,9 +85,34 @@ public class SubTasklet_TimeTaskImpl extends AbstractAddonSubTasklet implements 
 
 	@Override
 	public void doManualCorrection( CorrectionSubmitData csd ){
-		//CompareTextTaskCorrectionSubmitData acsd = (CompareTextTaskCorrectionSubmitData) csd;
+		TimeTaskCorrectionSubmitData pcsd = (TimeTaskCorrectionSubmitData) csd;
 		//super.setAutoCorrection(acsd.getPoints());
 		// TODO!
+		List<ManualCorrectionType> manualCorrections = subTaskObject.getManualCorrection();
+		if( complexTaskDefRoot.getCorrectionMode().getType() == ComplexTaskDefRoot.CorrectionModeType.MULTIPLECORRECTORS ) {
+			for( ManualCorrectionType mc : manualCorrections ){
+				if( mc.getCorrector().equals( pcsd.getCorrector() ) ){
+					mc.setPoints( pcsd.getPoints() );
+					return;
+				}
+			}
+			// corrector not found, so create a new ManualCorrection for him
+			ManualCorrectionType mc;
+			mc = objectFactory.createManualCorrectionType();
+			mc.setCorrector(pcsd.getCorrector());
+			mc.setPoints(pcsd.getPoints());
+			manualCorrections.add(mc);
+		} else {
+			ManualCorrectionType mc;
+			if( manualCorrections.size() > 0 ) {
+				mc = manualCorrections.get(0);
+			} else {
+				mc = objectFactory.createManualCorrectionType();
+				manualCorrections.add(mc);
+			}
+			mc.setCorrector(pcsd.getCorrector());
+			mc.setPoints(pcsd.getPoints());
+		}
 	}
 
 	@Override
@@ -244,6 +272,12 @@ public class SubTasklet_TimeTaskImpl extends AbstractAddonSubTasklet implements 
 			return true;
 		}		
 		return false;
+	}
+
+	@Override
+	public String getImage() {
+		Element timelineSubTaskDef = (Element)mementoTaskHandling.getElementsByTagName("timelineSubTaskDef").item(0);		
+		return timelineSubTaskDef.getElementsByTagName("image").item(0).getTextContent();
 	}
 
 }
