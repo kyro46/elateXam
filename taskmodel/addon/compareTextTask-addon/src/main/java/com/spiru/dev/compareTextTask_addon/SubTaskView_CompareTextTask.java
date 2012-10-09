@@ -5,6 +5,8 @@ import java.text.ParseException;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+
 import de.thorstenberger.taskmodel.MethodNotSupportedException;
 import de.thorstenberger.taskmodel.complex.ParsingException;
 import de.thorstenberger.taskmodel.complex.complextaskhandling.CorrectionSubmitData;
@@ -59,7 +61,12 @@ public class SubTaskView_CompareTextTask extends SubTaskView{
 
 	@Override
 	public String getCorrectedHTML( ViewContext context, int relativeTaskNumber ){
-		return getRenderedHTML( -1, true );
+		// @see http://stackoverflow.com/questions/4874626/java-escape-html
+		//ret = StringUtils.replaceEach(ret, new String[]{"<", ">"}, new String[]{"&lt;", "&gt;"});
+		System.out.println("RESULT" + subTasklet.getResult());
+		String ret = subTasklet.getResult().replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+		ret = "<b>Eingereichte Lösung des Studenten: </b><br/>" + ret;
+		return ret;
 	}
 
 	@Override

@@ -105,19 +105,24 @@ public class SubTaskView_TimeTask extends SubTaskView{
 		 */
 		//String nameJava = "C:\\Users\\Yves\\Desktop\\Praktikum\\apache-tomcat-7.0.28\\webapps\\taskmodel-core-view\\pics\\TimeLine"+relativeTaskNumber+".".concat(typ);
 		//String name = "/taskmodel-core-view/pics/TimeLine"+relativeTaskNumber+".".concat(typ);
-		String name = "opt\\apache-tomcat-7.0.29\\webapps/taskmodel-core-view\\pdfimgexport\\TimeLine"+relativeTaskNumber+".".concat(typ);		
+		String name = "";
+		String nameWebapp ="";
+		if(System.getProperty("os.name").toLowerCase().indexOf("win") >= 0) // windows = extrawurst
+			name = "\\opt\\apache-tomcat-7.0.29\\webapps/taskmodel-core-view\\pdfimgexport\\TimeLine"+relativeTaskNumber+".".concat(typ);
+		else name = "/opt/apache-tomcat-7.0.29/webapps/taskmodel-core-view/pdfimgexport/TimeLine"+relativeTaskNumber+".".concat(typ);
+		nameWebapp = "/taskmodel-core-view/pdfimgexport/TimeLine"+relativeTaskNumber+".".concat(typ);
 		File datei = new File( name );		
 		System.out.println(datei.getAbsoluteFile());
 		try {
 			ImageIO.write( bufferedImage, typ, datei );
 		} catch (IOException e) { 
 			e.printStackTrace();
-		}			
+		}
 		int width = bufferedImage.getWidth();
 		int height = bufferedImage.getHeight();
 		if (width>600) width = 600;
 		if (height>600) height = 600;	
-		String imgTag = "<img src=\""+name+"\" alt=\"timelineIMG\" width=\""+width+"\" height=\""+height+"\">";		
+		String imgTag = "<img src=\""+nameWebapp+"\" alt=\"timelineIMG\" width=\""+width+"\" height=\""+height+"\">";		
 		return imgTag;
 	}
 
