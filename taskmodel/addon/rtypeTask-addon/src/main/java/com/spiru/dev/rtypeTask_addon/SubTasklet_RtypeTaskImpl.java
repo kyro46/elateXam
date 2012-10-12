@@ -203,7 +203,7 @@ public class SubTasklet_RtypeTaskImpl extends AbstractAddonSubTasklet implements
 		NodeList answers = el.getElementsByTagName("answer");
 		for(int i=0; i<answers.getLength(); i++){
 			Element a = (Element)answers.item(i);
-			answerList.add(a.getAttribute("symbol"));
+			answerList.add(a.getTextContent());
 		}
 		return answerList;
 	}
