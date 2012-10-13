@@ -183,7 +183,7 @@
     <action path="/moodleUsers" type="org.apache.struts.actions.ForwardAction" parameter="/WEB-INF/pages/importMoodle.jsp" roles="admin">
     </action>
   </action-mappings>
-  <controller inputForward="true" maxFileSize="2M" nocache="true"/>
+  <controller inputForward="true" maxFileSize="11M" nocache="true"/>
   <message-resources parameter="ApplicationResources"/>
   <!-- ========== Validator plugin =================== -->
   <plug-in className="org.apache.struts.validator.ValidatorPlugIn">
