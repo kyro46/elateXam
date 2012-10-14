@@ -58,7 +58,10 @@ public class TaskUploadAction extends BaseAction {
 		Document document = parser.parse(new InputSource(new ByteArrayInputStream(file_data)));
 		Node root_element = document.getFirstChild();
 		if(root_element.getNodeName().equals("quiz")) {
+			log.warn("Moodle XML hochgeladen");
 			file_data = ElateXMLMain.startTransformToElateFormat(file_data);
+			log.warn("Moodle XML bearbeitet");
+
 			//System.out.println(new String(file_data));
 		}
 
