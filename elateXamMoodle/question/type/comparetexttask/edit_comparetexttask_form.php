@@ -28,37 +28,62 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * comparetexttask editing form definition.
  *
- * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @author	C.Wilhelm
+ * @license	http://www.gnu.org/copyleft/gpl.html GNU Public License
 */
 class qtype_comparetexttask_edit_form extends question_edit_form {
+
+	/**
+	 * this method needs to be overridden in subtypes
+	 *
+	 * @see question_edit_form::qtype()
+	 */
+	public function qtype() {
+		return 'comparetexttask';
+	}
+
+	/**
+	 * this method needs to be overridden in subtypes
+	 *
+	 * @return string containing the path to the *.clss file inside the JAR-file
+	 */
+	protected function get_innerpath() {
+		return "com/spiru/dev/compareTextTask_addon/CompareTextProfessorApplet.class";
+	}
+
+	/**
+	 * this method may be needed to be overridden
+	 * when the name of the JAR-file is not "complexTask.jar"
+	 *
+	 * @return string containing the name of the JAR-file (which should be inside the ./lib folder)
+	 */
+	protected function get_jarname() {
+		return "complexTask.jar";
+	}
+
 	protected function definition_inner($mform) {
-		// this method is called by question_edit_form.definition() 
+		// this method is called by question_edit_form.definition()
 		global $CFG;
 		global $PAGE;
-		// a) We need a Corrector Feedback Field for all CompareTextTask questions, see question_edit_form.definition()
-		$element = $mform->addElement('editor', 'correctorfeedback', "Feedback for the Corrector", array('rows' => 10), $this->editoroptions);
-		//$mform->setDefault('correctorfeedback', ...); // doesn't work for "editor" fields (blame moodle for this)
-		$element->setValue(array('text'=>$this->get_correctorfeedback())); // see https://github.com/colchambers/moodle/commit/MDL-31726
-		$mform->setType('correctorfeedback', PARAM_RAW);
+		// a) We need a Corrector Feedback Field for all CompareTextTask questions
+		$this->add_corrector_feedback();
 
 		// b) Java Applet
-		$jarfile = "complexTask.jar";
-		$jarpath = $CFG->wwwroot . "/question/type/" . $this->qtype() . "/lib/" . $jarfile;
-		$innerpath = "com/spiru/dev/compareTextTask_addon/CompareTextProfessorApplet.class"; // TODO: Configurable!
+		$jarpath = $CFG->wwwroot . "/question/type/" . $this->qtype() . "/lib/" . $this->get_jarname();
 		$appletstr = "\n\n<applet "
-				. 'archive="' . $jarpath . '" ' . 'code="'. $innerpath . '" '
-				. 'id="appletField"'
+				. 'archive="' . $jarpath . '" ' . 'code="'. $this->get_innerpath() . '" '
+				. 'id="appletField" '
 				. 'width="600" height="400">\n'
 			. '<param name="memento" value="' . $this->get_memento() . '">\n'
 			. "</applet>\n\n";
 
 		// Trick to place it at the same position as the <input> elements above it (+ nice label)
 		$appletstr = '<div class="fitem fitem_feditor" id="fitem_id_questiontext"><div class="fitemtitle">'
-				.'<label for="appletField">Settings for '. "CompareTextTask" .'</label></div>'
+				.'<label for="appletField">Settings for '. get_string('pluginname', 'qtype_'.$this->qtype()) .'</label></div>'
 				.'<div class="felement feditor"><div><div>'.$appletstr.'</div></div></div></div>';
 
 		// Hidden Elements to put in the Applet output via module.js
-		$failstr = "Error: Applet Content was not send!"; // result when javascript didn't execute properly 
+		$failstr = "Error: Applet Content was not send!"; // result when javascript didn't execute properly
 		$mform->addElement('textarea', 'memento', '', 'style="display:none;"');
 		$mform->setDefault('memento', $failstr);
 
@@ -66,18 +91,35 @@ class qtype_comparetexttask_edit_form extends question_edit_form {
 		$mform->addElement('html', $appletstr);
 
 		// c) Add Module.js
-		$PAGE->requires->js("/question/type/" . $this->qtype() . "/jquery-1.8.0.min.js");
-		$PAGE->requires->js("/question/type/" . $this->qtype() . "/module.js");
+		$PAGE->requires->js("/question/type/comparetexttask/jquery-1.8.0.min.js");
+		$PAGE->requires->js("/question/type/comparetexttask/module.js");
 	}
 
-	public function qtype() {
-		return 'comparetexttask';
+	protected function add_corrector_feedback() {
+		// we won't use any applets
+		$element = $this->_form->addElement('editor', 'correctorfeedback',
+				get_string('correctorfeedback', 'qtype_comparetexttask'),
+				array('rows' => 10), $this->editoroptions);
+		$this->_form->setType('correctorfeedback', PARAM_RAW);
 	}
 
-	protected function get_correctorfeedback() {
-		if (property_exists($this->question, "options")) // when updating
-			return $this->question->options->correctorfeedback;
-		return ""; // when inserting
+	protected function data_preprocessing($question) {
+		// @see qtype_essay_edit_form.data_preprocessing()
+		$question = parent::data_preprocessing($question);
+		if (empty($question->options)) return $question;
+		$draftid = file_get_submitted_draft_itemid('correctorfeedback');
+		$question->correctorfeedback = array();
+		$question->correctorfeedback['text'] = file_prepare_draft_area(
+				$draftid,				// draftid
+				$this->context->id,		// context
+				'qtype_'.$this->qtype(),// component
+				'correctorfeedback',	// filarea
+				!empty($question->id) ? (int) $question->id : null, // itemid
+				$this->fileoptions,		// options
+				$question->options->correctorfeedback // text
+		);
+		$question->correctorfeedback['itemid'] = $draftid;
+		return $question;
 	}
 
 	protected function get_memento() {

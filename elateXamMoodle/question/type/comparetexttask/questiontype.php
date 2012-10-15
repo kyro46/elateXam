@@ -27,61 +27,78 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * The comparetexttask question type class.
  *
- * TODO: Make sure short answer questions chosen by a comparetexttask question
- * can not also be used by a random question
- *
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @author	C.Wilhelm
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
 class qtype_comparetexttask extends question_type {
-	const MAX_SUBQUESTIONS = 10;
-
+	/**
+	 * this method needs to be overridden in subtypes
+	 * @see question_type::extra_question_fields()
+	 */
 	public function extra_question_fields() {
 		return array('question_comparetexttask', 'correctorfeedback', 'memento');
 	}
 
-	public function get_question_options($question) {
-		global $DB;
-		$question->options = $DB->get_record('question_comparetexttask', array('questionid' => $question->id), '*', MUST_EXIST);
-		$question->options->memento = $question->options->memento;
-		$question->options->answers = array();
-		//debugging("§question:".var_export($question));
-		return true;
-	}
-
-	public function save_question_options($question) {
-		global $DB;
-		//$question->options->answers = array();
-		//debugging("save_question_options(): §question:".var_export($question));
-		if(strpos($question->memento, "Error:") === 0) {
-			$result = new stdClass();
-			$result->error = $question->memento;
-			return $result;
-		}
-		$existing = $DB->get_record('question_comparetexttask', array('questionid' => $question->id));
-		$options = new stdClass(); // such an object is required by update_record() / insert_record()
-		$options->correctorfeedback = $question->correctorfeedback['text']; // "editor" fields need extra treatment in moodle formslib
-		$options->memento = base64_decode($question->memento); // database should contain readable xml, no base64 encoded things
-		$options->questionid = $question->id; // set foreign key question_comparetexttask.questionid to questions.id
-		if ($existing) {
-			$options->id = $existing->id;
-			$DB->update_record('question_comparetexttask', $options);
-		} else {
-			$DB->insert_record('question_comparetexttask', $options);
-		}
-		return true;
-	}
-
-	public function delete_question($questionid, $contextid) {
-		parent::delete_question($questionid, $contextid);
-	}
-
 	/**
-	 * @param object $question
-	 * @return mixed either a integer score out of 1 that the average random
-	 * guess by a student might give or an empty string which means will not
-	 * calculate.
+	 * will store input (which can be from a web formular or from an XML import)
+	 * @see question_type::save_question_options()
 	 */
-	public function get_random_guess_score($question) {
-		return 1/$question->options->choose;
+	public function save_question_options($formdata) {
+		//debugging(var_export($formdata));
+		// database (and exported XML) should contain readable xml, no base64 encoded things
+		if(substr($formdata->memento, 0, 5) !== "<?xml") // won't be base64-encoded on import!
+			$formdata->memento = base64_decode($formdata->memento);
+		// "editor" fields need extra treatment in moodle formslib + they cause problems on import!
+		$formdata->correctorfeedback = $this->import_or_save_files($formdata->correctorfeedback,
+				$formdata->context, $this->plugin_name(), 'correctorfeedback', $formdata->id);
+		return parent::save_question_options($formdata);
+	}
+
+	////// IMPORT/EXPORT FUNCTIONS /////////////////
+	/** Imports question from the Moodle XML format */
+	public function import_from_xml($data, $question, qformat_xml $format, $extra=null) {
+		//debugging(var_export($data));
+		// compare to parent::import_from_xml($data, $question, $format, $extra);
+		$question_type = $data['@']['type'];
+		if ($question_type != $this->name()) return false;
+		$qo = $format->import_headers($data);
+		$qo->qtype = $question_type;
+		$qo->memento = $format->getpath($data, array('#', 'memento', 0, '#'), '');
+		// compare to import_essay() in /question/format/xml/format.php
+		// also see here: https://github.com/maths/moodle-qtype_stack/blob/master/questiontype.php
+		$qo->correctorfeedback['text'] = $format->getpath($data, array('#', 'correctorfeedback', 0, '#', 'text', 0, '#'), '', true);
+		$qo->correctorfeedback['format'] = $format->trans_format($format->getpath($data, array('#', 'correctorfeedback', 0, '@', 'format'), 'moodle_auto_format'));
+		$qo->correctorfeedback['files'] = $format->import_files($format->getpath($data, array('#', 'correctorfeedback', 0, '#', 'file'), array(), false));
+		return $qo;
+	}
+
+	/** Export question to the Moodle XML format */
+	public function export_to_xml($question, qformat_xml $format, $extra=null) {
+		// compare to parent::export_to_xml($question, $format, $extra);
+		$expout = "    <memento>{$format->xml_escape($question->options->memento)}</memento>";
+		$fs = get_file_storage();
+		// compare to writequestion() in /question/format/xml/format.php (lousy documentation for new question types :()
+		$expout .= "\n    <correctorfeedback format=\"html\">\n";
+		$expout .= $format->writetext($question->options->correctorfeedback, 3) . "      ";
+		$expout .= $format->write_files($fs->get_area_files($question->contextid, $this->plugin_name(), 'correctorfeedback', $question->id));
+		$expout .= "\n    </correctorfeedback>\n";
+		return $expout;
+	}
+
+	////// the following is borrowed from qtype_description -> compare to original when upgrading moodle! //////////
+	public function is_real_question_type() {
+		return false;
+	}
+	public function is_usable_by_random() {
+		return false;
+	}
+	public function can_analyse_responses() {
+		return false;
+	}
+	public function actual_number_of_questions($question) {
+		return 0;
+	}
+	public function get_random_guess_score($questiondata) {
+		return null;
 	}
 }

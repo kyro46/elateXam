@@ -1,3 +1,9 @@
+Changes to Moodle 2.3
+=====================
+
+![Screenshot](https://raw.github.com/valmynd/moodle23/master/course/format/elatexam/doc/ChangesOnMoodle.png)
+
+
 QUICK INSTALL
 =============
 

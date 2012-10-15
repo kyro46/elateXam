@@ -23,65 +23,10 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
+require_once($CFG->dirroot . '/question/type/comparetexttask/questiontype.php');
 
-/**
- * The timetask question type class.
- *
- * TODO: Make sure short answer questions chosen by a timetask question
- * can not also be used by a random question
- *
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
-class qtype_timetask extends question_type {
-	const MAX_SUBQUESTIONS = 10;
-
+class qtype_timetask extends qtype_comparetexttask {
 	public function extra_question_fields() {
 		return array('question_timetask', 'correctorfeedback', 'memento');
-	}
-
-	public function get_question_options($question) {
-		global $DB;
-		$question->options = $DB->get_record('question_timetask', array('questionid' => $question->id), '*', MUST_EXIST);
-		$question->options->memento = $question->options->memento;
-		$question->options->answers = array();
-		//debugging("§question:".var_export($question));
-		return true;
-	}
-
-	public function save_question_options($question) {
-		global $DB;
-		//$question->options->answers = array();
-		//debugging("save_question_options(): §question:".var_export($question->correctorfeedback['text']));
-		if(strpos($question->memento, "Error:") === 0) {
-			$result = new stdClass();
-			$result->error = $question->memento;
-			return $result;
-		}
-		$existing = $DB->get_record('question_timetask', array('questionid' => $question->id));
-		$options = new stdClass(); // such an object is required by update_record() / insert_record()
-		$options->correctorfeedback = $question->correctorfeedback['text']; // "editor" fields need extra treatment in moodle formslib
-		$options->memento = base64_decode($question->memento); // database should contain readable xml, no base64 encoded things
-		$options->questionid = $question->id; // set foreign key question_timetask.questionid to questions.id
-		if ($existing) {
-			$options->id = $existing->id;
-			$DB->update_record('question_timetask', $options);
-		} else {
-			$DB->insert_record('question_timetask', $options);
-		}
-		return true;
-	}
-
-	public function delete_question($questionid, $contextid) {
-		parent::delete_question($questionid, $contextid);
-	}
-
-	/**
-	 * @param object $question
-	 * @return mixed either a integer score out of 1 that the average random
-	 * guess by a student might give or an empty string which means will not
-	 * calculate.
-	 */
-	public function get_random_guess_score($question) {
-		return 1/$question->options->choose;
 	}
 }
