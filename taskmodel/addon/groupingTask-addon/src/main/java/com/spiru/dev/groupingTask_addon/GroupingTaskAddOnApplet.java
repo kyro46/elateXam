@@ -4,11 +4,14 @@ import java.applet.Applet;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class GroupingTaskAddOnApplet extends Applet{
 	
 	private GroupingTaskAddOnJPanel gpanel;
+	private Task task;
 	
 	    @Override
 	    public void init() {	
@@ -44,7 +47,10 @@ public class GroupingTaskAddOnApplet extends Applet{
 	    		boolean isCorrected = Boolean.parseBoolean(this.getParameter("correction"));
 				gpanel = new GroupingTaskAddOnJPanel(width, height, isCorrected);
 				gpanel.load(isHandling, this.getParameter("memento"), isCorrected);
-		        add(gpanel);	    		       
+		        add(gpanel);
+		        Timer timer = new Timer();	
+		        task = new Task(this);
+		        timer.schedule  ( task, 1000, 1500 );
 	    }
 
 	    @Override
@@ -62,5 +68,32 @@ public class GroupingTaskAddOnApplet extends Applet{
 		public boolean hasChanged() {
 			return true;//jpanel.getRightTextAreaContent() != jpanel.getLeftTextAreaContent();
 		}
+		
+	    public void draw(){	        	        
+	        task.setTest();	              
+	    }
+}
+
+class Task extends TimerTask{
+	private GroupingTaskAddOnApplet a;
+    private boolean test = false;
+    private int count = 0;
+	public Task(GroupingTaskAddOnApplet a){
+		this.a = a;
+	}
+    
+    public void setTest(){
+      this.test = true;
+    }
+	 public void run()  {      
+        if(test || (count < 2 && count != 0)){
+        //a.drawAll();
+            a.paintAll(a.getGraphics());            
+          //a.repaint();            
+            test = false;     
+            count++;
+        }
+        if (count >= 2) count = 0;
+	  }	
 }
 

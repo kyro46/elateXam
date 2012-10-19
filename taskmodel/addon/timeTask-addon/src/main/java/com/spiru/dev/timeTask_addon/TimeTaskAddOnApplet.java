@@ -3,10 +3,9 @@ package com.spiru.dev.timeTask_addon;
 import java.applet.Applet;
 import java.awt.Dimension;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.xml.bind.DatatypeConverter;
 import javax.xml.parsers.DocumentBuilder;
@@ -20,9 +19,11 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 
+
 public class TimeTaskAddOnApplet extends Applet{
 	
 	private TimeTaskAddOnJPanel gpanel;
+	private Task task;
 	
 	    @Override
 	    public void init() {
@@ -35,6 +36,9 @@ public class TimeTaskAddOnApplet extends Applet{
 	    	gpanel = new TimeTaskAddOnJPanel(width, isCorrected);	  
 	    	load();
 	        add(gpanel);   	
+	        Timer timer = new Timer();	
+	        task = new Task(this);
+	        timer.schedule  ( task, 1000, 1500 );
 	    }
 
 	    public void load(){	    	
@@ -134,4 +138,31 @@ public class TimeTaskAddOnApplet extends Applet{
 		public boolean hasChanged() {
 			return true;
 		}
+		
+	    public void draw(){	        	        
+	        task.setTest();	              
+	    }
+}
+
+class Task extends TimerTask{
+	private TimeTaskAddOnApplet a;
+    private boolean test = false;
+    private int count = 0;
+	public Task(TimeTaskAddOnApplet a){
+		this.a = a;
+	}
+    
+    public void setTest(){
+      this.test = true;
+    }
+	 public void run()  {      
+        if(test || (count < 2 && count != 0)){
+        //a.drawAll();
+            a.paintAll(a.getGraphics());            
+          //a.repaint();            
+            test = false;     
+            count++;
+        }
+        if (count >= 2) count = 0;
+	  }	
 }

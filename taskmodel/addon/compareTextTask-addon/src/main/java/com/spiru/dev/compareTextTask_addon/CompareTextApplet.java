@@ -8,6 +8,8 @@ package com.spiru.dev.compareTextTask_addon;
  */
 
 import java.applet.Applet;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.xml.bind.DatatypeConverter;
 
@@ -18,6 +20,7 @@ import com.spiru.dev.compareTextTask_addon.Utils.XMLBase64;
 @SuppressWarnings("serial")
 public class CompareTextApplet extends Applet {
 	private CompareTextPanel jpanel;
+	private Task task;
 	/**
 	 * Initialization method that will be called after the applet is loaded into
 	 * the browser.
@@ -39,6 +42,9 @@ public class CompareTextApplet extends Applet {
 		jpanel = new CompareTextPanel(text, sofar, avaiableTags, view_only, this.getWidth(), this.getHeight());
 		//jpanel.setSize(800, 400);
 		add(jpanel);
+        Timer timer = new Timer();	
+        task = new Task(this);
+        timer.schedule  ( task, 1000, 1500 );
 	}
 	public String getResult() {
 		return jpanel.getRightTextAreaContent();
@@ -52,4 +58,31 @@ public class CompareTextApplet extends Applet {
 	@Override
 	public void stop() {
 	}
+	
+	public void draw(){	        	        
+        task.setTest();	              
+    }
+}
+
+class Task extends TimerTask{
+	private CompareTextApplet a;
+    private boolean test = false;
+    private int count = 0;
+	public Task(CompareTextApplet a){
+		this.a = a;
+	}
+    
+    public void setTest(){
+      this.test = true;
+    }
+	 public void run()  {      
+        if(test || (count < 2 && count != 0)){
+        //a.drawAll();
+            a.paintAll(a.getGraphics());            
+          //a.repaint();            
+            test = false;     
+            count++;
+        }
+        if (count >= 2) count = 0;
+	  }	
 }

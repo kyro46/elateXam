@@ -41,6 +41,13 @@ var useTime = ${Task.timeRestricted};
 var everythingDone = ${Task.everythingProcessed};
 var ktime = ${Task.kindnesTimeMillis};
 
+window.onscroll = scroll;
+function scroll () {
+    var el = document.getElementsByTagName("applet");
+    for(var i=0; i<el.length; i++){
+        el[i].draw();
+    }
+}
 
 Function.prototype.andThen=function(g){
 	var f = this;
