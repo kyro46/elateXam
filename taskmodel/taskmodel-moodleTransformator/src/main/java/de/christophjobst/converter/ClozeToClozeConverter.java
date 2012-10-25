@@ -133,9 +133,13 @@ public class ClozeToClozeConverter {
 		Gap gap = new Gap();
 		gap.setIgnoreCase(true);
 		String correctAnswer;
-
-		punktzahl += Float.parseFloat(input.substring(0, input.indexOf(":")));
-
+		
+		try {
+			punktzahl += Float.parseFloat(input.substring(0, input.indexOf(":")));
+		} catch (NumberFormatException e) {
+			punktzahl += 1;
+		}
+		
 		int nextAnswer = 0;
 //		System.out.println(input);
 		while ((nextAnswer = input.indexOf("=", nextAnswer + 1)) != -1) {
