@@ -69,60 +69,6 @@ Korrekturstand des letzten Versuchs:
 </fieldset>
 <br>
 
-<fieldset class="tasks"><legend>Start</legend>
-<table border="0" cellspacing="2" cellpadding="2" width="100%">
-  <tr>
-    <td valign="top" width="50%">
-	<fieldset class="tasks"><legend>Neuer L&ouml;sungsversuch</legend>
-      <form method="get" action="/taskmodel-core-view/execute.do">
-	<input type="submit" value="Starten"
-		<c:choose>
-			<c:when test="${!task.canStartNewTry}"> disabled="true"</c:when>
-		</c:choose>
-	>
-	<input type="hidden" name="action" value="ComplexTaskExecute">
-	<input type="hidden" name="id" value="<c:out value="${task.id}"/>">
-	<input type="hidden" name="todo" value="new">
-	<input type="hidden" name="try" value="<c:out value="${task.usedTries + 1}"/>">
-	</form>
-	<c:choose>
-		<c:when test="${task.canContinueTry}">
-			&nbsp;
-		</c:when>
-		<c:when test="${task.startText != null}">
-			<c:out value="${task.startText}" escapeXml="false"/>
-		</c:when>
-		<c:otherwise>
-			Starten Sie Ihren L&ouml;sungsversuch erst, wenn Sie sich sicher sind, die Aufgabenstellung bew&auml;ltigen zu k&ouml;nnen.<br/>
-			Ihnen wird ein L&ouml;sungsversuch abgezogen.</c:otherwise>
-	</c:choose>
-	  </fieldset>
-	  </td>
-    <td valign="top" width="50%">
-	<fieldset class="tasks"><legend>L&ouml;sungsversuch fortsetzen</legend>
-	    <form method="get" action="/taskmodel-core-view/execute.do">
-			<input type="submit" value="Fortsetzen"
-				<c:choose>
-					<c:when test="${!task.canContinueTry}"> disabled="true"</c:when>
-				</c:choose>
-			>
-			<input type="hidden" name="action" value="ComplexTaskExecute">
-			<input type="hidden" name="id" value="<c:out value="${task.id}"/>">
-			<input type="hidden" name="todo" value="continue">
-			<input type="hidden" name="page" value="1">
-		</form>
-	<c:if test="${task.canContinueTry}">
-		Ihr letzter L&ouml;sungsversuch ist noch aktiv und kann fortgesetzt werden.<br>
-		<c:if test="${task.time != null}">
-		Abgabezeit: <b><c:out value="${task.ctDeadline}"/></b>
-		</c:if>
-	</c:if>
-	</fieldset>
-	</td>
-  </tr>
-</table>
-</fieldset>
-<br><br>
 <c:if test="${task.showHandlingHintsBeforeStart}">
 <fieldset class="tasks"><legend>Allgemeine Hinweise</legend> 
 <p><b>
@@ -204,6 +150,62 @@ Bewertet werden alle bis zum Bearbeitungsende abgespeicherten Seiten.
 <br/>
 </fieldset> 
 </c:if>
+
+<fieldset class="tasks"><legend>Start</legend>
+<table border="0" cellspacing="2" cellpadding="2" width="100%">
+  <tr>
+    <td valign="top" width="50%">
+	<fieldset class="tasks"><legend>Neuer L&ouml;sungsversuch</legend>
+      <form method="get" action="/taskmodel-core-view/execute.do">
+	<input type="submit" value="Starten"
+		<c:choose>
+			<c:when test="${!task.canStartNewTry}"> disabled="true"</c:when>
+		</c:choose>
+	>
+	<input type="hidden" name="action" value="ComplexTaskExecute">
+	<input type="hidden" name="id" value="<c:out value="${task.id}"/>">
+	<input type="hidden" name="todo" value="new">
+	<input type="hidden" name="try" value="<c:out value="${task.usedTries + 1}"/>">
+	</form>
+	<c:choose>
+		<c:when test="${task.canContinueTry}">
+			&nbsp;
+		</c:when>
+		<c:when test="${task.startText != null}">
+			<c:out value="${task.startText}" escapeXml="false"/>
+		</c:when>
+		<c:otherwise>
+			Starten Sie Ihren L&ouml;sungsversuch erst, wenn Sie sich sicher sind, die Aufgabenstellung bew&auml;ltigen zu k&ouml;nnen.<br/>
+			Ihnen wird ein L&ouml;sungsversuch abgezogen.</c:otherwise>
+	</c:choose>
+	  </fieldset>
+	  </td>
+    <td valign="top" width="50%">
+	<fieldset class="tasks"><legend>L&ouml;sungsversuch fortsetzen</legend>
+	    <form method="get" action="/taskmodel-core-view/execute.do">
+			<input type="submit" value="Fortsetzen"
+				<c:choose>
+					<c:when test="${!task.canContinueTry}"> disabled="true"</c:when>
+				</c:choose>
+			>
+			<input type="hidden" name="action" value="ComplexTaskExecute">
+			<input type="hidden" name="id" value="<c:out value="${task.id}"/>">
+			<input type="hidden" name="todo" value="continue">
+			<input type="hidden" name="page" value="1">
+		</form>
+	<c:if test="${task.canContinueTry}">
+		Ihr letzter L&ouml;sungsversuch ist noch aktiv und kann fortgesetzt werden.<br>
+		<c:if test="${task.time != null}">
+		Abgabezeit: <b><c:out value="${task.ctDeadline}"/></b>
+		</c:if>
+	</c:if>
+	</fieldset>
+	</td>
+  </tr>
+</table>
+</fieldset>
+<br><br>
+
 
 </td>
 </tr>
