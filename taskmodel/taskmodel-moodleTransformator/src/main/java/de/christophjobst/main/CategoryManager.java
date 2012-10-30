@@ -67,7 +67,8 @@ public class CategoryManager {
 		clozeTaskBlock.setConfig(generalTaskBlockConfig);
 		ClozeConfig clozeConfig = new ClozeConfig();
 		clozeConfig.setIgnoreCase(true);
-		clozeConfig.setNegativePoints(0);
+		//TODO NegativePoints aus Moodle beziehen
+		clozeConfig.setNegativePoints(1);
 		clozeTaskBlock.setClozeConfig(clozeConfig);
 
 		// Vorbereitung TextTaskBlock
@@ -76,14 +77,16 @@ public class CategoryManager {
 		// Vorbereitung MappingTaskBlock
 		mappingTaskBlock.setConfig(generalTaskBlockConfig);
 		MappingConfig mappingConfig = new MappingConfig();
-		mappingConfig.setNegativePoints(0);
+		//TODO NegativePoints aus Moodle beziehen
+		mappingConfig.setNegativePoints(1);
 		mappingTaskBlock.setMappingConfig(mappingConfig);
 
 		// Vorbereitung McTaskBlock
 		mcTaskBlock.setConfig(generalTaskBlockConfig);
 		McConfig mcConfig = new McConfig();
 		Different different = new Different();
-		different.setCorrectAnswerNegativePoints(0);
+		//TODO NegativePoints aus Moodle beziehen
+		different.setCorrectAnswerNegativePoints(1);
 		different.setIncorrectAnswerNegativePoints(0);
 		mcConfig.setDifferent(different);
 		mcTaskBlock.setMcConfig(mcConfig);
@@ -142,7 +145,8 @@ public class CategoryManager {
 		
 		mappingTaskBlock.setConfig(generalTaskBlockConfig);
 		MappingConfig mappingConfig = new MappingConfig();
-		mappingConfig.setNegativePoints(0);
+		//TODO NegativePoints aus Moodle beziehen
+		mappingConfig.setNegativePoints(1);
 		mappingTaskBlock.setMappingConfig(mappingConfig);
 		
 		return mappingTaskBlock;
@@ -157,7 +161,8 @@ public class CategoryManager {
 		generalTaskBlockConfig.setPreserveOrder(false);
 		this.mappingTaskBlock.setConfig(generalTaskBlockConfig);
 		MappingConfig mappingConfig = new MappingConfig();
-		mappingConfig.setNegativePoints(0);
+		//TODO NegativePoints aus Moodle beziehen
+		mappingConfig.setNegativePoints(1);
 		this.mappingTaskBlock.setMappingConfig(mappingConfig);
 		
 		this.mappingTaskBlock.getMappingSubTaskDefOrChoice().add(mappingSubTaskDef);
@@ -175,7 +180,8 @@ public class CategoryManager {
 		mcTaskBlock.setConfig(generalTaskBlockConfig);
 		McConfig mcConfig = new McConfig();
 		Different different = new Different();
-		different.setCorrectAnswerNegativePoints(0);
+		//TODO NegativePoints aus Moodle beziehen
+		different.setCorrectAnswerNegativePoints(1);
 		different.setIncorrectAnswerNegativePoints(0);
 		mcConfig.setDifferent(different);
 		mcTaskBlock.setMcConfig(mcConfig);
@@ -193,7 +199,8 @@ public class CategoryManager {
 		mcTaskBlock.setConfig(generalTaskBlockConfig);
 		McConfig mcConfig = new McConfig();
 		Different different = new Different();
-		different.setCorrectAnswerNegativePoints(0);
+		//TODO NegativePoints aus Moodle beziehen
+		different.setCorrectAnswerNegativePoints(1);
 		different.setIncorrectAnswerNegativePoints(0);
 		mcConfig.setDifferent(different);
 		mcTaskBlock.setMcConfig(mcConfig);
@@ -241,7 +248,8 @@ public class CategoryManager {
 		clozeTaskBlock.setConfig(generalTaskBlockConfig);
 		ClozeConfig clozeConfig = new ClozeConfig();
 		clozeConfig.setIgnoreCase(true);
-		clozeConfig.setNegativePoints(0);
+		//TODO NegativePoints aus Moodle beziehen
+		clozeConfig.setNegativePoints(1);
 		clozeTaskBlock.setClozeConfig(clozeConfig);
 		return clozeTaskBlock;
 	}
@@ -257,7 +265,8 @@ public class CategoryManager {
 		clozeTaskBlock.setConfig(generalTaskBlockConfig);
 		ClozeConfig clozeConfig = new ClozeConfig();
 		clozeConfig.setIgnoreCase(true);
-		clozeConfig.setNegativePoints(0);
+		//TODO NegativePoints aus Moodle beziehen
+		clozeConfig.setNegativePoints(1);
 		clozeTaskBlock.setClozeConfig(clozeConfig);
 
 		clozeTaskBlock.getClozeSubTaskDefOrChoice().add(clozeSubTaskDef);
