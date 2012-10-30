@@ -22,6 +22,8 @@
 <jsp:include page="/WEB-INF/pages/loginForm.jsp"/>
 <br/><br/><br/>
 
+<font size="+1"><b><a href="http://172.18.60.104/gateway.html">Zurück zur Serverauswahl</a></b></font>
+<br/><br/>
 
 <c:if test="${loadJava}">
 <div align="right" class="copytext">
