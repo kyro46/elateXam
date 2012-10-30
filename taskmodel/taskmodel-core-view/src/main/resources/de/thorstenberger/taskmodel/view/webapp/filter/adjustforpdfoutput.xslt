@@ -34,8 +34,10 @@
   <xsl:template match="input[@type='radio']">
     <b>
       <xsl:choose>
-        <xsl:when test="@checked">[X]</xsl:when>
-        <xsl:otherwise>[ ]</xsl:otherwise>
+        <xsl:when test="@checked"><div>[X]</div></xsl:when>
+        <xsl:otherwise>
+          <div style="white-space:nowrap;">[ ]</div>
+        </xsl:otherwise>                      
       </xsl:choose>
     </b>
   </xsl:template>

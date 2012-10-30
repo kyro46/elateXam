@@ -75,8 +75,7 @@ public class SubTasklet_RtypeTaskImpl extends AbstractAddonSubTasklet implements
 	@Override
 	public void doManualCorrection( CorrectionSubmitData csd ){
 		RtypeTaskCorrectionSubmitData pcsd = (RtypeTaskCorrectionSubmitData) csd;
-		//super.setAutoCorrection(acsd.getPoints());
-		// TODO!
+		//super.setAutoCorrection(acsd.getPoints());	
 		List<ManualCorrectionType> manualCorrections = subTaskObject.getManualCorrection();
 		if( complexTaskDefRoot.getCorrectionMode().getType() == ComplexTaskDefRoot.CorrectionModeType.MULTIPLECORRECTORS ) {
 			for( ManualCorrectionType mc : manualCorrections ){
