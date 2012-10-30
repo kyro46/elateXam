@@ -94,49 +94,43 @@ public class SubTaskView_TimeTask extends SubTaskView{
 		/*
 		 * getImage from handling (base64)
 		 */		
-		
-
-		String base = timeSubTasklet.getImage();		
-		Image img = new ImageIcon(Base64.base64ToByteArray(base)).getImage();
-		BufferedImage bufferedImage = new BufferedImage( img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_RGB );
-		Graphics2D g = bufferedImage.createGraphics();
-		g.drawImage(img, 0,0, null);
-		g.dispose();		
-		// save Image
-		String typ = "png";	
-		/*
-		 * nameJava -> tomcatServer->webapps -> absolutePfath!!!!!!!
-		 */
-		//String nameJava = "C:\\Users\\Yves\\Desktop\\Praktikum\\apache-tomcat-7.0.28\\webapps\\taskmodel-core-view\\pics\\TimeLine"+relativeTaskNumber+".".concat(typ);
-		//String name = "/taskmodel-core-view/pics/TimeLine"+relativeTaskNumber+".".concat(typ);
-		
-		//Windows
-//		String pfad = "C:\\apache-tomcat-7.0.30\\webapps\\";
-//		String name = "taskmodel-core-view\\TimeLine"+relativeTaskNumber+".".concat(typ);		
-
-		//Linux
-		String pfad = "/opt/apache-tomcat-7.0.29/webapps/";
-		
-		//Dem Bild eine zufällige ID mitgeben, damit bei gleichzeitiger PDF-Erstellung
-		//keine Kollisionen mit anderen gleichnamigen Bildern anderer Studenten entstehen
-		SecureRandom random = new SecureRandom();
-		
-		String name = "taskmodel-core-view/TimeLine"+relativeTaskNumber+ "_" + new BigInteger(51, random).toString(32) + ".".concat(typ);	
-		
-		File datei = new File( pfad + name );
-		//System.out.println(datei.getAbsoluteFile());
-		try {
-			ImageIO.write( bufferedImage, typ, datei );
-		} catch (IOException e) { 
-			e.printStackTrace();
-		}			
-		int width = bufferedImage.getWidth();
-		int height = bufferedImage.getHeight();
-		if (width>600) width = 600;
-		if (height>600) height = 600;	
-		String imgTag = "<img src=\""+name+"\" alt=\"timelineIMG\" width=\""+width+"\" height=\""+height+"\">";		
-		return imgTag;
-		
+		if (timeSubTasklet.getImage() == null) {			
+			return "<p><b>Aufgabe nicht bearbeitet!</b></p>";
+		} 
+		else {			
+			// getImage as base64-string
+			String base = timeSubTasklet.getImage();		
+			// convert String to Image			
+			Image img = new ImageIcon(Base64.base64ToByteArray(base)).getImage();
+			// create bufferedImage
+			BufferedImage bufferedImage = new BufferedImage( img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_RGB );
+			Graphics2D g = bufferedImage.createGraphics();
+			g.drawImage(img, 0,0, null);
+			g.dispose();		
+			////// save Image			
+			String typ = "png";
+			//Linux
+			String pfad = "/opt/apache-tomcat-7.0.29/webapps/";			
+			//Dem Bild eine zufällige ID mitgeben, damit bei gleichzeitiger PDF-Erstellung
+			//keine Kollisionen mit anderen gleichnamigen Bildern anderer Studenten entstehen
+			SecureRandom random = new SecureRandom();	
+			//String name = "taskmodel-core-view/Grouping"+relativeTaskNumber+ "_" + new BigInteger(51, random).toString(32) + ".".concat(typ);
+			String name = "taskmodel-core-view\\Time"+relativeTaskNumber+ "_" + new BigInteger(51, random).toString(32) + ".".concat(typ);
+			File datei = new File( pfad + name );					
+			// write Image
+			try {
+				ImageIO.write( bufferedImage, typ, datei );				
+			} catch (IOException e) { 
+				e.printStackTrace();
+			}		
+			int width = bufferedImage.getWidth();
+			int height = bufferedImage.getHeight();
+			if (width>600) width = 600;
+			if (height>600) height = 600;
+			// ImageTag for View und pdf			
+			String imgTag = "<img src=\""+name+"\" alt=\"timeImg\" width=\""+width+"\" height=\""+height+"\">";			
+			return imgTag;
+		}				
 	}
 
 	public String getCorrectionHTML(String actualCorrector, ViewContext context ){

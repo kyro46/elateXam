@@ -35,6 +35,7 @@ public class MyDropTargetListener extends DropTargetAdapter {
 	//@Override
 	public void drop(DropTargetDropEvent event) {		
 		// wenn Maus losgelassen wurde und ein Objekt gedropt werden soll
+		panel.setModified();
         try {              
             Transferable tr = event.getTransferable();
             // erzeuge Symbol

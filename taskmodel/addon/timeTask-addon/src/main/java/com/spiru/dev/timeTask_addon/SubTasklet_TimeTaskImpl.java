@@ -277,7 +277,13 @@ public class SubTasklet_TimeTaskImpl extends AbstractAddonSubTasklet implements 
 	@Override
 	public String getImage() {
 		Element timelineSubTaskDef = (Element)mementoTaskHandling.getElementsByTagName("timelineSubTaskDef").item(0);		
-		return timelineSubTaskDef.getElementsByTagName("image").item(0).getTextContent();
+		if (timelineSubTaskDef==null) return null;		
+		NodeList imL = timelineSubTaskDef.getElementsByTagName("image");		
+		if (imL == null) return null;
+		Node im = imL.item(0);		
+		if (im == null) return null;
+		String test = timelineSubTaskDef.getElementsByTagName("image").item(0).getTextContent();		
+		return test;		
 	}
 
 }

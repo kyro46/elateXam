@@ -35,6 +35,7 @@ public class MyMouseListener implements MouseListener {
 	public void mouseClicked(MouseEvent event) {
 		if (corrected)
 			return;
+		panel.setModified();
 		Object objekt = event.getSource();
 		
 		if(objekt instanceof DragElement){

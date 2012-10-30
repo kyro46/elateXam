@@ -4,7 +4,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class MyKeyListener implements KeyListener  {
+	
+	private JPanelPlayGround panel;
 
+	public MyKeyListener(JPanelPlayGround panel){
+		this.panel = panel;
+	}
+	
 	public void keyPressed(KeyEvent k) {
 		//				
 	}
@@ -14,6 +20,7 @@ public class MyKeyListener implements KeyListener  {
 	}
 
 	public void keyTyped(KeyEvent e) {
+		panel.setModified();
 		// only numbers and '.'
 		char c = e.getKeyChar();			
 		if (!Character.isDigit(c) && c != '.'){

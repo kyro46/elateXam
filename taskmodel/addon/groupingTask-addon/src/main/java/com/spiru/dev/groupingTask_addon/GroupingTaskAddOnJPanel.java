@@ -84,6 +84,10 @@ public class GroupingTaskAddOnJPanel extends JPanel {
     public List<DragElement> getComponentList(){    	
     	return elementList;
     }
+    
+	public boolean isModified(){
+		return jPanelSpielplatz.isModified();
+	}
 
     /**
      * initialisiert alle Komponenten

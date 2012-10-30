@@ -216,9 +216,15 @@ public class SubTasklet_GroupingTaskImpl extends AbstractAddonSubTasklet impleme
 	}
 
 	@Override
-	public String getImage() {
+	public String getImage() {		
 		Element dragSubTaskDef = (Element)mementoTaskHandling.getElementsByTagName("dragSubTaskDef").item(0);		
-		return dragSubTaskDef.getElementsByTagName("image").item(0).getTextContent();
+		if (dragSubTaskDef==null) return null;		
+		NodeList imL = dragSubTaskDef.getElementsByTagName("image");		
+		if (imL == null) return null;
+		Node im = imL.item(0);		
+		if (im == null) return null;
+		String test = dragSubTaskDef.getElementsByTagName("image").item(0).getTextContent();		
+		return test;
 	}
 
 	@Override

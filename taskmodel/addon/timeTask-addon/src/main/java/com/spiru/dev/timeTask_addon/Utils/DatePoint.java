@@ -26,13 +26,14 @@ public class DatePoint extends JPanel{
 	private JTextField textfield; 
 	
 	private String caption;
+	private JPanelPlayGround panel;
 	
 	/**
 	 * A JPanel with a Date or a TextField to insert a Date (if visible = false)
 	 * @param caption The Date-String
 	 * @param visible true, show Date; false, show TextField
 	 */
-	public DatePoint(String caption, boolean visible){
+	public DatePoint(String caption, boolean visible, JPanelPlayGround panel){
 		this.setLayout(null);
 		this.setBounds(0,0,70,25);
 		this.visible = visible;
@@ -46,7 +47,7 @@ public class DatePoint extends JPanel{
 			// else show empty TextField
 			textfield = new JTextField();
 			textfield.setBounds(2,2,67,22);			
-			textfield.addKeyListener(new MyKeyListener());
+			textfield.addKeyListener(new MyKeyListener(panel));
 			this.add(textfield);			
 		}				
 	}	

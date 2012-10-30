@@ -102,6 +102,10 @@ public class TimeTaskAddOnJPanel extends JPanel {
     	addElement(e);
     }
     
+    public boolean isModified(){
+    	return jpanelPlayground.isModified();
+    }
+    
     public void addElement(DragElement e){
     	for(DragElement n:jpanelOfElements.getElementList()){
     		if (e.getColor() == n.getColor() || e.getCaption().equals(n.getCaption())){
@@ -114,7 +118,7 @@ public class TimeTaskAddOnJPanel extends JPanel {
     }
     
     public void addDatePoint(String caption, boolean visible, String input, boolean isCorrected){
-    	DatePoint dp = new DatePoint(caption, visible);
+    	DatePoint dp = new DatePoint(caption, visible, jpanelPlayground);
     	if (!visible){
     		dp.setDateFromStudent(input);
     		dp.setCorrected(isCorrected);

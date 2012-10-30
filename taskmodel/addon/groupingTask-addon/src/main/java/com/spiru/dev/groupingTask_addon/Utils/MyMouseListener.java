@@ -51,6 +51,7 @@ public class MyMouseListener implements MouseListener {
 	}
 	
 	public void mouseClicked(MouseEvent event) {	
+		spielplatz.setModified();		
 		Object objekt = event.getSource();
 		// Klick auf Panel Spielplatz
 		if (objekt instanceof PanelSpielplatz){			

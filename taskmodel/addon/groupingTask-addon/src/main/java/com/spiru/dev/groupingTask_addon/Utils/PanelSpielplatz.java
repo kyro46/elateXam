@@ -33,6 +33,8 @@ public class PanelSpielplatz extends JPanel {
 	private List<Verbindung> verbindungen = null;
 	private Image imageAsString = null;
 	
+	private boolean hasChanged = false;
+	
 	/**
 	 * Konstruktor fuer PanelSpielplatz
 	 * @param auswahl zur Auswahl stehender Elemente
@@ -57,6 +59,14 @@ public class PanelSpielplatz extends JPanel {
 			n.draw(g);
 		}
 		
+	}
+	
+	public boolean isModified(){
+		return hasChanged;
+	}
+	
+	public void setModified(){
+		hasChanged = true;
 	}
 	
 	@Override

@@ -36,6 +36,7 @@ public class MyDropTargetListener extends DropTargetAdapter {
 	public void drop(DropTargetDropEvent event) {
 		// wenn Maus losgelassen wurde und ein Objekt gedropt werden soll
         try {              
+        	panel.setModified();
             Transferable tr = event.getTransferable();
             // erzeuge Element
             DragElement element = (DragElement) tr.getTransferData(TransferableElement.elementFlavor);            

@@ -136,7 +136,7 @@ public class TimeTaskAddOnApplet extends Applet{
 		}
 		
 		public boolean hasChanged() {
-			return true;
+			return gpanel.isModified();
 		}
 		
 	    public void draw(){	        	        

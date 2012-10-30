@@ -66,7 +66,7 @@ public class GroupingTaskAddOnApplet extends Applet{
 			return gpanel.save();
 		}
 		public boolean hasChanged() {
-			return true;//jpanel.getRightTextAreaContent() != jpanel.getLeftTextAreaContent();
+			return gpanel.isModified();
 		}
 		
 	    public void draw(){	        	        

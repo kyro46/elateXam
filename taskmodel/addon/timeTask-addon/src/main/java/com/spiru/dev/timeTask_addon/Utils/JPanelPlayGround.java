@@ -21,6 +21,8 @@ public class JPanelPlayGround extends JPanel {
 	/** The TimeLine */
 	private TimeLine timeLine;
 	
+	private boolean modified = false;
+	
 	public JPanelPlayGround(MyMouseListener mouseListener /* List of DatePoints */){
 		this.setBackground(Color.LIGHT_GRAY);
 		this.mouseListener = mouseListener;
@@ -36,6 +38,14 @@ public class JPanelPlayGround extends JPanel {
 		super.paint(g);		
 		drawTimeLine(g);
 		drawConnectionLine(g);			
+	}
+	
+	public void setModified(){
+		modified = true;
+	}
+	
+	public boolean isModified(){
+		return modified;
 	}
 	
 	/**
