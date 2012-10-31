@@ -5,7 +5,6 @@ import java.text.ParseException;
 import java.util.Iterator;
 import java.util.Map;
 
-
 import de.thorstenberger.taskmodel.MethodNotSupportedException;
 import de.thorstenberger.taskmodel.complex.ParsingException;
 import de.thorstenberger.taskmodel.complex.complextaskhandling.CorrectionSubmitData;
@@ -26,7 +25,7 @@ public class SubTaskView_RtypeTask extends SubTaskView{
 	 * @see de.thorstenberger.uebman.services.student.task.complex.SubTaskView#getRenderedHTML(int)
 	 */
 	public String getRenderedHTML( ViewContext context, int relativeTaskNumber) {		
-		return getRenderedHTML( relativeTaskNumber, false );
+		return getRenderedHTML( relativeTaskNumber, false );	
 	}
 
 	public String getRenderedHTML(int relativeTaskNumber, boolean corrected) {				
@@ -45,31 +44,29 @@ public class SubTaskView_RtypeTask extends SubTaskView{
 		ret.append("\n");
 		ret.append("</tr>\n");		
 		ret.append("</table>");				
-		String solution = rtypeSubTasklet.getHandlingSolution();		
-		String[] text = null;
-		String[][] list = null;		
-		if (solution != null){			
-			text = solution.split("//");			
-			list = new String[text.length][2]; 
-			for(int i=0; i<text.length;i++){				
-				String[] a = text[i].split("--");
-				list[i][0] = a[0];
-				list[i][1] = a[1];
-			}
-		}		
-		// Setze Teilfragen in div-Bereich zum scrollen
-		ret.append("\n<div style=\" height:220px; width:520px; font-size:12px; overflow-x:hidden; overflow-y:visible;\">");		
+		
+		String solution = rtypeSubTasklet.getHandlingSolution();
+		Boolean[] b = null;
+		if (solution != null){
+			String[] sp = solution.split("//");        
+			b = new Boolean[sp.length];
+			for(int i=0; i<b.length; i++){
+				if ( sp[i].split("-")[0].equals("true") )
+					b[i] = true;            
+				else b[i] = false;
+			}		
+		}
+		if (!corrected){
+			// 	Setze Teilfragen in div-Bereich zum scrollen
+			ret.append("\n<div style=\" height:220px; width:520px; font-size:12px; overflow-x:hidden; overflow-y:visible;\">");
+		}
 		// mcList->questions		
-		for(int i=0; i<rtypeSubTasklet.getCountQuestions(); i++){			
-			if (list!=null){								
-				ret.append(setQuestions(i, relativeTaskNumber, list[i][0], corrected));				
-			}
-			else{				
-				ret.append(setQuestions(i, relativeTaskNumber, null, corrected));
-			}
+		for(int i=0; i<rtypeSubTasklet.getCountQuestions(); i++){						
+			ret.append(setQuestions(i, relativeTaskNumber, b, corrected));							
 		}	
 		// ende div		
-		ret.append("\n</div>");
+		if (!corrected)
+			ret.append("\n</div>");
 		
 		if (!corrected) {
 			ret.append("<script type=\"text/javascript\">\n");
@@ -81,15 +78,19 @@ public class SubTaskView_RtypeTask extends SubTaskView{
 			"var clear = \"\";\n"+
 	        "  for(var k = 0; k<document.getElementsByName(\"[\"+i+\"][\"+relativeTaskNumber+\"]\").length; k++){\n"+	        
 	        "    if(document.getElementsByName(\"[\"+i+\"][\"+relativeTaskNumber+\"]\")[k].checked && document.getElementsByName(\"[\"+i+\"][\"+relativeTaskNumber+\"]\")[k].id == relativeTaskNumber ){\n"+	        
-	        "        clear += document.getElementsByName(\"[\"+i+\"][\"+relativeTaskNumber+\"]\")[k].value+\"--\"+i+\"//\" ;\n"+
+	        //"        clear += document.getElementsByName(\"[\"+i+\"][\"+relativeTaskNumber+\"]\")[k].value+\"--\"+i+\"//\" ;\n"+
+	        "          clear += \"true-\"+i+\"//\";\n"+
 	        "        document.getElementsByName(\"[\"+i+\"][\"+relativeTaskNumber+\"]\")[k].checked = false;\n"+
-	        "    }\n"+                        
+	        "    }\n"+   
+	        "    else{\n"+
+	        "          clear += \"false-\"+i+\"//\";\n"+
+	        "    }"+
 	        "  }\n"+
 	        "if (clear == \"\")\n"+
 	        "  clear = \"null--\"+i+\"//\"\n"+
 	        "sol += clear;\n"+
-	        "}\n"+	
-		    "alert(\"Text: \"+sol)\n"
+	        "}\n"	
+		    //"alert(\"Text: \"+sol)\n"
 		    );
 			ret.append("document.getElementById(\"task_"+relativeTaskNumber+".result\").value = sol;\n");		
 			ret.append("};\n");
@@ -100,30 +101,36 @@ public class SubTaskView_RtypeTask extends SubTaskView{
 		return ret.toString();
 	}
 	
-	private String setQuestions(int num, int relativ, String param, boolean disabled){		
+	private String setQuestions(int num, int relativ, Boolean[] param, boolean disabled){				
 		StringBuffer ret = new StringBuffer();
 		// problem			
 		ret.append("<hr>\n");
 		ret.append("<table width=\"100%\" border=\"0\">");
 		ret.append("\n<tr>\n  <td valign=top><b>"+rtypeSubTasklet.getQuestionProblem(num)+"</b></td>");
-		ret.append("\n"); ret.append("</tr>");			
+		ret.append("\n"); 
+		ret.append("</tr>");			
 		// hint
 		ret.append("<tr>\n  <td nowrap valign=top><i>"+rtypeSubTasklet.getQuestionHint(num)+"</i></td>");
 		ret.append("\n"); ret.append("</tr>");
 		// answers						
+		int pos = 0;
+		for(int k=0; k<num; k++){
+			pos+=rtypeSubTasklet.getQuestionsAnswers(k).size();
+		}
 		for(String n:rtypeSubTasklet.getQuestionsAnswers(num)){
 			ret.append("<tr>");				
 			String sel = "";
-			if (n.equals(param)){
+			if (param != null && param[pos]){
 				sel = "checked";
 			}
 			if (disabled){
 				sel += " disabled";
 			}
 			ret.append("\n  <td nowrap valign=top> <input type=\"radio\" name=\"["+num+"]["+relativ+"]\"" +					
-					   " id=\""+relativ+"\" value=\""+n+"\" "+sel+">"+n+"</td>");
+					   " id=\""+relativ+"\" value=\""+n+"\" "+sel+" onChange=\"setModified()\" >"+n+"</td>");
 			ret.append("\n");
-			ret.append("</tr>");			
+			ret.append("</tr>");	
+			pos++;
 		}
 		
 		ret.append("\n");
@@ -175,6 +182,6 @@ public class SubTaskView_RtypeTask extends SubTaskView{
             return new RtypeTaskCorrectionSubmitData( points );
 	    }else
 	        throw new ParsingException();
-	}
+	}	
 
 }

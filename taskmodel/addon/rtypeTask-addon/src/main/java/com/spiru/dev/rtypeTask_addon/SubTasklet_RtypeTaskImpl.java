@@ -209,10 +209,12 @@ public class SubTasklet_RtypeTaskImpl extends AbstractAddonSubTasklet implements
 
 	@Override
 	public String getHandlingSolution() {
-		Element el = (Element)mementoTaskHandling.getElementsByTagName("answer").item(0);		
-		if (el != null){
-			String str = el.getTextContent(); 			
-			return str;
+		NodeList nl = mementoTaskHandling.getElementsByTagName("answer");
+		if (nl != null){
+			Element el = (Element)nl.item(0);
+			if (el != null){
+				return el.getTextContent();
+			}
 		}
 		return null;
 	}
