@@ -25,13 +25,13 @@ import javax.swing.event.CaretListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 
-import org.fife.ui.autocomplete.AutoCompletion;
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
-import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+//import org.fife.ui.autocomplete.AutoCompletion;
+//import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+//import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import com.spiru.dev.compareTextTask_addon.Utils.CompareTextCompletionProvider;
+//import com.spiru.dev.compareTextTask_addon.Utils.CompareTextCompletionProvider;
 
 /**
  *
@@ -67,8 +67,8 @@ public class CompareTextPanel extends JPanel {
 		splitPane = new JSplitPane();
 		scrollPaneLeft = new JScrollPane();
 		scrollPaneRight = new JScrollPane();
-		textAreaLeft = new RSyntaxTextArea(); // JTextArea();
-		textAreaRight = new RSyntaxTextArea(); // JTextArea();
+		textAreaLeft = new JTextArea(); // new RSyntaxTextArea(); // 
+		textAreaRight = new JTextArea(); // new RSyntaxTextArea(); // 
 
 		toolBar = new JToolBar();
 		fontComboBox = new JComboBox();
@@ -233,11 +233,11 @@ public class CompareTextPanel extends JPanel {
 		});
 	}
 
-	protected String initTagListAndHelp(Element avaiableTags) {
-		if (avaiableTags == null) return null;
+	protected String initTagListAndHelp(Element availableTags) {
+		if (availableTags == null) return null;
 		String ret = "<table border=1 width=260>\n";
 		ret += "<th>Tag</th><th>Beschreibung</th>\n";
-		NodeList tags = avaiableTags.getElementsByTagName("tag");
+		NodeList tags = availableTags.getElementsByTagName("tag");
 		for (int i = 0; i < tags.getLength(); i++) {
 			Element tag = (Element) tags.item(i);
 			Element desc = (Element) tag.getElementsByTagName("desc").item(0);
@@ -250,7 +250,7 @@ public class CompareTextPanel extends JPanel {
 		return ret;
 	}
 
-	protected void enableAutoCompletion() {
+	/*protected void enableAutoCompletion() {
 		CompareTextCompletionProvider completionp = new CompareTextCompletionProvider(tagList);
 		AutoCompletion ac = new AutoCompletion(completionp);
 		ac.install(textAreaRight);
@@ -258,7 +258,7 @@ public class CompareTextPanel extends JPanel {
 		ac.setAutoCompleteEnabled(true);
 		ac.setParameterAssistanceEnabled(false); // might come as a requirement
 		ac.setShowDescWindow(true); // show help text alongside completions
-	}
+	}*/
 
 	protected void initScrollPanes() {
 		// Adjust Divider of SplitPlane
@@ -294,12 +294,12 @@ public class CompareTextPanel extends JPanel {
 		splitPane.setRightComponent(scrollPaneRight);
 
 		// consider putting some of this into initStudentView()
-		((RSyntaxTextArea)textAreaLeft).setHighlightCurrentLine(false);
-		((RSyntaxTextArea)textAreaRight).setHighlightCurrentLine(false);
+		//((RSyntaxTextArea)textAreaLeft).setHighlightCurrentLine(false);
+		//((RSyntaxTextArea)textAreaRight).setHighlightCurrentLine(false);
 		textAreaLeft.setLineWrap(true);
 		textAreaRight.setLineWrap(true);
-		((RSyntaxTextArea)textAreaLeft).setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
-		((RSyntaxTextArea)textAreaRight).setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
+		//((RSyntaxTextArea)textAreaLeft).setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
+		//((RSyntaxTextArea)textAreaRight).setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
 	}
 
 	protected void initStudentView() {
