@@ -61,22 +61,20 @@ a.MenuLink:hover {  font-family: Arial, Helvetica, sans-serif; font-size: 12px; 
 .annotationsheader {  font-family: Arial, Helvetica, sans-serif; font-size: 9px; color: #718EA5; padding-top: 5px}
 
 .imgbutton {
-	border: 0;
-	width: 46px; /*original picture size is 128x128*/
-	height: 46px;
+	/*border: 0;
+	width: 46px; original picture size is 128x128
+	height: 46px;*/
 	float: right;
+	padding-left: 18px;
 }
 .imgbutton[name="save-and-backward"] {
-	background: url('/taskmodel-core-view/icons/save-and-backward.png') no-repeat;
-	background-size: 100%;
+	background: url('/taskmodel-core-view/icons/save-and-backward-16px.png') no-repeat left;
 }
 .imgbutton[name="save-and-forward"] {
-	background: url('/taskmodel-core-view/icons/save-and-forward.png') no-repeat;
-	background-size: 100%;
+	background: url('/taskmodel-core-view/icons/save-and-forward-16px.png') no-repeat left;
 }
 .imgbutton[name="save"] {
-	background: url('/taskmodel-core-view/icons/save.png') no-repeat;
-	background-size: 100%;
+	background: url('/taskmodel-core-view/icons/save-16px.png') no-repeat left;
 }
 
 /* jetzt ein paar Definitionen f�r den TreeIncludeService */

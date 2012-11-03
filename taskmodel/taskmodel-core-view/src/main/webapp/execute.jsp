@@ -376,11 +376,11 @@ function checkedLink(name, target, linkClass)
         <br>
 		<input type="hidden" name="page" value="${Task.page}">
 		<c:if test="${Task.page < Task.numOfPages}">
-			<input type="submit" class="imgbutton" name="save-and-forward" title="Speichern und Weiter" value="">
+			<input type="submit" class="imgbutton" name="save-and-forward" title="Speichern und Weiter" value="Speichern und Weiter">
 		</c:if>
-		<input type="submit" class="imgbutton" name="save" title="Speichern" value="">
+		<input type="submit" class="imgbutton" name="save" title="Speichern" value="Speichern">
 		<c:if test="${Task.page > 1}">
-			<input type="submit" class="imgbutton" name="save-and-backward" title="Speichern und Zurück" value="">
+			<input type="submit" class="imgbutton" name="save-and-backward" title="Speichern und Zurück" value="Speichern und Zurück">
 		</c:if>
 		<br style="clear: both;" />
        </form>
