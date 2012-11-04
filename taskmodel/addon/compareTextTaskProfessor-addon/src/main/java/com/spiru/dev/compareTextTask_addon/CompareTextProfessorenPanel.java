@@ -17,10 +17,10 @@ import org.w3c.dom.Element;
  */
 @SuppressWarnings("serial")
 public class CompareTextProfessorenPanel extends CompareTextPanel {
-	protected javax.swing.JLabel labelAvaiableTags;
+	protected javax.swing.JLabel labelAvailableTags;
 	protected javax.swing.JLabel labelInitialText;
 	protected javax.swing.JLabel labelSampleSolution;
-	protected javax.swing.JScrollPane scrollPaneAvaiableTags;
+	protected javax.swing.JScrollPane scrollPaneAvailableTags;
 	protected javax.swing.JButton buttonMinus;
 	protected javax.swing.JButton buttonPlus;
 	protected javax.swing.JButton buttonUpload;
@@ -28,21 +28,21 @@ public class CompareTextProfessorenPanel extends CompareTextPanel {
 	protected javax.swing.JTable tablePanel;
 	protected String sampleSolutionText;
 	protected String lastDirectory;
-	protected int componentAvaiableTagsHeight;
+	protected int componentAvailableTagsHeight;
 	protected int componentInitialTextHeight;
 	protected int paneWidth;
 
 	public CompareTextProfessorenPanel(String initial_text, String solution, Element xmldefs, int Width, int Height) {
 		super(initial_text, null, xmldefs, false, Width, Height);
-		labelAvaiableTags = new javax.swing.JLabel("Avaiable Tags:");
+		labelAvailableTags = new javax.swing.JLabel("Available Tags:");
 		labelInitialText = new javax.swing.JLabel("Initial Text:");
 		labelSampleSolution = new javax.swing.JLabel("Sample Solution:");
-		scrollPaneAvaiableTags = new javax.swing.JScrollPane();
+		scrollPaneAvailableTags = new javax.swing.JScrollPane();
 		tablePanel = new javax.swing.JTable();
 		buttonMinus = new javax.swing.JButton();
 		buttonPlus = new javax.swing.JButton();
 		buttonUpload = new javax.swing.JButton();
-		componentAvaiableTagsHeight = Height / 2 - 30;
+		componentAvailableTagsHeight = Height / 2 - 30;
 		componentInitialTextHeight = Height / 2 - 25;
 		paneWidth = Width;
 		sampleSolutionText = solution;
@@ -107,7 +107,7 @@ public class CompareTextProfessorenPanel extends CompareTextPanel {
 	protected void initTagTable() {
 		tableModel = new javax.swing.table.DefaultTableModel(new String [] { "Tag Name", "Description" }, 0);
 		tablePanel.setModel(tableModel);
-		scrollPaneAvaiableTags.setViewportView(tablePanel);
+		scrollPaneAvailableTags.setViewportView(tablePanel);
 		// by now, initTagListAndHelp() was already called, so we have access to tagList
 		for (Map.Entry<String, String> entry : tagList.entrySet()) {
 			String tagname = entry.getKey();
@@ -137,12 +137,12 @@ public class CompareTextProfessorenPanel extends CompareTextPanel {
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 			.addGroup(layout.createSequentialGroup()
-				.addComponent(labelAvaiableTags)
+				.addComponent(labelAvailableTags)
 				.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 				.addComponent(buttonPlus, 25, 25, 25)
 				.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 				.addComponent(buttonMinus, 25, 25, 25))
-			.addComponent(scrollPaneAvaiableTags)
+			.addComponent(scrollPaneAvailableTags)
 			.addComponent(toolBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 			.addComponent(splitPane, javax.swing.GroupLayout.DEFAULT_SIZE, paneWidth, Short.MAX_VALUE)
 			.addGroup(layout.createSequentialGroup()
@@ -163,8 +163,8 @@ public class CompareTextProfessorenPanel extends CompareTextPanel {
 						.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
 							.addComponent(buttonMinus, 20, 20, 20)
 							.addComponent(buttonPlus, 20, 20, 20))
-						.addComponent(labelAvaiableTags, javax.swing.GroupLayout.Alignment.TRAILING))
-					.addComponent(scrollPaneAvaiableTags, javax.swing.GroupLayout.PREFERRED_SIZE, componentAvaiableTagsHeight, javax.swing.GroupLayout.PREFERRED_SIZE))
+						.addComponent(labelAvailableTags, javax.swing.GroupLayout.Alignment.TRAILING))
+					.addComponent(scrollPaneAvailableTags, javax.swing.GroupLayout.PREFERRED_SIZE, componentAvailableTagsHeight, javax.swing.GroupLayout.PREFERRED_SIZE))
 			);
 		} else {
 			layout.setVerticalGroup(
@@ -174,8 +174,8 @@ public class CompareTextProfessorenPanel extends CompareTextPanel {
 						.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
 							.addComponent(buttonMinus, 20, 20, 20)
 							.addComponent(buttonPlus, 20, 20, 20))
-						.addComponent(labelAvaiableTags, javax.swing.GroupLayout.Alignment.TRAILING))
-					.addComponent(scrollPaneAvaiableTags, javax.swing.GroupLayout.PREFERRED_SIZE, componentAvaiableTagsHeight, javax.swing.GroupLayout.PREFERRED_SIZE)
+						.addComponent(labelAvailableTags, javax.swing.GroupLayout.Alignment.TRAILING))
+					.addComponent(scrollPaneAvailableTags, javax.swing.GroupLayout.PREFERRED_SIZE, componentAvailableTagsHeight, javax.swing.GroupLayout.PREFERRED_SIZE)
 					.addComponent(toolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
 					.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
 						.addComponent(labelInitialText)
@@ -193,13 +193,13 @@ public class CompareTextProfessorenPanel extends CompareTextPanel {
 		return textAreaRight.getText();
 	}
 
-	public void appendAvaiableTags(Element addonConfig) {
+	public void appendAvailableTags(Element addonConfig) {
 		// Fix issue described here: http://stackoverflow.com/questions/1652942/can-a-jtable-save-data-whenever-a-cell-loses-focus
 		if (tablePanel.isEditing())
 			tablePanel.getCellEditor().stopCellEditing();
-		// Write tags and Description into a new avaiableTags Element
+		// Write tags and Description into a new availableTags Element
 		Document document = addonConfig.getOwnerDocument();
-		Element avaiableTags = document.createElement("avaiableTags");
+		Element availableTags = document.createElement("availableTags");
 		// retrieve information from jTable
 		Vector<?> rows = tableModel.getDataVector();
 		Iterator<?> iter_rows = rows.iterator();
@@ -211,14 +211,14 @@ public class CompareTextProfessorenPanel extends CompareTextPanel {
 			if (tagname == null || tagname == "")
 				continue;
 			if (description == null || description == "")
-				description = "ERROR in getAvaiableTags()";
+				description = "ERROR in getAvailableTags()";
 			Element Tag = document.createElement("tag");
 			Element desc = document.createElement("desc");
 			Tag.setAttribute("name", tagname);
 			desc.setTextContent(description);
 			Tag.appendChild(desc);
-			avaiableTags.appendChild(Tag);
+			availableTags.appendChild(Tag);
 		}
-		addonConfig.appendChild(avaiableTags);
+		addonConfig.appendChild(availableTags);
 	}
 }

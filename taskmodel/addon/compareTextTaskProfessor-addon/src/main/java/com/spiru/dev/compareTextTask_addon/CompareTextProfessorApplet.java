@@ -28,22 +28,22 @@ public class CompareTextProfessorApplet extends Applet {
 	public void init() {
 		String mementostr = getParameter("memento");
 		if (mementostr == null && this.getWidth() < 300) { // is NULL, when Applet is not loaded from a Webbrowser, but from Eclipse
-			mementostr = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Memento><addonConfig><avaiableTags><tag name=\"example\"><desc>Example Tag with Description, please replace this line.</desc></tag></avaiableTags></addonConfig>"
+			mementostr = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Memento><addonConfig><availableTags><tag name=\"example\"><desc>Example Tag with Description, please replace this line.</desc></tag></availableTags></addonConfig>"
 					+ "<textComparisonSubTaskDef><initialText>Lorem ipsum dolor sit amet.</initialText><sampleSolution>Lorem ipsum dolor sit amet.</sampleSolution></textComparisonSubTaskDef></Memento>";
 			mementostr = DatatypeConverter.printBase64Binary(mementostr.getBytes());
 			this.setSize(800, 400);
 		}
-		Element avaiableTags = null;
+		Element availableTags = null;
 		String initial_text = "";
 		String sample_solution = "";
 		if (mementostr.length() > 0) { // if empty: assumption: Not editing existing-, but adding new Question -> nothing to do
 			Element Memento = XMLBase64.base64StringToElement(mementostr, null); // from moodle, we will get a base64 string
-			avaiableTags = (Element) Memento.getElementsByTagName("avaiableTags").item(0);
-			//System.out.println(new String(XMLBase64.elementToByteArray(avaiableTags, null)));
+			availableTags = (Element) Memento.getElementsByTagName("availableTags").item(0);
+			//System.out.println(new String(XMLBase64.elementToByteArray(availableTags, null)));
 			initial_text = Memento.getElementsByTagName("initialText").item(0).getTextContent();
 			sample_solution = Memento.getElementsByTagName("sampleSolution").item(0).getTextContent();
 		}
-		jpanel = new CompareTextProfessorenPanel(initial_text, sample_solution, avaiableTags, this.getWidth(), this.getHeight());
+		jpanel = new CompareTextProfessorenPanel(initial_text, sample_solution, availableTags, this.getWidth(), this.getHeight());
 		//jpanel.setSize(800, 450);
 		add(jpanel);
 	}
@@ -56,10 +56,10 @@ public class CompareTextProfessorApplet extends Applet {
 			Document document = documentBuilder.newDocument();
 			Element Memento = document.createElement("Memento");
 			document.appendChild(Memento);
-			// add addonConfig with avaiableTags
+			// add addonConfig with availableTags
 			Element addonConfig = document.createElement("addonConfig");
 			Memento.appendChild(addonConfig);
-			jpanel.appendAvaiableTags(addonConfig);
+			jpanel.appendAvailableTags(addonConfig);
 			// add SubTaskDef with initialText and sampleSolution
 			Element textComparisonSubTaskDef = document.createElement("textComparisonSubTaskDef");
 			Element initialText = document.createElement("initialText");
