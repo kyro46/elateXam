@@ -52,6 +52,8 @@ public class TimeTaskAddOnJPanel extends JPanel {
 	private JScrollPane scrollPanePlayground;
 	private JScrollPane scrollPane;
 	
+	private boolean oldIsProcessed = false;
+	
     public TimeTaskAddOnJPanel(int width, boolean corrected) {
     	init(width, corrected);
     }
@@ -196,7 +198,15 @@ public class TimeTaskAddOnJPanel extends JPanel {
 			Element addonConfig = document.createElement("addonConfig");
 			memento.appendChild(addonConfig);	    		
     		Element timelineSubTaskDef = document.createElement("timelineSubTaskDef");
-    		memento.appendChild(timelineSubTaskDef);	
+    		memento.appendChild(timelineSubTaskDef);
+    		Element isProcessed = document.createElement("Processed");
+    		if (isModified() || oldIsProcessed){    			
+    			isProcessed.setTextContent("true");    			
+    		}
+    		else{
+    			isProcessed.setTextContent("false");    			
+    		}
+    		timelineSubTaskDef.appendChild(isProcessed);
     		Element img = document.createElement("image");
 			img.setTextContent(jpanelPlayground.getBase64StringFromImage());
 			timelineSubTaskDef.appendChild(img);
@@ -230,17 +240,13 @@ public class TimeTaskAddOnJPanel extends JPanel {
     			timelineSubTaskDef.appendChild(date);
     			int dp1x = datePoints.get(i-1).getX()+datePoints.get(i-1).getWidth()/2;
     			int dp2x = datePoints.get(i).getX()+datePoints.get(i).getWidth()/2;
-    			List<Symbol> listSymbols = new ArrayList<Symbol>();	    			
+    			List<Symbol> listSymbols = new ArrayList<Symbol>();	      			
     			// alle Elemente zwischen dem Intervall    			
     			for(Symbol n:symbols){
-    				if(n.getConnectionLine() == null || n.getConnectionLine().getLine() == null){
+    				if(n.getConnectionLine() == null || n.getConnectionLine().getLine() == null){    					
     					continue;
     				}
     				int sx = (int)n.getConnectionLine().getLine().getP2().getX();
-    				//*******************
-    				/*
-    				 * elemente dennoch speichern, nur halt ohne line?
-    				 */
     				if(sx >= dp1x && sx <= dp2x){
     					listSymbols.add(n);
     				}
@@ -281,8 +287,21 @@ public class TimeTaskAddOnJPanel extends JPanel {
     					correctAssignmentID.setAttribute("isFixedToDate","datePoint2");
     				}
     				date.appendChild(correctAssignmentID);
-    			}
-    		}    		
+    			}    			
+    		}    
+    		List<Symbol> symbolsWithoutConnection = new ArrayList<Symbol>();
+    		for(Symbol n:symbols){
+				if(n.getConnectionLine() == null || n.getConnectionLine().getLine() == null){    					
+					symbolsWithoutConnection.add(n);
+				}
+    		}
+    		for(Symbol n:symbolsWithoutConnection){
+				Element symbolNoLine = document.createElement("symbolNoLine");
+				symbolNoLine.setAttribute("eventId",""+n.getId());
+				symbolNoLine.setAttribute("PosX",""+n.getX());
+				symbolNoLine.setAttribute("PosY",""+n.getY());
+				timelineSubTaskDef.appendChild(symbolNoLine);
+			}
 			// write DOM to string
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			Transformer transformer = transformerFactory.newTransformer();
@@ -298,5 +317,9 @@ public class TimeTaskAddOnJPanel extends JPanel {
 	} catch (TransformerException e) {
 		e.printStackTrace();}	    	
 	return ret;
+    }
+    
+    public void setProcessed(boolean value){
+    	oldIsProcessed = value;
     }
 }

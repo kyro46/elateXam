@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
 import javax.swing.ImageIcon;
 
 import com.spiru.dev.timeTask_addon.Utils.Base64;
@@ -110,12 +111,12 @@ public class SubTaskView_TimeTask extends SubTaskView{
 			////// save Image			
 			String typ = "png";
 			//Linux
-			String pfad = "/opt/apache-tomcat-7.0.29/webapps/";			
+			String pfad = "/opt/apache-tomcat-7.0.29/webapps/taskmodel-core-view";			
 			//Dem Bild eine zufällige ID mitgeben, damit bei gleichzeitiger PDF-Erstellung
 			//keine Kollisionen mit anderen gleichnamigen Bildern anderer Studenten entstehen
 			SecureRandom random = new SecureRandom();	
 			//String name = "taskmodel-core-view/Grouping"+relativeTaskNumber+ "_" + new BigInteger(51, random).toString(32) + ".".concat(typ);
-			String name = "taskmodel-core-view\\Time"+relativeTaskNumber+ "_" + new BigInteger(51, random).toString(32) + ".".concat(typ);
+			String name = "/Time"+relativeTaskNumber+ "_" + new BigInteger(51, random).toString(32) + ".".concat(typ);
 			File datei = new File( pfad + name );					
 			// write Image
 			try {
@@ -128,7 +129,9 @@ public class SubTaskView_TimeTask extends SubTaskView{
 			if (width>600) width = 600;
 			if (height>600) height = 600;
 			// ImageTag for View und pdf			
-			String imgTag = "<img src=\""+name+"\" alt=\"timeImg\" width=\""+width+"\" height=\""+height+"\">";			
+			HttpServletRequest request=(HttpServletRequest) context.getViewContextObject();
+			String pfadForAll = request.getContextPath();
+			String imgTag = "<img src=\""+pfadForAll+name+"\" alt=\"timeImg\" width=\""+width+"\" height=\""+height+"\">";			
 			return imgTag;
 		}				
 	}

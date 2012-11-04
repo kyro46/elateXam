@@ -66,6 +66,7 @@ public class GroupingTaskAddOnJPanel extends JPanel {
     private PanelSpielplatz jPanelSpielplatz;
     /** Liste mit allen zur Auswahl stehenden Elementen */
     private List<DragElement> elementList;
+    private boolean oldIsProcessed = false;
 
     /**
      * Creates new form AddonOnJPanel
@@ -202,6 +203,18 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 			if (!isHandling){				
 				return;
 			}
+			NodeList isProcessed = dragSubTaskDef.getElementsByTagName("Processed");
+			if (isProcessed != null){							
+				Element el = (Element) isProcessed.item(0);						
+				if (el != null){							
+					if (el.getTextContent().equals("true")){
+						oldIsProcessed = true;									
+					}
+					else
+						oldIsProcessed = false;								
+				}
+			}
+			else oldIsProcessed = false;
 			// list all used DragElements
 			NodeList dragElements = dragSubTaskDef.getElementsByTagName("DragElement");			
 			for (int i = 0; i < dragElements.getLength(); i++) {
@@ -298,6 +311,14 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 			Element img = document.createElement("image");
 			img.setTextContent(jPanelSpielplatz.getBase64StringFromImage());
 			dragSubTaskDef.appendChild(img);
+    		Element isProcessed = document.createElement("Processed");
+    		if (isModified() || oldIsProcessed){    			
+    			isProcessed.setTextContent("true");    			
+    		}
+    		else{
+    			isProcessed.setTextContent("false");    			
+    		}
+    		dragSubTaskDef.appendChild(isProcessed);
 			for(DragElement n:elementList) {
 				Element BoxContainer = document.createElement("BoxContainer");
 				BoxContainer.setAttribute("boxName",n.getCaption());
