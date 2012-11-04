@@ -42,6 +42,8 @@ public class CompareTextProfessorApplet extends Applet {
 			//System.out.println(new String(XMLBase64.elementToByteArray(availableTags, null)));
 			initial_text = Memento.getElementsByTagName("initialText").item(0).getTextContent();
 			sample_solution = Memento.getElementsByTagName("sampleSolution").item(0).getTextContent();
+			initial_text = initial_text.replaceAll("<br/>", "\n");
+			sample_solution = sample_solution.replaceAll("<br/>", "\n");
 		}
 		jpanel = new CompareTextProfessorenPanel(initial_text, sample_solution, availableTags, this.getWidth(), this.getHeight());
 		//jpanel.setSize(800, 450);

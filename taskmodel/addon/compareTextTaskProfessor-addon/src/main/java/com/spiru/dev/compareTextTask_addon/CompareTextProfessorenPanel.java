@@ -186,11 +186,11 @@ public class CompareTextProfessorenPanel extends CompareTextPanel {
 	}
 
 	public String getInitialText() {
-		return textAreaLeft.getText();
+		return textAreaLeft.getText().replaceAll("\n", "<br/>");
 	}
 
 	public String getSampleSolution() {
-		return textAreaRight.getText();
+		return textAreaRight.getText().replaceAll("\n", "<br/>");
 	}
 
 	public void appendAvailableTags(Element addonConfig) {

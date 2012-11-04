@@ -35,8 +35,11 @@ public class CompareTextApplet extends Applet {
 		String sofar = this.getParameter("soFarSolution"); // will be "EMPTY" (literally!) unless student triggered Save Page
 		if (xmldef == null && this.getWidth() < 300) { // is NULL, when Applet is not loaded from a Webbrowser, but from Eclipse
 			xmldef = DatatypeConverter.printBase64Binary("<avaiableTags><tag name=\"p\"><desc>Markiert einen Absatz.</desc></tag><tag name=\"soundslikefun\"><desc>Tut das und das.</desc></tag></avaiableTags>".getBytes());
+			text = "Absatz1<br/><br/>Absatz2\n\nAbsatz3";
 			this.setSize(800, 400);
 		}
+		text = text.replaceAll("<br/>", "\n");
+		System.out.println(text);
 		boolean view_only = Boolean.parseBoolean(this.getParameter("viewOnly")); // correcor shouldn't be able to manipulate result
 		Element avaiableTags = XMLBase64.base64StringToElement(xmldef, null);
 		jpanel = new CompareTextPanel(text, sofar, avaiableTags, view_only, this.getWidth(), this.getHeight());

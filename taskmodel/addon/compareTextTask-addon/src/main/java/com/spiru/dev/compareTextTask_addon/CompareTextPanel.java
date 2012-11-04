@@ -25,13 +25,8 @@ import javax.swing.event.CaretListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 
-//import org.fife.ui.autocomplete.AutoCompletion;
-//import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
-//import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-
-//import com.spiru.dev.compareTextTask_addon.Utils.CompareTextCompletionProvider;
 
 /**
  *
@@ -67,8 +62,8 @@ public class CompareTextPanel extends JPanel {
 		splitPane = new JSplitPane();
 		scrollPaneLeft = new JScrollPane();
 		scrollPaneRight = new JScrollPane();
-		textAreaLeft = new JTextArea(); // new RSyntaxTextArea(); // 
-		textAreaRight = new JTextArea(); // new RSyntaxTextArea(); // 
+		textAreaLeft = new JTextArea(); // new RSyntaxTextArea(); // JTextArea
+		textAreaRight = new JTextArea(); // new RSyntaxTextArea(); // JTextArea
 
 		toolBar = new JToolBar();
 		fontComboBox = new JComboBox();
@@ -159,6 +154,8 @@ public class CompareTextPanel extends JPanel {
 				}
 			}
 			lastCaretPosRight = dot;
+		} catch (StringIndexOutOfBoundsException e) {
+			System.out.println(e);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -296,10 +293,10 @@ public class CompareTextPanel extends JPanel {
 		// consider putting some of this into initStudentView()
 		//((RSyntaxTextArea)textAreaLeft).setHighlightCurrentLine(false);
 		//((RSyntaxTextArea)textAreaRight).setHighlightCurrentLine(false);
-		textAreaLeft.setLineWrap(true);
-		textAreaRight.setLineWrap(true);
 		//((RSyntaxTextArea)textAreaLeft).setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
 		//((RSyntaxTextArea)textAreaRight).setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
+		textAreaLeft.setLineWrap(true);
+		textAreaRight.setLineWrap(true);
 	}
 
 	protected void initStudentView() {
