@@ -227,16 +227,24 @@ public class TimeTaskAddOnJPanel extends JPanel {
     				date.setAttribute("whichDatePointAsTextbox","all");
     				date.setAttribute("datePointStudent1",datePoints.get(i-1).getDateFromStudent());
     				date.setAttribute("datePointStudent2",datePoints.get(i).getDateFromStudent());
-    			}else{
-    				if (!datePoints.get(i-1).isDateVisible()){
-    					date.setAttribute("whichDatePointAsTextbox","datePoint1");
-    					date.setAttribute("datePointStudent1",datePoints.get(i-1).getDateFromStudent());
-    				}
-    				if (!datePoints.get(i).isDateVisible()){
-    					date.setAttribute("whichDatePointAsTextbox","datePoint2");
-    					date.setAttribute("datePointStudent2",datePoints.get(i).getDateFromStudent());
-    				}
-    			}    			
+    			}
+    			if (datePoints.get(i-1).isDateVisible() && datePoints.get(i).isDateVisible()){
+    				
+    				date.setAttribute("whichDatePointAsTextbox","none");
+    				date.setAttribute("datePointStudent1",datePoints.get(i-1).getDateFromStudent());
+    				date.setAttribute("datePointStudent2",datePoints.get(i).getDateFromStudent());
+    			}
+    			if (!datePoints.get(i-1).isDateVisible() && datePoints.get(i).isDateVisible())
+				{
+    				date.setAttribute("whichDatePointAsTextbox","datePoint1");
+    				date.setAttribute("datePointStudent1",datePoints.get(i-1).getDateFromStudent());
+				}
+    			if (!datePoints.get(i).isDateVisible() && datePoints.get(i-1).isDateVisible())
+    			{
+				date.setAttribute("whichDatePointAsTextbox","datePoint2");
+				date.setAttribute("datePointStudent2",datePoints.get(i).getDateFromStudent());
+    			}
+ 
     			timelineSubTaskDef.appendChild(date);
     			int dp1x = datePoints.get(i-1).getX()+datePoints.get(i-1).getWidth()/2;
     			int dp2x = datePoints.get(i).getX()+datePoints.get(i).getWidth()/2;
