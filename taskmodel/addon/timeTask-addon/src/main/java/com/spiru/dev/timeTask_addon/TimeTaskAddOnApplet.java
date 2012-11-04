@@ -100,7 +100,7 @@ public class TimeTaskAddOnApplet extends Applet{
 						Element date = (Element) dateList.item(i);
 						String datePoint1 = date.getAttribute("datePoint1");
 						String datePoint2 = date.getAttribute("datePoint2");
-						String dPasTextbox = date.getAttribute("whichDatePointAsTextbox");																			
+						String dPasTextbox = date.getAttribute("whichDatePointAsTextbox");
 						if (dPasTextbox == null){
 						// visible = true bei beiden
 							gpanel.addDatePoint(datePoint1, true, null, isCorrected);
@@ -119,6 +119,11 @@ public class TimeTaskAddOnApplet extends Applet{
 							gpanel.addDatePoint(datePoint1, false,datePointStudent1, isCorrected);
 							gpanel.addDatePoint(datePoint2, true, null, isCorrected);
 						}
+						else if (dPasTextbox.equals("none")){
+							//beide Punkte sollen angezeigt werden
+								gpanel.addDatePoint(datePoint1, true,null, isCorrected);
+								gpanel.addDatePoint(datePoint2, true, null, isCorrected);
+							}
 						else{
 						// datePoint2 as Textbox
 							String datePointStudent2 = date.getAttribute("datePointStudent2");
