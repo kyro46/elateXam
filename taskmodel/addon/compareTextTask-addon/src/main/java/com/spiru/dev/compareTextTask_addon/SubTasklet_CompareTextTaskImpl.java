@@ -139,21 +139,21 @@ public class SubTasklet_CompareTextTaskImpl extends AbstractAddonSubTasklet impl
 	public String getInitialText() {
 		// XPath: Memento/textComparisonSubTaskDef/initialText
 		Element initialText = (Element) mementoTaskDef.getElementsByTagName("initialText").item(0);
-		return initialText.getTextContent();
+		return initialText.getFirstChild().getNodeValue();
 	}
 
 	@Override
 	public String getSampleSolution() {
 		// XPath: Memento/textComparisonSubTaskDef/sampleSolution
 		Element sampleSolution = (Element) mementoTaskDef.getElementsByTagName("sampleSolution").item(0);
-		return sampleSolution.getTextContent();
+		return sampleSolution.getFirstChild().getNodeValue();
 	}
 
 	@Override
 	public String getResult() {
 		NodeList resultElement = mementoTaskHandling.getElementsByTagName("answer");
 		if(resultElement.getLength() == 1)
-			return resultElement.item(0).getTextContent();
+			return resultElement.item(0).getFirstChild().getNodeValue();
 		return "EMPTY";
 	}
 
