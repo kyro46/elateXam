@@ -53,7 +53,17 @@ public class CompareTextApplet extends Applet {
 		return jpanel.getRightTextAreaContent();
 	}
 	public boolean hasChanged() {
-		return jpanel.getRightTextAreaContent() != jpanel.getLeftTextAreaContent();
+		return false;
+		/*
+		 * Anmerkung:
+		 * Text wird bearbeitet -> unterscheidet sich also und liefert true zurück
+		 * ----> bei speichern wird daran aber nichts geändert
+		 * ------> es kommt jedes mal der aufruf, dass noch nicht alle änderungen gespeichert wurden
+		 * ---> soll aber nur kommen, wenn etwas geändert wird und dann auf 
+		 *      abgeben statt auf speichern geklickt wurde
+		 * (Yves)      
+		 */
+		//return jpanel.getRightTextAreaContent() != jpanel.getLeftTextAreaContent();
 	}
 	@Override
 	public void start() {

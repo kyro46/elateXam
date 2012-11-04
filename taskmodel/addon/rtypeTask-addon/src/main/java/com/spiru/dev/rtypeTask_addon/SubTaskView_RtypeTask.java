@@ -3,7 +3,10 @@ package com.spiru.dev.rtypeTask_addon;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import de.thorstenberger.taskmodel.MethodNotSupportedException;
 import de.thorstenberger.taskmodel.complex.ParsingException;
@@ -14,7 +17,8 @@ import de.thorstenberger.taskmodel.view.ViewContext;
 
 public class SubTaskView_RtypeTask extends SubTaskView{
 
-	private SubTasklet_RtypeTask rtypeSubTasklet;	
+	private SubTasklet_RtypeTask rtypeSubTasklet;
+	private HttpServletRequest request;
 
 	public SubTaskView_RtypeTask( SubTasklet_RtypeTask rtypeSubTasklet ) {
 		this.rtypeSubTasklet = rtypeSubTasklet;
@@ -24,8 +28,9 @@ public class SubTaskView_RtypeTask extends SubTaskView{
 	/**
 	 * @see de.thorstenberger.uebman.services.student.task.complex.SubTaskView#getRenderedHTML(int)
 	 */
-	public String getRenderedHTML( ViewContext context, int relativeTaskNumber) {		
-		return getRenderedHTML( relativeTaskNumber, false );	
+	public String getRenderedHTML( ViewContext context, int relativeTaskNumber) {
+	    request=(HttpServletRequest) context.getViewContextObject();
+		return getRenderedHTML( relativeTaskNumber, false );			
 	}
 
 	public String getRenderedHTML(int relativeTaskNumber, boolean corrected) {				
@@ -120,14 +125,26 @@ public class SubTaskView_RtypeTask extends SubTaskView{
 		for(String n:rtypeSubTasklet.getQuestionsAnswers(num)){
 			ret.append("<tr>");				
 			String sel = "";
+			String symbolPic = "";
 			if (param != null && param[pos]){
-				sel = "checked";
-			}
+				sel = "checked";				
+			}					
 			if (disabled){
 				sel += " disabled";
-			}
-			ret.append("\n  <td nowrap valign=top> <input type=\"radio\" name=\"["+num+"]["+relativ+"]\"" +					
-					   " id=\""+relativ+"\" value=\""+n+"\" "+sel+" onChange=\"setModified()\" >"+n+"</td>");
+				if (param!= null){
+					if (param[pos]){
+						symbolPic = getSymbolForCorrectedAnswer(pos,true);
+					}
+					else 
+						symbolPic = getSymbolForCorrectedAnswer(pos,false);
+				}
+			}			
+			
+			ret.append("\n  <td nowrap valign=top>"+
+					   " <input type=\"radio\" name=\"["+num+"]["+relativ+"]\"" +					
+					   " id=\""+relativ+"\" value=\""+n+"\" "+sel+" onChange=\"setModified()\" >"+n+
+					   symbolPic+
+					   "</td>");
 			ret.append("\n");
 			ret.append("</tr>");	
 			pos++;
@@ -138,9 +155,24 @@ public class SubTaskView_RtypeTask extends SubTaskView{
 
 		return ret.toString();
 	}
+	
+	private String getSymbolForCorrectedAnswer(int answersNumber, boolean answer){		
+		if (request == null) return "";
+		
+		List<Boolean> boolList = rtypeSubTasklet.getAnswerList();	
+		if(answer && boolList.get(answersNumber)){			
+			return "<img src=\"" + request.getContextPath() + "/pics/true.gif\">";			
+		}
+		else if (answer || boolList.get(answersNumber)){			
+			return "<img src=\"" + request.getContextPath() + "/pics/false.gif\">";
+		}
+		
+		return "";
+	}
 
 	public String getCorrectedHTML( ViewContext context, int relativeTaskNumber ){
 		// for pdf...
+		request=(HttpServletRequest) context.getViewContextObject();
 		StringBuffer ret = new StringBuffer();		
 		ret.append(getRenderedHTML( -1, true ));
 		return ret.toString();
@@ -148,6 +180,7 @@ public class SubTaskView_RtypeTask extends SubTaskView{
 	}
 
 	public String getCorrectionHTML(String actualCorrector, ViewContext context ){	
+		request=(HttpServletRequest) context.getViewContextObject();
 	    StringBuffer ret = new StringBuffer();
 	    ret.append( getRenderedHTML( -1, true ) );	    	   
 

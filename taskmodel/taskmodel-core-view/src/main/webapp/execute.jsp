@@ -183,6 +183,7 @@ function submit_on_timeout()
 	document._speichern.autosave.value = ${true};
 	//console.log(document._speichern.autosave);
 	//document._absenden.onsubmit = null; // would call send()
+	document._speichern.onsubmit();
 	document._speichern.submit();
 }
 

@@ -24,6 +24,7 @@ public interface SubTasklet_RtypeTask extends AddOnSubTasklet {
 	public String getQuestionHint(int number);
 	public List<String> getQuestionsAnswers(int question);
 	public String getHandlingSolution();
+	public List<Boolean> getAnswerList();
 	
 }
 

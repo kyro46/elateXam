@@ -84,6 +84,11 @@ public class SubTasklet_GroupingTaskImpl extends AbstractAddonSubTasklet impleme
 	}
 
 	@Override
+    public boolean isSetNeedsManualCorrectionFlag() {		
+		return true;
+	}
+	
+	@Override
 	public void doManualCorrection( CorrectionSubmitData csd ){
 		GroupingTaskCorrectionSubmitData pcsd = (GroupingTaskCorrectionSubmitData) csd;
 		//super.setAutoCorrection(acsd.getPoints());
@@ -117,7 +122,22 @@ public class SubTasklet_GroupingTaskImpl extends AbstractAddonSubTasklet impleme
 
 	@Override
 	public boolean isProcessed(){
-		return getAnswer() != null && getAnswer().length() > 0;// && !getResult().equals(getText(memento,"defaultAnswer",null));
+		NodeList list = mementoTaskHandling.getElementsByTagName("dragSubTaskDef");		
+		if (list!=null){
+			Element el = (Element)list.item(0);			
+			if (el == null) return false;
+			NodeList pro = el.getElementsByTagName("Processed");
+			if (pro !=null){				
+				Element e = (Element)pro.item(0);
+				if (e == null) return false;				
+				String text = e.getTextContent();				
+				if (text == null) return false;				
+				if (text.equals("true"))
+					return true;
+				else return false;
+			}
+		}
+		return false;
 	}
 
 	/*

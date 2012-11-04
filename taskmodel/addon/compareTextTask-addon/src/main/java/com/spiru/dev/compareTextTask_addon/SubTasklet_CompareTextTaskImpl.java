@@ -108,8 +108,17 @@ public class SubTasklet_CompareTextTaskImpl extends AbstractAddonSubTasklet impl
 	}
 
 	@Override
+    public boolean isSetNeedsManualCorrectionFlag() {		
+		return true;
+	}
+	
+	@Override
 	public boolean isProcessed(){
-		return getResult() != null && getResult().length() > 0 && !getResult().equals(getInitialText());
+		if (getResult().equals("EMPTY"))
+			return false;
+		return true;
+		
+		//return getResult() != null && getResult().length() > 0 && !getResult().equals(getInitialText());
 	}
 
 	/*
