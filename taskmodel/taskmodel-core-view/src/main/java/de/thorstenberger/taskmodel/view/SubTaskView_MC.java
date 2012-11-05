@@ -18,14 +18,24 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 package de.thorstenberger.taskmodel.view;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.bind.DatatypeConverter;
 
 import de.thorstenberger.taskmodel.MethodNotSupportedException;
 import de.thorstenberger.taskmodel.complex.ParsingException;
@@ -62,7 +72,7 @@ public class SubTaskView_MC extends SubTaskView {
 		HttpServletRequest request=(HttpServletRequest) context.getViewContextObject();
 		StringBuffer ret = new StringBuffer();
 
-		// alle Antworten einf�gen
+		// alle Antworten einfügen
 		ret.append("\n<table>\n");
 		List<SubTasklet_MC.Answer> answers = mcSubTasklet.getAnswers();
 		for(int j=0; j<answers.size(); j++){
@@ -86,7 +96,31 @@ public class SubTaskView_MC extends SubTaskView {
 	}
 
 	public String getCorrectedHTML( ViewContext context, int relativeTaskNumber ){
-		return getRenderedHTML( context, relativeTaskNumber, true );
+		String orig = getRenderedHTML( context, relativeTaskNumber, true );
+		// Workaround: Go through all Images containing Base64 Strings and write them
+		// somewhere to the disk, putting links to those files afterwards.
+		// TODO: move code to Import, handle deletion of image files (e.g. when the corresponding exam is deleted)
+		String ret = "";
+		int lastPos = 0;
+		String fspath = "/opt/apache-tomcat-7.0.29/webapps/taskmodel-core-view"; // FIXME: Get rid of this
+		String svpath = ((HttpServletRequest) context.getViewContextObject()).getContextPath();
+		SecureRandom random = new SecureRandom();
+		Pattern pattern = Pattern.compile("data:image/([a-z]+);base64,([^\"]+)");
+		Matcher match = pattern.matcher(orig);
+		while(match.find()) try {
+			String type = match.group(1), base64 = match.group(2);
+			byte[] img = DatatypeConverter.parseBase64Binary(base64);
+			final BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(img));
+			String randomname = "/frombase64_" + new BigInteger(130, random).toString(32) + "." + type;
+			ImageIO.write(bufferedImage, type, new File(fspath + randomname)); // write to file on filesystem
+			ret += orig.substring(lastPos, match.start()) + svpath + randomname; // have a link to that file accessible via web
+			lastPos = match.end();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		ret += orig.substring(lastPos);
+		System.out.println("|||getCorrectedHTML()");
+		return ret;
 	}
 
 	private String checked( SubTasklet_MC.Answer answer ){
@@ -137,7 +171,7 @@ public class SubTaskView_MC extends SubTaskView {
 		// weder ss- noch ms-Variable, also Aufgabe nicht bearbeitet
 		if( mcSubmitData == null )
 			mcSubmitData = new McSubmitData();
-		// TODO un�bersichtlich
+		// TODO unübersichtlich
 
 		return mcSubmitData;
 	}
