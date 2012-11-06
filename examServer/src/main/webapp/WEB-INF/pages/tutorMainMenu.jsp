@@ -8,7 +8,7 @@
 
 <p>In der folgenden Liste finden Sie alle verfügbaren Aufgaben zur Korrektur. Klicken Sie auf den Titel der Aufgabe, um zur Korrektur-Übersicht zu gelangen.</p>
 
-	<display:table name="TaskDefs" uid="row" pagesize="30" class="table">
+	<display:table name="TaskDefs" uid="row" requestURI="" pagesize="30" class="table">
 		<display:column title="Name&nbsp;&nbsp;&nbsp;" sortable="true">
 			<html:link action="/CorrectorFactory" paramId="taskId" paramName="row" paramProperty="id"><c:out value="${row.title}"/></html:link>
 			<c:if test="${!row.active && row.visible}"> <b>(inaktiv)</b></c:if>

@@ -15,7 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ */
 /**
  * 
  */
@@ -34,22 +34,15 @@ import org.apache.struts.action.ActionMapping;
  *
  */
 public class MainAction extends Action {
-
 	/* (non-Javadoc)
 	 * @see org.apache.struts.action.Action#execute(org.apache.struts.action.ActionMapping, org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-
 		if( request.isUserInRole( "student" ) )
 			return mapping.findForward( "studentMainMenu" );
 		else if( request.isUserInRole( "tutor" ) )
 			return mapping.findForward( "tutorMainMenu" );
-		
 		return mapping.findForward( "mainMenu" );
-		
 	}
-
-	
-
 }
