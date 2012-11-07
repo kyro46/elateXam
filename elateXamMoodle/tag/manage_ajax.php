@@ -6,6 +6,7 @@ require_login();
 $task   = optional_param('task', '', PARAM_ALPHA);
 $id     = optional_param('tagid', '', PARAM_INT);
 $morexml = '';
+$error = '';
 if (strlen($task) == 0 || $id <= 0 ) {
     $error = "ungültige Daten";
 } else {
@@ -38,7 +39,7 @@ if (strlen($task) == 0 || $id <= 0 ) {
                     if (!tag_rename($id, $newname) ) {
                         $error .= $newname. '-- ' . get_string('namesalreadybeeingused','tag');
                     }
-                    $record = $DB->get_record('tag', array('id'=>$record->id));
+                    $record = $DB->get_record('tag', array('id'=>$id));
                     $morexml .= "<name>".$record->rawname."</name>\n";
                     
                 } else {
@@ -50,7 +51,7 @@ if (strlen($task) == 0 || $id <= 0 ) {
             break;
         case 'deletetag':
             if ($DB->record_exists('tag', array('id' => $id))) {
-                if (!tag_delete($id, $newname) ) {
+                if (!tag_delete($id) ) {
                     $error = 'Tag konnte nicht gelöscht werden.';
                 }
             } else {
@@ -92,21 +93,21 @@ if (strlen($task) == 0 || $id <= 0 ) {
                     $instance_record = $DB->get_record_sql('SELECT * FROM {tag} WHERE name = ? OR rawname = ?', array($record->name."=".$description,$record->name."=".$description));
                     if ($instance_record->id > 0) {
                         //4.tag_instance-update/insert für alle questions
-                        $questionsbefore = $DB->count_records_sql("SELECT COUNT(DISTINCT (itemid)) FROM {tag_instance} WHERE tagid = ? AND itemtype = 'question'", array($instance_record->id));
+                        $questionsbefore = $DB->count_records_sql("SELECT COUNT(DISTINCT (ti.itemid)) FROM {tag_instance} ti LEFT JOIN {tag} tg ON ti.tagid = tg.id WHERE tg.name LIKE ? AND ti.itemtype = 'question'",array($record->name."=%"));
                         $conn = mysql_connect($CFG->dbhost, $CFG->dbuser,$CFG->dbpass);
                         mysql_select_db($CFG->dbname, $conn);
                         $sql = "INSERT INTO `".$CFG->prefix."tag_instance` (tagid, itemtype, itemid, ordering)
 SELECT ".$instance_record->id.", 'question', id, 0 
 FROM `".$CFG->prefix."question`
 WHERE id NOT IN ( 
-SELECT DISTINCT (itemid) 
-FROM `".$CFG->prefix."tag_instance` 
-WHERE tagid = ".$instance_record->id." AND itemtype = 'question') ";
+SELECT DISTINCT (ti.itemid) 
+FROM `".$CFG->prefix."tag_instance` ti LEFT JOIN `".$CFG->prefix."tag` tg ON ti.tagid = tg.id
+WHERE tg.name LIKE '".$record->name."=%' AND ti.itemtype = 'question') ";
                         if (mysql_query($sql)) {
-                            $questionsafter = $DB->count_records_sql("SELECT COUNT(DISTINCT (itemid)) FROM {tag_instance} WHERE tagid = ? AND itemtype = 'question'", array($instance_record->id));
+                            $questionsafter = $DB->count_records_sql("SELECT COUNT(DISTINCT (ti.itemid)) FROM {tag_instance} ti LEFT JOIN {tag} tg ON ti.tagid = tg.id WHERE tg.name LIKE ? AND ti.itemtype = 'question'",array($record->name."=%"));
                         
                             $morexml .= "<name>".$record->rawname."</name>\n";
-                            $morexml .= "<instance>".$instance_record->id->rawname."</instance>\n";
+                            $morexml .= "<instance>".$instance_record->rawname."</instance>\n";
                             $morexml .= "<created>".($questionsafter - $questionsbefore)."</created>\n";
                             $morexml .= "<newcount>".$questionsafter."</newcount>\n";
                         } else {

@@ -14,21 +14,21 @@ $changeIm     = optional_param('changeIm', '', PARAM_ALPHA);
 $search       = addslashes(optional_param('search', '', PARAM_RAW));
 if (count($sel_tagtypes)>0) {
     $SESSION->search = $search;
-} elseif (!is_null($SESSION->search)) {
+} elseif (isset($SESSION->search)) {
     $search = $SESSION->search;
 } else {
     $search = '';
 }
 if (count($sel_tagtypes)>0) {
     $SESSION->seltagtypes = $sel_tagtypes;
-} elseif (is_array($SESSION->seltagtypes)) {
+} elseif (isset($SESSION->seltagtypes)) {
     $sel_tagtypes = $SESSION->seltagtypes;
 } else {
     $sel_tagtypes = array('official_text','official_select');
 }
 if (strlen($changeIm)>0) {
     $SESSION->changeIm = $changeIm;
-} elseif (strlen($SESSION->changeIm) > 0) {
+} elseif (isset($SESSION->changeIm)) {
     $changeIm = $SESSION->changeIm;
 } else {
     $changeIm = 'ask';
@@ -93,7 +93,7 @@ $existing_tagtypes['official_select'] = 'Vorgegebenes Auswahl-Schlagwort';
 
 //setup table
 $tablecolumns = array('id','name','tagtype','count','timemodified');
-$tableheaders = array(get_string('id', 'tag'),get_string('name', 'tag'),get_string('tagtype', 'tag'),get_string('count', 'tag'),get_string('timemodified', 'tag'));
+$tableheaders = array(get_string('id', 'tag'),get_string('name', 'tag'),get_string('tagtype', 'tag'),'<span title="In dieser Spalte steht die Anzahl wie oft jedes Schlagwort vorkommt. Bei den vorgegebenen Schlagwörtern wird die Anzahl der Fragen gezählt die mindestens eine Taginstanz eines vorgebenen Schlagworts haben.">'.get_string('count', 'tag').'</span>',get_string('timemodified', 'tag'));
 
 $table = new flexible_table('tag-management-list-'.$USER->id);
 
@@ -130,7 +130,7 @@ list($where, $params) = $table->get_sql_where();
 if ($where) {
     $where = 'AND '. $where;
 } 
-
+$wsearch = "";
 if (strlen($search)>0) {
     $wsearch = "AND tg.name LIKE '%$search%' ";
 }
@@ -198,7 +198,6 @@ var lastaction          = "";
 
 function changetype (newtype, tagid, oc) {
     if (lastaction != newtype+''+tagid) {
-        lastaction = newtype+''+tagid;
         var writechange = false;
         if ($('input[name=changeIm]:checked').val() == 'immediatly' || oc == 0) {
             writechange = true;
@@ -208,6 +207,7 @@ function changetype (newtype, tagid, oc) {
             }
         }
         if(writechange) {
+            lastaction = newtype+''+tagid;
             var log = $('#log');
             log.attr("class","");
             log.html('<image src="../pix/i/ajaxloader.gif" alt="loading..." />');
@@ -242,9 +242,9 @@ function changetype (newtype, tagid, oc) {
         }
     }
 }
-function newtagname(newname, tagid, oc) {
+function newtagname(tagid, oc) {
+    var newname = $('#tagedit'+tagid).val();
     if (lastaction != newname+''+tagid) {
-        lastaction = newname+''+tagid;
         var writechange = false;
         if ($('input[name=changeIm]:checked').val() == 'immediatly' || oc == 0) {
             writechange = true;
@@ -254,6 +254,7 @@ function newtagname(newname, tagid, oc) {
             }
         }
         if(writechange) {
+            lastaction = newname+''+tagid;
             var log = $('#log');
             log.attr("class","");
             log.html('<image src="../pix/i/ajaxloader.gif" alt="loading..." />');
@@ -282,7 +283,6 @@ function newtagname(newname, tagid, oc) {
 }
 function writepredef (tagid, oc) {
     if (lastaction != $('#tagtext'+tagid).val()+''+tagid) {
-        lastaction = $('#tagtext'+tagid).val()+''+tagid;
         var writechange = false;
         if ($('input[name=changeIm]:checked').val() == 'immediatly' || oc == 0) {
             writechange = true;
@@ -292,6 +292,7 @@ function writepredef (tagid, oc) {
             }
         }
         if(writechange) {
+            lastaction = $('#tagtext'+tagid).val()+''+tagid;
             var log = $('#log');
             log.attr("class","");
             log.html('<image src="../pix/i/ajaxloader.gif" alt="loading..." />');
@@ -392,7 +393,7 @@ function deltag (tagid) {
 }
 
 function edittag(edtid) {
-    $('#edit'+edtid).html('<input type="text" size="30" value="'+$('#nametag'+edtid).val()+'" id="tagedit'+edtid+'" title="neuer Tagname (jedes Vorkommen wird damit geändert)" onkeydown="savepic2('+edtid+')" onchange="newtagname(this.value, '+edtid+', 1)" />');
+    $('#edit'+edtid).html('<input type="text" size="30" value="'+$('#nametag'+edtid).val()+'" id="tagedit'+edtid+'" title="neuer Tagname (jedes Vorkommen wird damit geändert)" onkeydown="savepic2('+edtid+')" onchange="newtagname('+edtid+', 1)" />');
 }
 function createInput(ciTagid, ciSize, ciValue, ciTitle) {
     $('#desc'+ciTagid).html('<input type="text" size="'+ciSize+'" value="'+ciValue+'" id="tagtext'+ciTagid+'" title="'+ciTitle+'" onkeydown="savepic('+ciTagid+')" onchange="writepredef('+ciTagid+', 1)" />');
@@ -401,7 +402,7 @@ function savepic(spTagid) {
     $('#ttsave'+spTagid).html('<image class="save_text" src="../pix/i/portfolio.gif" onclick="writepredef('+spTagid+', 0)" title="Noch nicht gespeichert. Jetzt speichern?" alt="Noch nicht gespeichert. Jetzt speichern?"/>');
 }
 function savepic2(spTagid) {
-    $('#edited'+spTagid).html('<image class="save_text" src="../pix/i/portfolio.gif" onclick="newtagname(document.getElementById(\'tagedit'+spTagid+'\').value() ,'+spTagid+', 0)" title="Noch nicht gespeichert. Jetzt speichern?" alt="Noch nicht gespeichert. Jetzt speichern?"/>');
+    $('#edited'+spTagid).html('<image class="save_text" src="../pix/i/portfolio.gif" onclick="newtagname('+spTagid+', 0)" title="Noch nicht gespeichert. Jetzt speichern?" alt="Noch nicht gespeichert. Jetzt speichern?"/>');
 }
 </script>
 <?php
@@ -426,7 +427,7 @@ if ($tagrecords = $DB->get_records_sql($query, $params, $table->get_page_start()
         }
         $count          =   $tag->count;
         if ($tag->tagtype == 'official_select' || $tag->tagtype == 'official_text') {
-            $tagcount = $DB->count_records_sql("SELECT COUNT(id) FROM {tag_instance} ti WHERE itemtype = 'question' AND ti.tagid IN (SELECT id FROM {tag} WHERE name LIKE '".$tag->name."=%')", null );
+            $tagcount = $DB->count_records_sql("SELECT COUNT(DISTINCT itemid) FROM {tag_instance} ti WHERE itemtype = 'question' AND ti.tagid IN (SELECT id FROM {tag} WHERE name LIKE ?)", array($tag->name.'=%') );
             if ($tagcount >= $questioncount) {
                 $img = '<img src="../pix/i/flagged.png" title="Jede vorkommende Frage besitzt eine Instanz dieses Tags. (Bei korrekter Ausführung der Cron-Jobs!)" />';
                 $count = $tagcount.' <span style="float:right;">'.$img.'</span>';
