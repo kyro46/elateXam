@@ -33,10 +33,13 @@ class elate_question_bank_view extends question_bank_view {
     protected $new_cols = array(//Neue Klassen: 'name für qbank column' => Bezeichnung
                                 'tags' => 'Schlagworte',
                                 'autor' => 'Autor',
-                                'schwierigkeit' => 'Schwierigkeitsgrad'
+                                'schwierigkeit' => 'Schwierigkeitsgrad',
+                                'fachgebiet' => 'Fachgebiet'
                               );
     protected $selectable_cols;
     protected $std_selected_cols = array('questionname','modifiername', 'autor', 'schwierigkeit');
+    protected $catids;
+    
 	/**
      * Konstruktor
      */         
@@ -61,11 +64,11 @@ class elate_question_bank_view extends question_bank_view {
         $sel_columns = optional_param_array('column_select', array(), PARAM_RAW);
         if (count($sel_columns)) {
             $SESSION->sel_columns = $sel_columns;
-        }elseif (count($SESSION->sel_columns)) {
+        }elseif (isset($SESSION->sel_columns)) {
             $sel_columns = $SESSION->sel_columns;
         } else {
-            $sel_columns = $std_selected_cols;
-            $SESSION->sel_columns = $std_selected_cols;
+            $sel_columns = $this->std_selected_cols;
+            $SESSION->sel_columns = $this->std_selected_cols;
         }
         $sel_columns = array_combine($sel_columns,$sel_columns);
         
@@ -100,6 +103,7 @@ class elate_question_bank_view extends question_bank_view {
         }
 		return array_merge($basetypes, $newtypes);
 	}
+    
     /**
      * SQL-Anfrage aufbauen
      */
@@ -142,12 +146,6 @@ class elate_question_bank_view extends question_bank_view {
             $tests[] = 'q.hidden = 0';
         }
 
-        if ($recurse) {
-            $categoryids = question_categorylist($category->id);
-        } else {
-            $categoryids = array($category->id);
-        }
-        
         //$this->sqlparams = $params;
     /// Suche aufbauen
         $searchbyform = (optional_param('question_search', '', PARAM_ALPHA) == 'y');
@@ -168,20 +166,25 @@ class elate_question_bank_view extends question_bank_view {
                 $this->reset_search();
             }
         }
-        
-        
+
         if (!$SESSION->search_all_cats) {
+            if ($recurse) {
+                $categoryids = question_categorylist($category->id);
+            } else {
+                $categoryids = array($category->id);
+            }
             list($catidtest, $params) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED, 'cat');
             $tests[] = 'q.category ' . $catidtest;
-        } else {
-            $params = array();
+        } else {//Alle Kategorien (nur berechtigte) anzeigen
+            list($catidtest, $params) = $DB->get_in_or_equal($this->catids, SQL_PARAMS_NAMED, 'cat');
+            $tests[] = 'q.category ' . $catidtest;
         }
         
     /// Build the SQL.
         $sql = ' FROM {question} q ' . implode(' ', $joins);
         $sql .= ' WHERE ' . implode(' AND ', $tests);
         $this->loadsql = 'SELECT DISTINCT ' . implode(', ', $fields) . $sql . ' ORDER BY ' . implode(', ', $sorts);
-        $this->countsql = 'SELECT DISTINCT count(1) '.$sql;
+        $this->countsql = 'SELECT count(DISTINCT q.id) '.$sql;
         $this->sqlparams = $params;
     }
     protected function reset_search(){
@@ -213,21 +216,12 @@ class elate_question_bank_view extends question_bank_view {
             $searcharray = array();
         }
         $searcharray2 = preg_split('"\\"([^\\"]*)\\""', $SESSION->question_search_text, -1, PREG_SPLIT_NO_EMPTY);
-        print_r($SESSION->question_search_text);
         foreach ($searcharray2 as $sa2) {
-            $searcharray = array_merge($searcharray,preg_split('/( |and|und|&)/i', $sa2, -1, PREG_SPLIT_NO_EMPTY));
+            $sa2 = preg_replace('/  /i',' ',$sa2);
+            $sa2 = preg_replace('/( )*\\|+( )*|( )+(oder|or)( )+/i','|',$sa2);
+            $searcharray = array_merge($searcharray,preg_split('/(( )+(and|und)( )+|&| )/i', $sa2, -1, PREG_SPLIT_NO_EMPTY));
         }
         $searcharray = array_unique($searcharray);
-        /*
-        if (strpos(",".$SESSION->question_search_text,"'")>0 || strpos(",".$SESSION->question_search_text,"\"") > 0) {
-            $searcharray = preg_split('/(\\\'|").+?(\\\'|")/', '"'.$SESSION->question_search_text.'"' , -1, PREG_SPLIT_NO_EMPTY);
-        } else {
-            $searcharray = array();
-        }
-        $searcharray2 = preg_split("/('|\\\").+?('|\\\")/", "'".$SESSION->question_search_text."'", -1, PREG_SPLIT_NO_EMPTY);
-        foreach ($searcharray2 as $sa2) {
-            $searcharray = array_merge($searcharray,preg_split('/( |and|und|&)/i', $sa2, -1, PREG_SPLIT_NO_EMPTY));
-        }*/
         //simple://$searcharray = preg_split('/( |and|und|&)/i', $SESSION->question_search_text, -1, PREG_SPLIT_NO_EMPTY);
         $search_select = $SESSION->search_columns;
 
@@ -237,44 +231,50 @@ class elate_question_bank_view extends question_bank_view {
         } else {$all = true;}
         foreach ($searcharray as $s_element) {
             $s_element = addslashes($s_element);
-            $search = array();
+            $search_all = array();
             foreach ($this->knowncolumntypes as $column) {
                 $name = $column->get_name();
-                if ($all || isset($search_select[$name])) {             
-                    switch ($name) {
-                        case 'checkbox':
-                        case 'qtype':
-                        case 'editaction':
-                        case 'previewaction':
-                        case 'moveaction':
-                        case 'deleteaction':
-                        break;
-                        case 'questionname':
-                            $search[] = 'q.name LIKE "%'.$s_element.'%"';                  
-                        break;
-                        case 'creatorname':
-                            $search[] = '(uc.firstname LIKE "%'.$s_element.'%" OR uc.lastname LIKE "%'.$s_element.'%")';
-                            if (!isset($this->requiredcolumns[$name])) {
-                                $missing_join[$name] = $name;
-                            }
-                        break;
-                        case 'modifiername':
-                            $search[] = '(um.firstname LIKE "%'.$s_element.'%" OR um.lastname LIKE "%'.$s_element.'%")';
-                            if (!isset($this->requiredcolumns[$name])) {
-                                $missing_join[$name] = $name;
-                            }  
-                        break;
-                        default:// questiontext & custom types wie tags, difficulty, und co
-                            $search[] = $name.' LIKE "%'.$s_element.'%"';
-                            if (!isset($this->requiredcolumns[$name])) {
-                                $missing_join[$name] = $name;
-                            }  
-                        break;
-                    }              
+                if ($all || isset($search_select[$name])) {
+                    $search = array();
+                    foreach (explode("|",$s_element) as $search_phrase) {
+                        switch ($name) {
+                            case 'checkbox':
+                            case 'qtype':
+                            case 'editaction':
+                            case 'previewaction':
+                            case 'moveaction':
+                            case 'deleteaction':
+                            break;
+                            case 'questionname':
+                                $search[] = 'q.name LIKE "%'.$search_phrase.'%"';                  
+                            break;
+                            case 'creatorname':
+                                $search[] = '(uc.firstname LIKE "%'.$search_phrase.'%" OR uc.lastname LIKE "%'.$search_phrase.'%")';
+                                if (!isset($this->requiredcolumns[$name]) && !isset($missing_join[$name])) {
+                                    $missing_join[$name] = $name;
+                                }
+                            break;
+                            case 'modifiername':
+                                $search[] = '(um.firstname LIKE "%'.$search_phrase.'%" OR um.lastname LIKE "%'.$search_phrase.'%")';
+                                if (!isset($this->requiredcolumns[$name]) && !isset($missing_join[$name])) {
+                                    $missing_join[$name] = $name;
+                                }  
+                            break;
+                            default:// questiontext & custom types wie tags, difficulty, und co
+                                $search[] = $name.' LIKE "%'.$search_phrase.'%"';
+                                if (!isset($this->requiredcolumns[$name]) && !isset($missing_join[$name])) {
+                                    $missing_join[$name] = $name;
+                                }  
+                            break;
+                        }
+                    }
+                    if (count($search)) {
+                        $search_all[] = '('.implode(' OR ',$search).')';
+                    }               
                 }
             }
-            if (count($search)) {
-                $search_parts[] = '('.implode(' OR ',$search).')';
+            if (count($search_all)) {
+                $search_parts[] = '('.implode(' OR ',$search_all).')';
             }          
         }
         if (count($missing_join)) {
@@ -310,7 +310,8 @@ class elate_question_bank_view extends question_bank_view {
         // Category selection form
         echo $OUTPUT->heading(get_string('questionbank', 'question'), 2);
         echo '<div class="qbank_config">';
-        $this->display_category_form($this->contexts->having_one_edit_tab_cap($tabname),
+        $this->contexts_edit = $this->contexts->having_one_edit_tab_cap($tabname);
+        $this->display_category_form($this->contexts_edit,
                 $this->baseurl, $cat);
         $this->display_options($recurse, $showhidden, $showquestiontext);
         echo "</div>";
@@ -443,9 +444,9 @@ class elate_question_bank_view extends question_bank_view {
         echo '<fieldset class="invisiblefieldset">';
         
         echo '<div class="search_part">';
-        echo '<input type="submit" value="suchen" /> <br /> <input type="submit" value="Suche zurücksetzen" onclick="$(\'#input_question_search_text\').val(\'\')" title="Suche zurücksetzen" />';
+        echo '<input type="submit" value="suchen" /> <br /> <input type="submit" value="zurücksetzen" onclick="$(\'#input_question_search_text\').val(\'\')" title="Suche zurücksetzen" />';
         echo '<input type="hidden" name="question_search" value="y" /></div>';
-        echo '<div class="search_part"><input type="text" id="input_question_search_text" title="Suchtext (jedes Wort muss für eine Frage in einer der ausgewählten Tabellenspalten vorkommen)" value="'.str_replace("\"","'",$SESSION->question_search_text).'" name="input_question_search_text" /><br />';
+        echo '<div class="search_part"><input type="text" id="input_question_search_text" size="29" title="Suchtext (jedes Wort muss für eine Frage in einer der ausgewählten Tabellenspalten vorkommen)" value="'.str_replace("\"","'",$SESSION->question_search_text).'" name="input_question_search_text" /><br />';
         echo html_writer::select($this->selectable_cols, 'search_select[]', $SESSION->search_columns, false, array('multiple' => 'true', 'id' => 'search_select'));
         echo '<br /><label><input type="checkbox" name="search_all_categories" value="1" '.($SESSION->search_all_cats ? 'checked="true"' : '') .' /> in allen Kategorien suchen </label></div>';
         
@@ -474,7 +475,14 @@ class elate_question_bank_view extends question_bank_view {
     /// Get all the existing categories now
         echo '<div class="choosecategory">';
         $catmenu = question_category_options($contexts, false, 0, true);
-
+        $this->catids = array();
+        foreach ($catmenu as $catcourse) {
+            foreach ($catcourse as $optgroup) {
+                foreach ($optgroup as $key => $cat) {
+                    $catid = 0;
+                    list($catid) = explode(",", $key);
+                    $this->catids[] = $catid;
+        }}}
         $select = new single_select($this->baseurl, 'category', $catmenu, $current, null, 'catmenu');
         $select->set_label("<strong>".get_string('selectacategory', 'question')."</strong>");
         echo $OUTPUT->render($select);

@@ -105,6 +105,7 @@ $(document).ready(function() {
 
    });
    $("#search_select").multiselect({
+     selectedList: 2,
      noneSelectedText: 'in allen Tabellenspalten',
      checkAllText: 'alle',
      uncheckAllText: 'keine',

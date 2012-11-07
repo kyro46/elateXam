@@ -1,4 +1,33 @@
 <?php
+class question_bank_fachgebiet_column extends question_bank_column_base {
+    protected $metaname = 'fachgebiet';
+    protected $metatitle = 'Fachgebiet';
+    protected $tbl_shortcut = 'fc';
+	
+    public function get_name() {
+		return $this->metaname;
+	}
+	protected function get_title() {
+		return $this->metatitle;
+	}
+    public function get_extra_joins() {
+        return array($this->tbl_shortcut => "LEFT JOIN (".
+                                 "SELECT ti.itemid, GROUP_CONCAT(tg.rawname SEPARATOR ', ') AS $this->metaname FROM {tag_instance} ti ".
+                                 "LEFT JOIN {tag} tg ON ti.tagid = tg.id WHERE ti.itemtype = 'question' AND tg.name LIKE '%$this->metaname=%' GROUP BY ti.itemid".
+                             ") $this->tbl_shortcut ON $this->tbl_shortcut.itemid = q.id");
+    }
+
+    public function get_required_fields() {
+        return array($this->tbl_shortcut.".".$this->metaname);
+    }
+    public function is_sortable() {
+        return $this->tbl_shortcut.".".$this->metaname;
+    }
+    protected function display_content($question, $rowclasses) {
+        $name = $this->metaname;
+        echo str_replace($this->metaname.'=','',$question->$name);
+    }
+}
 class question_bank_autor_column extends question_bank_column_base {
     protected $metaname = 'autor';
     protected $metatitle = 'Autor';
@@ -12,8 +41,8 @@ class question_bank_autor_column extends question_bank_column_base {
 	}
     public function get_extra_joins() {
         return array($this->tbl_shortcut => "LEFT JOIN (".
-                                 "SELECT ti.itemid, tg.rawname AS $this->metaname FROM {tag_instance} ti ".
-                                 "LEFT JOIN {tag} tg ON ti.tagid = tg.id WHERE ti.itemtype = 'question' AND tg.name LIKE '%$this->metaname=%'".
+                                 "SELECT ti.itemid, GROUP_CONCAT(tg.rawname SEPARATOR ', ') AS $this->metaname FROM {tag_instance} ti ".
+                                 "LEFT JOIN {tag} tg ON ti.tagid = tg.id WHERE ti.itemtype = 'question' AND tg.name LIKE '%$this->metaname=%' GROUP BY ti.itemid".
                              ") $this->tbl_shortcut ON $this->tbl_shortcut.itemid = q.id");
     }
 
@@ -40,8 +69,8 @@ class question_bank_schwierigkeit_column extends question_bank_column_base {
 	}
     public function get_extra_joins() {
         return array($this->tbl_shortcut => "LEFT JOIN (".
-                                 "SELECT ti.itemid, tg.rawname AS $this->metaname FROM {tag_instance} ti ".
-                                 "LEFT JOIN {tag} tg ON ti.tagid = tg.id WHERE ti.itemtype = 'question' AND tg.name LIKE '%$this->metaname=%'".
+                                 "SELECT ti.itemid, GROUP_CONCAT(tg.rawname SEPARATOR ', ') AS $this->metaname FROM {tag_instance} ti ".
+                                 "LEFT JOIN {tag} tg ON ti.tagid = tg.id WHERE ti.itemtype = 'question' AND tg.name LIKE '%$this->metaname=%' GROUP BY ti.itemid".
                              ") $this->tbl_shortcut ON $this->tbl_shortcut.itemid = q.id");
     }
 

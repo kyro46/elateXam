@@ -151,15 +151,29 @@
 .block_search {
     float: right;
     min-width: 400px;
-    padding-left: 5px;
+    padding: 5px;
+    background-color: #EEEEEE;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px; 
 }
 .search_part {
     float: right;
+    margin-right: 2px;
 }
 .clear {
     clear:both;
 }
-
+#input_question_search_text{
+    padding: 2px 1px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    background-color: #FFFFFF; 
+}
+#input_question_search_text:focus {
+    background-color: #EFF5FB;
+}
 /* question table */
 .tags_container {
     white-space: normal;
