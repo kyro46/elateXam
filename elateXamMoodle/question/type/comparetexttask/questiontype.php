@@ -44,7 +44,6 @@ class qtype_comparetexttask extends question_type {
 	 * @see question_type::save_question_options()
 	 */
 	public function save_question_options($formdata) {
-		//debugging(var_export($formdata));
 		// database (and exported XML) should contain readable xml, no base64 encoded things
 		if(substr($formdata->memento, 0, 5) !== "<?xml") // won't be base64-encoded on import!
 			$formdata->memento = base64_decode($formdata->memento);
@@ -55,16 +54,16 @@ class qtype_comparetexttask extends question_type {
 	}
 
 	////// IMPORT/EXPORT FUNCTIONS /////////////////
+
 	/** Imports question from the Moodle XML format */
 	public function import_from_xml($data, $question, qformat_xml $format, $extra=null) {
-		//debugging(var_export($data));
 		// compare to parent::import_from_xml($data, $question, $format, $extra);
 		$question_type = $data['@']['type'];
 		if ($question_type != $this->name()) return false;
 		$qo = $format->import_headers($data);
 		$qo->qtype = $question_type;
 		$qo->memento = $format->getpath($data, array('#', 'memento', 0, '#'), '');
-		// compare to import_essay() in /question/format/xml/format.php
+		// compare to qformat_xml::import_essay() in /question/format/xml/format.php
 		// also see here: https://github.com/maths/moodle-qtype_stack/blob/master/questiontype.php
 		$qo->correctorfeedback['text'] = $format->getpath($data, array('#', 'correctorfeedback', 0, '#', 'text', 0, '#'), '', true);
 		$qo->correctorfeedback['format'] = $format->trans_format($format->getpath($data, array('#', 'correctorfeedback', 0, '@', 'format'), 'moodle_auto_format'));
@@ -72,7 +71,7 @@ class qtype_comparetexttask extends question_type {
 		return $qo;
 	}
 
-	/** Export question to the Moodle XML format */
+	/** Exports question to the Moodle XML format */
 	public function export_to_xml($question, qformat_xml $format, $extra=null) {
 		// compare to parent::export_to_xml($question, $format, $extra);
 		$expout = "    <memento>{$format->xml_escape($question->options->memento)}</memento>";
@@ -83,6 +82,12 @@ class qtype_comparetexttask extends question_type {
 		$expout .= $format->write_files($fs->get_area_files($question->contextid, $this->plugin_name(), 'correctorfeedback', $question->id));
 		$expout .= "\n    </correctorfeedback>\n";
 		return $expout;
+	}
+	
+	public function move_files($questionid, $oldcontextid, $newcontextid) {
+		parent::move_files($questionid, $oldcontextid, $newcontextid);
+		$fs = get_file_storage();
+		$fs->move_area_files_to_new_context($oldcontextid, $newcontextid, $this->plugin_name(), 'correctorfeedback', $questionid);
 	}
 
 	////// the following is borrowed from qtype_description -> compare to original when upgrading moodle! //////////
