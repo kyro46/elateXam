@@ -261,7 +261,7 @@ function newtagname(tagid, oc) {
             $('#edited'+tagid).html('<image src="../pix/i/ajaxloader.gif" title="loading..." alt="loading..."/>');
             $.ajax({
                 url: '<?php echo $CFG->wwwroot ?>/tag/manage_ajax.php',			
-                data: 'task=editname&tagid='+tagid+'&newname='+escape(newname),
+                data: 'task=editname&tagid='+tagid+'&newname='+encodeURIComponent(newname),
                 dataType: 'xml',
                 cache: false,
                 error: function(exhr, txtStat, errorThrown){log.html(errorThrown); log.attr("class","ajax_failed"); lastaction= '';}, 
@@ -299,7 +299,7 @@ function writepredef (tagid, oc) {
             $('#ttsave'+tagid).html('<image src="../pix/i/ajaxloader.gif" title="loading..." alt="loading..."/>');
             $.ajax({
                 url: '<?php echo $CFG->wwwroot ?>/tag/manage_ajax.php',			
-                data: 'task=writepredef&tagid='+tagid+'&newdesc='+escape($('#tagtext'+tagid).val()),
+                data: 'task=writepredef&tagid='+tagid+'&newdesc='+encodeURIComponent($('#tagtext'+tagid).val()),
                 dataType: 'xml',
                 cache: false,
                 error: function(exhr, txtStat, errorThrown){log.html(errorThrown); log.attr("class","ajax_failed");lastaction = '';}, 
@@ -340,7 +340,7 @@ function setinstances(tagid) {
                 $('#setallquest'+tagid).html('<image src="../pix/i/ajaxloader.gif" title="loading..." alt="loading..."/>');
                 $.ajax({
                     url: '<?php echo $CFG->wwwroot ?>/tag/manage_ajax.php',			
-                    data: 'task=setinstances&tagid='+tagid+'&newval='+escape(standardwert),
+                    data: 'task=setinstances&tagid='+tagid+'&newval='+encodeURIComponent(standardwert),
                     dataType: 'xml',
                     cache: false,
                     error: function(exhr, txtStat, errorThrown){log.html(errorThrown); log.attr("class","ajax_failed");}, 

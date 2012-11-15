@@ -60,7 +60,7 @@ if (strlen($task) == 0 || $id <= 0 ) {
             break;
         case 'writepredef':
             $newdesc   = addslashes(optional_param('newdesc', '', PARAM_RAW));
-            $newdesc = str_replace(array(", ",",,", " ,"),array(",",",",","), $newdesc);
+            $newdesc = str_replace(array(", ",",,", " ,"," , "),array(",",",",",",","), $newdesc);
             $record = new stdClass();
             $record->id             = $id;
             $record->description    = $newdesc;
