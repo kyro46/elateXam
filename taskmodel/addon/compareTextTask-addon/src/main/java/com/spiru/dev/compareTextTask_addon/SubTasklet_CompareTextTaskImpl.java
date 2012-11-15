@@ -69,10 +69,20 @@ public class SubTasklet_CompareTextTaskImpl extends AbstractAddonSubTasklet impl
 		}
 	}
 
+	private float checkPoints(float maxPointsPerTask, float points){
+		float pointsCorrector = points;
+		if (pointsCorrector < 0) 
+			pointsCorrector = 0;
+		if (pointsCorrector > maxPointsPerTask)
+			pointsCorrector = maxPointsPerTask;
+		return pointsCorrector;		
+	}
+	
 	@Override
 	public void doManualCorrection( CorrectionSubmitData csd ){
 		//System.out.println("\n\ndoManualCorrection() Called");
 		CompareTextTaskCorrectionSubmitData pcsd = (CompareTextTaskCorrectionSubmitData) csd;
+		final float maxPointsPerTask = block.getPointsPerSubTask();
 		//super.setAutoCorrection(acsd.getPoints());
 
 		//if( isAutoCorrected() )
@@ -84,7 +94,7 @@ public class SubTasklet_CompareTextTaskImpl extends AbstractAddonSubTasklet impl
 		if( complexTaskDefRoot.getCorrectionMode().getType() == ComplexTaskDefRoot.CorrectionModeType.MULTIPLECORRECTORS ) {
 			for( ManualCorrectionType mc : manualCorrections ){
 				if( mc.getCorrector().equals( pcsd.getCorrector() ) ){
-					mc.setPoints( pcsd.getPoints() );
+					mc.setPoints( checkPoints(maxPointsPerTask, pcsd.getPoints()) );
 					return;
 				}
 			}
@@ -92,7 +102,7 @@ public class SubTasklet_CompareTextTaskImpl extends AbstractAddonSubTasklet impl
 			ManualCorrectionType mc;
 			mc = objectFactory.createManualCorrectionType();
 			mc.setCorrector(pcsd.getCorrector());
-			mc.setPoints(pcsd.getPoints());
+			mc.setPoints( checkPoints(maxPointsPerTask, pcsd.getPoints()) );
 			manualCorrections.add(mc);
 		} else {
 			ManualCorrectionType mc;
@@ -103,7 +113,7 @@ public class SubTasklet_CompareTextTaskImpl extends AbstractAddonSubTasklet impl
 				manualCorrections.add(mc);
 			}
 			mc.setCorrector(pcsd.getCorrector());
-			mc.setPoints(pcsd.getPoints());
+			mc.setPoints( checkPoints(maxPointsPerTask, pcsd.getPoints()) );
 		}
 	}
 

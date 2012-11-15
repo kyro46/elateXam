@@ -138,6 +138,7 @@ public class SubTaskView_RtypeTask extends SubTaskView{
 					else 
 						symbolPic = getSymbolForCorrectedAnswer(pos,false);
 				}
+				else symbolPic = getSymbolForCorrectedAnswer(pos,false);
 			}			
 			
 			ret.append("\n  <td nowrap valign=top>"+
@@ -163,7 +164,7 @@ public class SubTaskView_RtypeTask extends SubTaskView{
 		if(answer && boolList.get(answersNumber)){			
 			return "<img src=\"" + request.getContextPath() + "/pics/true.gif\">";			
 		}
-		else if (answer || boolList.get(answersNumber)){			
+		else if (!answer && boolList.get(answersNumber)){			
 			return "<img src=\"" + request.getContextPath() + "/pics/false.gif\">";
 		}
 		
