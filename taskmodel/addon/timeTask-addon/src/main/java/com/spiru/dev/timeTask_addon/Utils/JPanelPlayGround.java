@@ -167,9 +167,11 @@ public class JPanelPlayGround extends JPanel {
 	 */
 	public void removeAllStuff(){
 		for(Symbol n:symbols){
-			this.remove(n);
+			this.removeConnectionLine(n.getConnectionLine());
+			n.markSymbol(false);
+			//this.remove(n);
 		}
-		symbols.clear();
+		//symbols.clear();
 		repaint();
 	}
 	
@@ -188,11 +190,11 @@ public class JPanelPlayGround extends JPanel {
 		repaint();
 	}
 	
-	public String getBase64StringFromImage(){
-		BufferedImage img=new BufferedImage(this.getWidth(),this.getHeight(),BufferedImage.TYPE_INT_ARGB);
+	public String getBase64StringFromImage(){								
+		BufferedImage img=new BufferedImage(this.getWidth(),300,BufferedImage.TYPE_INT_ARGB);		
 		this.paint(img.getGraphics());//dirty hack :)
 		  ByteArrayOutputStream bos=new ByteArrayOutputStream();
-		  try {
+		try {
 			ImageIO.write(img,"png",bos);
 		} catch (IOException e) {
 			e.printStackTrace();

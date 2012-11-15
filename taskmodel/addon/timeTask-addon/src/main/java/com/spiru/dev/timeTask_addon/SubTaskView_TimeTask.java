@@ -50,26 +50,8 @@ public class SubTaskView_TimeTask extends SubTaskView{
 				+ " id=\"applet_%s\""
 				+ " width=\"710\" height=\"540\" title=\"Java\">\n";
 		ret += "<param name=\"param\" value=\""+timeSubTasklet.getMemento()+"\">";
-		/*
-		if (timeSubTasklet.fromHandling()){
-			ret += "<param name=\"handling\" value=\"true\">";			
-		}
-		else{
-			ret += "<param name=\"handling\" value=\"false\">";
-		}*/
 		ret += "<param name=\"handling\" value=\""+timeSubTasklet.fromHandling()+"\">";
 		ret += "<param name=\"corrected\" value=\""+corrected+"\">";
-		/*
-		List<String> dragElements = timeSubTasklet.getDragElements();
-		for(int i=0; i<dragElements.size(); i++){
-			ret += "<param name=\"e"+i+"\" value=\""+dragElements.get(i)+"\">";
-		}
-		List<String> datePoints = timeSubTasklet.getDatePoints();
-		System.out.println("********** add DatePoints to HTML");
-		for(int i=0; i<datePoints.size(); i++){
-			ret += "<param name=\"dp"+i+"\" value=\""+datePoints.get(i)+"\">";
-		}
-		*/
 		
 		ret+= "</applet>\n";
 		ret += "<textarea name=\"task[%s].result\" id=\"task_%s.result\" style=\"display:none;\"></textarea>";
@@ -87,10 +69,56 @@ public class SubTaskView_TimeTask extends SubTaskView{
 			ret += "preSaveManager.registerCallback( preSave_task_%s );\n";
 			ret += "leavePageManager.registerCallback( leavePage_task_%s );\n";
 			ret += "</script>\n";
+		}else{
+			// show Solution
+			ret += "<p><u>Musterlösung:</u></p>";
+			ret += "\n<applet archive=\"applet/timeTask.jar\" code=\"" + path + "\""
+					+ " id=\"applet_%s\""
+					+ " width=\"710\" height=\"540\" title=\"Java\">\n";
+			ret += "<param name=\"param\" value=\""+timeSubTasklet.getMementoFromTaskDef()+"\">";
+			ret += "<param name=\"handling\" value=\""+true+"\">";
+			ret += "<param name=\"corrected\" value=\""+true+"\">";
+			ret+= "</applet>\n";
 		}
 		return ret.replaceAll("%s",""+relativeTaskNumber);
 	}
 
+	private BufferedImage getImageFromString(String base){
+		Image img = new ImageIcon(Base64.base64ToByteArray(base)).getImage();
+		BufferedImage bufferedImage = new BufferedImage( img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_RGB );
+		Graphics2D g = bufferedImage.createGraphics();
+		g.drawImage(img, 0,0, null);
+		g.dispose();
+		return bufferedImage;
+	}
+	
+	private String saveImageAndGetImageTag(BufferedImage bufferedImage, String relativeTaskNumber, ViewContext context){
+		////// save Image			
+		String typ = "png";
+		//Linux
+		String pfad = "/opt/apache-tomcat-7.0.29/webapps/taskmodel-core-view";		
+		//Dem Bild eine zufällige ID mitgeben, damit bei gleichzeitiger PDF-Erstellung
+		//keine Kollisionen mit anderen gleichnamigen Bildern anderer Studenten entstehen
+		SecureRandom random = new SecureRandom();	
+		//String name = "taskmodel-core-view/Grouping"+relativeTaskNumber+ "_" + new BigInteger(51, random).toString(32) + ".".concat(typ);
+		String name = "/Time"+relativeTaskNumber+ "_" + new BigInteger(51, random).toString(32) + ".".concat(typ);
+		File datei = new File( pfad + name );					
+		// write Image
+		try {
+			ImageIO.write( bufferedImage, typ, datei );				
+		} catch (IOException e) { 
+			e.printStackTrace();
+		}
+		int width = bufferedImage.getWidth();
+		int height = bufferedImage.getHeight();
+		if (width>600) width = 600;
+		if (height>600) height = 600;
+		// ImageTag for View und pdf			
+		HttpServletRequest request=(HttpServletRequest) context.getViewContextObject();
+		String pfadForAll = request.getContextPath();
+		return "<img src=\""+pfadForAll+name+"\" alt=\"timeImg\" width=\""+width+"\" height=\""+height+"\">";
+	}
+	
 	public String getCorrectedHTML( ViewContext context, int relativeTaskNumber ){
 		/*
 		 * getImage from handling (base64)
@@ -100,39 +128,8 @@ public class SubTaskView_TimeTask extends SubTaskView{
 		} 
 		else {			
 			// getImage as base64-string
-			String base = timeSubTasklet.getImage();		
-			// convert String to Image			
-			Image img = new ImageIcon(Base64.base64ToByteArray(base)).getImage();
-			// create bufferedImage
-			BufferedImage bufferedImage = new BufferedImage( img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_RGB );
-			Graphics2D g = bufferedImage.createGraphics();
-			g.drawImage(img, 0,0, null);
-			g.dispose();		
-			////// save Image			
-			String typ = "png";
-			//Linux
-			String pfad = "/opt/apache-tomcat-7.0.29/webapps/taskmodel-core-view";			
-			//Dem Bild eine zufällige ID mitgeben, damit bei gleichzeitiger PDF-Erstellung
-			//keine Kollisionen mit anderen gleichnamigen Bildern anderer Studenten entstehen
-			SecureRandom random = new SecureRandom();	
-			//String name = "taskmodel-core-view/Grouping"+relativeTaskNumber+ "_" + new BigInteger(51, random).toString(32) + ".".concat(typ);
-			String name = "/Time"+relativeTaskNumber+ "_" + new BigInteger(51, random).toString(32) + ".".concat(typ);
-			File datei = new File( pfad + name );					
-			// write Image
-			try {
-				ImageIO.write( bufferedImage, typ, datei );				
-			} catch (IOException e) { 
-				e.printStackTrace();
-			}		
-			int width = bufferedImage.getWidth();
-			int height = bufferedImage.getHeight();
-			if (width>600) width = 600;
-			if (height>600) height = 600;
-			// ImageTag for View und pdf			
-			HttpServletRequest request=(HttpServletRequest) context.getViewContextObject();
-			String pfadForAll = request.getContextPath();
-			String imgTag = "<img src=\""+pfadForAll+name+"\" alt=\"timeImg\" width=\""+width+"\" height=\""+height+"\">";			
-			return imgTag;
+			String base = timeSubTasklet.getImage();
+			return saveImageAndGetImageTag(getImageFromString(base),"St"+relativeTaskNumber,context);		
 		}				
 	}
 

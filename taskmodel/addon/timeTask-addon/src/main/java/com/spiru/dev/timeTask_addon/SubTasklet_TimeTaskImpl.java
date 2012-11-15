@@ -87,17 +87,27 @@ public class SubTasklet_TimeTaskImpl extends AbstractAddonSubTasklet implements 
 			e.printStackTrace();
 		}
 	}
+	
+	private float checkPoints(float maxPointsPerTask, float points){
+		float pointsCorrector = points;
+		if (pointsCorrector < 0) 
+			pointsCorrector = 0;
+		if (pointsCorrector > maxPointsPerTask)
+			pointsCorrector = maxPointsPerTask;
+		return pointsCorrector;		
+	}
 
 	@Override
 	public void doManualCorrection( CorrectionSubmitData csd ){
 		TimeTaskCorrectionSubmitData pcsd = (TimeTaskCorrectionSubmitData) csd;
+		final float maxPointsPerTask = block.getPointsPerSubTask();		
 		//super.setAutoCorrection(acsd.getPoints());
 		// TODO!
 		List<ManualCorrectionType> manualCorrections = subTaskObject.getManualCorrection();
 		if( complexTaskDefRoot.getCorrectionMode().getType() == ComplexTaskDefRoot.CorrectionModeType.MULTIPLECORRECTORS ) {
 			for( ManualCorrectionType mc : manualCorrections ){
-				if( mc.getCorrector().equals( pcsd.getCorrector() ) ){
-					mc.setPoints( pcsd.getPoints() );
+				if( mc.getCorrector().equals( pcsd.getCorrector() ) ){					
+					mc.setPoints( checkPoints(maxPointsPerTask, pcsd.getPoints()) );
 					return;
 				}
 			}
@@ -105,7 +115,7 @@ public class SubTasklet_TimeTaskImpl extends AbstractAddonSubTasklet implements 
 			ManualCorrectionType mc;
 			mc = objectFactory.createManualCorrectionType();
 			mc.setCorrector(pcsd.getCorrector());
-			mc.setPoints(pcsd.getPoints());
+			mc.setPoints( checkPoints(maxPointsPerTask, pcsd.getPoints()) );
 			manualCorrections.add(mc);
 		} else {
 			ManualCorrectionType mc;
@@ -116,7 +126,7 @@ public class SubTasklet_TimeTaskImpl extends AbstractAddonSubTasklet implements 
 				manualCorrections.add(mc);
 			}
 			mc.setCorrector(pcsd.getCorrector());
-			mc.setPoints(pcsd.getPoints());
+			mc.setPoints( checkPoints(maxPointsPerTask, pcsd.getPoints()) );
 		}
 	}
 
@@ -254,6 +264,32 @@ public class SubTasklet_TimeTaskImpl extends AbstractAddonSubTasklet implements 
 		return stringList;	
 	}
 */
+	@Override
+	public String getMementoFromTaskDef(){		
+		Element memento = (Element)mementoTaskDef;		
+		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		Transformer transformer;	
+		try {
+			transformer = transformerFactory.newTransformer();
+			DOMSource source = new DOMSource(memento/*.getOwnerDocument()*/);			
+			StringWriter stringWriter = new StringWriter();
+			StreamResult result =  new StreamResult(stringWriter);			
+			transformer.transform(source, result);			
+			String ret = stringWriter.toString();			
+			return DatatypeConverter.printBase64Binary(ret.getBytes("utf-8"));						
+		} catch (TransformerConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TransformerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+		return null;
+	}
+	
 	@Override
 	public String getMemento() {
 		Element memento = null;

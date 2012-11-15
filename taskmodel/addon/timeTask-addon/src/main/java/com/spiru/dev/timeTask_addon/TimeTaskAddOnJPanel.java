@@ -96,16 +96,31 @@ public class TimeTaskAddOnJPanel extends JPanel {
     	this.add(scrollPanePlayground);
     	this.setLayout(null);
     	this.setBounds(0,0,width,420);
-    }    
+    }       
     
     public void addElement(String id, String name, String color){
     	Color c = new Color(Integer.parseInt(color));
-    	DragElement e = new DragElement(name, c,mouseListener, Integer.parseInt(id));
-    	addElement(e);
+    	DragElement e = new DragElement(name, c, Integer.parseInt(id));
+    	addElement(e);    	
     }
     
     public boolean isModified(){
     	return jpanelPlayground.isModified();
+    }
+    
+    public void placeAllSymbols(){
+    	List<DragElement> eList = new ArrayList<DragElement>();
+    	eList = jpanelOfElements.getElementList();
+    	int row = 20;
+    	int column = 20;
+    	for(DragElement n:eList){
+    		jpanelPlayground.addSymbol(n, new Point(row, column));
+    		row+=30;
+    		if (row > 300 && row>jpanelPlayground.getTimeLine().getLine().getX2()){
+    			column+=25;
+    			row = 20;
+    		}
+    	}
     }
     
     public void addElement(DragElement e){
@@ -119,25 +134,24 @@ public class TimeTaskAddOnJPanel extends JPanel {
     	scrollPane.paintAll(scrollPane.getGraphics());
     }
     
-    public void addDatePoint(String caption, boolean visible, String input, boolean isCorrected){
+    public void addDatePoint(String caption, boolean visible, String input, boolean isCorrected){    	
     	DatePoint dp = new DatePoint(caption, visible, jpanelPlayground);
-    	if (!visible){
+    	if (!visible){    		
     		dp.setDateFromStudent(input);
     		dp.setCorrected(isCorrected);
     	}
-    	addDatePoint(dp);
+    	addDatePoint(dp);    	
     }
     
-    public void addDatePoint(DatePoint d){
+    public void addDatePoint(DatePoint d){    	
     	List<DatePoint> datePoints = jpanelPlayground.getTimeLine().getDatePoints();
     	for(DatePoint n:datePoints){
-    		if(n.getCaption().equals(d.getCaption())){
+    		if(n.getCaption().equals(d.getCaption())){    			
     			return;
     		}
     	}
     	datePoints.add(d);
-    	jpanelPlayground.add(d);
-    	
+    	jpanelPlayground.add(d);    	
     	// fill
     	List<Date> dates = new ArrayList<Date>();
     	for(DatePoint n:datePoints){
@@ -182,7 +196,7 @@ public class TimeTaskAddOnJPanel extends JPanel {
     			break;
     		}
     	}    	
-    }
+    }    
     
     public String save(){
     	List<DragElement> elements = jpanelOfElements.getElementList();

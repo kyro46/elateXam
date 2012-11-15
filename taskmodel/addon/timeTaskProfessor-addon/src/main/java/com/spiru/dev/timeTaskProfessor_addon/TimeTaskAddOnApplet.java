@@ -65,7 +65,7 @@ public class TimeTaskAddOnApplet extends Applet{
 						String datePoint1 = date.getAttribute("datePoint1");
 						String datePoint2 = date.getAttribute("datePoint2");
 						String dPasTextbox = date.getAttribute("whichDatePointAsTextbox");																			
-						if (dPasTextbox == null){
+						if (dPasTextbox == null || dPasTextbox.equals("")){
 						// visible = true bei beiden
 							gpanel.addDatePoint(datePoint1, true);
 							gpanel.addDatePoint(datePoint2, true);

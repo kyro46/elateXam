@@ -19,7 +19,7 @@ public class DragElement extends JPanel {
 	private boolean isMarked=false;	
 	private int id;
 	
-	public DragElement(String caption, Color color, MyMouseListener mouseListener, int idElement){				
+	public DragElement(String caption, Color color, int idElement){				
 		id = idElement;
 		colorPanel = new JPanel();
 		colorPanel.setBackground(color);
@@ -27,7 +27,7 @@ public class DragElement extends JPanel {
 		this.label = new JLabel(caption);						
 		this.add(label);	
 		this.setBorder(BorderFactory.createLineBorder(Color.black));
-		this.addMouseListener(mouseListener);
+		//this.addMouseListener(mouseListener);
 	}	
 	
 	/**

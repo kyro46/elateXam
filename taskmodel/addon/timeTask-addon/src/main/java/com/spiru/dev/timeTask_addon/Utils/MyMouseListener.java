@@ -85,8 +85,10 @@ public class MyMouseListener implements MouseListener {
 		else if (objekt instanceof JButton){
 			JButton button = (JButton)objekt;
 			if (button.getActionCommand().equals("DELETE")){
-				if (selectedSymbol != null){
-					panel.removeSymbol(selectedSymbol);
+				if (selectedSymbol != null){					
+					panel.removeConnectionLine(selectedSymbol.getConnectionLine());
+					selectedSymbol.markSymbol(false);
+					//panel.removeSymbol(selectedSymbol);
 					selectedSymbol = null;
 				}
 				else if (selectedConnectionLine != null){

@@ -34,48 +34,43 @@ public class TimeTaskAddOnApplet extends Applet{
 	    	this.setPreferredSize(new Dimension(width,420));
 	    	this.setLayout(null);	  	    
 	    	boolean isCorrected = Boolean.parseBoolean(this.getParameter("corrected"));
-	    	gpanel = new TimeTaskAddOnJPanel(width, isCorrected);	  
-	    	load();
+	    	gpanel = new TimeTaskAddOnJPanel(width, isCorrected);	 	    	 
+	    	load(getParameter("param"), isCorrected, getParameter("handling"));
 	        add(gpanel);  
 	        gpanel.setProcessed(oldIsProcessed);
 	        Timer timer = new Timer();	
 	        task = new Task(this);
 	        timer.schedule  ( task, 1000, 1500 );
-	    }
-
-	    public void load(){	    	
-				String xml = getParameter("param");		
-				boolean isCorrected = Boolean.parseBoolean(this.getParameter("corrected"));
-				String loadFromHandling = null; 
-				loadFromHandling = getParameter("handling");
+	    }	    	    	   
+	    
+	    public void load(String xml, boolean isCorrected, String loadFromHandling){	    		
 				byte[] x = null; // needed for ByteArrayInputStream
-				if (xml == null) return;
+				if (xml == null) return;				
 				// assumption: Not editing existing-, but adding new Question -> nothing to do
 				if (xml.length() == 0) return;
-				// from moodle we will get a base64 string
-				x = DatatypeConverter.parseBase64Binary(xml);
-				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+				// from moodle we will get a base64 string				
+				x = DatatypeConverter.parseBase64Binary(xml);				
+				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();				
 				factory.setIgnoringComments(true);
 				factory.setCoalescing(true); // Convert CDATA to Text nodes
 				factory.setNamespaceAware(false); // No namespaces: this is default
-				factory.setValidating(false); // Don't validate DTD: also default
-				
+				factory.setValidating(false); // Don't validate DTD: also default				
 				try{					
-					DocumentBuilder parser = factory.newDocumentBuilder();
-					Document document = parser.parse(new InputSource(new ByteArrayInputStream(x)));
-					Element memento = (Element) document.getElementsByTagName("Memento").item(0);									
+					DocumentBuilder parser = factory.newDocumentBuilder();					
+					Document document = parser.parse(new InputSource(new ByteArrayInputStream(x)));					
+					Element memento = (Element) document.getElementsByTagName("Memento").item(0);					
 					Element timelineSubTaskDef = (Element) memento.getElementsByTagName("timelineSubTaskDef").item(0);					
-					NodeList assignedEventList = timelineSubTaskDef.getElementsByTagName("assignedEvent");									
-					for (int i = 0; i < assignedEventList.getLength(); i++) {
+					NodeList assignedEventList = timelineSubTaskDef.getElementsByTagName("assignedEvent");					
+					for (int i = 0; i < assignedEventList.getLength(); i++) {						
 						Element assignedEvent = (Element) assignedEventList.item(i);						
-						String id = assignedEvent.getAttribute("id");
-						String name = assignedEvent.getAttribute("name");
-						String color = assignedEvent.getAttribute("color");
+						String id = assignedEvent.getAttribute("id");						
+						String name = assignedEvent.getAttribute("name");						
+						String color = assignedEvent.getAttribute("color");						
 						gpanel.addElement(id, name, color);						
-					}
-					if(loadFromHandling != null && loadFromHandling.equals("true")){
+					}					
+					if(loadFromHandling != null && loadFromHandling.equals("true")){						
 						NodeList isProcessed = timelineSubTaskDef.getElementsByTagName("Processed");
-						if (isProcessed != null){							
+						if (isProcessed != null){									
 							Element el = (Element) isProcessed.item(0);						
 							if (el != null){							
 								if (el.getTextContent().equals("true")){
@@ -85,7 +80,7 @@ public class TimeTaskAddOnApplet extends Applet{
 									oldIsProcessed = false;								
 							}
 						}
-						else oldIsProcessed = false;
+						else oldIsProcessed = false;						
 						NodeList symbolsWithoutLine = timelineSubTaskDef.getElementsByTagName("symbolNoLine");
 						for(int i=0; i<symbolsWithoutLine.getLength(); i++){
 							Element symbolNoLine = (Element)symbolsWithoutLine.item(i);
@@ -93,42 +88,42 @@ public class TimeTaskAddOnApplet extends Applet{
 							String posX = symbolNoLine.getAttribute("PosX");
 							String posY = symbolNoLine.getAttribute("PosY");
 							gpanel.addSymbol(eventID, posX, posY, null);
-						}
+						}						
 					}
 					NodeList dateList = timelineSubTaskDef.getElementsByTagName("date");
-					for(int i=0; i<dateList.getLength(); i++){
+					for(int i=0; i<dateList.getLength(); i++){						
 						Element date = (Element) dateList.item(i);
 						String datePoint1 = date.getAttribute("datePoint1");
 						String datePoint2 = date.getAttribute("datePoint2");
-						String dPasTextbox = date.getAttribute("whichDatePointAsTextbox");
-						if (dPasTextbox == null){
-						// visible = true bei beiden
+						String dPasTextbox = date.getAttribute("whichDatePointAsTextbox");						
+						if (dPasTextbox == null || dPasTextbox.equals("")){
+						// visible = true bei beiden							
 							gpanel.addDatePoint(datePoint1, true, null, isCorrected);
-							gpanel.addDatePoint(datePoint2, true, null, isCorrected);
+							gpanel.addDatePoint(datePoint2, true, null, isCorrected);							
 						}
-						else if (dPasTextbox.equals("all")){
+						else if (dPasTextbox.equals("all")){							
 						// visible = false bei beiden
 							String datePointStudent1 = date.getAttribute("datePointStudent1");
 							String datePointStudent2 = date.getAttribute("datePointStudent2");
 							gpanel.addDatePoint(datePoint1, false, datePointStudent1, isCorrected);
-							gpanel.addDatePoint(datePoint2, false, datePointStudent2, isCorrected);
+							gpanel.addDatePoint(datePoint2, false, datePointStudent2, isCorrected);							
 						}
 						else if (dPasTextbox.equals("datePoint1")){
-						// datePoint1 as Textbox
+						// datePoint1 as Textbox							
 							String datePointStudent1 = date.getAttribute("datePointStudent1");
 							gpanel.addDatePoint(datePoint1, false,datePointStudent1, isCorrected);
-							gpanel.addDatePoint(datePoint2, true, null, isCorrected);
+							gpanel.addDatePoint(datePoint2, true, null, isCorrected);							
 						}
-						else if (dPasTextbox.equals("none")){
+						else if (dPasTextbox.equals("none")){							
 							//beide Punkte sollen angezeigt werden
 								gpanel.addDatePoint(datePoint1, true,null, isCorrected);
-								gpanel.addDatePoint(datePoint2, true, null, isCorrected);
+								gpanel.addDatePoint(datePoint2, true, null, isCorrected);								
 							}
 						else{
-						// datePoint2 as Textbox
+						// datePoint2 as Textbox							
 							String datePointStudent2 = date.getAttribute("datePointStudent2");
 							gpanel.addDatePoint(datePoint1, true, null, isCorrected);
-							gpanel.addDatePoint(datePoint2, false, datePointStudent2, isCorrected);
+							gpanel.addDatePoint(datePoint2, false, datePointStudent2, isCorrected);							
 						}
 						if(loadFromHandling != null && loadFromHandling.equals("true")){
 							NodeList correctAssignmentIDList = date.getElementsByTagName("correctAssignmentID");
@@ -139,8 +134,11 @@ public class TimeTaskAddOnApplet extends Applet{
 								String posY = n.getAttribute("PosY");
 								String lineX = n.getAttribute("LineX");
 								gpanel.addSymbol(eventID, posX, posY, lineX);
-							}
-						}
+							}							
+						}						
+					}
+					if (loadFromHandling==null || loadFromHandling.equals("false")){
+						gpanel.placeAllSymbols();
 					}
 				} catch (ParserConfigurationException e) {
 					e.printStackTrace();
