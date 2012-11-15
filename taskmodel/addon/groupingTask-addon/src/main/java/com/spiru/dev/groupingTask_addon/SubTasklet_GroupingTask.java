@@ -20,6 +20,7 @@ public interface SubTasklet_GroupingTask extends AddOnSubTasklet {
 	public boolean loadFromHandling();
 	public String getImage();
 	public String getMemento();
+	public String getMementoFromTaskDef();	
 	
 }
 

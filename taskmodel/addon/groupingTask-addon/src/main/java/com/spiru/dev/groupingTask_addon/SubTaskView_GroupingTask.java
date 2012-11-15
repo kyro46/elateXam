@@ -78,6 +78,16 @@ public class SubTaskView_GroupingTask extends SubTaskView{
 			ret += "preSaveManager.registerCallback( preSave_task_%s );\n";
 			ret += "leavePageManager.registerCallback( leavePage_task_%s );\n";
 			ret += "</script>\n";
+		}else{
+			ret += "<p><u>Musterlösung:</u></p>";
+			ret += "<applet archive=\"applet/groupingTask.jar\" code=\"" + path + "\""
+					+ " id=\"applet_%s\""
+					+ " width=\"710\" height=\"540\" title=\"Java\">\n";			
+					
+			ret += "<param name=\"handling\" value=\""+true+"\">";
+			ret += "<param name=\"correction\" value=\""+true+"\">";
+			ret += "<param name=\"memento\" value=\""+groupingSubTasklet.getMementoFromTaskDef()+"\" >";						
+			ret+= "</applet>\n";			
 		}
 		return ret.replaceAll("%s",""+relativeTaskNumber);
 	}

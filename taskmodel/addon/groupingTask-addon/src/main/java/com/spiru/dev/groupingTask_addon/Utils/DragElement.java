@@ -70,8 +70,8 @@ public class DragElement extends JPanel implements DragGestureListener, Comparab
 		else{
 			// Label mit Caption links, kleiner Button fuer Verbindung rechts
 			this.setLayout(null);
-			FontMetrics fm = getFontMetrics(getFont());
-			labelCaption.setBounds(5,5,fm.stringWidth(name)+10,20);
+			FontMetrics fm = getFontMetrics(labelCaption.getFont());
+			labelCaption.setBounds(5,5,fm.stringWidth(name)+25,20);
 			// Verbindungsbutton
 			jButtonVerbindung = new JButton("+");
 			jButtonVerbindung.setActionCommand(GroupingTaskAddOnJPanel.PLUS_ACTION);

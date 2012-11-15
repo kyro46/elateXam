@@ -70,8 +70,7 @@ public class MyMouseListener implements MouseListener {
 			if (element != null)
 				element.markiereElement(false);
 			// neue Markierung setzen
-			element = (DragElement) objekt;
-			System.out.println(element.getId());
+			element = (DragElement) objekt;			
 			element.markiereElement(true);	
 			if (element == element2){
 				element.markiereElement(false);
