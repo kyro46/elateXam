@@ -1,6 +1,7 @@
 package com.spiru.dev.timeTask_addon;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.io.StringWriter;
@@ -174,7 +175,8 @@ public class TimeTaskAddOnJPanel extends JPanel {
     		}
     	}
     	
-    	jpanelPlayground.getTimeLine().sortDatePoints();   
+    	jpanelPlayground.getTimeLine().sortDatePoints();  
+    	jpanelPlayground.setPreferredSize(new Dimension(60+(int)jpanelPlayground.getTimeLine().getLine().getP2().getX(),jpanelPlayground.getHeight()));
     	scrollPanePlayground.paintAll(scrollPanePlayground.getGraphics());    	
     }
     
