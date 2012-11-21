@@ -149,23 +149,8 @@ public class SubTasklet_CompareTextTaskImpl extends AbstractAddonSubTasklet impl
 	// METHODS WHICH ARE SPECIFIC FOR THIS TASK FOLLOW FROM HERE:
 
 	@Override
-	public String getTagsString() {
-		// XPath: Memento/addonConfig/avaiableTags -> write into Base64 String
-		return XMLBase64.elementToBase64String(mementoTaskDef, "avaiableTags");
-	}
-
-	@Override
-	public String getInitialText() {
-		// XPath: Memento/textComparisonSubTaskDef/initialText
-		Element initialText = (Element) mementoTaskDef.getElementsByTagName("initialText").item(0);
-		return initialText.getFirstChild().getNodeValue();
-	}
-
-	@Override
-	public String getSampleSolution() {
-		// XPath: Memento/textComparisonSubTaskDef/sampleSolution
-		Element sampleSolution = (Element) mementoTaskDef.getElementsByTagName("sampleSolution").item(0);
-		return sampleSolution.getFirstChild().getNodeValue();
+	public String getMementoAsBase64() {
+		return XMLBase64.elementToBase64String(mementoTaskDef, null);
 	}
 
 	@Override

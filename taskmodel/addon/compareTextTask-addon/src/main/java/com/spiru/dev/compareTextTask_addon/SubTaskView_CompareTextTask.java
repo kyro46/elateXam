@@ -30,12 +30,12 @@ public class SubTaskView_CompareTextTask extends SubTaskView{
 		String ret = "<applet archive=\"applet/compareTextTask.jar\" code=\"" + path + "\""
 				+ " id=\"applet_%s\""
 				+ " width=\"710\" height=\"540\" title=\"Java\">\n";
-		if (!corrected)
-			ret += "<param name=\"initialText\" value=\"" + subTasklet.getInitialText() + "\">\n";
-		else ret += "<param name=\"initialText\" value=\"" + subTasklet.getSampleSolution() + "\">\n";
+		//if (!corrected)
+		//else ret += "<param name=\"initialText\" value=\"" + subTasklet.getSampleSolution() + "\">\n";
+		ret += "<param name=\"memento\" value=\"" + subTasklet.getMementoAsBase64() + "\">\n";
 		ret += "<param name=\"soFarSolution\" value=\"" + subTasklet.getResult() + "\">\n";
 		ret += "<param name=\"viewOnly\" value=\"" + corrected + "\">\n";
-		ret += "<param name=\"xmlDef\" value=\"" + subTasklet.getTagsString() + "\">\n";
+		//ret += "<param name=\"xmlDef\" value=\"" + subTasklet.getTagsString() + "\">\n";
 		ret += "</applet>\n";
 		// SavePageAction.getSubmitData() erwartet eine bestimmte Benennung von Element-Name und -ID!
 		ret += "<textarea name=\"task[%s].result\" id=\"task_%s.result\" style=\"display:none;\"></textarea>";

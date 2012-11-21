@@ -8,7 +8,7 @@
 
 <p>In der folgenden Liste finden Sie alle verf&uuml;gbaren Aufgaben. Klicken Sie auf den Titel der Aufgabe, um sie zu bearbeiten.</p>
 
-	<display:table partialList="false" name="TaskDefs" uid="row" pagesize="30" sort="list" class="table">
+	<display:table partialList="false" name="TaskDefs" uid="row" requestURI="" pagesize="30" sort="list" class="table">
 		<display:column title="Name&nbsp;&nbsp;&nbsp;" sortable="true">
 			<html:link action="/TaskConfig" paramId="taskId" paramName="row" paramProperty="id"><c:out value="${row.title}"/></html:link>
 			<c:if test="${!row.active}"> <b>(inaktiv)</b></c:if>

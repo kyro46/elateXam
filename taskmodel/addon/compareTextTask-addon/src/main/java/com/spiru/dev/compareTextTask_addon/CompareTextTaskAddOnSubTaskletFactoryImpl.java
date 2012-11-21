@@ -16,7 +16,6 @@ public class CompareTextTaskAddOnSubTaskletFactoryImpl implements AddOnSubTaskle
 
 	@Override
 	public String getAddonTaskType() {
-		System.out.println("Subtasklet CompareTextTask successfully loaded");
 		return "comparetexttask";
 	}
 

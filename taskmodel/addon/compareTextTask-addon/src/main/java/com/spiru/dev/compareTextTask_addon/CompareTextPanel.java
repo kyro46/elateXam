@@ -1,7 +1,9 @@
 package com.spiru.dev.compareTextTask_addon;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -16,7 +18,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.ScrollPaneConstants;
@@ -24,9 +25,13 @@ import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.DefaultHighlighter.DefaultHighlightPainter;
+import javax.swing.text.Highlighter;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+
+import com.spiru.dev.compareTextTask_addon.Utils.XmlPane;
 
 /**
  *
@@ -37,7 +42,7 @@ public class CompareTextPanel extends JPanel {
 
 	protected static String sentenceEndingCharacters = ".!?\"'";
 	protected static String defaultFontSizeLabel = "Default Font Size";
-	protected static String defaultFontSize = "13";
+	protected static String defaultFontSize = "14";
 	protected BoundedRangeModel independentScrollbarModel;
 	protected String initialText;
 	protected String sofarResult;
@@ -47,8 +52,8 @@ public class CompareTextPanel extends JPanel {
 	protected JSplitPane splitPane;
 	protected JScrollPane scrollPaneLeft;
 	protected JScrollPane scrollPaneRight;
-	protected JTextArea textAreaLeft;
-	protected JTextArea textAreaRight;
+	protected XmlPane textAreaLeft;
+	protected XmlPane textAreaRight;
 	protected int splitPaneHeight;
 	protected int splitPaneWidth;
 	protected int lastCaretPosRight;
@@ -62,8 +67,16 @@ public class CompareTextPanel extends JPanel {
 		splitPane = new JSplitPane();
 		scrollPaneLeft = new JScrollPane();
 		scrollPaneRight = new JScrollPane();
-		textAreaLeft = new JTextArea(); // new RSyntaxTextArea(); // JTextArea
-		textAreaRight = new JTextArea(); // new RSyntaxTextArea(); // JTextArea
+		textAreaLeft = new XmlPane(); // new RSyntaxTextArea(); // JTextArea
+		textAreaRight = new XmlPane(); // new RSyntaxTextArea(); // JTextArea
+
+		// font
+		//Font font = new JTextArea().getFont();
+		Font font = new Font("Verdana", Font.PLAIN, 14);
+		System.out.println(font);
+		textAreaLeft.setFont(font);
+		textAreaRight.setFont(font);
+		
 
 		toolBar = new JToolBar();
 		fontComboBox = new JComboBox();
@@ -130,6 +143,29 @@ public class CompareTextPanel extends JPanel {
 			textAreaLeft.getHighlighter().addHighlight(sentencePosBeg, sentencePosEnd, DefaultHighlighter.DefaultPainter);
 		} catch (BadLocationException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	protected void highlightXmlTags() {
+		Highlighter highlighter = textAreaRight.getHighlighter();
+		highlighter.removeAllHighlights();
+		String txt = textAreaRight.getText();
+		int tagBeg = -1, tagEnd = -1;
+		DefaultHighlightPainter paint = new DefaultHighlightPainter(Color.GREEN);
+		for(int i = 0; i < txt.length(); i++) {
+			char c = txt.charAt(i);
+			if(c=='<') tagBeg = i;
+			else if(c=='>') {
+				tagEnd = i+1;
+				if(tagBeg != -1) try {
+					highlighter.addHighlight(tagBeg, tagEnd, paint);
+				} catch (BadLocationException e) {
+					System.out.println(e);
+				}
+				// reset tagBeg/tagEnd
+				tagBeg = -1;
+				tagEnd = -1;
+			}
 		}
 	}
 
@@ -295,8 +331,8 @@ public class CompareTextPanel extends JPanel {
 		//((RSyntaxTextArea)textAreaRight).setHighlightCurrentLine(false);
 		//((RSyntaxTextArea)textAreaLeft).setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
 		//((RSyntaxTextArea)textAreaRight).setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
-		textAreaLeft.setLineWrap(true);
-		textAreaRight.setLineWrap(true);
+		//textAreaLeft.setLineWrap(true);
+		//textAreaRight.setLineWrap(true);
 	}
 
 	protected void initStudentView() {

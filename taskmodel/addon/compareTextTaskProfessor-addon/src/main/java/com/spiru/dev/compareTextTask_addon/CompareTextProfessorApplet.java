@@ -31,7 +31,7 @@ public class CompareTextProfessorApplet extends Applet {
 			mementostr = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Memento><addonConfig><availableTags><tag name=\"example\"><desc>Example Tag with Description, please replace this line.</desc></tag></availableTags></addonConfig>"
 					+ "<textComparisonSubTaskDef><initialText>Lorem ipsum dolor sit amet.</initialText><sampleSolution>Lorem ipsum dolor sit amet.</sampleSolution></textComparisonSubTaskDef></Memento>";
 			mementostr = DatatypeConverter.printBase64Binary(mementostr.getBytes());
-			this.setSize(800, 400);
+			this.setSize(600, 300);
 		}
 		Element availableTags = null;
 		String initial_text = "";

@@ -7,7 +7,7 @@
 </head>
 <p><fmt:message key="mainMenu.student"/></p>
 
-	<display:table partialList="false" name="TaskDefs" uid="row" pagesize="30" sort="list" class="table">
+	<display:table partialList="false" name="TaskDefs" uid="row" requestURI="" pagesize="30" sort="list" class="table">
 		<display:column title="Name&nbsp;&nbsp;&nbsp;" sortable="true">
 			<html:link action="/TaskViewFactory" paramId="taskId" paramName="row" paramProperty="id"><c:out value="${row.title}"/></html:link>
 			<c:if test="${!row.active}"> <b>(inaktiv)</b></c:if>
