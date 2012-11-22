@@ -70,10 +70,9 @@ public class CompareTextPanel extends JPanel {
 		textAreaLeft = new XmlPane(); // new RSyntaxTextArea(); // JTextArea
 		textAreaRight = new XmlPane(); // new RSyntaxTextArea(); // JTextArea
 
-		// font
 		//Font font = new JTextArea().getFont();
 		Font font = new Font("Verdana", Font.PLAIN, 14);
-		System.out.println(font);
+		//System.out.println(font);
 		textAreaLeft.setFont(font);
 		textAreaRight.setFont(font);
 		
@@ -339,14 +338,13 @@ public class CompareTextPanel extends JPanel {
 		// Settings not relevant for the Professor View
 		textAreaLeft.setEditable(false); // left area contains original
 		textAreaRight.setEditable(!viewOnly); // correctors won't be able to edit
-		toggleSyncButton.setSelected(!toggleSyncButton.isSelected());
-		sync_scrollbars(); // Sync Scrollbars by default
+		if (getRightTextAreaContent().length() > getLeftTextAreaContent().length()) {
+			toggleSyncButton.setSelected(!toggleSyncButton.isSelected());
+			sync_scrollbars(); // Sync Scrollbars by default
+		}
 
 		textAreaLeft.setText(initialText);
-		if ( sofarResult == null || sofarResult.equals("EMPTY") ) // see SubTasklet_CompareTextTaskImpl.getResult()
-			textAreaRight.setText(initialText);
-		else textAreaRight.setText(sofarResult);
-
+		textAreaRight.setText(sofarResult);
 		if (viewOnly) {
 			splitPane.remove(scrollPaneLeft);
 			splitPane.remove(scrollPaneRight);

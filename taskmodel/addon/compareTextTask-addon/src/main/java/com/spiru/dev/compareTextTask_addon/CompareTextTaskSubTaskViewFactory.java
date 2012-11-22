@@ -9,16 +9,13 @@ public class CompareTextTaskSubTaskViewFactory implements AddonSubTaskViewFactor
 
 	@Override
 	public String getAddonTaskType() {
-		System.out.println("SubtaskletViewFactory CompareTextTask successfully loaded");
 		return "comparetexttask";
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.thorstenberger.taskmodel.view.SubTaskViewFactory#getSubTaskView(de
-	 * .thorstenberger.taskmodel.complex.complextaskhandling.SubTasklet)
+	 * @see de.thorstenberger.taskmodel.view.SubTaskViewFactory#getSubTaskView(de.thorstenberger.taskmodel.complex.complextaskhandling.SubTasklet)
 	 */
 	@Override
 	public SubTaskView getSubTaskView(final SubTasklet subTasklet) {

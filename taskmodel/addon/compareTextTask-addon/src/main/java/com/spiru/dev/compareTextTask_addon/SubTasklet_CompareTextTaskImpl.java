@@ -2,6 +2,8 @@ package com.spiru.dev.compareTextTask_addon;
 
 import java.util.List;
 
+import javax.management.modelmbean.XMLParseException;
+import javax.xml.bind.DatatypeConverter;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -29,7 +31,6 @@ public class SubTasklet_CompareTextTaskImpl extends AbstractAddonSubTasklet impl
 
 	public SubTasklet_CompareTextTaskImpl( ComplexTaskDefRoot root, Block block, SubTaskDefType aoSubTaskDef, AddonSubTask atSubTask ) {
 		super(root, block,aoSubTaskDef,atSubTask);
-		//System.out.println("\n\nConstructor Called");
 		subTaskObject = atSubTask;
 		mementoTaskDef = ((AddonSubTaskDef)aoSubTaskDef).getMemento();
 		mementoTaskHandling = atSubTask.getMemento();
@@ -124,10 +125,13 @@ public class SubTasklet_CompareTextTaskImpl extends AbstractAddonSubTasklet impl
 	
 	@Override
 	public boolean isProcessed(){
-		if (getResult().equals("EMPTY"))
-			return false;
+		try {
+			if (getResult().equals("EMPTY"))
+				return false;
+		} catch (XMLParseException e) {
+			e.printStackTrace();
+		}
 		return true;
-		
 		//return getResult() != null && getResult().length() > 0 && !getResult().equals(getInitialText());
 	}
 
@@ -142,7 +146,12 @@ public class SubTasklet_CompareTextTaskImpl extends AbstractAddonSubTasklet impl
 
 	@Override
 	public int getHash(){
-		String ret = subTaskType.getRefId() + getResult() + getVirtualSubtaskNumber();
+		String ret = "";
+		try {
+			ret = subTaskType.getRefId() + getResult() + getVirtualSubtaskNumber();
+		} catch (XMLParseException e) {
+			e.printStackTrace();
+		}
 		return ret.hashCode();
 	}
 
@@ -154,11 +163,23 @@ public class SubTasklet_CompareTextTaskImpl extends AbstractAddonSubTasklet impl
 	}
 
 	@Override
-	public String getResult() {
+	public String getResult() throws XMLParseException {
+		// sometimes we need the result not encoded via Base64, e.g. when generating PDF
 		NodeList resultElement = mementoTaskHandling.getElementsByTagName("answer");
 		if(resultElement.getLength() == 1)
 			return resultElement.item(0).getFirstChild().getNodeValue();
+		else if(resultElement.getLength() > 1) // see constructor -> never happens unless somewone changes things somewhere
+			throw new XMLParseException("Unhandled Exception: mementoTaskHandling shall never contain more than one Answer");
 		return "EMPTY";
+	}
+
+	@Override
+	public String getResultAsBase64() throws XMLParseException {
+		// send to browser as Base64 String (safer, as it may contain line-breaks etc)
+		String result = getResult();
+		if (result != "EMPTY")
+			return DatatypeConverter.printBase64Binary(result.getBytes());
+		return result;
 	}
 
 	private void setResult(String resultString) {
@@ -167,6 +188,8 @@ public class SubTasklet_CompareTextTaskImpl extends AbstractAddonSubTasklet impl
 			resultElement = mementoTaskHandling.getOwnerDocument().createElement("answer");
 			mementoTaskHandling.appendChild(resultElement);
 		}
-		resultElement.setTextContent(resultString);
+		// will be sent as Base64 String
+		String s = new String(DatatypeConverter.parseBase64Binary(resultString));
+		resultElement.setTextContent(s);
 	}
 }

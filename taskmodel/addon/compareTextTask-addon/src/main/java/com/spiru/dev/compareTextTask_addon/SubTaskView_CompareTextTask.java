@@ -5,6 +5,9 @@ import java.text.ParseException;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.management.modelmbean.XMLParseException;
+import javax.xml.bind.DatatypeConverter;
+
 import de.thorstenberger.taskmodel.MethodNotSupportedException;
 import de.thorstenberger.taskmodel.complex.ParsingException;
 import de.thorstenberger.taskmodel.complex.complextaskhandling.CorrectionSubmitData;
@@ -30,12 +33,13 @@ public class SubTaskView_CompareTextTask extends SubTaskView{
 		String ret = "<applet archive=\"applet/compareTextTask.jar\" code=\"" + path + "\""
 				+ " id=\"applet_%s\""
 				+ " width=\"710\" height=\"540\" title=\"Java\">\n";
-		//if (!corrected)
-		//else ret += "<param name=\"initialText\" value=\"" + subTasklet.getSampleSolution() + "\">\n";
 		ret += "<param name=\"memento\" value=\"" + subTasklet.getMementoAsBase64() + "\">\n";
-		ret += "<param name=\"soFarSolution\" value=\"" + subTasklet.getResult() + "\">\n";
+		try {
+			ret += "<param name=\"soFarSolution\" value=\"" + subTasklet.getResultAsBase64() + "\">\n";
+		} catch (XMLParseException e) {
+			e.printStackTrace();
+		}
 		ret += "<param name=\"viewOnly\" value=\"" + corrected + "\">\n";
-		//ret += "<param name=\"xmlDef\" value=\"" + subTasklet.getTagsString() + "\">\n";
 		ret += "</applet>\n";
 		// SavePageAction.getSubmitData() erwartet eine bestimmte Benennung von Element-Name und -ID!
 		ret += "<textarea name=\"task[%s].result\" id=\"task_%s.result\" style=\"display:none;\"></textarea>";
@@ -61,8 +65,16 @@ public class SubTaskView_CompareTextTask extends SubTaskView{
 	public String getCorrectedHTML( ViewContext context, int relativeTaskNumber ){
 		// @see http://stackoverflow.com/questions/4874626/java-escape-html
 		//ret = StringUtils.replaceEach(ret, new String[]{"<", ">"}, new String[]{"&lt;", "&gt;"});
-		System.out.println("RESULT" + subTasklet.getResult());
-		String ret = subTasklet.getResult().replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+		//System.out.println("RESULT" + subTasklet.getResult());
+		String ret = "";
+		try {
+			ret = subTasklet.getResult();
+			ret = ret.replaceAll("<br/>", "\n");
+			ret = ret.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+			ret = ret.replaceAll("\n", "<br/>");
+		} catch (XMLParseException e) {
+			e.printStackTrace();
+		}
 		ret = "<b>Eingereichte Lösung des Studenten: </b><br/>" + ret;
 		return ret;
 	}
@@ -70,8 +82,8 @@ public class SubTaskView_CompareTextTask extends SubTaskView{
 	@Override
 	public String getCorrectionHTML(String actualCorrector, ViewContext context ){
 		String ret = getRenderedHTML( -1, true );
-		System.out.println(actualCorrector);
-		System.out.println(context.toString());
+		//System.out.println(actualCorrector);
+		//System.out.println(context.toString());
 		ret += getCorrectorPointsInputString(actualCorrector, "Anordnung", subTasklet);
 		return ret;
 	}
