@@ -25,7 +25,8 @@
 
 
 defined('MOODLE_INTERNAL') || die();
-
+global $CFG;
+require_once($CFG->dirroot.'/course/format/elatexam/questionlib/elate_question_edit_form.php');
 
 /**
  * Multiple choice editing form definition.
@@ -33,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2007 Jamie Pratt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_multichoice_edit_form extends question_edit_form {
+class qtype_multichoice_edit_form extends elate_question_edit_form {
     /**
      * Add question-type specific form fields.
      *
@@ -67,16 +68,22 @@ class qtype_multichoice_edit_form extends question_edit_form {
         $this->add_interactive_settings(true, true);
     }
 
-    protected function get_per_answer_fields($mform, $label, $gradeoptions,
-            &$repeatedoptions, &$answersoption) {
+    // we want the method in the parent class to be used
+    protected function get_per_answer_fields($mform, $label, $gradeoptions, &$repeatedoptions, &$answersoption) {
+    	$mform = $this->_form;
         $repeated = array();
         $repeated[] = $mform->createElement('header', 'answerhdr', $label);
-        $repeated[] = $mform->createElement('editor', 'answer',
-                get_string('answer', 'question'), array('rows' => 1), $this->editoroptions);
-        $repeated[] = $mform->createElement('select', 'fraction',
-                get_string('grade'), $gradeoptions);
-        $repeated[] = $mform->createElement('editor', 'feedback',
-                get_string('feedback', 'question'), array('rows' => 1), $this->editoroptions);
+        $repeated[] = $mform->createElement('editor', 'answer', get_string('answer', 'question'), array('rows' => 1), $this->editoroptions);
+        // instead of percentages, we only want to know whether an answer is correct (100%) or not (0%)
+		//$repeated[] = $mform->createElement('select', 'fraction', get_string('grade'), $gradeoptions);
+        /*$repeated[] = $mform->createElement('group', '', get_string('grade'), array(
+        		0 => $mform->createElement('radio', 'fraction', '', get_string('right', 'format_elatexam'), 100),
+        		1 => $mform->createElement('radio', 'fraction', '', get_string('wrong', 'format_elatexam'), 0),
+        ));*/
+        $repeated[] = $mform->createElement('advcheckbox', 'fraction', get_string('grade'), get_string('right', 'format_elatexam'), array('group' => 1), array(0, 1));
+		// we don't need the 'feedback' fields;
+        //$repeated[] = $mform->createElement('editor', 'feedback', get_string('feedback', 'question'), array('rows' => 1), $this->editoroptions);
+		$repeated[] = $mform->createElement('hidden', 'feedback', "");
         $repeatedoptions['answer']['type'] = PARAM_RAW;
         $repeatedoptions['fraction']['default'] = 0;
         $answersoption = 'answers';
@@ -144,10 +151,11 @@ class qtype_multichoice_edit_form extends question_edit_form {
             }
         } else {
             $totalfraction = round($totalfraction, 2);
-            if ($totalfraction != 1) {
+            // we need to disable those checks, as ElateXam can only handle correct (100%) and incorrect (0%)
+            /*if ($totalfraction != 1) {
                 $errors['fraction[0]'] = get_string('errfractionsaddwrong', 'qtype_multichoice',
                         $totalfraction * 100);
-            }
+            }*/
         }
         return $errors;
     }

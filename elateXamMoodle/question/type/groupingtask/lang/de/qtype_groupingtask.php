@@ -15,27 +15,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines the editing form for the groupingtask question type.
+ * Strings for component 'qtype_groupingtask', language 'en', branch 'MOODLE_20_STABLE'
  *
  * @package    qtype
  * @subpackage groupingtask
- * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-require_once($CFG->dirroot.'/course/format/elatexam/questionlib/elate_question_edit_form.php');
-
-class qtype_groupingtask_edit_form extends elate_applet_question_edit_form {
-
-	public function qtype() {
-		return 'groupingtask';
-	}
-
-	protected function get_innerpath() {
-		return "com/spiru/dev/groupingTaskProfessor_addon/GroupingTaskAddOnApplet.class";
-	}
-
-	protected function get_jarname() {
-		return "complexTask.jar";
-	}
-}
+$string['pluginname'] = 'GroupingTask';
+$string['pluginname_help'] = 'In diesem Aufgabentyp geht es darum, eine Reihe von Stichworten mit Hilfe von Verbindungslinien in einen Zusammenhang zu bringen.';
+$string['pluginname_link'] = 'question/type/groupingtask';
+$string['pluginnameadding'] = 'Eine GroupingTask Aufgabe hinzufügen';
+$string['pluginnameediting'] = 'Eine GroupingTask Aufgabe editieren';
+$string['pluginnamesummary'] = 'In diesem Aufgabentyp geht es darum, eine Reihe von Stichworten mit Hilfe von Verbindungslinien in einen Zusammenhang zu bringen.';

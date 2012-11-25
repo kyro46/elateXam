@@ -25,7 +25,8 @@
 
 
 defined('MOODLE_INTERNAL') || die();
-
+global $CFG;
+require_once($CFG->dirroot.'/course/format/elatexam/questionlib/elate_question_edit_form.php');
 
 /**
  * Short answer question editing form definition.
@@ -33,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2007 Jamie Pratt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_shortanswer_edit_form extends question_edit_form {
+class qtype_shortanswer_edit_form extends elate_question_edit_form {
 
     protected function definition_inner($mform) {
         $menu = array(
@@ -49,7 +50,7 @@ class qtype_shortanswer_edit_form extends question_edit_form {
         $mform->closeHeaderBefore('answersinstruct');
 
         $this->add_per_answer_fields($mform, get_string('answerno', 'qtype_shortanswer', '{no}'),
-                question_bank::fraction_options());
+                question_bank::fraction_options(), 1, 1);
 
         $this->add_interactive_settings();
     }

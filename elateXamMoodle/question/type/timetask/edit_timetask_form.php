@@ -23,9 +23,9 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-require_once($CFG->dirroot . '/question/type/comparetexttask/edit_comparetexttask_form.php');
+require_once($CFG->dirroot.'/course/format/elatexam/questionlib/elate_question_edit_form.php');
 
-class qtype_timetask_edit_form extends qtype_comparetexttask_edit_form {
+class qtype_timetask_edit_form extends elate_applet_question_edit_form {
 
 	public function qtype() {
 		return 'timetask';
@@ -33,5 +33,9 @@ class qtype_timetask_edit_form extends qtype_comparetexttask_edit_form {
 
 	protected function get_innerpath() {
 		return "com/spiru/dev/timeTaskProfessor_addon/TimeTaskAddOnApplet.class";
+	}
+
+	protected function get_jarname() {
+		return "complexTask.jar";
 	}
 }

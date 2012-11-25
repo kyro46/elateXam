@@ -15,27 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines the editing form for the groupingtask question type.
+ * Strings for component 'qtype_timetask', language 'en', branch 'MOODLE_20_STABLE'
  *
  * @package    qtype
- * @subpackage groupingtask
- * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @subpackage timetask
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-require_once($CFG->dirroot.'/course/format/elatexam/questionlib/elate_question_edit_form.php');
-
-class qtype_groupingtask_edit_form extends elate_applet_question_edit_form {
-
-	public function qtype() {
-		return 'groupingtask';
-	}
-
-	protected function get_innerpath() {
-		return "com/spiru/dev/groupingTaskProfessor_addon/GroupingTaskAddOnApplet.class";
-	}
-
-	protected function get_jarname() {
-		return "complexTask.jar";
-	}
-}
+$string['pluginname'] = 'TimeTask';
+$string['pluginname_help'] = 'Bei diesem Aufgabentyp sind eine Reihe von Ereignissen auf einem Zeitstrahl anzuordnen..';
+$string['pluginname_link'] = 'question/type/timetask';
+$string['pluginnameadding'] = 'Eine TimeTask Aufgabe hinzufügen';
+$string['pluginnameediting'] = 'Eine TimeTask Aufgabe editieren';
+$string['pluginnamesummary'] = 'Bei diesem Aufgabentyp sind eine Reihe von Ereignissen auf einem Zeitstrahl anzuordnen.';
