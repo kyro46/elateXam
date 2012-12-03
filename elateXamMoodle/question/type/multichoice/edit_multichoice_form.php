@@ -47,7 +47,11 @@ class qtype_multichoice_edit_form extends elate_question_edit_form {
      */
     protected function definition_inner($mform) {
     	$mform = $this->_form;
-    	$mform->addElement('text', 'num_right', get_string('num_right', 'format_elatexam'), array('size' => 3));
+    	// TODO: min/max
+    	// bei mc fehlt noch: maximal anzuzeigende richtige antwortalternativen,
+    	// minimal anzuzeigende antwortalternativen (default jeweils 1), insgesamt anzuzeigende antwortalternativen (wenn nichts eingetragen alle)
+    	$mform->addElement('text', 'num_right_min', get_string('num_right_min', 'format_elatexam'), array('size' => 3));
+    	$mform->addElement('text', 'num_right_max', get_string('num_right_max', 'format_elatexam'), array('size' => 3));
     	$mform->addElement('text', 'num_shown', get_string('num_shown', 'format_elatexam'), array('size' => 3));
     	$mform->setType('num_right', PARAM_INT);
     	$mform->setType('num_shown', PARAM_INT);
@@ -96,18 +100,18 @@ class qtype_multichoice_edit_form extends elate_question_edit_form {
     protected function add_interactive_settings($withclearwrong = false, $withshownumpartscorrect = false) {
     	$mform = $this->_form;
     	$mform->addElement('header', 'penaltyheader', get_string('penaltyheader', 'format_elatexam'));
-    	$mform->addElement('radio', 'assessment', get_string('assessment_reg', 'format_elatexam'), '', 0);
+    	$mform->addElement('radio', 'assessmentmode', get_string('assessment_reg', 'format_elatexam'), '', 0);
     	$mform->addElement('text', 'penalty', get_string('penaltyforeachincorrecttry', 'format_elatexam'), array('size' => 3));
-    	$mform->addElement('radio', 'assessment', get_string('assessment_dif', 'format_elatexam'), '', 1);
+    	$mform->addElement('radio', 'assessmentmode', get_string('assessment_dif', 'format_elatexam'), '', 1);
     	$mform->addElement('text', 'penalty_empty', get_string('penalty_empty', 'format_elatexam'), array('size' => 3));
     	$mform->addElement('text', 'penalty_wrong', get_string('penalty_wrong', 'format_elatexam'), array('size' => 3));
     	//$mform->insertElementBefore($x, 'generalfeedback'); // we want it at the top
     	$mform->setType('penalty', PARAM_FLOAT);
     	$mform->setType('penalty_empty', PARAM_FLOAT);
     	$mform->setType('penalty_wrong', PARAM_FLOAT);
-    	$mform->disabledIf('penalty', 'assessment', 'checked');
-    	$mform->disabledIf('penalty_empty', 'assessment', 'nonchecked');
-    	$mform->disabledIf('penalty_wrong', 'assessment', 'nonchecked');
+    	$mform->disabledIf('penalty', 'assessmentmode', 'checked');
+    	$mform->disabledIf('penalty_empty', 'assessmentmode', 'nonchecked');
+    	$mform->disabledIf('penalty_wrong', 'assessmentmode', 'nonchecked');
     	$mform->setDefault('penalty', 0);
     	$mform->setDefault('penalty_empty', 0);
     	$mform->setDefault('penalty_wrong', 0);
