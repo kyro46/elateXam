@@ -45,25 +45,43 @@ abstract class elate_question_edit_form extends question_edit_form {
 		// -> unwanted fields can now be removed via $mform->removeElement()
 		$mform = $this->_form;
 		switch($this->qtype()) {
+			// here we remove unwanted fields only, @see self::add_interactive_settings()
 			case 'essay':
+				$mform->removeElement('responsefieldlines');
+				$height = $mform->createElement('text', 'responsefieldlines', get_string('responsefieldlines', 'format_elatexam'), array('size' => 3));
+				$width = $mform->createElement('text', 'responsefieldwidth', get_string('responsefieldwidth', 'format_elatexam'), array('size' => 3));
+				$mform->insertElementBefore($height, 'attachments');
+				$mform->insertElementBefore($width, 'attachments');
+				$mform->setType('responsefieldlines', PARAM_INT);
+				$mform->setType('responsefieldwidth', PARAM_INT);
+				$mform->setDefault('responsefieldlines', 15);
+				$mform->setDefault('responsefieldwidth', 25);
 				$mform->removeElement('attachments');
+				$mform->removeElement('responseformat');
 				$mform->addElement('hidden', 'attachments', 0);
+				$mform->addElement('hidden', 'responseformat', 'editor');
 				break;
 			case 'multichoice':
-				$mform->removeElement('answernumbering');
-				$mform->addElement('hidden', 'answernumbering', 'abc');
+				// @see qtype_multichoice_edit_form
 				break;
 			case 'truefalse':
 				$mform->removeElement('feedbacktrue');
 				$mform->removeElement('feedbackfalse');
 				$mform->addElement('hidden', 'feedbacktrue', '');
-				$mform->addElement('hidden', 'feedbacktrue', '');
+				$mform->addElement('hidden', 'feedbackfalse', '');
 				// TODO: Abzug für falschen Versuch
 				break;
 		}
+		// Override some labels (global)
 		$mform->getElement('generalfeedback')->setLabel(get_string('generalfeedback', 'format_elatexam'));
+		$mform->addHelpButton('generalfeedback', 'generalfeedback', 'format_elatexam');
 	}
 
+	/**
+	 * By default, this method would use a selection of percentages for grades
+	 * this method is overridden in qtype_multichoice_edit_form::get_per_answer_fields()
+	 * @see question_edit_form::get_per_answer_fields()
+	 */
 	protected function get_per_answer_fields($mform, $label, $gradeoptions, &$repeatedoptions, &$answersoption) {
 		$repeated = array();
 		$repeated[] = $mform->createElement('header', 'answerhdr', $label);
@@ -83,31 +101,50 @@ abstract class elate_question_edit_form extends question_edit_form {
 		return $repeated;
 	}
 
+	/**
+	 * overridden because we don't need these fields at all
+	 * (but we want to stay compatible as muc as possible)
+	 * @see question_edit_form::add_combined_feedback_fields()
+	 */
 	protected function add_combined_feedback_fields($withshownumpartscorrect = false) {
 		$mform = $this->_form;
-		// overridden because we don't need them at all
 		foreach (array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback') as $fieldname) {
 			$mform->addElement('hidden', $fieldname, 0);
 			$mform->setType($fieldname, PARAM_RAW);
 		}
 	}
 
-	protected function add_interactive_settings($withclearwrong = false,
-			$withshownumpartscorrect = false) {
+	/**
+	 * this method was overridden as we want a textfield instead of the default combobox for 'penalty'
+	 * all the other fields that would be added by this method ain't needed at all
+	 * this method is overridden in qtype_multichoice_edit_form::add_interactive_settings()
+	 * 
+	 * @see question_edit_form::add_interactive_settings()
+	 */
+	protected function add_interactive_settings($withclearwrong = false, $withshownumpartscorrect = false) {
 		$mform = $this->_form;
-		// we want a textfield instead, the rest ain't needed
-		$mform->addElement('text', 'penalty', get_string('penaltyforeachincorrecttry', 'format_elatexam'), array('size' => 3));
+		//$mform->addElement('header', 'multitriesheader', get_string('settingsformultipletries', 'question'));
+		$x = $mform->createElement('text', 'penalty', get_string('penaltyforeachincorrecttry', 'format_elatexam'), array('size' => 3));
+		$mform->insertElementBefore($x, 'generalfeedback'); // we want it at the top
 		$mform->setType('penalty', PARAM_INT);
-		$mform->setDefault('penalty', 0);
+		if($this->qtype() == 'truefalse')
+			$mform->setDefault('penalty', 1);
+		else $mform->setDefault('penalty', 0);
 	}
 
-	protected function data_preprocessing_combined_feedback($question,
-			$withshownumcorrect = false) {
+	/**
+	 * overidden to do nothing
+	 * @see question_edit_form::data_preprocessing_combined_feedback()
+	 */
+	protected function data_preprocessing_combined_feedback($question, $withshownumcorrect = false) {
 		return $question;
 	}
 
-	protected function data_preprocessing_hints($question, $withclearwrong = false,
-			$withshownumpartscorrect = false) {
+	/**
+	 * overidden to do nothing
+	 * @see question_edit_form::data_preprocessing_hints()
+	 */
+	protected function data_preprocessing_hints($question, $withclearwrong = false, $withshownumpartscorrect = false) {
 		return $question;
 	}
 
@@ -139,8 +176,13 @@ abstract class elate_question_edit_form extends question_edit_form {
 				array('rows' => 10), $this->editoroptions);
 		$this->_form->setType('correctorfeedback', PARAM_RAW);
 	}
+	/**
+	 * Boilerplate Code, needed for all 'editor' form fields
+	 * as they may contain images that need to be handled.
+	 *
+	 * for example @see qtype_essay_edit_form.data_preprocessing()
+	 */
 	protected function data_preprocessing_corrector_feedback($question) {
-		// @see qtype_essay_edit_form.data_preprocessing()
 		$question = parent::data_preprocessing($question);
 		if (empty($question->options)) return $question;
 		$draftid = file_get_submitted_draft_itemid('correctorfeedback');

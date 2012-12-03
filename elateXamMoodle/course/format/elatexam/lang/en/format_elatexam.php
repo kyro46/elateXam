@@ -37,7 +37,22 @@ $string['category'] = 'Kategorie';
 
 ////////// Strings for Questionlib //////////////////////
 $string['generalfeedback'] = 'Feedback for Student';
+$string['generalfeedback_help'] = 'Hint that is shown to students during the examination (optional).';
 $string['correctorfeedback'] = 'Sample Solution';
 $string['penaltyforeachincorrecttry'] = "Penalty for False Answers";
 $string['right'] = "right";
 $string['wrong'] = "wrong";
+
+////////// Modified or added Strings for MC //////////////////////
+$string['num_shown'] = 'Number of visible Answers';
+$string['num_right'] = 'Number of visible correct Answers';
+$string['penalty_empty'] = 'Negative Points for not chosen correct Answers';
+$string['penalty_wrong'] = 'Negative Points for chosen wrong Answer';
+$string['penaltyheader'] = 'Einstellungen für Punkteabzug';
+$string['assessment_reg'] = 'Reguläre Bewertung';
+$string['assessment_dif'] = 'Unterschiedliche Bewertung';
+
+////////// Modified or added Strings for FreeText/Essay //////////////////////
+$string['responsefieldlines'] = 'Höhe des Textfeldes';
+$string['responsefieldwidth'] = 'Breite des Textfeldes';
+

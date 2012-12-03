@@ -39,12 +39,13 @@ class elate_questiontype_base extends question_type {
 	}
 
 	protected function initialise_combined_feedback(question_definition $question, $questiondata, $withparts = false) {
+		// @see parent::initialise_combined_feedback($question, $questiondata);
 		foreach(array('correctfeedback','partiallycorrectfeedback','incorrectfeedback') as $fieldname)
 			$question->{$fieldname} = "";
 	}
 
 	protected function import_or_save_files($field, $context, $component, $filearea, $itemid) {
-		// overridden because of missing exception handling in question_type::
+		// overridden because of missing exception handling in question_type::import_or_save_files()
 		if(!in_array($filearea, array('answerfeedback','correctfeedback','partiallycorrectfeedback','incorrectfeedback'))) try {
 			return parent::import_or_save_files($field, $context, $component, $filearea, $itemid);
 		} catch(Exception $e) {

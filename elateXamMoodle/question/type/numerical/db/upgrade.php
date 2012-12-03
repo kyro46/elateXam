@@ -15,20 +15,31 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for the rtypetask question type.
+ * Numerical question type upgrade code.
  *
  * @package    qtype
- * @subpackage rtypetask
+ * @subpackage numerical
+ * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2012061700;
-$plugin->requires = 2012061700;
-$plugin->component = 'qtype_rtypetask';
 
-$plugin->dependencies = array(
-		'format_elatexam' => ANY_VERSION,
-		'qtype_multichoice' => ANY_VERSION, // for translations
-);
+/**
+ * Upgrade code for the numerical question type.
+ * @param int $oldversion the version we are upgrading from.
+ */
+function xmldb_qtype_numerical_upgrade($oldversion) {
+    global $CFG, $DB;
+
+    $dbman = $DB->get_manager();
+
+
+    // Moodle v2.3.0 release upgrade line
+    // Put any upgrade step following this
+
+
+    return true;
+}
