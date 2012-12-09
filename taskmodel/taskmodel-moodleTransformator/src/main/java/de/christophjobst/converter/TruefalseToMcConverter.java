@@ -22,7 +22,9 @@ import de.thorstenberger.taskmodel.complex.complextaskdef.McSubTaskDef;
 
 public class TruefalseToMcConverter {
 
-	public static McSubTaskDef processing(Question question) throws ParserConfigurationException, SAXException, IOException, TransformerException {
+	public static McSubTaskDef processing(Question question)
+			throws ParserConfigurationException, SAXException, IOException,
+			TransformerException {
 
 		RandomIdentifierGenerator rand = new RandomIdentifierGenerator();
 
@@ -30,37 +32,41 @@ public class TruefalseToMcConverter {
 		McSubTaskDef.Correct correct = new McSubTaskDef.Correct();
 		McSubTaskDef.Incorrect incorrect = new McSubTaskDef.Incorrect();
 
-			// Allgemeine Angaben pro Frage
-			subTask.setTrash(false);
-			subTask.setInteractiveFeedback(false);
-			subTask.setPreserveOrderOfAnswers(false);
-			subTask.setDisplayedAnswers(2);
+		// Allgemeine Angaben pro Frage
+		subTask.setTrash(false);
+		subTask.setInteractiveFeedback(false);
+		subTask.setPreserveOrderOfAnswers(false);
+		subTask.setDisplayedAnswers(2);
 
-			subTask.setCategory("singleSelect");
+		subTask.setCategory("singleSelect");
 
-			// Spezielle Angaben pro Frage
-			subTask.setProblem(Base64Relocator.relocateBase64(question.getQuestiontext().getText(),question.getQuestiontext().getFile()));
-			subTask.setHint(question.getName().getText().toString());
-			subTask.setTrash(false);
-			subTask.setInteractiveFeedback(false);
-			subTask.setId(question.getName().getText().toString() + "_"
-					+ rand.getRandomID());
+		// Spezielle Angaben pro Frage
+		subTask.setProblem(Base64Relocator.relocateBase64(question
+				.getQuestiontext().getText(), question.getQuestiontext()
+				.getFile()));
+		subTask.setHint(Base64Relocator.relocateBase64(question
+				.getGeneralfeedback().getText(), question.getQuestiontext()
+				.getFile()));
+		subTask.setTrash(false);
+		subTask.setInteractiveFeedback(false);
+		subTask.setId(question.getName().getText().toString() + "_"
+				+ rand.getRandomID());
 
-			correct.setId(rand.getRandomID());
-			incorrect.setId(rand.getRandomID());
+		correct.setId(rand.getRandomID());
+		incorrect.setId(rand.getRandomID());
 
-			if (question.getAnswer().get(0).getFraction().equals("100")) {
-				correct.setValue("Wahr");
-				incorrect.setValue("Falsch");
-			} else {
-				correct.setValue("Falsch");
-				incorrect.setValue("Wahr");
-			}
+		if (question.getAnswer().get(0).getFraction().equals("100")) {
+			correct.setValue("Wahr");
+			incorrect.setValue("Falsch");
+		} else {
+			correct.setValue("Falsch");
+			incorrect.setValue("Wahr");
+		}
 
-			subTask.getCorrectOrIncorrect().add(correct);
-			subTask.getCorrectOrIncorrect().add(incorrect);
-			correct = new McSubTaskDef.Correct();
-			incorrect = new McSubTaskDef.Incorrect();
+		subTask.getCorrectOrIncorrect().add(correct);
+		subTask.getCorrectOrIncorrect().add(incorrect);
+		correct = new McSubTaskDef.Correct();
+		incorrect = new McSubTaskDef.Incorrect();
 
 		return subTask;
 	}

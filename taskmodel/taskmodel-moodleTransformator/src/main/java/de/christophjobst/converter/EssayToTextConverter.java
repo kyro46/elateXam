@@ -22,21 +22,33 @@ import generated.Quiz.Question;
 
 public class EssayToTextConverter {
 
-	public static TextSubTaskDef processing(Question question) throws ParserConfigurationException, SAXException, IOException, TransformerException {
+	public static TextSubTaskDef processing(Question question)
+			throws ParserConfigurationException, SAXException, IOException,
+			TransformerException {
 
 		RandomIdentifierGenerator rand = new RandomIdentifierGenerator();
 
 		TextSubTaskDef subTask = new TextSubTaskDef();
 
-			subTask.setProblem(Base64Relocator.relocateBase64(question.getQuestiontext().getText(),question.getQuestiontext().getFile()));
-			subTask.setHint(question.getName().getText().toString());
+		subTask.setProblem(Base64Relocator.relocateBase64(question
+				.getQuestiontext().getText(), question.getQuestiontext()
+				.getFile()));
+		subTask.setHint(Base64Relocator.relocateBase64(question
+				.getGeneralfeedback().getText(), question.getQuestiontext()
+				.getFile()));
 
-			subTask.setCorrectionHint(Base64Relocator.relocateBase64(question.getGraderinfo().getText(),question.getGraderinfo().getFile()));
-			
-			subTask.setTrash(false);
-			subTask.setInteractiveFeedback(false);
-			subTask.setId(question.getName().getText().toString() + "_"
-					+ rand.getRandomID());
+		subTask.setCorrectionHint(Base64Relocator.relocateBase64(question
+				.getGraderinfo().getText(), question.getGraderinfo().getFile()));
+
+		subTask.setTextFieldHeight(Integer.parseInt(question
+				.getResponsefieldlines()));
+		subTask.setTextFieldWidth(Integer.parseInt(question
+				.getResponsefieldwidth()));
+
+		subTask.setTrash(false);
+		subTask.setInteractiveFeedback(false);
+		subTask.setId(question.getName().getText().toString() + "_"
+				+ rand.getRandomID());
 
 		return subTask;
 	}
