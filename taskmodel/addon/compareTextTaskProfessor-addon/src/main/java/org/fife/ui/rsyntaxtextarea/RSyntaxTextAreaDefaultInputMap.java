@@ -48,7 +48,8 @@ public class RSyntaxTextAreaDefaultInputMap extends RTADefaultInputMap {
 		// Note we cannot simply remove the key-typed action; we must map it
 		// to nothing to stop default action.
 		put(KeyStroke.getKeyStroke(KeyEvent.VK_SLASH, 0),					RSyntaxTextAreaEditorKit.rstaCloseMarkupTagAction);
-		put(KeyStroke.getKeyStroke('/'),									"DoNothing");
+		/****** THIS DOES NOT WORK; I NEEDED TO UNCOMMENT THIS; CHECK FUTURE VERSIONS OF THIS LIBRARY*****/
+		//put(KeyStroke.getKeyStroke('/'),									"DoNothing");
 		put(KeyStroke.getKeyStroke(KeyEvent.VK_SLASH, defaultMod),			RSyntaxTextAreaEditorKit.rstaToggleCommentAction);
 		put(KeyStroke.getKeyStroke(KeyEvent.VK_OPEN_BRACKET, defaultMod),	RSyntaxTextAreaEditorKit.rstaGoToMatchingBracketAction);
 		put(KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, defaultMod),		RSyntaxTextAreaEditorKit.rstaCollapseFoldAction);

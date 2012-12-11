@@ -29,10 +29,13 @@ import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.DefaultHighlighter.DefaultHighlightPainter;
 import javax.swing.text.Highlighter;
 
+import org.fife.ui.autocomplete.AutoCompletion;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+
+import com.spiru.dev.compareTextTask_addon.Utils.CompareTextCompletionProvider;
 
 
 /**
@@ -284,7 +287,7 @@ public class CompareTextPanel extends JPanel {
 		return ret;
 	}
 
-	/*protected void enableAutoCompletion() {
+	protected void enableAutoCompletion() {
 		CompareTextCompletionProvider completionp = new CompareTextCompletionProvider(tagList);
 		AutoCompletion ac = new AutoCompletion(completionp);
 		ac.install(textAreaRight);
@@ -292,7 +295,7 @@ public class CompareTextPanel extends JPanel {
 		ac.setAutoCompleteEnabled(true);
 		ac.setParameterAssistanceEnabled(false); // might come as a requirement
 		ac.setShowDescWindow(true); // show help text alongside completions
-	}*/
+	}
 
 	protected void initScrollPanes() {
 		// Adjust Divider of SplitPlane
