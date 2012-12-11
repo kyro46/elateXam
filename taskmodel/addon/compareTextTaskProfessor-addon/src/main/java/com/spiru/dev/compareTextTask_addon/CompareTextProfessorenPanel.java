@@ -55,6 +55,7 @@ public class CompareTextProfessorenPanel extends CompareTextPanel {
 	protected void initButtons() {
 		buttonUpload.setText("Upload Text File");
 		buttonUpload.addActionListener(new java.awt.event.ActionListener() {
+			@Override
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				String tmp = "";
 				try {
@@ -87,6 +88,7 @@ public class CompareTextProfessorenPanel extends CompareTextPanel {
 		});
 		buttonMinus.setText("-");
 		buttonMinus.addActionListener(new java.awt.event.ActionListener() {
+			@Override
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				int s[] = tablePanel.getSelectedRows();
 				for (int i = 0; i < s.length; i++) {
@@ -98,6 +100,7 @@ public class CompareTextProfessorenPanel extends CompareTextPanel {
 		});
 		buttonPlus.setText("+");
 		buttonPlus.addActionListener(new java.awt.event.ActionListener() {
+			@Override
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				tableModel.addRow(new Object [] {null, null});
 			}
