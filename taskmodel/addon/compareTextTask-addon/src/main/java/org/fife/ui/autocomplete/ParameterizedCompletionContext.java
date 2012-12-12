@@ -189,9 +189,11 @@ class ParameterizedCompletionContext {
 	/**
 	 * Activates parameter completion support.
 	 *
+	 * @param addParamListStart Whether the parameter list start token should
+	 *        be inserted at the caret position before the parameters.
 	 * @see #deactivate()
 	 */
-	public void activate() {
+	public void activate(boolean addParamListStart) {
 
 		if (active) {
 			return;
@@ -220,7 +222,7 @@ class ParameterizedCompletionContext {
 			}
 		}
 
-		listener.install(tc);
+		listener.install(tc, addParamListStart);
 		// First time through, we'll need to create this window.
 		if (paramChoicesWindow==null) {
 			paramChoicesWindow = createParamChoicesWindow();
@@ -250,7 +252,7 @@ class ParameterizedCompletionContext {
 	 * Hides any popup windows and terminates parameterized completion
 	 * assistance.
 	 *
-	 * @see #activate()
+	 * @see #activate(boolean)
 	 */
 	public void deactivate() {
 		if (!active) {
@@ -872,6 +874,7 @@ class ParameterizedCompletionContext {
 	 */
 	private class GotoEndAction extends AbstractAction {
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 
 			// If the param choices window is visible and something is chosen,
@@ -916,6 +919,7 @@ class ParameterizedCompletionContext {
 	 */
 	private class ClosingAction extends AbstractAction {
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 
 			JTextComponent tc = ac.getTextComponent();
@@ -925,21 +929,26 @@ class ParameterizedCompletionContext {
 			// Are they at or past the end of the parameters?
 			if (dot>=maxPos.getOffset()-2) { // ">=" for overwrite mode
 
-				// Try to decide if we're closing a paren that is a part
-				// of the (last) arg being typed.
-				String text = getArgumentText(dot);
-				if (text!=null) {
-					char start = pc.getProvider().getParameterListStart();
-					int startCount = getCount(text, start);
-					int endCount = getCount(text, end);
-					if (startCount>endCount) { // Just closing a paren
-						tc.replaceSelection(Character.toString(end));
-						return;
-					}
+				if (dot==maxPos.getOffset()-1) { // Happens in overwrite mode
+					tc.replaceSelection(Character.toString(end));
 				}
-				//tc.setCaretPosition(maxPos.getOffset());
-				tc.setCaretPosition(Math.min(tc.getCaretPosition()+1,
-						tc.getDocument().getLength()));
+
+				else { // Typical case.
+					// Try to decide if we're closing a paren that is a part
+					// of the (last) arg being typed.
+					String text = getArgumentText(dot);
+					if (text!=null) {
+						char start = pc.getProvider().getParameterListStart();
+						int startCount = getCount(text, start);
+						int endCount = getCount(text, end);
+						if (startCount>endCount) { // Just closing a paren
+							tc.replaceSelection(Character.toString(end));
+							return;
+						}
+					}
+					//tc.setCaretPosition(maxPos.getOffset());
+					tc.setCaretPosition(tc.getCaretPosition()+1);
+				}
 
 				deactivate();
 
@@ -972,6 +981,7 @@ class ParameterizedCompletionContext {
 	 */
 	private class HideAction extends AbstractAction {
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			// On first escape press, if the param choices window is visible,
 			// just remove it, but keep ability to tab through params.  If
@@ -1003,6 +1013,7 @@ class ParameterizedCompletionContext {
 		 *
 		 * @param e The event.
 		 */
+		@Override
 		public void caretUpdate(CaretEvent e) {
 			if (maxPos==null) { // Sanity check
 				deactivate();
@@ -1020,6 +1031,7 @@ class ParameterizedCompletionContext {
 		}
 
 
+		@Override
 		public void changedUpdate(DocumentEvent e) {
 		}
 
@@ -1029,6 +1041,7 @@ class ParameterizedCompletionContext {
 		 *
 		 * @param e The event.
 		 */
+		@Override
 		public void focusGained(FocusEvent e) {
 			// Do nothing
 		}
@@ -1039,6 +1052,7 @@ class ParameterizedCompletionContext {
 		 *
 		 * @param e The event.
 		 */
+		@Override
 		public void focusLost(FocusEvent e) {
 			deactivate();
 		}
@@ -1048,6 +1062,7 @@ class ParameterizedCompletionContext {
 			if (!ignoringDocumentEvents) {
 				ignoringDocumentEvents = true;
 				SwingUtilities.invokeLater(new Runnable() {
+					@Override
 					public void run() {
 						possiblyUpdateParamCopies(e.getDocument());
 						ignoringDocumentEvents = false;
@@ -1057,6 +1072,7 @@ class ParameterizedCompletionContext {
 		}
 
 
+		@Override
 		public void insertUpdate(DocumentEvent e) {
 			handleDocumentEvent(e);
 		}
@@ -1066,9 +1082,12 @@ class ParameterizedCompletionContext {
 		 * Installs this listener onto a text component.
 		 *
 		 * @param tc The text component to install onto.
+		 * @param addParamStartList Whether or not
+		 *        {@link CompletionProvider#getParameterListStart()} should be
+		 *        added to the text component.
 		 * @see #uninstall()
 		 */
-		public void install(JTextComponent tc) {
+		public void install(JTextComponent tc, boolean addParamStartList) {
 
 			boolean replaceTabs = false;
 			if (tc instanceof RSyntaxTextArea) {
@@ -1084,7 +1103,7 @@ class ParameterizedCompletionContext {
 
 				// Insert the parameter text
 				ParameterizedCompletionInsertionInfo info =
-					pc.getInsertionInfo(tc, replaceTabs);
+					pc.getInsertionInfo(tc, addParamStartList, replaceTabs);
 				tc.replaceSelection(info.getTextToInsert());
 
 				// Add highlights around the parameters.
@@ -1133,6 +1152,7 @@ class ParameterizedCompletionContext {
 		}
 
 
+		@Override
 		public void removeUpdate(DocumentEvent e) {
 			handleDocumentEvent(e);
 		}
@@ -1178,6 +1198,7 @@ class ParameterizedCompletionContext {
 			this.oldAction = oldAction;
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (paramChoicesWindow!=null && paramChoicesWindow.isVisible()) {
 				paramChoicesWindow.incSelection(amount);
@@ -1198,6 +1219,7 @@ class ParameterizedCompletionContext {
 	 */
 	private class NextParamAction extends AbstractAction {
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			moveToNextParam();
 		}
@@ -1223,6 +1245,7 @@ class ParameterizedCompletionContext {
 	 */
 	private class PrevParamAction extends AbstractAction {
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			moveToPreviousParam();
 		}

@@ -15,6 +15,7 @@ import javax.swing.text.BadLocationException;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.Token;
+import org.fife.ui.rsyntaxtextarea.TokenTypes;
 
 
 /**
@@ -33,6 +34,7 @@ public class LatexFoldParser implements FoldParser {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public List getFolds(RSyntaxTextArea textArea) {
 
 		List folds = new ArrayList();
@@ -48,11 +50,11 @@ public class LatexFoldParser implements FoldParser {
 				Token t = textArea.getTokenListForLine(line);
 				while (t!=null && t.isPaintable()) {
 
-					if (t.is(Token.RESERVED_WORD, BEGIN)) {
+					if (t.is(TokenTypes.RESERVED_WORD, BEGIN)) {
 						Token temp = t.getNextToken();
 						if (temp!=null && temp.isLeftCurly()) {
 							temp = temp.getNextToken();
-							if (temp!=null && temp.type==Token.RESERVED_WORD) {
+							if (temp!=null && temp.type==TokenTypes.RESERVED_WORD) {
 								if (currentFold==null) {
 									currentFold = new Fold(FoldType.CODE, textArea, t.offset);
 									folds.add(currentFold);
@@ -66,12 +68,12 @@ public class LatexFoldParser implements FoldParser {
 						}
 					}
 
-					else if (t.is(Token.RESERVED_WORD, END) &&
+					else if (t.is(TokenTypes.RESERVED_WORD, END) &&
 							currentFold!=null && !expectedStack.isEmpty()) {
 						Token temp = t.getNextToken();
 						if (temp!=null && temp.isLeftCurly()) {
 							temp = temp.getNextToken();
-							if (temp!=null && temp.type==Token.RESERVED_WORD) {
+							if (temp!=null && temp.type==TokenTypes.RESERVED_WORD) {
 								String value = temp.getLexeme();
 								if (expectedStack.peek().equals(value)) {
 									expectedStack.pop();
@@ -79,7 +81,10 @@ public class LatexFoldParser implements FoldParser {
 									Fold parentFold = currentFold.getParent();
 									// Don't add fold markers for single-line blocks
 									if (currentFold.isOnSingleLine()) {
-										if (!currentFold.removeFromParent()) {
+										if (parentFold!=null) {
+											currentFold.removeFromParent();
+										}
+										else {
 											folds.remove(folds.size()-1);
 										}
 									}

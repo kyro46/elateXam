@@ -110,6 +110,7 @@ public class FocusableTip {
 		// See http://forums.sun.com/thread.jspa?forumID=57&threadID=574810
 		// for a discussion.
 		SwingUtilities.invokeLater(new Runnable() {
+			@Override
 			public void run() {
 
 				// If a new FocusableTip is requested while another one is
@@ -248,6 +249,7 @@ public class FocusableTip {
 	private class TextAreaListener extends MouseInputAdapter implements
 			CaretListener, ComponentListener, FocusListener, KeyListener {
 
+		@Override
 		public void caretUpdate(CaretEvent e) {
 			Object source = e.getSource();
 			if (source == textArea) {
@@ -255,25 +257,31 @@ public class FocusableTip {
 			}
 		}
 
+		@Override
 		public void componentHidden(ComponentEvent e) {
 			handleComponentEvent(e);
 		}
 
+		@Override
 		public void componentMoved(ComponentEvent e) {
 			handleComponentEvent(e);
 		}
 
+		@Override
 		public void componentResized(ComponentEvent e) {
 			handleComponentEvent(e);
 		}
 
+		@Override
 		public void componentShown(ComponentEvent e) {
 			handleComponentEvent(e);
 		}
 
+		@Override
 		public void focusGained(FocusEvent e) {
 		}
 
+		@Override
 		public void focusLost(FocusEvent e) {
 			// Only dispose of tip if it wasn't the TipWindow that was clicked
 			// "c" can be null, at least on OS X, so we must check that before
@@ -301,6 +309,7 @@ public class FocusableTip {
 			textArea.addMouseMotionListener(this);
 		}
 
+		@Override
 		public void keyPressed(KeyEvent e) {
 			if (e.getKeyCode()==KeyEvent.VK_ESCAPE) {
 				possiblyDisposeOfTipWindow();
@@ -313,16 +322,20 @@ public class FocusableTip {
 			}
 		}
 
+		@Override
 		public void keyReleased(KeyEvent e) {
 		}
 
+		@Override
 		public void keyTyped(KeyEvent e) {
 		}
 
+		@Override
 		public void mouseExited(MouseEvent e) {
 			// possiblyDisposeOfTipWindow();
 		}
 
+		@Override
 		public void mouseMoved(MouseEvent e) {
 			if (tipVisibleBounds==null ||
 					!tipVisibleBounds.contains(e.getPoint())) {

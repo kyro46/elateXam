@@ -168,9 +168,11 @@ class AutoCompleteDescWindow extends JWindow implements HyperlinkListener,
 
 		bottomPanel = new JPanel(new BorderLayout());
 		b = new AbstractBorder() {
+			@Override
 			public Insets getBorderInsets(Component c) { 
 				return new Insets(1, 0, 0, 0);
 			}
+			@Override
 			public void paintBorder(Component c, Graphics g, int x, int y, int w, int h) {
 				g.setColor(UIManager.getColor("controlDkShadow"));
 				g.drawLine(x,y, x+w-1,y);
@@ -274,6 +276,7 @@ class AutoCompleteDescWindow extends JWindow implements HyperlinkListener,
 	 *
 	 * @param e The event.
 	 */
+	@Override
 	public void hyperlinkUpdate(HyperlinkEvent e) {
 
 		HyperlinkEvent.EventType type = e.getEventType();
@@ -413,6 +416,7 @@ class AutoCompleteDescWindow extends JWindow implements HyperlinkListener,
 		descArea.setText(desc);
 		if (anchor!=null) {
 			SwingUtilities.invokeLater(new Runnable() {
+				@Override
 				public void run() {
 					descArea.scrollToReference(anchor);
 				}
@@ -435,6 +439,7 @@ class AutoCompleteDescWindow extends JWindow implements HyperlinkListener,
 	/**
 	 * {@inheritDoc} 
 	 */
+	@Override
 	public void setVisible(boolean visible) {
 		if (!visible) {
 			clearHistory();
@@ -450,6 +455,7 @@ class AutoCompleteDescWindow extends JWindow implements HyperlinkListener,
 	 * @param anchor The anchor in the HTML to jump to, or <code>null</code>
 	 *        if none.
 	 */
+	@Override
 	public void showSummaryFor(Completion completion, String anchor) {
 		setDescriptionFor(completion, anchor, true);
 	}
@@ -490,6 +496,7 @@ class AutoCompleteDescWindow extends JWindow implements HyperlinkListener,
 		 *
 		 * @return A string representation of this history entry.
 		 */
+		@Override
 		public String toString() {
 			return completion.getInputText();
 		}
@@ -509,6 +516,7 @@ class AutoCompleteDescWindow extends JWindow implements HyperlinkListener,
 		/**
 		 * Called when the timer is fired.
 		 */
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			setDisplayedDesc(completion, anchor, addToHistory);
 		}
@@ -536,6 +544,7 @@ class AutoCompleteDescWindow extends JWindow implements HyperlinkListener,
 			putValue(Action.SMALL_ICON, icon);
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (historyPos>0) {
 				HistoryEntry pair = (HistoryEntry)history.
@@ -568,6 +577,7 @@ class AutoCompleteDescWindow extends JWindow implements HyperlinkListener,
 			putValue(Action.SMALL_ICON, icon);
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (history!=null && historyPos<history.size()-1) {
 				HistoryEntry pair = (HistoryEntry)history.

@@ -24,6 +24,7 @@ class DefaultTokenMakerFactory extends AbstractTokenMakerFactory
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected void initTokenMakerMap() {
 
 		String pkg = "org.fife.ui.rsyntaxtextarea.modes.";
@@ -50,7 +51,6 @@ class DefaultTokenMakerFactory extends AbstractTokenMakerFactory
 		putMapping(SYNTAX_STYLE_LUA,			pkg + "LuaTokenMaker");
 		putMapping(SYNTAX_STYLE_MAKEFILE,		pkg + "MakefileTokenMaker");
 		putMapping(SYNTAX_STYLE_MXML,			pkg + "MxmlTokenMaker");
-		putMapping(SYNTAX_STYLE_NSIS,			pkg + "NSISTokenMaker");
 		putMapping(SYNTAX_STYLE_PERL,			pkg + "PerlTokenMaker");
 		putMapping(SYNTAX_STYLE_PHP,			pkg + "PHPTokenMaker");
 		putMapping(SYNTAX_STYLE_PROPERTIES_FILE,pkg + "PropertiesFileTokenMaker");

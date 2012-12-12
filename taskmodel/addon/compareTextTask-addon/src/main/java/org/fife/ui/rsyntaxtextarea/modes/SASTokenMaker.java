@@ -973,6 +973,7 @@ public class SASTokenMaker extends AbstractJFlexTokenMaker {
 	 * @param startOffset The offset in the document at which this token
 	 *                    occurs.
 	 */
+	@Override
 	public void addToken(char[] array, int start, int end, int tokenType, int startOffset) {
 		super.addToken(array, start,end, tokenType, startOffset);
 		zzStartRead = zzMarkedPos;
@@ -986,6 +987,7 @@ public class SASTokenMaker extends AbstractJFlexTokenMaker {
 	 * @return The start and end strings to add to a line to "comment"
 	 *         it out.
 	 */
+	@Override
 	public String[] getLineCommentStartAndEnd() {
 		return new String[] { "*", null };
 	}
@@ -999,8 +1001,9 @@ public class SASTokenMaker extends AbstractJFlexTokenMaker {
 	 * @return Whether tokens of this type should have "mark occurrences"
 	 *         enabled.
 	 */
+	@Override
 	public boolean getMarkOccurrencesOfTokenType(int type) {
-		return type==Token.IDENTIFIER || type==Token.VARIABLE;
+		return type==TokenTypes.IDENTIFIER || type==TokenTypes.VARIABLE;
 	}
 
 
@@ -1016,28 +1019,29 @@ public class SASTokenMaker extends AbstractJFlexTokenMaker {
 	 * @return The first <code>Token</code> in a linked list representing
 	 *         the syntax highlighted text.
 	 */
+	@Override
 	public Token getTokenList(Segment text, int initialTokenType, int startOffset) {
 
 		resetTokenList();
 		this.offsetShift = -text.offset + startOffset;
 
 		// Start off in the proper state.
-		int state = Token.NULL;
+		int state = TokenTypes.NULL;
 		switch (initialTokenType) {
-			case Token.LITERAL_STRING_DOUBLE_QUOTE:
+			case TokenTypes.LITERAL_STRING_DOUBLE_QUOTE:
 				state = STRING;
 				start = text.offset;
 				break;
-			case Token.LITERAL_CHAR:
+			case TokenTypes.LITERAL_CHAR:
 				state = CHAR;
 				start = text.offset;
 				break;
-			case Token.COMMENT_MULTILINE:
+			case TokenTypes.COMMENT_MULTILINE:
 				state = MLC;
 				start = text.offset;
 				break;
 			default:
-				state = Token.NULL;
+				state = TokenTypes.NULL;
 		}
 
 		s = text;
@@ -1161,7 +1165,8 @@ public class SASTokenMaker extends AbstractJFlexTokenMaker {
    *
    * @param newState the new lexical state
    */
-  public final void yybegin(int newState) {
+  @Override
+public final void yybegin(int newState) {
     zzLexicalState = newState;
   }
 
@@ -1352,7 +1357,7 @@ public class SASTokenMaker extends AbstractJFlexTokenMaker {
 
       switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
         case 13: 
-          { yybegin(YYINITIAL); addToken(start,zzStartRead-1, Token.LITERAL_CHAR); return firstToken;
+          { yybegin(YYINITIAL); addToken(start,zzStartRead-1, TokenTypes.LITERAL_CHAR); return firstToken;
           }
         case 21: break;
         case 2: 
@@ -1360,7 +1365,7 @@ public class SASTokenMaker extends AbstractJFlexTokenMaker {
           }
         case 22: break;
         case 18: 
-          { yybegin(YYINITIAL); addToken(start,zzStartRead+1, Token.COMMENT_MULTILINE);
+          { yybegin(YYINITIAL); addToken(start,zzStartRead+1, TokenTypes.COMMENT_MULTILINE);
           }
         case 23: break;
         case 17: 
@@ -1368,7 +1373,7 @@ public class SASTokenMaker extends AbstractJFlexTokenMaker {
           }
         case 24: break;
         case 3: 
-          { addToken(Token.WHITESPACE);
+          { addToken(TokenTypes.WHITESPACE);
           }
         case 25: break;
         case 8: 
@@ -1376,35 +1381,35 @@ public class SASTokenMaker extends AbstractJFlexTokenMaker {
           }
         case 26: break;
         case 5: 
-          { addToken(Token.RESERVED_WORD);
+          { addToken(TokenTypes.RESERVED_WORD);
           }
         case 27: break;
         case 6: 
-          { addToken(Token.SEPARATOR);
+          { addToken(TokenTypes.SEPARATOR);
           }
         case 28: break;
         case 16: 
-          { addToken(Token.VARIABLE);
+          { addToken(TokenTypes.VARIABLE);
           }
         case 29: break;
         case 14: 
-          { yybegin(YYINITIAL); addToken(start,zzStartRead, Token.LITERAL_CHAR);
+          { yybegin(YYINITIAL); addToken(start,zzStartRead, TokenTypes.LITERAL_CHAR);
           }
         case 30: break;
         case 1: 
-          { addToken(Token.IDENTIFIER);
+          { addToken(TokenTypes.IDENTIFIER);
           }
         case 31: break;
         case 20: 
-          { addToken(Token.FUNCTION);
+          { addToken(TokenTypes.FUNCTION);
           }
         case 32: break;
         case 19: 
-          { addToken(Token.DATA_TYPE);
+          { addToken(TokenTypes.DATA_TYPE);
           }
         case 33: break;
         case 11: 
-          { addToken(start,zzStartRead-1, Token.LITERAL_STRING_DOUBLE_QUOTE); return firstToken;
+          { addToken(start,zzStartRead-1, TokenTypes.LITERAL_STRING_DOUBLE_QUOTE); return firstToken;
           }
         case 34: break;
         case 9: 
@@ -1418,18 +1423,18 @@ public class SASTokenMaker extends AbstractJFlexTokenMaker {
 									start = zzStartRead;
 									// Might not be any whitespace.
 									if (yylength()>1) {
-										addToken(zzStartRead,zzMarkedPos-2, Token.WHITESPACE);
+										addToken(zzStartRead,zzMarkedPos-2, TokenTypes.WHITESPACE);
 										zzStartRead = zzMarkedPos-1;
 									}
 									// Remember:  zzStartRead may now be updated,
 									// so we must check against 'start'.
 									if (start==s.offset) {
-										addToken(zzStartRead,zzEndRead, Token.COMMENT_EOL);
+										addToken(zzStartRead,zzEndRead, TokenTypes.COMMENT_EOL);
 										addNullToken();
 										return firstToken;
 									}
 									else {
-										addToken(zzStartRead,zzStartRead, Token.OPERATOR);
+										addToken(zzStartRead,zzStartRead, TokenTypes.OPERATOR);
 									}
           }
         case 35: break;
@@ -1438,11 +1443,11 @@ public class SASTokenMaker extends AbstractJFlexTokenMaker {
           }
         case 36: break;
         case 4: 
-          { addToken(Token.OPERATOR);
+          { addToken(TokenTypes.OPERATOR);
           }
         case 37: break;
         case 12: 
-          { yybegin(YYINITIAL); addToken(start,zzStartRead, Token.LITERAL_STRING_DOUBLE_QUOTE);
+          { yybegin(YYINITIAL); addToken(start,zzStartRead, TokenTypes.LITERAL_STRING_DOUBLE_QUOTE);
           }
         case 38: break;
         case 10: 
@@ -1450,7 +1455,7 @@ public class SASTokenMaker extends AbstractJFlexTokenMaker {
           }
         case 39: break;
         case 15: 
-          { addToken(start,zzStartRead-1, Token.COMMENT_MULTILINE); return firstToken;
+          { addToken(start,zzStartRead-1, TokenTypes.COMMENT_MULTILINE); return firstToken;
           }
         case 40: break;
         default: 
@@ -1458,7 +1463,7 @@ public class SASTokenMaker extends AbstractJFlexTokenMaker {
             zzAtEOF = true;
             switch (zzLexicalState) {
             case STRING: {
-              addToken(start,zzStartRead-1, Token.LITERAL_STRING_DOUBLE_QUOTE); return firstToken;
+              addToken(start,zzStartRead-1, TokenTypes.LITERAL_STRING_DOUBLE_QUOTE); return firstToken;
             }
             case 640: break;
             case YYINITIAL: {
@@ -1466,11 +1471,11 @@ public class SASTokenMaker extends AbstractJFlexTokenMaker {
             }
             case 641: break;
             case MLC: {
-              addToken(start,zzStartRead-1, Token.COMMENT_MULTILINE); return firstToken;
+              addToken(start,zzStartRead-1, TokenTypes.COMMENT_MULTILINE); return firstToken;
             }
             case 642: break;
             case CHAR: {
-              addToken(start,zzStartRead-1, Token.LITERAL_CHAR); return firstToken;
+              addToken(start,zzStartRead-1, TokenTypes.LITERAL_CHAR); return firstToken;
             }
             case 643: break;
             default:

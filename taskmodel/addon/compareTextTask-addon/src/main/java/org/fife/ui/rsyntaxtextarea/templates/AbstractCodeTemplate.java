@@ -46,6 +46,7 @@ public abstract class AbstractCodeTemplate implements CodeTemplate {
 	 *
 	 * @return A deep copy of this template.
 	 */
+	@Override
 	public Object clone() {
 		// This method can't be abstract as compilers don't like concrete
 		// subclassses calling super.clone() on  an abstract super.
@@ -70,6 +71,7 @@ public abstract class AbstractCodeTemplate implements CodeTemplate {
 	 * @throws ClassCastException If <code>o</code> is
 	 *         not an instance of <code>CodeTemplate</code>.
 	 */
+	@Override
 	public int compareTo(Object o) {
 		if (!(o instanceof CodeTemplate)) {
 			return -1;
@@ -85,6 +87,7 @@ public abstract class AbstractCodeTemplate implements CodeTemplate {
 	 *
 	 * @return Whether this code template is equal to another.
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof CodeTemplate) {
 			return compareTo(obj)==0;
@@ -99,6 +102,7 @@ public abstract class AbstractCodeTemplate implements CodeTemplate {
 	 * @return The template's ID.
 	 * @see #setID(String)
 	 */
+	@Override
 	public String getID() {
 		return id;
 	}
@@ -109,6 +113,7 @@ public abstract class AbstractCodeTemplate implements CodeTemplate {
 	 *
 	 * @return The hash code for this template.
 	 */
+	@Override
 	public int hashCode() {
 		return id.hashCode();
 	}

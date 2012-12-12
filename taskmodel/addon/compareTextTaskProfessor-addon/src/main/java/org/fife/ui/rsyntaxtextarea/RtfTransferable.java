@@ -52,6 +52,7 @@ class RtfTransferable implements Transferable {
 	}
 
 
+	@Override
 	public Object getTransferData(DataFlavor flavor)
 					throws UnsupportedFlavorException, IOException {
 		if (flavor.equals(FLAVORS[0])) { // RTF
@@ -73,11 +74,13 @@ class RtfTransferable implements Transferable {
 	}
 
 
+	@Override
 	public DataFlavor[] getTransferDataFlavors() {
-		return (DataFlavor[])FLAVORS.clone();
+		return FLAVORS.clone();
 	}
 
 
+	@Override
 	public boolean isDataFlavorSupported(DataFlavor flavor) {
 		for (int i=0; i<FLAVORS.length; i++) {
 			if (flavor.equals(FLAVORS[i])) {

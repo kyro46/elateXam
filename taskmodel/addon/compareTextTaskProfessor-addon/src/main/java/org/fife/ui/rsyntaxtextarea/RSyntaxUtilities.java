@@ -16,8 +16,6 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.Toolkit;
 import java.util.Map;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Caret;
@@ -377,7 +375,7 @@ public class RSyntaxUtilities implements SwingConstants {
 						token = doc.getTokenListForLine(curLine);
 						token = RSyntaxUtilities.getTokenAtOffset(token, caretPosition);
 						// All brackets are always returned as "separators."
-						if (token.type!=Token.SEPARATOR) {
+						if (token.type!=TokenTypes.SEPARATOR) {
 							return -1;
 						}
 						bracketMatch = bracket=='{' ? '}' : (bracket=='(' ? ')' : ']');
@@ -397,7 +395,7 @@ public class RSyntaxUtilities implements SwingConstants {
 						token = doc.getTokenListForLine(curLine);
 						token = RSyntaxUtilities.getTokenAtOffset(token, caretPosition);
 						// All brackets are always returned as "separators."
-						if (token.type!=Token.SEPARATOR) {
+						if (token.type!=TokenTypes.SEPARATOR) {
 							return -1;
 						}
 						bracketMatch = bracket=='}' ? '{' : (bracket==')' ? '(' : '[');
@@ -435,7 +433,7 @@ public class RSyntaxUtilities implements SwingConstants {
 								}
 								int offset = start + (i-segOffset);
 								token = RSyntaxUtilities.getTokenAtOffset(token, offset);
-								if (token.type==Token.SEPARATOR)
+								if (token.type==TokenTypes.SEPARATOR)
 									numEmbedded++;
 							}
 
@@ -446,7 +444,7 @@ public class RSyntaxUtilities implements SwingConstants {
 								}
 								int offset = start + (i-segOffset);
 								token = RSyntaxUtilities.getTokenAtOffset(token, offset);
-								if (token.type==Token.SEPARATOR) {
+								if (token.type==TokenTypes.SEPARATOR) {
 									if (numEmbedded==0) {
 										if (textArea.isCodeFoldingEnabled() &&
 												textArea.getFoldManager().isLineHidden(curLine)) {
@@ -504,7 +502,7 @@ public class RSyntaxUtilities implements SwingConstants {
 								}
 								int offset = start + (i-segOffset);
 								t2 = RSyntaxUtilities.getTokenAtOffset(token, offset);
-								if (t2.type==Token.SEPARATOR)
+								if (t2.type==TokenTypes.SEPARATOR)
 									numEmbedded++;
 							}
 
@@ -515,7 +513,7 @@ public class RSyntaxUtilities implements SwingConstants {
 								}
 								int offset = start + (i-segOffset);
 								t2 = RSyntaxUtilities.getTokenAtOffset(token, offset);
-								if (t2.type==Token.SEPARATOR) {
+								if (t2.type==TokenTypes.SEPARATOR) {
 									if (numEmbedded==0)
 										return offset;
 									numEmbedded--;
@@ -698,7 +696,7 @@ public class RSyntaxUtilities implements SwingConstants {
 			return -1;
 
 		// A line containing only Token.NULL is an empty line.
-		else if (token.type==Token.NULL) {
+		else if (token.type==TokenTypes.NULL) {
 			int line = c.getLineOfOffset(offs);	// Sure to be >0 ??
 			return c.getLineStartOffset(line-1);
 		}
@@ -732,7 +730,7 @@ public class RSyntaxUtilities implements SwingConstants {
 			return -1;
 
 		// A line containing only Token.NULL is an empty line.
-		else if (token.type==Token.NULL) {
+		else if (token.type==TokenTypes.NULL) {
 			int line = c.getLineOfOffset(offs);	// Sure to be > c.getLineCount()-1 ??
 //			return c.getLineStartOffset(line+1);
 FoldManager fm = c.getFoldManager();
@@ -1129,9 +1127,9 @@ return c.getLineStartOffset(line);
 					ch=='&'
 				)) ||
 				/* Operators "==", "===", "!=", "!==" */
-				(t.type==Token.OPERATOR &&
+				(t.type==TokenTypes.OPERATOR &&
 						t.text[t.textOffset+t.textCount-1]=='=') ||
-				t.is(Token.RESERVED_WORD, JS_KEYWORD_RETURN);
+				t.is(TokenTypes.RESERVED_WORD, JS_KEYWORD_RETURN);
 	}
 
 
@@ -1154,67 +1152,6 @@ return c.getLineStartOffset(line);
 		if (ch>='A' && ch<='Z')
 			return (char)(ch | 0x20);
 		return ch;
-	}
-
-
-	/**
-	 * Creates a regular expression pattern that matches a "wildcard" pattern.
-	 * 
-	 * @param wildcard The wildcard pattern.
-	 * @param matchCase Whether the pattern should be case sensitive.
-	 * @param escapeStartChar Whether to escape a starting <code>'^'</code>
-	 *        character.
-	 * @return The pattern.
-	 */
-	public static Pattern wildcardToPattern(String wildcard, boolean matchCase,
-			boolean escapeStartChar) {
-
-		int flags = 0;
-		if (!matchCase) {
-			flags = Pattern.CASE_INSENSITIVE|Pattern.UNICODE_CASE;
-		}
-
-		StringBuffer sb = new StringBuffer();
-		for (int i=0; i<wildcard.length(); i++) {
-			char ch = wildcard.charAt(i);
-			switch (ch) {
-				case '*':
-					sb.append(".*");
-					break;
-				case '?':
-					sb.append('.');
-					break;
-				case '^':
-					if (i>0 || escapeStartChar) {
-						sb.append('\\');
-					}
-					sb.append('^');
-					break;
-				case '\\':
-				case '.': case '|':
-				case '+': case '-':
-				case '$':
-				case '[': case ']':
-				case '{': case '}':
-				case '(': case ')':
-					sb.append('\\').append(ch);
-					break;
-				default:
-					sb.append(ch);
-					break;
-			}
-		}
-
-		Pattern p = null;
-		try {
-			p = Pattern.compile(sb.toString(), flags);
-		} catch (PatternSyntaxException pse) {
-			pse.printStackTrace();
-			p = Pattern.compile(".+");
-		}
-
-		return p;
-
 	}
 
 

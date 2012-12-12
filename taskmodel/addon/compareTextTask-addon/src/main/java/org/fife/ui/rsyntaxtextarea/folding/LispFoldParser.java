@@ -9,6 +9,7 @@
 package org.fife.ui.rsyntaxtextarea.folding;
 
 import org.fife.ui.rsyntaxtextarea.Token;
+import org.fife.ui.rsyntaxtextarea.TokenTypes;
 
 
 /**
@@ -20,13 +21,15 @@ import org.fife.ui.rsyntaxtextarea.Token;
 public class LispFoldParser extends CurlyFoldParser {
 
 
+	@Override
 	public boolean isLeftCurly(Token t) {
-		return t.isSingleChar(Token.SEPARATOR, '(');
+		return t.type==TokenTypes.SEPARATOR && t.isSingleChar('(');
 	}
 
 
+	@Override
 	public boolean isRightCurly(Token t) {
-		return t.isSingleChar(Token.SEPARATOR, ')');
+		return t.type==TokenTypes.SEPARATOR && t.isSingleChar(')');
 	}
 
 

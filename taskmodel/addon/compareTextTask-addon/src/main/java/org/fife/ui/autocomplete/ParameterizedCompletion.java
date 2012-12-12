@@ -50,7 +50,8 @@ public interface ParameterizedCompletion extends Completion {
 
 
 	public ParameterizedCompletionInsertionInfo getInsertionInfo(
-			JTextComponent tc, boolean replaceTabsWithSpaces);
+			JTextComponent tc, boolean addParamStartList,
+			boolean replaceTabsWithSpaces);
 
 
 	/**
@@ -151,6 +152,7 @@ public interface ParameterizedCompletion extends Completion {
 			this.desc = desc;
 		}
 
+		@Override
 		public String toString() {
 			StringBuffer sb = new StringBuffer();
 			if (getType()!=null) {

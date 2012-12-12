@@ -15,6 +15,7 @@ import javax.swing.text.BadLocationException;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.TokenMaker;
+import org.fife.ui.rsyntaxtextarea.TokenTypes;
 
 
 /**
@@ -52,7 +53,7 @@ public class CurlyFoldParser implements FoldParser {
 	/**
 	 * Whether this parser is folding Java.
 	 */
-	private final boolean java;
+	private boolean java;
 
 	/**
 	 * Used to find import statements when folding Java code.
@@ -103,6 +104,7 @@ public class CurlyFoldParser implements FoldParser {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public List getFolds(RSyntaxTextArea textArea) {
 
 		List folds = new ArrayList();
@@ -177,7 +179,7 @@ public class CurlyFoldParser implements FoldParser {
 						}
 						else {
 							// If we're an MLC that ends on a later line...
-							if (t.type!=Token.COMMENT_EOL && !t.endsWith(C_MLC_END)) {
+							if (t.type!=TokenTypes.COMMENT_EOL && !t.endsWith(C_MLC_END)) {
 								//System.out.println("Starting MLC at: " + t.offset);
 								inMLC = true;
 								mlcStart = t.offset;
@@ -233,7 +235,10 @@ public class CurlyFoldParser implements FoldParser {
 							//System.out.println("... Adding regular fold at " + t.offset + ", parent==" + parentFold);
 							// Don't add fold markers for single-line blocks
 							if (currentFold.isOnSingleLine()) {
-								if (!currentFold.removeFromParent()) {
+								if (parentFold!=null) {
+									currentFold.removeFromParent();
+								}
+								else {
 									folds.remove(folds.size()-1);
 								}
 							}
@@ -245,7 +250,7 @@ public class CurlyFoldParser implements FoldParser {
 					// Java-specific folding rules
 					else if (java) {
 
-						if (t.is(Token.RESERVED_WORD, KEYWORD_IMPORT)) {
+						if (t.is(TokenTypes.RESERVED_WORD, KEYWORD_IMPORT)) {
 							if (importStartLine==-1) {
 								importStartLine = line;
 								importGroupStartOffs = t.offset;

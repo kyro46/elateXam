@@ -387,6 +387,7 @@ public class DtdTokenMaker extends AbstractJFlexTokenMaker {
 	 * @param startOffset The offset in the document at which this token
 	 *                    occurs.
 	 */
+	@Override
 	public void addToken(char[] array, int start, int end, int tokenType, int startOffset) {
 		super.addToken(array, start,end, tokenType, startOffset);
 		zzStartRead = zzMarkedPos;
@@ -401,6 +402,7 @@ public class DtdTokenMaker extends AbstractJFlexTokenMaker {
 	 * @return Whether tokens of this type should have "mark occurrences"
 	 *         enabled.
 	 */
+	@Override
 	public boolean getMarkOccurrencesOfTokenType(int type) {
 		return false;
 	}
@@ -418,6 +420,7 @@ public class DtdTokenMaker extends AbstractJFlexTokenMaker {
 	 * @return The first <code>Token</code> in a linked list representing
 	 *         the syntax highlighted text.
 	 */
+	@Override
 	public Token getTokenList(Segment text, int initialTokenType, int startOffset) {
 
 		resetTokenList();
@@ -572,7 +575,8 @@ public class DtdTokenMaker extends AbstractJFlexTokenMaker {
    *
    * @param newState the new lexical state
    */
-  public final void yybegin(int newState) {
+  @Override
+public final void yybegin(int newState) {
     zzLexicalState = newState;
   }
 
@@ -730,27 +734,27 @@ public class DtdTokenMaker extends AbstractJFlexTokenMaker {
 
       switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
         case 3: 
-          { addToken(Token.IDENTIFIER);
+          { addToken(TokenTypes.IDENTIFIER);
           }
         case 16: break;
         case 12: 
-          { int temp=zzStartRead; addToken(start,zzStartRead-1, Token.COMMENT_MULTILINE); addHyperlinkToken(temp,zzMarkedPos-1, Token.COMMENT_MULTILINE); start = zzMarkedPos;
+          { int temp=zzStartRead; addToken(start,zzStartRead-1, TokenTypes.COMMENT_MULTILINE); addHyperlinkToken(temp,zzMarkedPos-1, TokenTypes.COMMENT_MULTILINE); start = zzMarkedPos;
           }
         case 17: break;
         case 2: 
-          { addToken(Token.WHITESPACE);
+          { addToken(TokenTypes.WHITESPACE);
           }
         case 18: break;
         case 1: 
-          { /* Not really valid */ addToken(Token.IDENTIFIER);
+          { /* Not really valid */ addToken(TokenTypes.IDENTIFIER);
           }
         case 19: break;
         case 9: 
-          { addToken(Token.MARKUP_TAG_DELIMITER); yybegin(INTAG_START);
+          { addToken(TokenTypes.MARKUP_TAG_DELIMITER); yybegin(INTAG_START);
           }
         case 20: break;
         case 6: 
-          { addToken(Token.MARKUP_TAG_DELIMITER); yybegin(YYINITIAL);
+          { addToken(TokenTypes.MARKUP_TAG_DELIMITER); yybegin(YYINITIAL);
           }
         case 21: break;
         case 11: 
@@ -758,23 +762,23 @@ public class DtdTokenMaker extends AbstractJFlexTokenMaker {
           }
         case 22: break;
         case 7: 
-          { addToken(Token.MARKUP_TAG_ATTRIBUTE);
+          { addToken(TokenTypes.MARKUP_TAG_ATTRIBUTE);
           }
         case 23: break;
         case 10: 
-          { int temp = zzMarkedPos; addToken(start,zzStartRead+2, Token.COMMENT_MULTILINE); start = temp; yybegin(prevState);
+          { int temp = zzMarkedPos; addToken(start,zzStartRead+2, TokenTypes.COMMENT_MULTILINE); start = temp; yybegin(prevState);
           }
         case 24: break;
         case 15: 
-          { addToken(Token.MARKUP_TAG_NAME); yybegin(INTAG_ATTLIST);
+          { addToken(TokenTypes.MARKUP_TAG_NAME); yybegin(INTAG_ATTLIST);
           }
         case 25: break;
         case 14: 
-          { addToken(Token.MARKUP_TAG_NAME); yybegin(INTAG_ELEMENT);
+          { addToken(TokenTypes.MARKUP_TAG_NAME); yybegin(INTAG_ELEMENT);
           }
         case 26: break;
         case 13: 
-          { addToken(Token.MARKUP_PROCESSING_INSTRUCTION);
+          { addToken(TokenTypes.MARKUP_PROCESSING_INSTRUCTION);
           }
         case 27: break;
         case 4: 
@@ -782,11 +786,11 @@ public class DtdTokenMaker extends AbstractJFlexTokenMaker {
           }
         case 28: break;
         case 5: 
-          { addToken(start,zzStartRead-1, Token.COMMENT_MULTILINE); addEndToken(INTERNAL_IN_COMMENT - prevState); return firstToken;
+          { addToken(start,zzStartRead-1, TokenTypes.COMMENT_MULTILINE); addEndToken(INTERNAL_IN_COMMENT - prevState); return firstToken;
           }
         case 29: break;
         case 8: 
-          { addToken(Token.MARKUP_TAG_ATTRIBUTE_VALUE);
+          { addToken(TokenTypes.MARKUP_TAG_ATTRIBUTE_VALUE);
           }
         case 30: break;
         default: 
@@ -810,7 +814,7 @@ public class DtdTokenMaker extends AbstractJFlexTokenMaker {
             }
             case 74: break;
             case COMMENT: {
-              addToken(start,zzStartRead-1, Token.COMMENT_MULTILINE); addEndToken(INTERNAL_IN_COMMENT - prevState); return firstToken;
+              addToken(start,zzStartRead-1, TokenTypes.COMMENT_MULTILINE); addEndToken(INTERNAL_IN_COMMENT - prevState); return firstToken;
             }
             case 75: break;
             default:

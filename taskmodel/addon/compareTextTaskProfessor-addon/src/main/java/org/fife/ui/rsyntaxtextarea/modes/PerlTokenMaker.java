@@ -1465,6 +1465,7 @@ public class PerlTokenMaker extends AbstractJFlexCTokenMaker {
 	 * @param startOffset The offset in the document at which this token
 	 *                    occurs.
 	 */
+	@Override
 	public void addToken(char[] array, int start, int end, int tokenType, int startOffset) {
 		super.addToken(array, start,end, tokenType, startOffset);
 		zzStartRead = zzMarkedPos;
@@ -1478,6 +1479,7 @@ public class PerlTokenMaker extends AbstractJFlexCTokenMaker {
 	 * @return The start and end strings to add to a line to "comment"
 	 *         it out.
 	 */
+	@Override
 	public String[] getLineCommentStartAndEnd() {
 		return new String[] { "#", null };
 	}
@@ -1486,8 +1488,9 @@ public class PerlTokenMaker extends AbstractJFlexCTokenMaker {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean getMarkOccurrencesOfTokenType(int type) {
-		return super.getMarkOccurrencesOfTokenType(type) || type==Token.VARIABLE;
+		return super.getMarkOccurrencesOfTokenType(type) || type==TokenTypes.VARIABLE;
 	}
 
 
@@ -1503,23 +1506,24 @@ public class PerlTokenMaker extends AbstractJFlexCTokenMaker {
 	 * @return The first <code>Token</code> in a linked list representing
 	 *         the syntax highlighted text.
 	 */
+	@Override
 	public Token getTokenList(Segment text, int initialTokenType, int startOffset) {
 
 		resetTokenList();
 		this.offsetShift = -text.offset + startOffset;
 
 		// Start off in the proper state.
-		int state = Token.NULL;
+		int state = TokenTypes.NULL;
 		switch (initialTokenType) {
-			case Token.LITERAL_STRING_DOUBLE_QUOTE:
+			case TokenTypes.LITERAL_STRING_DOUBLE_QUOTE:
 				state = STRING;
 				start = text.offset;
 				break;
-			case Token.LITERAL_CHAR:
+			case TokenTypes.LITERAL_CHAR:
 				state = CHAR_LITERAL;
 				start = text.offset;
 				break;
-			case Token.LITERAL_BACKQUOTE:
+			case TokenTypes.LITERAL_BACKQUOTE:
 				state = BACKTICKS;
 				start = text.offset;
 				break;
@@ -1544,7 +1548,7 @@ public class PerlTokenMaker extends AbstractJFlexCTokenMaker {
 				start = text.offset;
 				break;
 			default:
-				state = Token.NULL;
+				state = TokenTypes.NULL;
 		}
 
 		s = text;
@@ -1583,7 +1587,7 @@ public class PerlTokenMaker extends AbstractJFlexCTokenMaker {
 					ch=='&'
 				)) ||
 				/* Operators "==", "===", "!=", "!==", etc. */
-				(t.type==Token.OPERATOR &&
+				(t.type==TokenTypes.OPERATOR &&
 					((ch=t.text[t.textOffset+t.textCount-1])=='=' || ch=='~'));
 	}
 
@@ -1694,7 +1698,8 @@ public class PerlTokenMaker extends AbstractJFlexCTokenMaker {
    *
    * @param newState the new lexical state
    */
-  public final void yybegin(int newState) {
+  @Override
+public final void yybegin(int newState) {
     zzLexicalState = newState;
   }
 
@@ -1852,19 +1857,19 @@ public class PerlTokenMaker extends AbstractJFlexCTokenMaker {
 
       switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
         case 2: 
-          { addToken(Token.IDENTIFIER);
+          { addToken(TokenTypes.IDENTIFIER);
           }
         case 46: break;
         case 34: 
-          { int temp=zzStartRead; addToken(start,zzStartRead-1, Token.LITERAL_BACKQUOTE); addToken(temp,zzMarkedPos-1, Token.VARIABLE); start = zzMarkedPos;
+          { int temp=zzStartRead; addToken(start,zzStartRead-1, TokenTypes.LITERAL_BACKQUOTE); addToken(temp,zzMarkedPos-1, TokenTypes.VARIABLE); start = zzMarkedPos;
           }
         case 47: break;
         case 40: 
-          { if (start==zzStartRead) { addToken(Token.COMMENT_DOCUMENTATION); yybegin(YYINITIAL); }
+          { if (start==zzStartRead) { addToken(TokenTypes.COMMENT_DOCUMENTATION); yybegin(YYINITIAL); }
           }
         case 48: break;
         case 26: 
-          { addToken(Token.ERROR_NUMBER_FORMAT);
+          { addToken(TokenTypes.ERROR_NUMBER_FORMAT);
           }
         case 49: break;
         case 11: 
@@ -1872,17 +1877,17 @@ public class PerlTokenMaker extends AbstractJFlexCTokenMaker {
           }
         case 50: break;
         case 38: 
-          { if (start==zzStartRead) { addToken(Token.PREPROCESSOR); addNullToken(); return firstToken; }
+          { if (start==zzStartRead) { addToken(TokenTypes.PREPROCESSOR); addNullToken(); return firstToken; }
           }
         case 51: break;
         case 31: 
-          { addToken(Token.FUNCTION);
+          { addToken(TokenTypes.FUNCTION);
           }
         case 52: break;
         case 36: 
           { boolean highlightedAsRegex = false;
 					if (firstToken==null) {
-						addToken(Token.REGEX);
+						addToken(TokenTypes.REGEX);
 						highlightedAsRegex = true;
 					}
 					else {
@@ -1890,7 +1895,7 @@ public class PerlTokenMaker extends AbstractJFlexCTokenMaker {
 						// the previous token, highlight it as such.
 						Token t = firstToken.getLastNonCommentNonWhitespaceToken();
 						if (regexCanFollow(t)) {
-							addToken(Token.REGEX);
+							addToken(TokenTypes.REGEX);
 							highlightedAsRegex = true;
 						}
 					}
@@ -1898,33 +1903,33 @@ public class PerlTokenMaker extends AbstractJFlexCTokenMaker {
 					// individual tokens.
 					if (!highlightedAsRegex) {
 						int temp = zzStartRead + 1;
-						addToken(zzStartRead, zzStartRead, Token.OPERATOR);
+						addToken(zzStartRead, zzStartRead, TokenTypes.OPERATOR);
 						zzStartRead = zzCurrentPos = zzMarkedPos = temp;
 					}
           }
         case 53: break;
         case 30: 
-          { addToken(Token.VARIABLE);
+          { addToken(TokenTypes.VARIABLE);
           }
         case 54: break;
         case 1: 
-          { addToken(Token.ERROR_IDENTIFIER);
+          { addToken(TokenTypes.ERROR_IDENTIFIER);
           }
         case 55: break;
         case 24: 
-          { addToken(start,zzStartRead-1, Token.PREPROCESSOR); addEndToken(INTERNAL_HEREDOC_EOT_SINGLE_QUOTED); return firstToken;
+          { addToken(start,zzStartRead-1, TokenTypes.PREPROCESSOR); addEndToken(INTERNAL_HEREDOC_EOT_SINGLE_QUOTED); return firstToken;
           }
         case 56: break;
         case 4: 
-          { addToken(Token.COMMENT_EOL); addNullToken(); return firstToken;
+          { addToken(TokenTypes.COMMENT_EOL); addNullToken(); return firstToken;
           }
         case 57: break;
         case 29: 
-          { addToken(Token.PREPROCESSOR); addNullToken(); return firstToken;
+          { addToken(TokenTypes.PREPROCESSOR); addNullToken(); return firstToken;
           }
         case 58: break;
         case 41: 
-          { if (start==zzStartRead) { int temp=zzStartRead; addToken(start,zzStartRead-1, Token.COMMENT_DOCUMENTATION); addToken(temp,zzMarkedPos-1, Token.COMMENT_EOL); start = zzMarkedPos; }
+          { if (start==zzStartRead) { int temp=zzStartRead; addToken(start,zzStartRead-1, TokenTypes.COMMENT_DOCUMENTATION); addToken(temp,zzMarkedPos-1, TokenTypes.COMMENT_EOL); start = zzMarkedPos; }
           }
         case 59: break;
         case 44: 
@@ -1944,23 +1949,23 @@ public class PerlTokenMaker extends AbstractJFlexCTokenMaker {
           }
         case 63: break;
         case 37: 
-          { addToken(Token.REGEX);
+          { addToken(TokenTypes.REGEX);
           }
         case 64: break;
         case 18: 
-          { yybegin(YYINITIAL); addToken(start,zzStartRead, Token.LITERAL_CHAR);
+          { yybegin(YYINITIAL); addToken(start,zzStartRead, TokenTypes.LITERAL_CHAR);
           }
         case 65: break;
         case 28: 
-          { addToken(Token.LITERAL_NUMBER_HEXADECIMAL);
+          { addToken(TokenTypes.LITERAL_NUMBER_HEXADECIMAL);
           }
         case 66: break;
         case 21: 
-          { addToken(start,zzStartRead-1, Token.PREPROCESSOR); addEndToken(INTERNAL_HEREDOC_EOF_UNQUOTED); return firstToken;
+          { addToken(start,zzStartRead-1, TokenTypes.PREPROCESSOR); addEndToken(INTERNAL_HEREDOC_EOF_UNQUOTED); return firstToken;
           }
         case 67: break;
         case 6: 
-          { addToken(Token.WHITESPACE);
+          { addToken(TokenTypes.WHITESPACE);
           }
         case 68: break;
         case 10: 
@@ -1968,19 +1973,19 @@ public class PerlTokenMaker extends AbstractJFlexCTokenMaker {
           }
         case 69: break;
         case 3: 
-          { addToken(Token.LITERAL_NUMBER_DECIMAL_INT);
+          { addToken(TokenTypes.LITERAL_NUMBER_DECIMAL_INT);
           }
         case 70: break;
         case 33: 
-          { int temp=zzStartRead; addToken(start,zzStartRead-1, Token.LITERAL_STRING_DOUBLE_QUOTE); addToken(temp,zzMarkedPos-1, Token.VARIABLE); start = zzMarkedPos;
+          { int temp=zzStartRead; addToken(start,zzStartRead-1, TokenTypes.LITERAL_STRING_DOUBLE_QUOTE); addToken(temp,zzMarkedPos-1, TokenTypes.VARIABLE); start = zzMarkedPos;
           }
         case 71: break;
         case 20: 
-          { yybegin(YYINITIAL); addToken(start,zzStartRead, Token.LITERAL_BACKQUOTE);
+          { yybegin(YYINITIAL); addToken(start,zzStartRead, TokenTypes.LITERAL_BACKQUOTE);
           }
         case 72: break;
         case 15: 
-          { yybegin(YYINITIAL); addToken(start,zzStartRead, Token.LITERAL_STRING_DOUBLE_QUOTE);
+          { yybegin(YYINITIAL); addToken(start,zzStartRead, TokenTypes.LITERAL_STRING_DOUBLE_QUOTE);
           }
         case 73: break;
         case 16: 
@@ -1988,27 +1993,27 @@ public class PerlTokenMaker extends AbstractJFlexCTokenMaker {
           }
         case 74: break;
         case 23: 
-          { addToken(start,zzStartRead-1, Token.PREPROCESSOR); addEndToken(INTERNAL_HEREDOC_EOT_UNQUOTED); return firstToken;
+          { addToken(start,zzStartRead-1, TokenTypes.PREPROCESSOR); addEndToken(INTERNAL_HEREDOC_EOT_UNQUOTED); return firstToken;
           }
         case 75: break;
         case 35: 
-          { int temp=zzStartRead; addToken(start,zzStartRead-1, Token.PREPROCESSOR); addToken(temp,zzMarkedPos-1, Token.VARIABLE); start = zzMarkedPos;
+          { int temp=zzStartRead; addToken(start,zzStartRead-1, TokenTypes.PREPROCESSOR); addToken(temp,zzMarkedPos-1, TokenTypes.VARIABLE); start = zzMarkedPos;
           }
         case 76: break;
         case 39: 
-          { addToken(Token.COMMENT_EOL); start = zzMarkedPos; yybegin(POD);
+          { addToken(TokenTypes.COMMENT_EOL); start = zzMarkedPos; yybegin(POD);
           }
         case 77: break;
         case 32: 
-          { addToken(Token.RESERVED_WORD);
+          { addToken(TokenTypes.RESERVED_WORD);
           }
         case 78: break;
         case 19: 
-          { addToken(start,zzStartRead-1, Token.LITERAL_BACKQUOTE); return firstToken;
+          { addToken(start,zzStartRead-1, TokenTypes.LITERAL_BACKQUOTE); return firstToken;
           }
         case 79: break;
         case 8: 
-          { addToken(Token.SEPARATOR);
+          { addToken(TokenTypes.SEPARATOR);
           }
         case 80: break;
         case 5: 
@@ -2016,19 +2021,19 @@ public class PerlTokenMaker extends AbstractJFlexCTokenMaker {
           }
         case 81: break;
         case 7: 
-          { addToken(Token.OPERATOR);
+          { addToken(TokenTypes.OPERATOR);
           }
         case 82: break;
         case 17: 
-          { addToken(start,zzStartRead-1, Token.LITERAL_CHAR); return firstToken;
+          { addToken(start,zzStartRead-1, TokenTypes.LITERAL_CHAR); return firstToken;
           }
         case 83: break;
         case 25: 
-          { addToken(start,zzStartRead-1, Token.COMMENT_DOCUMENTATION); addEndToken(INTERNAL_POD); return firstToken;
+          { addToken(start,zzStartRead-1, TokenTypes.COMMENT_DOCUMENTATION); addEndToken(INTERNAL_POD); return firstToken;
           }
         case 84: break;
         case 27: 
-          { addToken(Token.LITERAL_NUMBER_FLOAT);
+          { addToken(TokenTypes.LITERAL_NUMBER_FLOAT);
           }
         case 85: break;
         case 43: 
@@ -2044,11 +2049,11 @@ public class PerlTokenMaker extends AbstractJFlexCTokenMaker {
           }
         case 88: break;
         case 14: 
-          { addToken(start,zzStartRead-1, Token.LITERAL_STRING_DOUBLE_QUOTE); return firstToken;
+          { addToken(start,zzStartRead-1, TokenTypes.LITERAL_STRING_DOUBLE_QUOTE); return firstToken;
           }
         case 89: break;
         case 22: 
-          { addToken(start,zzStartRead-1, Token.PREPROCESSOR); addEndToken(INTERNAL_HEREDOC_EOF_SINGLE_QUOTED); return firstToken;
+          { addToken(start,zzStartRead-1, TokenTypes.PREPROCESSOR); addEndToken(INTERNAL_HEREDOC_EOF_SINGLE_QUOTED); return firstToken;
           }
         case 90: break;
         default: 
@@ -2056,23 +2061,23 @@ public class PerlTokenMaker extends AbstractJFlexCTokenMaker {
             zzAtEOF = true;
             switch (zzLexicalState) {
             case HEREDOC_EOF_SINGLE_QUOTED: {
-              addToken(start,zzStartRead-1, Token.PREPROCESSOR); addEndToken(INTERNAL_HEREDOC_EOF_SINGLE_QUOTED); return firstToken;
+              addToken(start,zzStartRead-1, TokenTypes.PREPROCESSOR); addEndToken(INTERNAL_HEREDOC_EOF_SINGLE_QUOTED); return firstToken;
             }
             case 602: break;
             case HEREDOC_EOT_SINGLE_QUOTED: {
-              addToken(start,zzStartRead-1, Token.PREPROCESSOR); addEndToken(INTERNAL_HEREDOC_EOT_SINGLE_QUOTED); return firstToken;
+              addToken(start,zzStartRead-1, TokenTypes.PREPROCESSOR); addEndToken(INTERNAL_HEREDOC_EOT_SINGLE_QUOTED); return firstToken;
             }
             case 603: break;
             case HEREDOC_EOT_UNQUOTED: {
-              addToken(start,zzStartRead-1, Token.PREPROCESSOR); addEndToken(INTERNAL_HEREDOC_EOT_UNQUOTED); return firstToken;
+              addToken(start,zzStartRead-1, TokenTypes.PREPROCESSOR); addEndToken(INTERNAL_HEREDOC_EOT_UNQUOTED); return firstToken;
             }
             case 604: break;
             case STRING: {
-              addToken(start,zzStartRead-1, Token.LITERAL_STRING_DOUBLE_QUOTE); return firstToken;
+              addToken(start,zzStartRead-1, TokenTypes.LITERAL_STRING_DOUBLE_QUOTE); return firstToken;
             }
             case 605: break;
             case BACKTICKS: {
-              addToken(start,zzStartRead-1, Token.LITERAL_BACKQUOTE); return firstToken;
+              addToken(start,zzStartRead-1, TokenTypes.LITERAL_BACKQUOTE); return firstToken;
             }
             case 606: break;
             case YYINITIAL: {
@@ -2080,15 +2085,15 @@ public class PerlTokenMaker extends AbstractJFlexCTokenMaker {
             }
             case 607: break;
             case HEREDOC_EOF_UNQUOTED: {
-              addToken(start,zzStartRead-1, Token.PREPROCESSOR); addEndToken(INTERNAL_HEREDOC_EOF_UNQUOTED); return firstToken;
+              addToken(start,zzStartRead-1, TokenTypes.PREPROCESSOR); addEndToken(INTERNAL_HEREDOC_EOF_UNQUOTED); return firstToken;
             }
             case 608: break;
             case CHAR_LITERAL: {
-              addToken(start,zzStartRead-1, Token.LITERAL_CHAR); return firstToken;
+              addToken(start,zzStartRead-1, TokenTypes.LITERAL_CHAR); return firstToken;
             }
             case 609: break;
             case POD: {
-              addToken(start,zzStartRead-1, Token.COMMENT_DOCUMENTATION); addEndToken(INTERNAL_POD); return firstToken;
+              addToken(start,zzStartRead-1, TokenTypes.COMMENT_DOCUMENTATION); addEndToken(INTERNAL_POD); return firstToken;
             }
             case 610: break;
             default:

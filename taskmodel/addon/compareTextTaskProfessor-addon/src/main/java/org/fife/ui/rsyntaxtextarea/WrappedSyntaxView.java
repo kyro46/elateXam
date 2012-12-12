@@ -144,6 +144,7 @@ return p + 1;
 	 * @param f the factory to use to rebuild if the view has children
 	 * @see View#changedUpdate
 	 */
+	@Override
 	public void changedUpdate(DocumentEvent e, Shape a, ViewFactory f) {
 		updateChildren(e, a);
 	}
@@ -199,7 +200,7 @@ return p + 1;
 		// If this line is an empty line, then the token list is simply a
 		// null token.  In this case, the line highlight will be skipped in
 		// the loop below, so unfortunately we must manually do it here.
-		if (token!=null && token.type==Token.NULL) {
+		if (token!=null && token.type==TokenTypes.NULL) {
 			h.paintLayeredHighlights(g, p0,p1, r, host, this);
 			return;
 		}
@@ -235,8 +236,8 @@ return p + 1;
 		// NOTE: We should re-use code from Token (paintBackground()) here,
 		// but don't because I'm just too lazy.
 		if (host.getEOLMarkersVisible()) {
-			g.setColor(host.getForegroundForTokenType(Token.WHITESPACE));
-			g.setFont(host.getFontForTokenType(Token.WHITESPACE));
+			g.setColor(host.getForegroundForTokenType(TokenTypes.WHITESPACE));
+			g.setFont(host.getFontForTokenType(TokenTypes.WHITESPACE));
 			g.drawString("\u00B6", x, y-fontHeight);
 		}
 
@@ -253,6 +254,7 @@ return p + 1;
 	 *         <code>a</code> is <code>null</code>; or <code>null</code> if the
 	 *         layout is invalid
 	 */
+	@Override
 	public Shape getChildAllocation(int index, Shape a) {
 		if (a != null) {
 			Shape ca = getChildAllocationImpl(index, a);
@@ -315,6 +317,7 @@ return p + 1;
 	 *           The parent may choose to resize or break the view.
 	 * @see View#getMaximumSpan
 	 */
+	@Override
 	public float getMaximumSpan(int axis) {
 		updateMetrics();
 		float span = super.getPreferredSpan(axis);
@@ -340,6 +343,7 @@ return p + 1;
 	 *           The parent may choose to resize or break the view.
 	 * @see View#getMinimumSpan
 	 */
+	@Override
 	public float getMinimumSpan(int axis) {
 		updateMetrics();
 		float span = super.getPreferredSpan(axis);
@@ -365,6 +369,7 @@ return p + 1;
 	 *           The parent may choose to resize or break the view.
 	 * @see View#getPreferredSpan
 	 */
+	@Override
 	public float getPreferredSpan(int axis) {
 		updateMetrics();
 		float span = 0;
@@ -407,6 +412,7 @@ return p + 1;
 	/**
 	 * Overridden to allow for folded regions.
 	 */
+	@Override
 	protected View getViewAtPoint(int x, int y, Rectangle alloc) {
 
 		int lineCount = getViewCount();
@@ -444,6 +450,7 @@ return p + 1;
 	 * @param f the factory to use to rebuild if the view has children
 	 * @see View#insertUpdate
 	 */
+	@Override
 	public void insertUpdate(DocumentEvent changes, Shape a, ViewFactory f) {
 		updateChildren(changes, a);
 		Rectangle alloc = ((a != null) && isAllocationValid()) ? 
@@ -465,6 +472,7 @@ return p + 1;
 	 *
 	 * @param f the view factory
 	 */
+	@Override
 	protected void loadChildren(ViewFactory f) {
 		Element e = getElement();
 		int n = e.getElementCount();
@@ -477,6 +485,7 @@ return p + 1;
 	}
 
 
+	@Override
 	public Shape modelToView(int pos, Shape a, Position.Bias b)
 			throws BadLocationException {
 
@@ -552,6 +561,7 @@ return p + 1;
 	 *		legal <code>Position.Bias</code> values listed above
 	 * @see View#viewToModel
 	 */
+	@Override
 	public Shape modelToView(int p0, Position.Bias b0,
 							int p1, Position.Bias b1,
 							Shape a) throws BadLocationException {
@@ -610,6 +620,7 @@ return p + 1;
 	 *   that the tab occurred at >= 0.
 	 * @return the tab stop, measured in points >= 0
 	 */
+	@Override
 	public float nextTabStop(float x, int tabOffset) {
 		if (tabSize == 0)
 			return x;
@@ -624,6 +635,7 @@ return p + 1;
 	 * @param g The graphics context in which to paint.
 	 * @param a The shape (usually a rectangle) in which to paint.
 	 */
+	@Override
 	public void paint(Graphics g, Shape a) {
 
 		Rectangle alloc = (a instanceof Rectangle) ?
@@ -676,6 +688,7 @@ return p + 1;
 	 * @param f the factory to use to rebuild if the view has children
 	 * @see View#removeUpdate
 	 */
+	@Override
 	public void removeUpdate(DocumentEvent changes, Shape a, ViewFactory f) {
 
 		updateChildren(changes, a);
@@ -719,6 +732,7 @@ return p + 1;
 	 * @param width the width >= 0
 	 * @param height the height >= 0
 	 */
+	@Override
 	public void setSize(float width, float height) {
 		updateMetrics();
 		if ((int) width != getWidth()) {
@@ -785,6 +799,7 @@ return p + 1;
 	}
 
 
+	@Override
 	public int viewToModel(float x, float y, Shape a, Position.Bias[] bias) {
 
 		int offs = -1;
@@ -817,6 +832,7 @@ return p + 1;
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public int yForLine(Rectangle alloc, int line) throws BadLocationException {
 		return yForLineContaining(alloc,
 				getElement().getElement(line).getStartOffset());
@@ -827,6 +843,7 @@ return p + 1;
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public int yForLineContaining(Rectangle alloc, int offs)
 								throws BadLocationException {
 		if (isAllocationValid()) {
@@ -923,6 +940,7 @@ System.err.println(">>> >>> calculated number of lines for this view (line " + l
 		 *           The parent may choose to resize or break the view.
 		 * @see View#getPreferredSpan
 		 */
+		@Override
 		public float getPreferredSpan(int axis) {
 			switch (axis) {
 				case View.X_AXIS:
@@ -952,6 +970,7 @@ System.err.println(">>> >>> calculated number of lines for this view (line " + l
 		 * @param a the allocated region to render into
 		 * @see View#paint
 		 */
+		@Override
 		public void paint(Graphics g, Shape a) {
 			// This is done by drawView() above.
 		}
@@ -966,6 +985,7 @@ System.err.println(">>> >>> calculated number of lines for this view (line " + l
 		 * @exception BadLocationException  if the given position does not
 		 *            represent a valid location in the associated document.
 		 */
+		@Override
 		public Shape modelToView(int pos, Shape a, Position.Bias b)
 										throws BadLocationException {
 
@@ -1035,6 +1055,7 @@ System.err.println(">>> >>> calculated number of lines for this view (line " + l
 		 *  given point in the view
 		 * @see View#viewToModel
 		 */
+		@Override
 		public int viewToModel(float fx, float fy, Shape a, Position.Bias[] bias) {
 
 			// PENDING(prinz) implement bias properly
@@ -1153,10 +1174,12 @@ System.err.println(">>> >>> calculated number of lines for this view (line " + l
 			}
 		}
 
+		@Override
 		public void insertUpdate(DocumentEvent e, Shape a, ViewFactory f) {
 			handleDocumentEvent(e, a, f);
 		}
 
+		@Override
 		public void removeUpdate(DocumentEvent e, Shape a, ViewFactory f) {
 			handleDocumentEvent(e, a, f);
 		}

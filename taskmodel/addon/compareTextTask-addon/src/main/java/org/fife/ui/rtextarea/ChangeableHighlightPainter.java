@@ -194,6 +194,7 @@ public class ChangeableHighlightPainter
 	 * @param bounds the bounding box for the highlight
 	 * @param c the editor
 	 */
+	@Override
 	public void paint(Graphics g, int offs0, int offs1, Shape bounds,
 					JTextComponent c) {
 
@@ -260,6 +261,7 @@ public class ChangeableHighlightPainter
 	 * @param view View painting for
 	 * @return region drawing occurred in
 	 */
+	@Override
 	public Shape paintLayer(Graphics g, int offs0, int offs1,
 						Shape bounds, JTextComponent c, View view) {
 

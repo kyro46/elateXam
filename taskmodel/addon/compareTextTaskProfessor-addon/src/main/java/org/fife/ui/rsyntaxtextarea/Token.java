@@ -592,7 +592,6 @@ public abstract class Token implements TokenTypes {
 	 * @param lexeme The lexeme to check for.
 	 * @return Whether this token has that type and lexeme.
 	 * @see #is(int, String)
-	 * @see #isSingleChar(int, char)
 	 * @see #startsWith(char[])
 	 */
 	public boolean is(int type, char[] lexeme) {
@@ -619,8 +618,6 @@ public abstract class Token implements TokenTypes {
 	 * @param lexeme The lexeme to check for.
 	 * @return Whether this token has that type and lexeme.
 	 * @see #is(int, char[])
-	 * @see #isSingleChar(int, char)
-	 * @see #startsWith(char[])
 	 */
 	public boolean is(int type, String lexeme) {
 		return this.type==type && textCount==lexeme.length() &&
@@ -635,7 +632,7 @@ public abstract class Token implements TokenTypes {
 	 * @see #isWhitespace()
 	 */
 	public boolean isComment() {
-		return type>=Token.COMMENT_EOL && type<=Token.COMMENT_MARKUP;
+		return type>=TokenTypes.COMMENT_EOL && type<=TokenTypes.COMMENT_MARKUP;
 	}
 
 
@@ -693,7 +690,7 @@ public abstract class Token implements TokenTypes {
 	 * @return Whether or not this token is paintable.
 	 */
 	public boolean isPaintable() {
-		return type>Token.NULL;
+		return type>TokenTypes.NULL;
 	}
 
 
@@ -702,25 +699,9 @@ public abstract class Token implements TokenTypes {
 	 *
 	 * @param ch The character to check for.
 	 * @return Whether this token's lexeme is the single character specified.
-	 * @see #isSingleChar(int, char)
 	 */
 	public boolean isSingleChar(char ch) {
 		return textCount==1 && text[textOffset]==ch;
-	}
-
-
-	/**
-	 * Returns whether this token is the specified single character, and of a
-	 * specific type.
-	 *
-	 * @param type The token type.
-	 * @param ch The character to check for.
-	 * @return Whether this token is of the specified type, and with a lexeme
-	 *         Equaling the single character specified.
-	 * @see #isSingleChar(char)
-	 */
-	public boolean isSingleChar(int type, char ch) {
-		return this.type==type && isSingleChar(ch);
 	}
 
 
@@ -879,7 +860,7 @@ public abstract class Token implements TokenTypes {
 		// whitespace as identifiers for performance).  But we only paint tab
 		// lines for the leading whitespace in the token.  So, if this isn't a
 		// WHITESPACE token, figure out the leading whitespace's length.
-		if (type!=Token.WHITESPACE) {
+		if (type!=TokenTypes.WHITESPACE) {
 			int offs = textOffset;
 			for (; offs<textOffset+textCount; offs++) {
 				if (!RSyntaxUtilities.isWhitespace(text[offs])) {
@@ -1041,9 +1022,10 @@ public abstract class Token implements TokenTypes {
 	 *
 	 * @return A string describing this token.
 	 */
+	@Override
 	public String toString() {
 		return "[Token: " +
-			(type==Token.NULL ? "<null token>" :
+			(type==TokenTypes.NULL ? "<null token>" :
 				"text: '" +
 					(text==null ? "<null>" : getLexeme() + "'; " +
 	       		"offset: " + offset + "; type: " + type + "; " +

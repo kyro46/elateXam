@@ -4124,6 +4124,7 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
 	 * @param startOffset The offset in the document at which this token
 	 *                    occurs.
 	 */
+	@Override
 	public void addToken(char[] array, int start, int end, int tokenType, int startOffset) {
 		super.addToken(array, start,end, tokenType, startOffset);
 		zzStartRead = zzMarkedPos;
@@ -4138,6 +4139,7 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
 	 * @return Whether closing markup tags are completed.
 	 * @see #setCompleteCloseTags(boolean)
 	 */
+	@Override
 	public boolean getCompleteCloseTags() {
 		return completeCloseTags;
 	}
@@ -4155,6 +4157,7 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
 	 * @return The first <code>Token</code> in a linked list representing
 	 *         the syntax highlighted text.
 	 */
+	@Override
 	public Token getTokenList(Segment text, int initialTokenType, int startOffset) {
 
 		resetTokenList();
@@ -4164,15 +4167,15 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
 		int languageIndex = 0;
 
 		// Start off in the proper state.
-		int state = Token.NULL;
+		int state = TokenTypes.NULL;
 		switch (initialTokenType) {
-			case Token.COMMENT_MULTILINE:
+			case TokenTypes.COMMENT_MULTILINE:
 				state = COMMENT;
 				break;
-			case Token.PREPROCESSOR:
+			case TokenTypes.PREPROCESSOR:
 				state = PI;
 				break;
-			case Token.VARIABLE:
+			case TokenTypes.VARIABLE:
 				state = DTD;
 				break;
 			case INTERNAL_INTAG:
@@ -4285,7 +4288,7 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
 					}
 				}
 				else {
-					state = Token.NULL;
+					state = TokenTypes.NULL;
 				}
 				break;
 		}
@@ -4424,7 +4427,8 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
    *
    * @param newState the new lexical state
    */
-  public final void yybegin(int newState) {
+  @Override
+public final void yybegin(int newState) {
     zzLexicalState = newState;
   }
 
@@ -4582,23 +4586,23 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
 
       switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
         case 106: 
-          { addToken(Token.SEPARATOR); yybegin(JSP_DIRECTIVE);
+          { addToken(TokenTypes.SEPARATOR); yybegin(JSP_DIRECTIVE);
           }
         case 129: break;
         case 64: 
-          { addToken(Token.OPERATOR); yybegin(CSS_VALUE);
+          { addToken(TokenTypes.OPERATOR); yybegin(CSS_VALUE);
           }
         case 130: break;
         case 85: 
-          { addToken(Token.ERROR_NUMBER_FORMAT);
+          { addToken(TokenTypes.ERROR_NUMBER_FORMAT);
           }
         case 131: break;
         case 73: 
-          { addToken(start,zzStartRead-1, Token.LITERAL_CHAR); addEndToken(INTERNAL_CSS_CHAR - cssPrevState); return firstToken;
+          { addToken(start,zzStartRead-1, TokenTypes.LITERAL_CHAR); addEndToken(INTERNAL_CSS_CHAR - cssPrevState); return firstToken;
           }
         case 132: break;
         case 10: 
-          { yybegin(YYINITIAL); addToken(start,zzStartRead, Token.VARIABLE);
+          { yybegin(YYINITIAL); addToken(start,zzStartRead, TokenTypes.VARIABLE);
           }
         case 133: break;
         case 23: 
@@ -4606,7 +4610,7 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
           }
         case 134: break;
         case 60: 
-          { addToken(Token.SEPARATOR); yybegin(CSS_PROPERTY);
+          { addToken(TokenTypes.SEPARATOR); yybegin(CSS_PROPERTY);
           }
         case 135: break;
         case 111: 
@@ -4614,15 +4618,15 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
           }
         case 136: break;
         case 4: 
-          { addToken(Token.MARKUP_TAG_DELIMITER); yybegin(INTAG);
+          { addToken(TokenTypes.MARKUP_TAG_DELIMITER); yybegin(INTAG);
           }
         case 137: break;
         case 123: 
-          { addToken(Token.RESERVED_WORD_2);
+          { addToken(TokenTypes.RESERVED_WORD_2);
           }
         case 138: break;
         case 104: 
-          { addToken(start,zzStartRead+1, Token.COMMENT_MULTILINE); yybegin(cssPrevState);
+          { addToken(start,zzStartRead+1, TokenTypes.COMMENT_MULTILINE); yybegin(cssPrevState);
           }
         case 139: break;
         case 101: 
@@ -4630,63 +4634,63 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
           }
         case 140: break;
         case 80: 
-          { yybegin(YYINITIAL); addToken(start,zzStartRead+1, Token.PREPROCESSOR);
+          { yybegin(YYINITIAL); addToken(start,zzStartRead+1, TokenTypes.PREPROCESSOR);
           }
         case 141: break;
         case 41: 
           { /* Line ending in '\' => continue to next line. */
 								if (validJSString) {
-									addToken(start,zzStartRead, Token.LITERAL_CHAR);
+									addToken(start,zzStartRead, TokenTypes.LITERAL_CHAR);
 									addEndToken(INTERNAL_IN_JS_CHAR_VALID);
 								}
 								else {
-									addToken(start,zzStartRead, Token.ERROR_CHAR);
+									addToken(start,zzStartRead, TokenTypes.ERROR_CHAR);
 									addEndToken(INTERNAL_IN_JS_CHAR_INVALID);
 								}
 								return firstToken;
           }
         case 142: break;
         case 5: 
-          { addToken(Token.WHITESPACE);
+          { addToken(TokenTypes.WHITESPACE);
           }
         case 143: break;
         case 124: 
-          { addToken(zzStartRead,zzStartRead, Token.MARKUP_TAG_DELIMITER);
-								  addToken(zzMarkedPos-6,zzMarkedPos-1, Token.MARKUP_TAG_NAME);
+          { addToken(zzStartRead,zzStartRead, TokenTypes.MARKUP_TAG_DELIMITER);
+								  addToken(zzMarkedPos-6,zzMarkedPos-1, TokenTypes.MARKUP_TAG_NAME);
 								  start = zzMarkedPos; yybegin(INTAG_SCRIPT);
           }
         case 144: break;
         case 103: 
-          { addToken(Token.REGEX);
+          { addToken(TokenTypes.REGEX);
           }
         case 145: break;
         case 42: 
-          { addToken(start,zzStartRead-1, Token.COMMENT_MULTILINE); addEndToken(INTERNAL_IN_JS_MLC); return firstToken;
+          { addToken(start,zzStartRead-1, TokenTypes.COMMENT_MULTILINE); addEndToken(INTERNAL_IN_JS_MLC); return firstToken;
           }
         case 146: break;
         case 128: 
           { int temp = zzStartRead;
-							  addToken(start,zzStartRead-1, Token.COMMENT_EOL);
+							  addToken(start,zzStartRead-1, TokenTypes.COMMENT_EOL);
 							  yybegin(YYINITIAL, LANG_INDEX_DEFAULT);
-							  addToken(temp,temp+1, Token.MARKUP_TAG_DELIMITER);
-							  addToken(zzMarkedPos-7,zzMarkedPos-2, Token.MARKUP_TAG_NAME);
-							  addToken(zzMarkedPos-1,zzMarkedPos-1, Token.MARKUP_TAG_DELIMITER);
+							  addToken(temp,temp+1, TokenTypes.MARKUP_TAG_DELIMITER);
+							  addToken(zzMarkedPos-7,zzMarkedPos-2, TokenTypes.MARKUP_TAG_NAME);
+							  addToken(zzMarkedPos-1,zzMarkedPos-1, TokenTypes.MARKUP_TAG_DELIMITER);
           }
         case 147: break;
         case 117: 
-          { addToken(Token.FUNCTION);
+          { addToken(TokenTypes.FUNCTION);
           }
         case 148: break;
         case 92: 
-          { int temp=zzStartRead; addToken(start,zzStartRead-1, Token.COMMENT_DOCUMENTATION); addToken(temp,zzMarkedPos-1, Token.COMMENT_MARKUP); start = zzMarkedPos;
+          { int temp=zzStartRead; addToken(start,zzStartRead-1, TokenTypes.COMMENT_DOCUMENTATION); addToken(temp,zzMarkedPos-1, TokenTypes.COMMENT_MARKUP); start = zzMarkedPos;
           }
         case 149: break;
         case 107: 
-          { yybegin(YYINITIAL); addToken(start,zzStartRead+2, Token.COMMENT_MULTILINE);
+          { yybegin(YYINITIAL); addToken(start,zzStartRead+2, TokenTypes.COMMENT_MULTILINE);
           }
         case 150: break;
         case 36: 
-          { addToken(start,zzStartRead-1, Token.ERROR_STRING_DOUBLE); addEndToken(INTERNAL_IN_JS); return firstToken;
+          { addToken(start,zzStartRead-1, TokenTypes.ERROR_STRING_DOUBLE); addEndToken(INTERNAL_IN_JS); return firstToken;
           }
         case 151: break;
         case 57: 
@@ -4694,11 +4698,11 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
           }
         case 152: break;
         case 52: 
-          { addToken(Token.ERROR_CHAR);
+          { addToken(TokenTypes.ERROR_CHAR);
           }
         case 153: break;
         case 77: 
-          { addToken(Token.SEPARATOR); jspInState = zzLexicalState; yybegin(JAVA_EXPRESSION);
+          { addToken(TokenTypes.SEPARATOR); jspInState = zzLexicalState; yybegin(JAVA_EXPRESSION);
           }
         case 154: break;
         case 20: 
@@ -4714,23 +4718,23 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
           }
         case 157: break;
         case 82: 
-          { addToken(Token.MARKUP_TAG_DELIMITER); yybegin(YYINITIAL);
+          { addToken(TokenTypes.MARKUP_TAG_DELIMITER); yybegin(YYINITIAL);
           }
         case 158: break;
         case 29: 
-          { yybegin(INTAG_STYLE); addToken(start,zzStartRead, Token.MARKUP_TAG_ATTRIBUTE_VALUE);
+          { yybegin(INTAG_STYLE); addToken(start,zzStartRead, TokenTypes.MARKUP_TAG_ATTRIBUTE_VALUE);
           }
         case 159: break;
         case 116: 
-          { if(JavaScriptTokenMaker.isJavaScriptCompatible("1.6")){ addToken(Token.RESERVED_WORD);} else {addToken(Token.IDENTIFIER);}
+          { if(JavaScriptTokenMaker.isJavaScriptCompatible("1.6")){ addToken(TokenTypes.RESERVED_WORD);} else {addToken(TokenTypes.IDENTIFIER);}
           }
         case 160: break;
         case 109: 
-          { if(JavaScriptTokenMaker.isJavaScriptCompatible("1.7")){ addToken(Token.RESERVED_WORD);} else {addToken(Token.IDENTIFIER);}
+          { if(JavaScriptTokenMaker.isJavaScriptCompatible("1.7")){ addToken(TokenTypes.RESERVED_WORD);} else {addToken(TokenTypes.IDENTIFIER);}
           }
         case 161: break;
         case 65: 
-          { /*System.out.println("css_value: " + yytext());*/ addToken(Token.IDENTIFIER);
+          { /*System.out.println("css_value: " + yytext());*/ addToken(TokenTypes.IDENTIFIER);
           }
         case 162: break;
         case 17: 
@@ -4738,11 +4742,11 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
           }
         case 163: break;
         case 28: 
-          { addToken(Token.MARKUP_TAG_DELIMITER); yybegin(CSS, LANG_INDEX_CSS);
+          { addToken(TokenTypes.MARKUP_TAG_DELIMITER); yybegin(CSS, LANG_INDEX_CSS);
           }
         case 164: break;
         case 74: 
-          { addToken(start,zzStartRead, Token.LITERAL_CHAR); yybegin(cssPrevState);
+          { addToken(start,zzStartRead, TokenTypes.LITERAL_CHAR); yybegin(cssPrevState);
           }
         case 165: break;
         case 27: 
@@ -4750,11 +4754,11 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
           }
         case 166: break;
         case 54: 
-          { addToken(Token.IDENTIFIER); /* Needed as InTagIdentifier ignores it. */
+          { addToken(TokenTypes.IDENTIFIER); /* Needed as InTagIdentifier ignores it. */
           }
         case 167: break;
         case 119: 
-          { yybegin(YYINITIAL); addToken(start,zzStartRead+3, Token.COMMENT_MULTILINE);
+          { yybegin(YYINITIAL); addToken(start,zzStartRead+3, TokenTypes.COMMENT_MULTILINE);
           }
         case 168: break;
         case 90: 
@@ -4762,19 +4766,19 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
           }
         case 169: break;
         case 25: 
-          { yybegin(INTAG_SCRIPT); addToken(start,zzStartRead, Token.MARKUP_TAG_ATTRIBUTE_VALUE);
+          { yybegin(INTAG_SCRIPT); addToken(start,zzStartRead, TokenTypes.MARKUP_TAG_ATTRIBUTE_VALUE);
           }
         case 170: break;
         case 37: 
-          { int type = validJSString ? Token.LITERAL_STRING_DOUBLE_QUOTE : Token.ERROR_STRING_DOUBLE; addToken(start,zzStartRead, type); yybegin(JAVASCRIPT);
+          { int type = validJSString ? TokenTypes.LITERAL_STRING_DOUBLE_QUOTE : TokenTypes.ERROR_STRING_DOUBLE; addToken(start,zzStartRead, type); yybegin(JAVASCRIPT);
           }
         case 171: break;
         case 114: 
-          { addToken(Token.COMMENT_MULTILINE);
+          { addToken(TokenTypes.COMMENT_MULTILINE);
           }
         case 172: break;
         case 47: 
-          { addToken(Token.ERROR_STRING_DOUBLE); addEndToken(INTERNAL_IN_JAVA_EXPRESSION - jspInState); return firstToken;
+          { addToken(TokenTypes.ERROR_STRING_DOUBLE); addEndToken(INTERNAL_IN_JAVA_EXPRESSION - jspInState); return firstToken;
           }
         case 173: break;
         case 110: 
@@ -4787,18 +4791,18 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
         case 175: break;
         case 125: 
           { yybegin(YYINITIAL, LANG_INDEX_DEFAULT);
-						  addToken(zzStartRead,zzStartRead+1, Token.MARKUP_TAG_DELIMITER);
-						  addToken(zzMarkedPos-6,zzMarkedPos-2, Token.MARKUP_TAG_NAME);
-						  addToken(zzMarkedPos-1,zzMarkedPos-1, Token.MARKUP_TAG_DELIMITER);
+						  addToken(zzStartRead,zzStartRead+1, TokenTypes.MARKUP_TAG_DELIMITER);
+						  addToken(zzMarkedPos-6,zzMarkedPos-2, TokenTypes.MARKUP_TAG_NAME);
+						  addToken(zzMarkedPos-1,zzMarkedPos-1, TokenTypes.MARKUP_TAG_DELIMITER);
           }
         case 176: break;
         case 61: 
-          { /*System.out.println("css_property: " + yytext());*/ addToken(Token.IDENTIFIER);
+          { /*System.out.println("css_property: " + yytext());*/ addToken(TokenTypes.IDENTIFIER);
           }
         case 177: break;
         case 76: 
           { int count = yylength();
-									addToken(zzStartRead,zzStartRead, Token.MARKUP_TAG_DELIMITER);
+									addToken(zzStartRead,zzStartRead, TokenTypes.MARKUP_TAG_DELIMITER);
 									zzMarkedPos -= (count-1); //yypushback(count-1);
 									yybegin(INTAG_CHECK_TAG_NAME);
           }
@@ -4812,17 +4816,17 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
           }
         case 180: break;
         case 122: 
-          { addToken(zzStartRead,zzStartRead, Token.MARKUP_TAG_DELIMITER);
-								  addToken(zzMarkedPos-5,zzMarkedPos-1, Token.MARKUP_TAG_NAME);
+          { addToken(zzStartRead,zzStartRead, TokenTypes.MARKUP_TAG_DELIMITER);
+								  addToken(zzMarkedPos-5,zzMarkedPos-1, TokenTypes.MARKUP_TAG_NAME);
 								  start = zzMarkedPos; cssPrevState = zzLexicalState; yybegin(INTAG_STYLE);
           }
         case 181: break;
         case 93: 
-          { yybegin(JAVA_EXPRESSION); addToken(start,zzStartRead+1, Token.COMMENT_DOCUMENTATION);
+          { yybegin(JAVA_EXPRESSION); addToken(start,zzStartRead+1, TokenTypes.COMMENT_DOCUMENTATION);
           }
         case 182: break;
         case 91: 
-          { yybegin(JAVASCRIPT); addToken(start,zzStartRead+1, Token.COMMENT_MULTILINE);
+          { yybegin(JAVASCRIPT); addToken(start,zzStartRead+1, TokenTypes.COMMENT_MULTILINE);
           }
         case 183: break;
         case 31: 
@@ -4830,19 +4834,19 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
           }
         case 184: break;
         case 39: 
-          { addToken(start,zzStartRead-1, Token.ERROR_CHAR); addEndToken(INTERNAL_IN_JS); return firstToken;
+          { addToken(start,zzStartRead-1, TokenTypes.ERROR_CHAR); addEndToken(INTERNAL_IN_JS); return firstToken;
           }
         case 185: break;
         case 12: 
-          { addToken(Token.OPERATOR);
+          { addToken(TokenTypes.OPERATOR);
           }
         case 186: break;
         case 67: 
-          { addToken(Token.OPERATOR); yybegin(CSS_PROPERTY);
+          { addToken(TokenTypes.OPERATOR); yybegin(CSS_PROPERTY);
           }
         case 187: break;
         case 48: 
-          { addToken(Token.ERROR_CHAR); addEndToken(INTERNAL_IN_JAVA_EXPRESSION - jspInState); return firstToken;
+          { addToken(TokenTypes.ERROR_CHAR); addEndToken(INTERNAL_IN_JAVA_EXPRESSION - jspInState); return firstToken;
           }
         case 188: break;
         case 112: 
@@ -4850,11 +4854,11 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
           }
         case 189: break;
         case 102: 
-          { addToken(Token.VARIABLE);
+          { addToken(TokenTypes.VARIABLE);
           }
         case 190: break;
         case 55: 
-          { /*System.out.println("CSS: " + yytext());*/ addToken(Token.IDENTIFIER);
+          { /*System.out.println("CSS: " + yytext());*/ addToken(TokenTypes.IDENTIFIER);
           }
         case 191: break;
         case 96: 
@@ -4862,44 +4866,44 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
           }
         case 192: break;
         case 2: 
-          { addToken(Token.IDENTIFIER);
+          { addToken(TokenTypes.IDENTIFIER);
           }
         case 193: break;
         case 113: 
-          { int temp=zzStartRead; addToken(start,zzStartRead-1, Token.COMMENT_MULTILINE); addHyperlinkToken(temp,zzMarkedPos-1, Token.COMMENT_MULTILINE); start = zzMarkedPos;
+          { int temp=zzStartRead; addToken(start,zzStartRead-1, TokenTypes.COMMENT_MULTILINE); addHyperlinkToken(temp,zzMarkedPos-1, TokenTypes.COMMENT_MULTILINE); start = zzMarkedPos;
           }
         case 194: break;
         case 44: 
-          { addToken(start,zzStartRead-1, Token.COMMENT_MULTILINE); addEndToken(INTERNAL_IN_HIDDEN_COMMENT); return firstToken;
+          { addToken(start,zzStartRead-1, TokenTypes.COMMENT_MULTILINE); addEndToken(INTERNAL_IN_HIDDEN_COMMENT); return firstToken;
           }
         case 195: break;
         case 24: 
-          { addToken(Token.MARKUP_TAG_DELIMITER); yybegin(JAVASCRIPT, LANG_INDEX_JS);
+          { addToken(TokenTypes.MARKUP_TAG_DELIMITER); yybegin(JAVASCRIPT, LANG_INDEX_JS);
           }
         case 196: break;
         case 8: 
-          { addToken(start,zzStartRead-1, Token.PREPROCESSOR); return firstToken;
+          { addToken(start,zzStartRead-1, TokenTypes.PREPROCESSOR); return firstToken;
           }
         case 197: break;
         case 95: 
-          { addToken(Token.COMMENT_EOL); addEndToken(INTERNAL_IN_JAVA_EXPRESSION - jspInState); return firstToken;
+          { addToken(TokenTypes.COMMENT_EOL); addEndToken(INTERNAL_IN_JAVA_EXPRESSION - jspInState); return firstToken;
           }
         case 198: break;
         case 118: 
-          { int temp=zzStartRead; addToken(start,zzStartRead-1, Token.COMMENT_EOL); addHyperlinkToken(temp,zzMarkedPos-1, Token.COMMENT_EOL); start = zzMarkedPos;
+          { int temp=zzStartRead; addToken(start,zzStartRead-1, TokenTypes.COMMENT_EOL); addHyperlinkToken(temp,zzMarkedPos-1, TokenTypes.COMMENT_EOL); start = zzMarkedPos;
           }
         case 199: break;
         case 63: 
-          { addToken(Token.SEPARATOR); yybegin(CSS);
+          { addToken(TokenTypes.SEPARATOR); yybegin(CSS);
           }
         case 200: break;
         case 127: 
           { yybegin(YYINITIAL);
 							  int temp = zzStartRead;
-							  addToken(start,zzStartRead-1, Token.COMMENT_MULTILINE);
-							  addToken(temp,temp+1, Token.MARKUP_TAG_DELIMITER);
-							  addToken(zzMarkedPos-7,zzMarkedPos-2, Token.MARKUP_TAG_NAME);
-							  addToken(zzMarkedPos-1,zzMarkedPos-1, Token.MARKUP_TAG_DELIMITER);
+							  addToken(start,zzStartRead-1, TokenTypes.COMMENT_MULTILINE);
+							  addToken(temp,temp+1, TokenTypes.MARKUP_TAG_DELIMITER);
+							  addToken(zzMarkedPos-7,zzMarkedPos-2, TokenTypes.MARKUP_TAG_NAME);
+							  addToken(zzMarkedPos-1,zzMarkedPos-1, TokenTypes.MARKUP_TAG_DELIMITER);
           }
         case 201: break;
         case 32: 
@@ -4907,11 +4911,11 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
           }
         case 202: break;
         case 45: 
-          { addToken(start,zzStartRead-1, Token.COMMENT_DOCUMENTATION); addEndToken(INTERNAL_IN_JAVA_DOCCOMMENT - jspInState); return firstToken;
+          { addToken(start,zzStartRead-1, TokenTypes.COMMENT_DOCUMENTATION); addEndToken(INTERNAL_IN_JAVA_DOCCOMMENT - jspInState); return firstToken;
           }
         case 203: break;
         case 71: 
-          { addToken(start,zzStartRead, Token.LITERAL_STRING_DOUBLE_QUOTE); yybegin(cssPrevState);
+          { addToken(start,zzStartRead, TokenTypes.LITERAL_STRING_DOUBLE_QUOTE); yybegin(cssPrevState);
           }
         case 204: break;
         case 62: 
@@ -4919,15 +4923,15 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
           }
         case 205: break;
         case 51: 
-          { addToken(Token.ERROR_STRING_DOUBLE);
+          { addToken(TokenTypes.ERROR_STRING_DOUBLE);
           }
         case 206: break;
         case 40: 
-          { int type = validJSString ? Token.LITERAL_CHAR : Token.ERROR_CHAR; addToken(start,zzStartRead, type); yybegin(JAVASCRIPT);
+          { int type = validJSString ? TokenTypes.LITERAL_CHAR : TokenTypes.ERROR_CHAR; addToken(start,zzStartRead, type); yybegin(JAVASCRIPT);
           }
         case 207: break;
         case 7: 
-          { addToken(start,zzStartRead-1, Token.COMMENT_MULTILINE); return firstToken;
+          { addToken(start,zzStartRead-1, TokenTypes.COMMENT_MULTILINE); return firstToken;
           }
         case 208: break;
         case 33: 
@@ -4935,7 +4939,7 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
           }
         case 209: break;
         case 120: 
-          { int temp=zzStartRead; addToken(start,zzStartRead-1, Token.COMMENT_DOCUMENTATION); addHyperlinkToken(temp,zzMarkedPos-1, Token.COMMENT_DOCUMENTATION); start = zzMarkedPos;
+          { int temp=zzStartRead; addToken(start,zzStartRead-1, TokenTypes.COMMENT_DOCUMENTATION); addHyperlinkToken(temp,zzMarkedPos-1, TokenTypes.COMMENT_DOCUMENTATION); start = zzMarkedPos;
           }
         case 210: break;
         case 84: 
@@ -4943,30 +4947,30 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
           }
         case 211: break;
         case 87: 
-          { addToken(Token.LITERAL_NUMBER_HEXADECIMAL);
+          { addToken(TokenTypes.LITERAL_NUMBER_HEXADECIMAL);
           }
         case 212: break;
         case 69: 
           { int temp = zzMarkedPos - 2;
-						  addToken(zzStartRead, temp, Token.FUNCTION);
-						  addToken(zzMarkedPos-1, zzMarkedPos-1, Token.SEPARATOR);
+						  addToken(zzStartRead, temp, TokenTypes.FUNCTION);
+						  addToken(zzMarkedPos-1, zzMarkedPos-1, TokenTypes.SEPARATOR);
 						  zzStartRead = zzCurrentPos = zzMarkedPos;
           }
         case 213: break;
         case 98: 
-          { yybegin(JAVA_EXPRESSION); addToken(start,zzStartRead+1, Token.COMMENT_MULTILINE);
+          { yybegin(JAVA_EXPRESSION); addToken(start,zzStartRead+1, TokenTypes.COMMENT_MULTILINE);
           }
         case 214: break;
         case 50: 
-          { addToken(start,zzStartRead-1, Token.COMMENT_MULTILINE); addEndToken(INTERNAL_IN_JAVA_MLC - jspInState); return firstToken;
+          { addToken(start,zzStartRead-1, TokenTypes.COMMENT_MULTILINE); addEndToken(INTERNAL_IN_JAVA_MLC - jspInState); return firstToken;
           }
         case 215: break;
         case 49: 
-          { addToken(Token.ANNOTATION);
+          { addToken(TokenTypes.ANNOTATION);
           }
         case 216: break;
         case 30: 
-          { addToken(Token.ERROR_IDENTIFIER);
+          { addToken(TokenTypes.ERROR_IDENTIFIER);
           }
         case 217: break;
         case 66: 
@@ -4974,7 +4978,7 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
           }
         case 218: break;
         case 115: 
-          { addToken(Token.LITERAL_BOOLEAN);
+          { addToken(TokenTypes.LITERAL_BOOLEAN);
           }
         case 219: break;
         case 18: 
@@ -4991,9 +4995,9 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
         case 222: break;
         case 126: 
           { yybegin(YYINITIAL, LANG_INDEX_DEFAULT);
-								  addToken(zzStartRead,zzStartRead+1, Token.MARKUP_TAG_DELIMITER);
-								  addToken(zzMarkedPos-7,zzMarkedPos-2, Token.MARKUP_TAG_NAME);
-								  addToken(zzMarkedPos-1,zzMarkedPos-1, Token.MARKUP_TAG_DELIMITER);
+								  addToken(zzStartRead,zzStartRead+1, TokenTypes.MARKUP_TAG_DELIMITER);
+								  addToken(zzMarkedPos-7,zzMarkedPos-2, TokenTypes.MARKUP_TAG_NAME);
+								  addToken(zzMarkedPos-1,zzMarkedPos-1, TokenTypes.MARKUP_TAG_DELIMITER);
           }
         case 223: break;
         case 58: 
@@ -5001,11 +5005,11 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
           }
         case 224: break;
         case 53: 
-          { addToken(Token.RESERVED_WORD);
+          { addToken(TokenTypes.RESERVED_WORD);
           }
         case 225: break;
         case 97: 
-          { addToken(Token.SEPARATOR); start = zzMarkedPos; yybegin(jspInState);
+          { addToken(TokenTypes.SEPARATOR); start = zzMarkedPos; yybegin(jspInState);
           }
         case 226: break;
         case 13: 
@@ -5013,23 +5017,23 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
           }
         case 227: break;
         case 100: 
-          { yybegin(YYINITIAL); addToken(Token.SEPARATOR);
+          { yybegin(YYINITIAL); addToken(TokenTypes.SEPARATOR);
           }
         case 228: break;
         case 9: 
-          { addToken(start,zzStartRead-1, Token.VARIABLE); return firstToken;
+          { addToken(start,zzStartRead-1, TokenTypes.VARIABLE); return firstToken;
           }
         case 229: break;
         case 99: 
-          { addToken(Token.LITERAL_CHAR);
+          { addToken(TokenTypes.LITERAL_CHAR);
           }
         case 230: break;
         case 16: 
-          { yybegin(YYINITIAL); addToken(Token.MARKUP_TAG_DELIMITER);
+          { yybegin(YYINITIAL); addToken(TokenTypes.MARKUP_TAG_DELIMITER);
           }
         case 231: break;
         case 6: 
-          { addToken(Token.DATA_TYPE);
+          { addToken(TokenTypes.DATA_TYPE);
           }
         case 232: break;
         case 46: 
@@ -5037,34 +5041,34 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
           }
         case 233: break;
         case 35: 
-          { addToken(Token.SEPARATOR);
+          { addToken(TokenTypes.SEPARATOR);
           }
         case 234: break;
         case 105: 
           { int count = yylength();
-									addToken(zzStartRead,zzStartRead+1, Token.MARKUP_TAG_DELIMITER);
+									addToken(zzStartRead,zzStartRead+1, TokenTypes.MARKUP_TAG_DELIMITER);
 									zzMarkedPos -= (count-2); //yypushback(count-2);
 									yybegin(INTAG_CHECK_TAG_NAME);
           }
         case 235: break;
         case 70: 
-          { addToken(start,zzStartRead-1, Token.LITERAL_STRING_DOUBLE_QUOTE); addEndToken(INTERNAL_CSS_STRING - cssPrevState); return firstToken;
+          { addToken(start,zzStartRead-1, TokenTypes.LITERAL_STRING_DOUBLE_QUOTE); addEndToken(INTERNAL_CSS_STRING - cssPrevState); return firstToken;
           }
         case 236: break;
         case 68: 
-          { /* End of a function */ addToken(Token.SEPARATOR);
+          { /* End of a function */ addToken(TokenTypes.SEPARATOR);
           }
         case 237: break;
         case 19: 
-          { addToken(Token.MARKUP_TAG_NAME);
+          { addToken(TokenTypes.MARKUP_TAG_NAME);
           }
         case 238: break;
         case 11: 
-          { addToken(Token.MARKUP_TAG_ATTRIBUTE);
+          { addToken(TokenTypes.MARKUP_TAG_ATTRIBUTE);
           }
         case 239: break;
         case 121: 
-          { int temp=zzStartRead; addToken(start,zzStartRead-1, Token.COMMENT_DOCUMENTATION); addToken(temp,zzMarkedPos-1, Token.COMMENT_KEYWORD); start = zzMarkedPos;
+          { int temp=zzStartRead; addToken(start,zzStartRead-1, TokenTypes.COMMENT_DOCUMENTATION); addToken(temp,zzMarkedPos-1, TokenTypes.COMMENT_KEYWORD); start = zzMarkedPos;
           }
         case 240: break;
         case 83: 
@@ -5074,18 +5078,18 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
         case 38: 
           { /* Line ending in '\' => continue to next line. */
 								if (validJSString) {
-									addToken(start,zzStartRead, Token.LITERAL_STRING_DOUBLE_QUOTE);
+									addToken(start,zzStartRead, TokenTypes.LITERAL_STRING_DOUBLE_QUOTE);
 									addEndToken(INTERNAL_IN_JS_STRING_VALID);
 								}
 								else {
-									addToken(start,zzStartRead, Token.ERROR_STRING_DOUBLE);
+									addToken(start,zzStartRead, TokenTypes.ERROR_STRING_DOUBLE);
 									addEndToken(INTERNAL_IN_JS_STRING_INVALID);
 								}
 								return firstToken;
           }
         case 242: break;
         case 86: 
-          { addToken(Token.LITERAL_NUMBER_FLOAT);
+          { addToken(TokenTypes.LITERAL_NUMBER_FLOAT);
           }
         case 243: break;
         case 14: 
@@ -5095,7 +5099,7 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
         case 108: 
           { boolean highlightedAsRegex = false;
 										if (firstToken==null) {
-											addToken(Token.REGEX);
+											addToken(TokenTypes.REGEX);
 											highlightedAsRegex = true;
 										}
 										else {
@@ -5103,7 +5107,7 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
 											// the previous token, highlight it as such.
 											Token t = firstToken.getLastNonCommentNonWhitespaceToken();
 											if (RSyntaxUtilities.regexCanFollowInJavaScript(t)) {
-												addToken(Token.REGEX);
+												addToken(TokenTypes.REGEX);
 												highlightedAsRegex = true;
 											}
 										}
@@ -5111,25 +5115,25 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
 										// individual tokens.
 										if (!highlightedAsRegex) {
 											int temp = zzStartRead + 1;
-											addToken(zzStartRead, zzStartRead, Token.OPERATOR);
+											addToken(zzStartRead, zzStartRead, TokenTypes.OPERATOR);
 											zzStartRead = zzCurrentPos = zzMarkedPos = temp;
 										}
           }
         case 245: break;
         case 94: 
-          { addToken(Token.LITERAL_STRING_DOUBLE_QUOTE);
+          { addToken(TokenTypes.LITERAL_STRING_DOUBLE_QUOTE);
           }
         case 246: break;
         case 75: 
-          { addToken(start,zzStartRead-1, Token.COMMENT_MULTILINE); addEndToken(INTERNAL_CSS_MLC - cssPrevState); return firstToken;
+          { addToken(start,zzStartRead-1, TokenTypes.COMMENT_MULTILINE); addEndToken(INTERNAL_CSS_MLC - cssPrevState); return firstToken;
           }
         case 247: break;
         case 15: 
-          { addToken(Token.MARKUP_TAG_DELIMITER);
+          { addToken(TokenTypes.MARKUP_TAG_DELIMITER);
           }
         case 248: break;
         case 34: 
-          { addToken(Token.LITERAL_NUMBER_DECIMAL_INT);
+          { addToken(TokenTypes.LITERAL_NUMBER_DECIMAL_INT);
           }
         case 249: break;
         case 78: 
@@ -5137,11 +5141,11 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
           }
         case 250: break;
         case 21: 
-          { addToken(start,zzStartRead, Token.MARKUP_TAG_ATTRIBUTE_VALUE); yybegin(INTAG);
+          { addToken(start,zzStartRead, TokenTypes.MARKUP_TAG_ATTRIBUTE_VALUE); yybegin(INTAG);
           }
         case 251: break;
         case 81: 
-          { int temp=zzStartRead; if (zzStartRead>start) addToken(start,zzStartRead-1, Token.MARKUP_TAG_ATTRIBUTE_VALUE); addToken(temp, zzMarkedPos-1, Token.SEPARATOR); jspInState = zzLexicalState; yybegin(JAVA_EXPRESSION);
+          { int temp=zzStartRead; if (zzStartRead>start) addToken(start,zzStartRead-1, TokenTypes.MARKUP_TAG_ATTRIBUTE_VALUE); addToken(temp, zzMarkedPos-1, TokenTypes.SEPARATOR); jspInState = zzLexicalState; yybegin(JAVA_EXPRESSION);
           }
         case 252: break;
         case 22: 
@@ -5149,11 +5153,11 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
           }
         case 253: break;
         case 43: 
-          { addToken(start,zzStartRead-1, Token.COMMENT_EOL); addEndToken(INTERNAL_IN_JS); return firstToken;
+          { addToken(start,zzStartRead-1, TokenTypes.COMMENT_EOL); addEndToken(INTERNAL_IN_JS); return firstToken;
           }
         case 254: break;
         case 59: 
-          { /* Unknown pseudo class */ addToken(Token.DATA_TYPE);
+          { /* Unknown pseudo class */ addToken(TokenTypes.DATA_TYPE);
           }
         case 255: break;
         case 1: 
@@ -5165,11 +5169,11 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
             zzAtEOF = true;
             switch (zzLexicalState) {
             case INATTR_SINGLE_SCRIPT: {
-              addToken(start,zzStartRead-1, Token.MARKUP_TAG_ATTRIBUTE_VALUE); addEndToken(INTERNAL_ATTR_SINGLE_QUOTE_SCRIPT); return firstToken;
+              addToken(start,zzStartRead-1, TokenTypes.MARKUP_TAG_ATTRIBUTE_VALUE); addEndToken(INTERNAL_ATTR_SINGLE_QUOTE_SCRIPT); return firstToken;
             }
             case 1629: break;
             case JS_CHAR: {
-              addToken(start,zzStartRead-1, Token.ERROR_CHAR); addEndToken(INTERNAL_IN_JS); return firstToken;
+              addToken(start,zzStartRead-1, TokenTypes.ERROR_CHAR); addEndToken(INTERNAL_IN_JS); return firstToken;
             }
             case 1630: break;
             case JAVA_EXPRESSION: {
@@ -5177,23 +5181,23 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
             }
             case 1631: break;
             case CSS_STRING: {
-              addToken(start,zzStartRead-1, Token.LITERAL_STRING_DOUBLE_QUOTE); addEndToken(INTERNAL_CSS_STRING - cssPrevState); return firstToken;
+              addToken(start,zzStartRead-1, TokenTypes.LITERAL_STRING_DOUBLE_QUOTE); addEndToken(INTERNAL_CSS_STRING - cssPrevState); return firstToken;
             }
             case 1632: break;
             case HIDDEN_COMMENT: {
-              addToken(start,zzStartRead-1, Token.COMMENT_MULTILINE); addEndToken(INTERNAL_IN_HIDDEN_COMMENT); return firstToken;
+              addToken(start,zzStartRead-1, TokenTypes.COMMENT_MULTILINE); addEndToken(INTERNAL_IN_HIDDEN_COMMENT); return firstToken;
             }
             case 1633: break;
             case JS_MLC: {
-              addToken(start,zzStartRead-1, Token.COMMENT_MULTILINE); addEndToken(INTERNAL_IN_JS_MLC); return firstToken;
+              addToken(start,zzStartRead-1, TokenTypes.COMMENT_MULTILINE); addEndToken(INTERNAL_IN_JS_MLC); return firstToken;
             }
             case 1634: break;
             case CSS_CHAR_LITERAL: {
-              addToken(start,zzStartRead-1, Token.LITERAL_CHAR); addEndToken(INTERNAL_CSS_CHAR - cssPrevState); return firstToken;
+              addToken(start,zzStartRead-1, TokenTypes.LITERAL_CHAR); addEndToken(INTERNAL_CSS_CHAR - cssPrevState); return firstToken;
             }
             case 1635: break;
             case JAVA_DOCCOMMENT: {
-              yybegin(JAVA_EXPRESSION); addToken(start,zzEndRead, Token.COMMENT_DOCUMENTATION); addEndToken(INTERNAL_IN_JAVA_DOCCOMMENT - jspInState); return firstToken;
+              yybegin(JAVA_EXPRESSION); addToken(start,zzEndRead, TokenTypes.COMMENT_DOCUMENTATION); addEndToken(INTERNAL_IN_JAVA_DOCCOMMENT - jspInState); return firstToken;
             }
             case 1636: break;
             case INTAG_SCRIPT: {
@@ -5205,7 +5209,7 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
             }
             case 1638: break;
             case CSS_C_STYLE_COMMENT: {
-              addToken(start,zzStartRead-1, Token.COMMENT_MULTILINE); addEndToken(INTERNAL_CSS_MLC - cssPrevState); return firstToken;
+              addToken(start,zzStartRead-1, TokenTypes.COMMENT_MULTILINE); addEndToken(INTERNAL_CSS_MLC - cssPrevState); return firstToken;
             }
             case 1639: break;
             case CSS: {
@@ -5221,15 +5225,15 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
             }
             case 1642: break;
             case COMMENT: {
-              addToken(start,zzStartRead-1, Token.COMMENT_MULTILINE); return firstToken;
+              addToken(start,zzStartRead-1, TokenTypes.COMMENT_MULTILINE); return firstToken;
             }
             case 1643: break;
             case INATTR_DOUBLE_SCRIPT: {
-              addToken(start,zzStartRead-1, Token.MARKUP_TAG_ATTRIBUTE_VALUE); addEndToken(INTERNAL_ATTR_DOUBLE_QUOTE_SCRIPT); return firstToken;
+              addToken(start,zzStartRead-1, TokenTypes.MARKUP_TAG_ATTRIBUTE_VALUE); addEndToken(INTERNAL_ATTR_DOUBLE_QUOTE_SCRIPT); return firstToken;
             }
             case 1644: break;
             case PI: {
-              addToken(start,zzStartRead-1, Token.PREPROCESSOR); return firstToken;
+              addToken(start,zzStartRead-1, TokenTypes.PREPROCESSOR); return firstToken;
             }
             case 1645: break;
             case JAVASCRIPT: {
@@ -5245,23 +5249,23 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
             }
             case 1648: break;
             case INATTR_SINGLE_STYLE: {
-              addToken(start,zzStartRead-1, Token.MARKUP_TAG_ATTRIBUTE_VALUE); addEndToken(INTERNAL_ATTR_SINGLE_QUOTE_STYLE); return firstToken;
+              addToken(start,zzStartRead-1, TokenTypes.MARKUP_TAG_ATTRIBUTE_VALUE); addEndToken(INTERNAL_ATTR_SINGLE_QUOTE_STYLE); return firstToken;
             }
             case 1649: break;
             case DTD: {
-              addToken(start,zzStartRead-1, Token.VARIABLE); return firstToken;
+              addToken(start,zzStartRead-1, TokenTypes.VARIABLE); return firstToken;
             }
             case 1650: break;
             case JS_EOL_COMMENT: {
-              addToken(start,zzStartRead-1, Token.COMMENT_EOL); addEndToken(INTERNAL_IN_JS); return firstToken;
+              addToken(start,zzStartRead-1, TokenTypes.COMMENT_EOL); addEndToken(INTERNAL_IN_JS); return firstToken;
             }
             case 1651: break;
             case INATTR_DOUBLE_STYLE: {
-              addToken(start,zzStartRead-1, Token.MARKUP_TAG_ATTRIBUTE_VALUE); addEndToken(INTERNAL_ATTR_DOUBLE_QUOTE_STYLE); return firstToken;
+              addToken(start,zzStartRead-1, TokenTypes.MARKUP_TAG_ATTRIBUTE_VALUE); addEndToken(INTERNAL_ATTR_DOUBLE_QUOTE_STYLE); return firstToken;
             }
             case 1652: break;
             case INATTR_SINGLE: {
-              addToken(start,zzStartRead-1, Token.MARKUP_TAG_ATTRIBUTE_VALUE); addEndToken(INTERNAL_ATTR_SINGLE); return firstToken;
+              addToken(start,zzStartRead-1, TokenTypes.MARKUP_TAG_ATTRIBUTE_VALUE); addEndToken(INTERNAL_ATTR_SINGLE); return firstToken;
             }
             case 1653: break;
             case YYINITIAL: {
@@ -5269,15 +5273,15 @@ public class JSPTokenMaker extends AbstractMarkupTokenMaker {
             }
             case 1654: break;
             case INATTR_DOUBLE: {
-              addToken(start,zzStartRead-1, Token.MARKUP_TAG_ATTRIBUTE_VALUE); addEndToken(INTERNAL_ATTR_DOUBLE); return firstToken;
+              addToken(start,zzStartRead-1, TokenTypes.MARKUP_TAG_ATTRIBUTE_VALUE); addEndToken(INTERNAL_ATTR_DOUBLE); return firstToken;
             }
             case 1655: break;
             case JS_STRING: {
-              addToken(start,zzStartRead-1, Token.ERROR_STRING_DOUBLE); addEndToken(INTERNAL_IN_JS); return firstToken;
+              addToken(start,zzStartRead-1, TokenTypes.ERROR_STRING_DOUBLE); addEndToken(INTERNAL_IN_JS); return firstToken;
             }
             case 1656: break;
             case JAVA_MLC: {
-              addToken(start,zzStartRead-1, Token.COMMENT_MULTILINE); addEndToken(INTERNAL_IN_JAVA_MLC - jspInState); return firstToken;
+              addToken(start,zzStartRead-1, TokenTypes.COMMENT_MULTILINE); addEndToken(INTERNAL_IN_JAVA_MLC - jspInState); return firstToken;
             }
             case 1657: break;
             case INTAG_STYLE: {

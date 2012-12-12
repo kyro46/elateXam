@@ -1431,6 +1431,7 @@ public class AssemblerX86TokenMaker extends AbstractJFlexTokenMaker implements T
 	 * @param startOffset The offset in the document at which this token
 	 *                    occurs.
 	 */
+	@Override
 	public void addToken(char[] array, int start, int end, int tokenType, int startOffset) {
 		super.addToken(array, start,end, tokenType, startOffset);
 		zzStartRead = zzMarkedPos;
@@ -1444,6 +1445,7 @@ public class AssemblerX86TokenMaker extends AbstractJFlexTokenMaker implements T
 	 * @return The start and end strings to add to a line to "comment"
 	 *         it out.
 	 */
+	@Override
 	public String[] getLineCommentStartAndEnd() {
 		return new String[] { ";", null };
 	}
@@ -1461,16 +1463,17 @@ public class AssemblerX86TokenMaker extends AbstractJFlexTokenMaker implements T
 	 * @return The first <code>Token</code> in a linked list representing
 	 *         the syntax highlighted text.
 	 */
+	@Override
 	public Token getTokenList(Segment text, int initialTokenType, int startOffset) {
 
 		resetTokenList();
 		this.offsetShift = -text.offset + startOffset;
 
 		// Start off in the proper state.
-		int state = Token.NULL;
+		int state = TokenTypes.NULL;
 		switch (initialTokenType) {
 			default:
-				state = Token.NULL;
+				state = TokenTypes.NULL;
 		}
 
 		s = text;
@@ -1594,7 +1597,8 @@ public class AssemblerX86TokenMaker extends AbstractJFlexTokenMaker implements T
    *
    * @param newState the new lexical state
    */
-  public final void yybegin(int newState) {
+  @Override
+public final void yybegin(int newState) {
     zzLexicalState = newState;
   }
 
@@ -1785,59 +1789,59 @@ public class AssemblerX86TokenMaker extends AbstractJFlexTokenMaker implements T
 
       switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
         case 11: 
-          { addToken(Token.RESERVED_WORD);
+          { addToken(TokenTypes.RESERVED_WORD);
           }
         case 16: break;
         case 1: 
-          { addToken(Token.IDENTIFIER);
+          { addToken(TokenTypes.IDENTIFIER);
           }
         case 17: break;
         case 12: 
-          { addToken(Token.LITERAL_STRING_DOUBLE_QUOTE);
+          { addToken(TokenTypes.LITERAL_STRING_DOUBLE_QUOTE);
           }
         case 18: break;
         case 9: 
-          { addToken(Token.FUNCTION);
+          { addToken(TokenTypes.FUNCTION);
           }
         case 19: break;
         case 5: 
-          { addToken(Token.COMMENT_EOL); addNullToken(); return firstToken;
+          { addToken(TokenTypes.COMMENT_EOL); addNullToken(); return firstToken;
           }
         case 20: break;
         case 14: 
-          { addToken(Token.VARIABLE);
+          { addToken(TokenTypes.VARIABLE);
           }
         case 21: break;
         case 7: 
-          { addToken(Token.WHITESPACE);
+          { addToken(TokenTypes.WHITESPACE);
           }
         case 22: break;
         case 10: 
-          { addToken(Token.PREPROCESSOR);
+          { addToken(TokenTypes.PREPROCESSOR);
           }
         case 23: break;
         case 15: 
-          { addToken(Token.DATA_TYPE);
+          { addToken(TokenTypes.DATA_TYPE);
           }
         case 24: break;
         case 4: 
-          { addToken(Token.ERROR_CHAR); /*addNullToken(); return firstToken;*/
+          { addToken(TokenTypes.ERROR_CHAR); /*addNullToken(); return firstToken;*/
           }
         case 25: break;
         case 8: 
-          { addToken(Token.OPERATOR);
+          { addToken(TokenTypes.OPERATOR);
           }
         case 26: break;
         case 2: 
-          { addToken(Token.LITERAL_NUMBER_DECIMAL_INT);
+          { addToken(TokenTypes.LITERAL_NUMBER_DECIMAL_INT);
           }
         case 27: break;
         case 13: 
-          { addToken(Token.LITERAL_CHAR);
+          { addToken(TokenTypes.LITERAL_CHAR);
           }
         case 28: break;
         case 3: 
-          { addToken(Token.ERROR_STRING_DOUBLE); addNullToken(); return firstToken;
+          { addToken(TokenTypes.ERROR_STRING_DOUBLE); addNullToken(); return firstToken;
           }
         case 29: break;
         case 6: 

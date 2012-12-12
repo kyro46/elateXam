@@ -17,7 +17,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
-import javax.swing.text.StyleContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.SAXParser;
@@ -39,6 +38,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import org.fife.io.UnicodeWriter;
 import org.fife.ui.rtextarea.Gutter;
+import org.fife.ui.rtextarea.RTextAreaBase;
 
 
 /**
@@ -75,7 +75,6 @@ public class Theme {
 	private boolean markOccurrencesBorder;
 	private Color matchedBracketFG;
 	private Color matchedBracketBG;
-	private boolean matchedBracketHighlightBoth;
 	private boolean matchedBracketAnimate;
 	private Color hyperlinkFG;
 	private Color[] secondaryLanguages;
@@ -119,7 +118,6 @@ public class Theme {
 		markOccurrencesBorder = textArea.getPaintMarkOccurrencesBorder();
 		matchedBracketBG = textArea.getMatchedBracketBGColor();
 		matchedBracketFG = textArea.getMatchedBracketBorderColor();
-		matchedBracketHighlightBoth = textArea.getPaintMatchedBracketPair();
 		matchedBracketAnimate = textArea.getAnimateBracketMatching();
 		hyperlinkFG = textArea.getHyperlinkForeground();
 
@@ -165,7 +163,6 @@ public class Theme {
 		textArea.setPaintMarkOccurrencesBorder(markOccurrencesBorder);
 		textArea.setMatchedBracketBGColor(matchedBracketBG);
 		textArea.setMatchedBracketBorderColor(matchedBracketFG);
-		textArea.setPaintMatchedBracketPair(matchedBracketHighlightBoth);
 		textArea.setAnimateBracketMatching(matchedBracketAnimate);
 		textArea.setHyperlinkForeground(hyperlinkFG);
 
@@ -185,7 +182,7 @@ public class Theme {
 				baseFont.getFamily();
 			int fontSize = lineNumberFontSize>0 ? lineNumberFontSize :
 				baseFont.getSize();
-			Font font = getFont(fontName, Font.PLAIN, fontSize);
+			Font font = new Font(fontName, Font.PLAIN, fontSize);
 			gutter.setLineNumberFont(font);
 			gutter.setFoldIndicatorForeground(foldIndicatorFG);
 			gutter.setFoldBackground(foldBG);
@@ -201,21 +198,6 @@ public class Theme {
 			str = "0" + str;
 		}
 		return str;
-	}
-
-
-	/**
-	 * Returns the specified font.
-	 *
-	 * @param family The font family.
-	 * @param style The style of font.
-	 * @param size The size of the font.
-	 * @return The font.
-	 */
-	private static Font getFont(String family, int style, int size) {
-		// Use StyleContext to get a composite font for Asian glyphs.
-		StyleContext sc = StyleContext.getDefaultStyleContext();
-		return sc.getFont(family, style, size);
 	}
 
 
@@ -266,7 +248,7 @@ public class Theme {
 
 			Element elem = doc.createElement("baseFont");
 			if (!baseFont.getFamily().equals(
-					RSyntaxTextArea.getDefaultFont().getFamily())) {
+					RTextAreaBase.getDefaultFont().getFamily())) {
 				elem.setAttribute("family", baseFont.getFamily());
 			}
 			elem.setAttribute("size", Integer.toString(baseFont.getSize()));
@@ -306,7 +288,6 @@ public class Theme {
 			elem = doc.createElement("matchedBracket");
 			elem.setAttribute("fg", colorToString(matchedBracketFG));
 			elem.setAttribute("bg", colorToString(matchedBracketBG));
-			elem.setAttribute("highlightBoth", Boolean.toString(matchedBracketHighlightBoth));
 			elem.setAttribute("animate", Boolean.toString(matchedBracketAnimate));
 			root.appendChild(elem);
 
@@ -443,10 +424,12 @@ public class Theme {
 
 		private Theme theme;
 
+		@Override
 		public void error(SAXParseException e) throws SAXException {
 			throw e;
 		}
 
+		@Override
 		public void fatalError(SAXParseException e) throws SAXException {
 			throw e;
 		}
@@ -486,12 +469,14 @@ public class Theme {
 			return value;
 		}
 
-	    public InputSource resolveEntity(String publicID, 
+	    @Override
+		public InputSource resolveEntity(String publicID, 
 				String systemID) throws SAXException {
 			return new InputSource(getClass().
 					getResourceAsStream("/theme.dtd"));
 		}
 
+		@Override
 		public void startElement(String uri, String localName, String qName,
 								Attributes attrs) {
 
@@ -514,10 +499,10 @@ public class Theme {
 				String family = attrs.getValue("family");
 				int size = Integer.parseInt(attrs.getValue("size"));
 				if (family!=null) {
-					theme.baseFont = getFont(family, Font.PLAIN, size);
+					theme.baseFont = new Font(family, Font.PLAIN, size);
 				}
 				else {
-					theme.baseFont = RSyntaxTextArea.getDefaultFont();
+					theme.baseFont = RTextAreaBase.getDefaultFont();
 					theme.baseFont = theme.baseFont.deriveFont(size*1f);
 				}
 			}
@@ -576,8 +561,6 @@ public class Theme {
 				theme.matchedBracketFG = stringToColor(fg);
 				String bg = attrs.getValue("bg");
 				theme.matchedBracketBG = stringToColor(bg);
-				String highlightBoth = attrs.getValue("highlightBoth");
-				theme.matchedBracketHighlightBoth = Boolean.valueOf(highlightBoth).booleanValue();
 				String animate = attrs.getValue("animate");
 				theme.matchedBracketAnimate = Boolean.valueOf(animate).booleanValue();
 			}
@@ -646,7 +629,7 @@ public class Theme {
 					Font font = theme.baseFont;
 					String familyName = attrs.getValue("fontFamily");
 					if (familyName!=null) {
-						font = getFont(familyName, font.getStyle(),
+						font = new Font(familyName, font.getStyle(),
 								font.getSize());
 					}
 					String sizeStr = attrs.getValue("fontSize");
@@ -695,6 +678,7 @@ public class Theme {
 
 		}
 
+		@Override
 		public void warning(SAXParseException e) throws SAXException {
 			throw e;
 		}

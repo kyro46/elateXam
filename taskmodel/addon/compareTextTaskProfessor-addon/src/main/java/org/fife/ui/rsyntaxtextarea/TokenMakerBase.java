@@ -63,6 +63,7 @@ abstract class TokenMakerBase implements TokenMaker {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void addNullToken() {
 		if (firstToken==null) {
 			firstToken = tokenFactory.createToken();
@@ -95,6 +96,7 @@ abstract class TokenMakerBase implements TokenMaker {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void addToken(char[] array, int start, int end, int tokenType,
 						int startOffset) {
 		addToken(array, start, end, tokenType, startOffset, false);
@@ -142,6 +144,7 @@ abstract class TokenMakerBase implements TokenMaker {
 	 *
 	 * @return Whether curly braces denote code blocks.
 	 */
+	@Override
 	public boolean getCurlyBracesDenoteCodeBlocks() {
 		return false;
 	}
@@ -154,6 +157,7 @@ abstract class TokenMakerBase implements TokenMaker {
 	 *
 	 * @return The default implementation always returns <code>null</code>.
 	 */
+	@Override
 	public Action getInsertBreakAction() {
 		return null;
 	}
@@ -162,6 +166,7 @@ abstract class TokenMakerBase implements TokenMaker {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public int getLastTokenTypeOnLine(Segment text, int initialTokenType) {
 
 		// Last parameter doesn't matter if we're not painting.
@@ -178,6 +183,7 @@ abstract class TokenMakerBase implements TokenMaker {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String[] getLineCommentStartAndEnd() {
 		return null;
 	}
@@ -194,8 +200,9 @@ abstract class TokenMakerBase implements TokenMaker {
 	 * @return Whether tokens of this type should have "mark occurrences"
 	 *         enabled.
 	 */
+	@Override
 	public boolean getMarkOccurrencesOfTokenType(int type) {
-		return type==Token.IDENTIFIER;
+		return type==TokenTypes.IDENTIFIER;
 	}
 
 
@@ -206,6 +213,7 @@ abstract class TokenMakerBase implements TokenMaker {
 	 * @param token The token the previous line ends with.
 	 * @return Whether the next line should be indented.
 	 */
+	@Override
 	public boolean getShouldIndentNextLineAfter(Token token) {
 		return false;
 	}
@@ -218,6 +226,7 @@ abstract class TokenMakerBase implements TokenMaker {
 	 *
 	 * @return <code>false</code> always.
 	 */
+	@Override
 	public boolean isMarkupLanguage() {
 		return false;
 	}
@@ -226,6 +235,7 @@ abstract class TokenMakerBase implements TokenMaker {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean isWhitespaceVisible() {
 		return tokenFactory instanceof VisibleWhitespaceTokenFactory;
 	}
@@ -262,6 +272,7 @@ abstract class TokenMakerBase implements TokenMaker {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void setWhitespaceVisible(boolean visible) {
 		// FIXME:  Initialize with the proper sizes.
 		tokenFactory = visible ? new VisibleWhitespaceTokenFactory() :

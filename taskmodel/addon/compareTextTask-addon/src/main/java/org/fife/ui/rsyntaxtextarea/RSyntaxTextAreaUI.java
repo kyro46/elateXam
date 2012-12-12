@@ -56,6 +56,7 @@ public class RSyntaxTextAreaUI extends RTextAreaUI {
      * @param elem The element.
      * @return The view.
      */
+	@Override
 	public View create(Element elem) {
 		RTextArea c = getRTextArea();
 		if (c instanceof RSyntaxTextArea) {
@@ -76,6 +77,7 @@ public class RSyntaxTextAreaUI extends RTextAreaUI {
 	 *
 	 * @return The highlighter.
 	 */
+	@Override
 	protected Highlighter createHighlighter() {
 		return new RSyntaxTextAreaHighlighter();
 	}
@@ -88,6 +90,7 @@ public class RSyntaxTextAreaUI extends RTextAreaUI {
 	 *
 	 * @return The name of the cached action map.
 	 */
+	@Override
 	protected String getActionMapName() {
 		return SHARED_ACTION_MAP_NAME;
 	}
@@ -100,6 +103,7 @@ public class RSyntaxTextAreaUI extends RTextAreaUI {
 	 * @return The editor capabilities.
 	 * @see javax.swing.plaf.TextUI#getEditorKit
 	 */
+	@Override
 	public EditorKit getEditorKit(JTextComponent tc) {
 		return defaultKit;
 	}
@@ -114,6 +118,7 @@ public class RSyntaxTextAreaUI extends RTextAreaUI {
 	 * issue warnings that you are not actually overriding the original method
 	 * (since it is package-private).
 	 */
+	@Override
 	protected InputMap getRTextAreaInputMap() {
 		InputMap map = new InputMapUIResource();
 		InputMap shared = (InputMap)UIManager.get(SHARED_INPUT_MAP_NAME);
@@ -134,6 +139,7 @@ public class RSyntaxTextAreaUI extends RTextAreaUI {
 	 *
 	 * @param g The graphics component on which to paint.
 	 */
+	@Override
 	protected void paintBackground(Graphics g) {
 		super.paintBackground(g);
 		paintMatchedBracket(g);
@@ -146,46 +152,33 @@ public class RSyntaxTextAreaUI extends RTextAreaUI {
 	 * @param g The graphics context.
 	 */
 	protected void paintMatchedBracket(Graphics g) {
+		// We must add "-1" to the height because otherwise we'll paint below
+		// the region that gets invalidated.
 		RSyntaxTextArea rsta = (RSyntaxTextArea)textArea;
 		if (rsta.isBracketMatchingEnabled()) {
-			Rectangle match = rsta.getMatchRectangle();
+			Rectangle match = rsta.match;
 			if (match!=null) {
-				paintMatchedBracketImpl(g, rsta, match);
-			}
-			if (rsta.getPaintMatchedBracketPair()) {
-				Rectangle dotRect = rsta.getDotRectangle();
-				if (dotRect!=null) { // should always be true
-					paintMatchedBracketImpl(g, rsta, dotRect);
+				if (rsta.getAnimateBracketMatching()) {
+					Color bg = rsta.getMatchedBracketBGColor();
+					if (bg!=null) {
+						g.setColor(bg);
+						g.fillRoundRect(match.x,match.y, match.width,match.height-1, 5,5);
+					}
+					g.setColor(rsta.getMatchedBracketBorderColor());
+					g.drawRoundRect(match.x,match.y, match.width,match.height-1, 5,5);
+				}
+				else {
+					Color bg = rsta.getMatchedBracketBGColor();
+					if (bg!=null) {
+						g.setColor(bg);
+						g.fillRect(match.x,match.y, match.width,match.height-1);
+					}
+					g.setColor(rsta.getMatchedBracketBorderColor());
+					g.drawRect(match.x,match.y, match.width,match.height-1);
 				}
 			}
 		}
 	}
-
-
-	private void paintMatchedBracketImpl(Graphics g, RSyntaxTextArea rsta,
-			Rectangle r) {
-		// We must add "-1" to the height because otherwise we'll paint below
-		// the region that gets invalidated.
-		if (rsta.getAnimateBracketMatching()) {
-			Color bg = rsta.getMatchedBracketBGColor();
-			if (bg!=null) {
-				g.setColor(bg);
-				g.fillRoundRect(r.x,r.y, r.width,r.height-1, 5,5);
-			}
-			g.setColor(rsta.getMatchedBracketBorderColor());
-			g.drawRoundRect(r.x,r.y, r.width,r.height-1, 5,5);
-		}
-		else {
-			Color bg = rsta.getMatchedBracketBGColor();
-			if (bg!=null) {
-				g.setColor(bg);
-				g.fillRect(r.x,r.y, r.width,r.height-1);
-			}
-			g.setColor(rsta.getMatchedBracketBorderColor());
-			g.drawRect(r.x,r.y, r.width,r.height-1);
-		}
-	}
-
 
 	/**
 	 * Gets called whenever a bound property is changed on this UI's
@@ -193,6 +186,7 @@ public class RSyntaxTextAreaUI extends RTextAreaUI {
 	 *
 	 * @param e The property change event.
 	 */
+	@Override
 	protected void propertyChange(PropertyChangeEvent e) {
 
 		String name = e.getPropertyName();
@@ -227,6 +221,7 @@ public class RSyntaxTextAreaUI extends RTextAreaUI {
 	 * <code>modelToView(int)</code> calls, as the entire bounding box isn't
 	 * computed.
 	 */
+	@Override
 	public int yForLine(int line) throws BadLocationException {
 		Rectangle alloc = getVisibleEditorRect();
 		if (alloc!=null) {
@@ -243,6 +238,7 @@ public class RSyntaxTextAreaUI extends RTextAreaUI {
 	 * This is faster than calling <code>modelToView(offs).y</code>, so it is
 	 * preferred if you do not need the actual bounding box.
 	 */
+	@Override
 	public int yForLineContaining(int offs) throws BadLocationException {
 		Rectangle alloc = getVisibleEditorRect();
 		if (alloc!=null) {

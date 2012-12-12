@@ -158,6 +158,7 @@ public abstract class AbstractCompletionProvider
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected List getCompletionsImpl(JTextComponent comp) {
 
 		List retVal = new ArrayList();
@@ -229,6 +230,7 @@ public abstract class AbstractCompletionProvider
 	private static class CaseInsensitiveComparator implements Comparator,
 														Serializable {
 
+		@Override
 		public int compare(Object o1, Object o2) {
 			Completion c = (Completion)o1;
 			// o2.toString() needed to help compile with 1.5+.

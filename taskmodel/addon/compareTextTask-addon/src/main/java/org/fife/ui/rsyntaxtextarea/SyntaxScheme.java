@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import javax.swing.text.StyleContext;
+
+import org.fife.ui.rtextarea.RTextAreaBase;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -116,6 +118,7 @@ public class SyntaxScheme implements Cloneable, TokenTypes {
 	 *
 	 * @return The copy.
 	 */
+	@Override
 	public Object clone() {
 		SyntaxScheme shcs = null;
 		try {
@@ -143,6 +146,7 @@ public class SyntaxScheme implements Cloneable, TokenTypes {
 	 *         <code>otherScheme</code> are the same scheme;
 	 *         <code>false</code> otherwise.
 	 */
+	@Override
 	public boolean equals(Object otherScheme) {
 
 		// No need for null check; instanceof takes care of this for us,
@@ -212,6 +216,7 @@ public class SyntaxScheme implements Cloneable, TokenTypes {
 	 *
 	 * @return The hash code for this object.
 	 */
+	@Override
 	public int hashCode() {
 		// Keep me fast.  Iterating over *all* syntax schemes contained is
 		// probably much slower than a "bad" hash code here.
@@ -240,7 +245,7 @@ public class SyntaxScheme implements Cloneable, TokenTypes {
 	public static SyntaxScheme load(Font baseFont, InputStream in)
 									throws IOException {
 		if (baseFont==null) {
-			baseFont = RSyntaxTextArea.getDefaultFont();
+			baseFont = RTextAreaBase.getDefaultFont();
 		}
 		return XmlParser.load(baseFont, in);
 	}
@@ -277,10 +282,6 @@ public class SyntaxScheme implements Cloneable, TokenTypes {
 						tokenCount + ", found " + tokens.length);
 				}
 
-				// Use StyleContext to create fonts to get composite fonts for
-				// Asian glyphs.
-				StyleContext sc = StyleContext.getDefaultStyleContext();
-
 				// Loop through each token style.  Format:
 				// "index,(fg|-),(bg|-),(t|f),((font,style,size)|(-,,))"
 				for (int i=0; i<tokenTypeCount; i++) {
@@ -311,7 +312,7 @@ public class SyntaxScheme implements Cloneable, TokenTypes {
 					Font font = null;
 					String family = tokens[pos+4];
 					if (!"-".equals(family)) {
-						font = sc.getFont(family,
+						font = new Font(family,
 							Integer.parseInt(tokens[pos+5]),	// style
 							Integer.parseInt(tokens[pos+6]));	// size
 					}
@@ -379,13 +380,12 @@ public class SyntaxScheme implements Cloneable, TokenTypes {
 
 		// (Possible) special font styles for keywords and comments.
 		if (baseFont==null) {
-			baseFont = RSyntaxTextArea.getDefaultFont();
+			baseFont = RTextAreaBase.getDefaultFont();
 		}
 		Font commentFont = baseFont;
 		Font keywordFont = baseFont;
 		if (fontStyles) {
 			// WORKAROUND for Sun JRE bug 6282887 (Asian font bug in 1.4/1.5)
-			// That bug seems to be hidden now, see 6289072 instead.
 			StyleContext sc = StyleContext.getDefaultStyleContext();
 			Font boldFont = sc.getFont(baseFont.getFamily(), Font.BOLD,
 					baseFont.getSize());
@@ -583,6 +583,7 @@ public class SyntaxScheme implements Cloneable, TokenTypes {
 			return parser.scheme;
 		}
 
+		@Override
 		public void startElement(String uri, String localName, String qName,
 								Attributes attrs) {
 

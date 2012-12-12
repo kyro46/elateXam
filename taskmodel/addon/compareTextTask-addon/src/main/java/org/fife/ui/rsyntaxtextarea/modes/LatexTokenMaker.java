@@ -325,6 +325,7 @@ public class LatexTokenMaker extends AbstractJFlexTokenMaker {
 	 *                    occurs.
 	 * @param hyperlink Whether this token is a hyperlink.
 	 */
+	@Override
 	public void addToken(char[] array, int start, int end, int tokenType,
 						int startOffset, boolean hyperlink) {
 		super.addToken(array, start,end, tokenType, startOffset, hyperlink);
@@ -335,6 +336,7 @@ public class LatexTokenMaker extends AbstractJFlexTokenMaker {
 	/**
 	 * ${inheritDoc}
 	 */
+	@Override
 	public String[] getLineCommentStartAndEnd() {
 		return new String[] { "%", null };
 	}
@@ -352,13 +354,14 @@ public class LatexTokenMaker extends AbstractJFlexTokenMaker {
 	 * @return The first <code>Token</code> in a linked list representing
 	 *         the syntax highlighted text.
 	 */
+	@Override
 	public Token getTokenList(Segment text, int initialTokenType, int startOffset) {
 
 		resetTokenList();
 		this.offsetShift = -text.offset + startOffset;
 
 		// Start off in the proper state.
-		int state = Token.NULL;
+		int state = TokenTypes.NULL;
 
 		s = text;
 		try {
@@ -480,7 +483,8 @@ public class LatexTokenMaker extends AbstractJFlexTokenMaker {
    *
    * @param newState the new lexical state
    */
-  public final void yybegin(int newState) {
+  @Override
+public final void yybegin(int newState) {
     zzLexicalState = newState;
   }
 
@@ -638,19 +642,19 @@ public class LatexTokenMaker extends AbstractJFlexTokenMaker {
 
       switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
         case 1: 
-          { addToken(Token.IDENTIFIER);
+          { addToken(TokenTypes.IDENTIFIER);
           }
         case 12: break;
         case 8: 
-          { addToken(Token.FUNCTION);
+          { addToken(TokenTypes.FUNCTION);
           }
         case 13: break;
         case 2: 
-          { addToken(Token.WHITESPACE);
+          { addToken(TokenTypes.WHITESPACE);
           }
         case 14: break;
         case 9: 
-          { int temp=zzStartRead; addToken(start,zzStartRead-1, Token.COMMENT_EOL); addHyperlinkToken(temp,zzMarkedPos-1, Token.COMMENT_EOL); start = zzMarkedPos;
+          { int temp=zzStartRead; addToken(start,zzStartRead-1, TokenTypes.COMMENT_EOL); addHyperlinkToken(temp,zzMarkedPos-1, TokenTypes.COMMENT_EOL); start = zzMarkedPos;
           }
         case 15: break;
         case 3: 
@@ -662,23 +666,23 @@ public class LatexTokenMaker extends AbstractJFlexTokenMaker {
           }
         case 17: break;
         case 7: 
-          { addToken(start,zzStartRead-1, Token.COMMENT_EOL); addNullToken(); return firstToken;
+          { addToken(start,zzStartRead-1, TokenTypes.COMMENT_EOL); addNullToken(); return firstToken;
           }
         case 18: break;
         case 10: 
           { int temp = zzStartRead;
-							addToken(temp, temp+3, Token.RESERVED_WORD);
-							addToken(temp+4, temp+4, Token.SEPARATOR);
-							addToken(temp+5, zzMarkedPos-2, Token.RESERVED_WORD);
-							addToken(zzMarkedPos-1, zzMarkedPos-1, Token.SEPARATOR);
+							addToken(temp, temp+3, TokenTypes.RESERVED_WORD);
+							addToken(temp+4, temp+4, TokenTypes.SEPARATOR);
+							addToken(temp+5, zzMarkedPos-2, TokenTypes.RESERVED_WORD);
+							addToken(zzMarkedPos-1, zzMarkedPos-1, TokenTypes.SEPARATOR);
           }
         case 19: break;
         case 11: 
           { int temp = zzStartRead;
-							addToken(temp, temp+5, Token.RESERVED_WORD);
-							addToken(temp+6, temp+6, Token.SEPARATOR);
-							addToken(temp+7, zzMarkedPos-2, Token.RESERVED_WORD);
-							addToken(zzMarkedPos-1, zzMarkedPos-1, Token.SEPARATOR);
+							addToken(temp, temp+5, TokenTypes.RESERVED_WORD);
+							addToken(temp+6, temp+6, TokenTypes.SEPARATOR);
+							addToken(temp+7, zzMarkedPos-2, TokenTypes.RESERVED_WORD);
+							addToken(zzMarkedPos-1, zzMarkedPos-1, TokenTypes.SEPARATOR);
           }
         case 20: break;
         case 6: 
@@ -686,7 +690,7 @@ public class LatexTokenMaker extends AbstractJFlexTokenMaker {
           }
         case 21: break;
         case 4: 
-          { addToken(Token.SEPARATOR);
+          { addToken(TokenTypes.SEPARATOR);
           }
         case 22: break;
         default: 
@@ -694,7 +698,7 @@ public class LatexTokenMaker extends AbstractJFlexTokenMaker {
             zzAtEOF = true;
             switch (zzLexicalState) {
             case EOL_COMMENT: {
-              addToken(start,zzStartRead-1, Token.COMMENT_EOL); addNullToken(); return firstToken;
+              addToken(start,zzStartRead-1, TokenTypes.COMMENT_EOL); addNullToken(); return firstToken;
             }
             case 43: break;
             case YYINITIAL: {

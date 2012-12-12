@@ -125,6 +125,7 @@ public class CompletionXMLParser extends DefaultHandler {
 	/**
 	 * Called when character data inside an element is found.
 	 */
+	@Override
 	public void characters(char[] ch, int start, int length) {
 		if (gettingDesc) {
 			desc.append(ch, start, length);
@@ -221,6 +222,7 @@ public class CompletionXMLParser extends DefaultHandler {
 	/**
 	 * Called when an element is closed.
 	 */
+	@Override
 	public void endElement(String uri, String localName, String qName) {
 
 		if ("keywords".equals(qName)) {
@@ -290,6 +292,7 @@ public class CompletionXMLParser extends DefaultHandler {
 	}
 
 
+	@Override
 	public void error(SAXParseException e) throws SAXException {
 		throw e;
 	}
@@ -354,7 +357,8 @@ public class CompletionXMLParser extends DefaultHandler {
 	}
 
 
-    public InputSource resolveEntity(String publicID, 
+    @Override
+	public InputSource resolveEntity(String publicID, 
 			String systemID) throws SAXException {
 		return new InputSource(getClass().
 				getResourceAsStream("CompletionXml.dtd"));
@@ -378,6 +382,7 @@ public class CompletionXMLParser extends DefaultHandler {
 	/**
 	 * Called when an element starts.
 	 */
+	@Override
 	public void startElement(String uri, String localName, String qName,
 							Attributes attrs) { 
 		if ("keywords".equals(qName)) {
@@ -433,6 +438,7 @@ public class CompletionXMLParser extends DefaultHandler {
 	}
 
 
+	@Override
 	public void warning(SAXParseException e) throws SAXException {
 		throw e;
 	}

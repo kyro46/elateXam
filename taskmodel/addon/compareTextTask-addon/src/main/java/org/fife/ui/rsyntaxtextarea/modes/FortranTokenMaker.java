@@ -567,6 +567,7 @@ public class FortranTokenMaker extends AbstractJFlexTokenMaker implements TokenM
 	 * @param startOffset The offset in the document at which this token
 	 *                    occurs.
 	 */
+	@Override
 	public void addToken(char[] array, int start, int end, int tokenType, int startOffset) {
 		super.addToken(array, start,end, tokenType, startOffset);
 		zzStartRead = zzMarkedPos;
@@ -580,6 +581,7 @@ public class FortranTokenMaker extends AbstractJFlexTokenMaker implements TokenM
 	 * @return The start and end strings to add to a line to "comment"
 	 *         it out.
 	 */
+	@Override
 	public String[] getLineCommentStartAndEnd() {
 		return new String[] { "!", null };
 	}
@@ -597,24 +599,25 @@ public class FortranTokenMaker extends AbstractJFlexTokenMaker implements TokenM
 	 * @return The first <code>Token</code> in a linked list representing
 	 *         the syntax highlighted text.
 	 */
+	@Override
 	public Token getTokenList(Segment text, int initialTokenType, int startOffset) {
 
 		resetTokenList();
 		this.offsetShift = -text.offset + startOffset;
 
 		// Start off in the proper state.
-		int state = Token.NULL;
+		int state = TokenTypes.NULL;
 		switch (initialTokenType) {
-			case Token.LITERAL_STRING_DOUBLE_QUOTE:
+			case TokenTypes.LITERAL_STRING_DOUBLE_QUOTE:
 				state = STRING;
 				start = text.offset;
 				break;
-			case Token.LITERAL_CHAR:
+			case TokenTypes.LITERAL_CHAR:
 				state = CHAR;
 				start = text.offset;
 				break;
 			default:
-				state = Token.NULL;
+				state = TokenTypes.NULL;
 		}
 
 		s = text;
@@ -737,7 +740,8 @@ public class FortranTokenMaker extends AbstractJFlexTokenMaker implements TokenM
    *
    * @param newState the new lexical state
    */
-  public final void yybegin(int newState) {
+  @Override
+public final void yybegin(int newState) {
     zzLexicalState = newState;
   }
 
@@ -895,27 +899,27 @@ public class FortranTokenMaker extends AbstractJFlexTokenMaker implements TokenM
 
       switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
         case 15: 
-          { addToken(Token.RESERVED_WORD);
+          { addToken(TokenTypes.RESERVED_WORD);
           }
         case 17: break;
         case 2: 
-          { addToken(Token.IDENTIFIER);
+          { addToken(TokenTypes.IDENTIFIER);
           }
         case 18: break;
         case 4: 
-          { addToken(Token.WHITESPACE);
+          { addToken(TokenTypes.WHITESPACE);
           }
         case 19: break;
         case 11: 
-          { addToken(start,zzStartRead-1, Token.LITERAL_STRING_DOUBLE_QUOTE); return firstToken;
+          { addToken(start,zzStartRead-1, TokenTypes.LITERAL_STRING_DOUBLE_QUOTE); return firstToken;
           }
         case 20: break;
         case 13: 
-          { addToken(start,zzStartRead-1, Token.LITERAL_CHAR); return firstToken;
+          { addToken(start,zzStartRead-1, TokenTypes.LITERAL_CHAR); return firstToken;
           }
         case 21: break;
         case 10: 
-          { addToken(Token.OPERATOR);
+          { addToken(TokenTypes.OPERATOR);
           }
         case 22: break;
         case 5: 
@@ -924,17 +928,17 @@ public class FortranTokenMaker extends AbstractJFlexTokenMaker implements TokenM
 							// So we must check whether we're really at the beginning
 							// of the line ourselves...
 							if (zzStartRead==s.offset) {
-								addToken(zzStartRead,zzEndRead, Token.COMMENT_EOL);
+								addToken(zzStartRead,zzEndRead, TokenTypes.COMMENT_EOL);
 								addNullToken();
 								return firstToken;
 							}
 							else {
-								addToken(Token.IDENTIFIER);
+								addToken(TokenTypes.IDENTIFIER);
 							}
           }
         case 23: break;
         case 16: 
-          { addToken(Token.LITERAL_BOOLEAN);
+          { addToken(TokenTypes.LITERAL_BOOLEAN);
           }
         case 24: break;
         case 8: 
@@ -942,7 +946,7 @@ public class FortranTokenMaker extends AbstractJFlexTokenMaker implements TokenM
           }
         case 25: break;
         case 7: 
-          { addToken(zzStartRead,zzEndRead, Token.COMMENT_EOL); addNullToken(); return firstToken;
+          { addToken(zzStartRead,zzEndRead, TokenTypes.COMMENT_EOL); addNullToken(); return firstToken;
           }
         case 26: break;
         case 6: 
@@ -951,12 +955,12 @@ public class FortranTokenMaker extends AbstractJFlexTokenMaker implements TokenM
 							// So we must check whether we're really at the beginning
 							// of the line ourselves...
 							if (zzStartRead==s.offset) {
-								addToken(zzStartRead,zzEndRead, Token.COMMENT_DOCUMENTATION);
+								addToken(zzStartRead,zzEndRead, TokenTypes.COMMENT_DOCUMENTATION);
 								addNullToken();
 								return firstToken;
 							}
 							else {
-								addToken(Token.IDENTIFIER);
+								addToken(TokenTypes.IDENTIFIER);
 							}
           }
         case 27: break;
@@ -965,11 +969,11 @@ public class FortranTokenMaker extends AbstractJFlexTokenMaker implements TokenM
           }
         case 28: break;
         case 14: 
-          { yybegin(YYINITIAL); addToken(start,zzStartRead, Token.LITERAL_CHAR);
+          { yybegin(YYINITIAL); addToken(start,zzStartRead, TokenTypes.LITERAL_CHAR);
           }
         case 29: break;
         case 12: 
-          { yybegin(YYINITIAL); addToken(start,zzStartRead, Token.LITERAL_STRING_DOUBLE_QUOTE);
+          { yybegin(YYINITIAL); addToken(start,zzStartRead, TokenTypes.LITERAL_STRING_DOUBLE_QUOTE);
           }
         case 30: break;
         case 3: 
@@ -985,7 +989,7 @@ public class FortranTokenMaker extends AbstractJFlexTokenMaker implements TokenM
             zzAtEOF = true;
             switch (zzLexicalState) {
             case STRING: {
-              addToken(start,zzStartRead-1, Token.LITERAL_STRING_DOUBLE_QUOTE); return firstToken;
+              addToken(start,zzStartRead-1, TokenTypes.LITERAL_STRING_DOUBLE_QUOTE); return firstToken;
             }
             case 258: break;
             case YYINITIAL: {
@@ -993,7 +997,7 @@ public class FortranTokenMaker extends AbstractJFlexTokenMaker implements TokenM
             }
             case 259: break;
             case CHAR: {
-              addToken(start,zzStartRead-1, Token.LITERAL_CHAR); return firstToken;
+              addToken(start,zzStartRead-1, TokenTypes.LITERAL_CHAR); return firstToken;
             }
             case 260: break;
             default:

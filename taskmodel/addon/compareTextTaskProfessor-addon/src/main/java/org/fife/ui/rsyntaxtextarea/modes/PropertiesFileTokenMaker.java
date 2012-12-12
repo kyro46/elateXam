@@ -279,6 +279,7 @@ public class PropertiesFileTokenMaker extends AbstractJFlexTokenMaker implements
 	 * @param startOffset The offset in the document at which this token
 	 *                    occurs.
 	 */
+	@Override
 	public void addToken(char[] array, int start, int end, int tokenType, int startOffset) {
 		super.addToken(array, start,end, tokenType, startOffset);
 		zzStartRead = zzMarkedPos;
@@ -292,6 +293,7 @@ public class PropertiesFileTokenMaker extends AbstractJFlexTokenMaker implements
 	 * @return The start and end strings to add to a line to "comment"
 	 *         it out.
 	 */
+	@Override
 	public String[] getLineCommentStartAndEnd() {
 		return new String[] { "#", null };
 	}
@@ -309,20 +311,21 @@ public class PropertiesFileTokenMaker extends AbstractJFlexTokenMaker implements
 	 * @return The first <code>Token</code> in a linked list representing
 	 *         the syntax highlighted text.
 	 */
+	@Override
 	public Token getTokenList(Segment text, int initialTokenType, int startOffset) {
 
 		resetTokenList();
 		this.offsetShift = -text.offset + startOffset;
 
 		// Start off in the proper state.
-		int state = Token.NULL;
+		int state = TokenTypes.NULL;
 		switch (initialTokenType) {
-			case Token.LITERAL_STRING_DOUBLE_QUOTE:
+			case TokenTypes.LITERAL_STRING_DOUBLE_QUOTE:
 				state = VALUE;
 				start = text.offset;
 				break;
 			default:
-				state = Token.NULL;
+				state = TokenTypes.NULL;
 		}
 
 		s = text;
@@ -445,7 +448,8 @@ public class PropertiesFileTokenMaker extends AbstractJFlexTokenMaker implements
    *
    * @param newState the new lexical state
    */
-  public final void yybegin(int newState) {
+  @Override
+public final void yybegin(int newState) {
     zzLexicalState = newState;
   }
 
@@ -603,27 +607,27 @@ public class PropertiesFileTokenMaker extends AbstractJFlexTokenMaker implements
 
       switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
         case 7: 
-          { addToken(start, zzEndRead, Token.LITERAL_STRING_DOUBLE_QUOTE); return firstToken;
+          { addToken(start, zzEndRead, TokenTypes.LITERAL_STRING_DOUBLE_QUOTE); return firstToken;
           }
         case 9: break;
         case 2: 
-          { start = zzMarkedPos; addToken(Token.OPERATOR); yybegin(VALUE);
+          { start = zzMarkedPos; addToken(TokenTypes.OPERATOR); yybegin(VALUE);
           }
         case 10: break;
         case 8: 
-          { int temp=zzStartRead; addToken(start, zzStartRead-1, Token.LITERAL_STRING_DOUBLE_QUOTE); addToken(temp, zzMarkedPos-1, Token.VARIABLE); start = zzMarkedPos;
+          { int temp=zzStartRead; addToken(start, zzStartRead-1, TokenTypes.LITERAL_STRING_DOUBLE_QUOTE); addToken(temp, zzMarkedPos-1, TokenTypes.VARIABLE); start = zzMarkedPos;
           }
         case 11: break;
         case 3: 
-          { addToken(Token.WHITESPACE);
+          { addToken(TokenTypes.WHITESPACE);
           }
         case 12: break;
         case 6: 
-          { addToken(start, zzMarkedPos-1, Token.LITERAL_STRING_DOUBLE_QUOTE); start = zzMarkedPos;
+          { addToken(start, zzMarkedPos-1, TokenTypes.LITERAL_STRING_DOUBLE_QUOTE); start = zzMarkedPos;
           }
         case 13: break;
         case 1: 
-          { addToken(Token.RESERVED_WORD);
+          { addToken(TokenTypes.RESERVED_WORD);
           }
         case 14: break;
         case 5: 
@@ -631,7 +635,7 @@ public class PropertiesFileTokenMaker extends AbstractJFlexTokenMaker implements
           }
         case 15: break;
         case 4: 
-          { addToken(Token.COMMENT_EOL);
+          { addToken(TokenTypes.COMMENT_EOL);
           }
         case 16: break;
         default: 
@@ -643,7 +647,7 @@ public class PropertiesFileTokenMaker extends AbstractJFlexTokenMaker implements
             }
             case 14: break;
             case VALUE: {
-              addToken(start,zzStartRead-1, Token.LITERAL_STRING_DOUBLE_QUOTE); addNullToken(); return firstToken;
+              addToken(start,zzStartRead-1, TokenTypes.LITERAL_STRING_DOUBLE_QUOTE); addNullToken(); return firstToken;
             }
             case 15: break;
             default:

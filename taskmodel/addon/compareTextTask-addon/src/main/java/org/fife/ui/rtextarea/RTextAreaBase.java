@@ -26,8 +26,6 @@ import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.TextUI;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.Caret;
-import javax.swing.text.StyleContext;
 
 
 /**
@@ -40,7 +38,7 @@ import javax.swing.text.StyleContext;
  * @author Robert Futrell
  * @version 0.8
  */
-abstract class RTextAreaBase extends JTextArea {
+public abstract class RTextAreaBase extends JTextArea {
 
 	public static final String BACKGROUND_IMAGE_PROPERTY			= "background.image";
 	public static final String CURRENT_LINE_HIGHLIGHT_COLOR_PROPERTY	= "RTA.currentLineHighlightColor";
@@ -296,6 +294,7 @@ int currentCaretY;							// Used to know when to rehighlight current line.
 	 * @return The current background color, or <code>null</code> if an image
 	 *         is currently the background.
 	 */
+	@Override
 	public final Color getBackground() {
 		Object bg = getBackgroundObject();
 		return (bg instanceof Color) ? (Color)bg : null;
@@ -411,27 +410,24 @@ int currentCaretY;							// Used to know when to rehighlight current line.
 	 */
 	public static final Font getDefaultFont() {
 
-		// Use StyleContext to get a composite font for better Asian language
-		// support; see Sun bug S282887.
-		StyleContext sc = StyleContext.getDefaultStyleContext();
 		Font font = null;
 
 		if (isOSX()) {
 			// Snow Leopard (1.6) uses Menlo as default monospaced font,
 			// pre-Snow Leopard used Monaco.
-			font = sc.getFont("Menlo", Font.PLAIN, 12);
+			font = new Font("Menlo", Font.PLAIN, 12);
 			if (!"Menlo".equals(font.getFamily())) {
-				font = sc.getFont("Monaco", Font.PLAIN, 12);
+				font = new Font("Monaco", Font.PLAIN, 12);
 				if (!"Monaco".equals(font.getFamily())) { // Shouldn't happen
-					font = sc.getFont("Monospaced", Font.PLAIN, 13);
+					font = new Font("Monospaced", Font.PLAIN, 13);
 				}
 			}
 		}
 		else {
 			// Consolas added in Vista, used by VS2010+.
-			font = sc.getFont("Consolas", Font.PLAIN, 13);
+			font = new Font("Consolas", Font.PLAIN, 13);
 			if (!"Consolas".equals(font.getFamily())) {
-				font = sc.getFont("Monospaced", Font.PLAIN, 13);
+				font = new Font("Monospaced", Font.PLAIN, 13);
 			}
 		}
 
@@ -678,6 +674,7 @@ int currentCaretY;							// Used to know when to rehighlight current line.
 	 *
 	 * @param g The graphics context with which to paint.
 	 */
+	@Override
 	protected void paintComponent(Graphics g) {
 
 		//long startTime = System.currentTimeMillis();
@@ -768,6 +765,7 @@ try {
 	 * @param e The component event about to be sent to all registered
 	 *        <code>ComponentListener</code>s.
 	 */
+	@Override
 	protected void processComponentEvent(ComponentEvent e) {
 
 		// In line wrap mode, resizing the text area means that the caret's
@@ -801,6 +799,7 @@ try {
 	 *
 	 * @param bg The color to use as the background color.
 	 */
+	@Override
 	public void setBackground(Color bg) {
 		Object oldBG = getBackgroundObject();
 		if (oldBG instanceof Color) { // Just change color of strategy.
@@ -934,6 +933,7 @@ try {
 	 *
 	 * @param font The font to use for this text component.
 	 */
+	@Override
 	public void setFont(Font font) {
 		super.setFont(font);
 		updateMarginLineX();
@@ -967,6 +967,7 @@ try {
 	 *
 	 * @param wrap Whether or not word wrap should be enabled.
 	 */
+	@Override
 	public void setLineWrap(boolean wrap) {
 		super.setLineWrap(wrap);
 		forceCurrentLineHighlightRepaint();
@@ -1035,12 +1036,10 @@ try {
 	public void setRoundedSelectionEdges(boolean rounded) {
 		if (roundedSelectionEdges!=rounded) {
 			roundedSelectionEdges = rounded;
-			Caret c = getCaret();
-			if (c instanceof ConfigurableCaret) {
-				((ConfigurableCaret)c).setRoundedSelectionEdges(rounded);
-				if (c.getDot()!=c.getMark()) { // e.g., there's is a selection
-					repaint();
-				}
+			ConfigurableCaret cc = (ConfigurableCaret)getCaret();
+			cc.setRoundedSelectionEdges(rounded);
+			if (cc.getDot()!=cc.getMark()) { // ie, if there is a selection
+				repaint();
 			}
 			firePropertyChange(ROUNDED_SELECTION_PROPERTY, !rounded,
 											rounded);
@@ -1096,6 +1095,7 @@ try {
 	 *
 	 * @param size Number of characters to expand to.
 	 */
+	@Override
 	public void setTabSize(int size) {
 		super.setTabSize(size);
 		boolean b = getLineWrap();
@@ -1152,20 +1152,31 @@ try {
 			super(textArea);
 		}
 
+		@Override
 		public void focusGained(FocusEvent e) {}
+		@Override
 		public void focusLost(FocusEvent e) {}
+		@Override
 		public void mouseDragged(MouseEvent e) {}
+		@Override
 		public void mouseMoved(MouseEvent e) {}
+		@Override
 		public void mouseClicked(MouseEvent e) {}
+		@Override
 		public void mousePressed(MouseEvent e) {}
+		@Override
 		public void mouseReleased(MouseEvent e) {}
+		@Override
 		public void mouseEntered(MouseEvent e) {}
+		@Override
 		public void mouseExited(MouseEvent e) {}
 
+		@Override
 		public int getDot() {
 			return dot;
 		}
 
+		@Override
 		public int getMark() {
 			return mark;
 		}

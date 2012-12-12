@@ -516,21 +516,7 @@ public class AutoCompletion {
 	 *
 	 * @param c A completion to insert.  This cannot be <code>null</code>.
 	 */
-	protected final void insertCompletion(Completion c) {
-		insertCompletion(c, false);
-	}
-
-
-	/**
-	 * Inserts a completion.  Any time a code completion event occurs, the
-	 * actual text insertion happens through this method.
-	 *
-	 * @param c A completion to insert.  This cannot be <code>null</code>.
-	 * @param typedParamListStartChar Whether the parameterized completion
-	 *        start character was typed (typically <code>'('</code>).
-	 */
-	protected void insertCompletion(Completion c,
-			boolean typedParamListStartChar) {
+	protected void insertCompletion(Completion c) {
 
 		JTextComponent textComp = getTextComponent();
 		String alreadyEntered = c.getAlreadyEntered(textComp);
@@ -550,7 +536,7 @@ public class AutoCompletion {
 		if (isParameterAssistanceEnabled() &&
 				(c instanceof ParameterizedCompletion)) {
 			ParameterizedCompletion pc = (ParameterizedCompletion)c;
-			startParameterizedCompletionAssistance(pc, typedParamListStartChar);
+			startParameterizedCompletionAssistance(pc, true);
 		}
 
 	}
@@ -747,6 +733,7 @@ public class AutoCompletion {
 
 		else if (count==1) { // !isPopupVisible && autoCompleteSingleChoices
 			SwingUtilities.invokeLater(new Runnable() {
+				@Override
 				public void run() {
 					insertCompletion((Completion)completions.get(0));
 				}
@@ -988,39 +975,33 @@ public class AutoCompletion {
 
 
 	/**
-	 * Displays a "tool tip" detailing the inputs to the function just entered.
+	 * Displays a "tooltip" detailing the inputs to the function just entered.
 	 *
 	 * @param pc The completion.
-	 * @param typedParamListStartChar Whether the parameterized completion list
-	 *        starting character was typed.
+	 * @param addParamListStart Whether or not
+	 *        {@link CompletionProvider#getParameterListStart()} should be
+	 *        added to the text component.
 	 */
 	private void startParameterizedCompletionAssistance(
-				ParameterizedCompletion pc, boolean typedParamListStartChar) {
+				ParameterizedCompletion pc, boolean addParamListStart) {
 
-		// Get rid of the previous tool tip window, if there is one.
+		// Get rid of the previous tooltip window, if there is one.
 		hideParameterCompletionPopups();
 
-		// Don't bother with a tool tip if there are no parameters, but if
-		// they typed e.g. the opening '(', make them overtype the ')'.
+		// Don't bother with a tooltip if there are no parameters.
 		if (pc.getParamCount()==0 && !(pc instanceof TemplateCompletion)) {
 			CompletionProvider p = pc.getProvider();
 			char end = p.getParameterListEnd(); // Might be '\0'
 			String text = end=='\0' ? "" : Character.toString(end);
-			if (typedParamListStartChar) {
-				String template = "${}" + text + "${cursor}";
-				textComponent.replaceSelection(Character.toString(p.getParameterListStart()));
-				TemplateCompletion tc = new TemplateCompletion(p, null, null,  template);
-				pc = tc;
-			}
-			else {
+			if (addParamListStart) {
 				text = p.getParameterListStart() + text;
-				textComponent.replaceSelection(text);
-				return;
 			}
+			textComponent.replaceSelection(text);
+			return;
 		}
 
 		pcc = new ParameterizedCompletionContext(parentWindow, this, pc);
-		pcc.activate();
+		pcc.activate(addParamListStart);
 
 	}
 
@@ -1116,6 +1097,7 @@ public class AutoCompletion {
 			timer.setRepeats(false);
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			doCompletion();
 		}
@@ -1126,6 +1108,7 @@ public class AutoCompletion {
 			tc.addCaretListener(this);
 		}
 
+		@Override
 		public void caretUpdate(CaretEvent e) {
 			if (justInserted) {
 				justInserted = false;
@@ -1135,15 +1118,18 @@ public class AutoCompletion {
 			}
 		}
 
+		@Override
 		public void changedUpdate(DocumentEvent e) {
 			 // Ignore
 		}
 
+		@Override
 		public void focusLost(FocusEvent e) {
 			timer.stop();
 			//hideChildWindows(); Other listener will do this
 		}
 
+		@Override
 		public void insertUpdate(DocumentEvent e) {
 			justInserted = false;
 			if (isAutoCompleteEnabled() && isAutoActivationEnabled() &&
@@ -1169,6 +1155,7 @@ public class AutoCompletion {
 			justInserted = false;
 		}
 
+		@Override
 		public void removeUpdate(DocumentEvent e) {
 			timer.stop();
 		}
@@ -1182,6 +1169,7 @@ public class AutoCompletion {
 	 */
 	private class AutoCompleteAction extends AbstractAction {
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (isAutoCompleteEnabled()) {
 				refreshPopupWindow();
@@ -1200,6 +1188,7 @@ public class AutoCompletion {
 	 */
 	private class LookAndFeelChangeListener implements PropertyChangeListener {
 
+		@Override
 		public void propertyChange(PropertyChangeEvent e) {
 			String name = e.getPropertyName();
 			if ("lookAndFeel".equals(name)) {
@@ -1222,6 +1211,7 @@ public class AutoCompletion {
 			this.start = Character.toString(ch);
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 
 			// Prevents keystrokes from messing up
@@ -1236,7 +1226,7 @@ public class AutoCompletion {
 			Completion c = popupWindow.getSelection();
 			if (c instanceof ParameterizedCompletion) { // Should always be true
 				// Fixes capitalization of the entered text.
-				insertCompletion(c, true);
+				insertCompletion(c);
 			}
 
 		}
@@ -1256,14 +1246,17 @@ public class AutoCompletion {
 			w.addWindowFocusListener(this);
 		}
 
+		@Override
 		public void componentHidden(ComponentEvent e) {
 			hideChildWindows();
 		}
 
+		@Override
 		public void componentMoved(ComponentEvent e) {
 			hideChildWindows();
 		}
 
+		@Override
 		public void componentResized(ComponentEvent e) {
 			hideChildWindows();
 		}
@@ -1273,9 +1266,11 @@ public class AutoCompletion {
 			w.removeWindowFocusListener(this);
 		}
 
+		@Override
 		public void windowGainedFocus(WindowEvent e) {
 		}
 
+		@Override
 		public void windowLostFocus(WindowEvent e) {
 			hideChildWindows();
 		}
@@ -1298,6 +1293,7 @@ public class AutoCompletion {
 		 * Hide the auto-completion windows when the text component loses
 		 * focus.
 		 */
+		@Override
 		public void focusLost(FocusEvent e) {
 			hideChildWindows();
 		}
@@ -1309,6 +1305,7 @@ public class AutoCompletion {
 		 *
 		 * @param e The event.
 		 */
+		@Override
 		public void hierarchyChanged(HierarchyEvent e) {
 
 			// NOTE: e many be null as we call this method at other times.

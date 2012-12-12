@@ -212,6 +212,7 @@ public class RSyntaxTextAreaHighlighter extends BasicHighlighter {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void deinstall(JTextComponent c) {
 		this.textArea = null;
 		markedOccurrences.clear();
@@ -242,6 +243,7 @@ public class RSyntaxTextAreaHighlighter extends BasicHighlighter {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void install(JTextComponent c) {
 		super.install(c);
 		this.textArea = (RTextArea)c;
@@ -253,6 +255,7 @@ public class RSyntaxTextAreaHighlighter extends BasicHighlighter {
 	 *
 	 * @param g the graphics context
 	 */
+	@Override
 	public void paint(Graphics g) {
 		paintList(g, markedOccurrences);
 		super.paint(g);
@@ -304,6 +307,7 @@ public class RSyntaxTextAreaHighlighter extends BasicHighlighter {
 	 * @param editor JTextComponent
 	 * @param view View instance being rendered
 	 */
+	@Override
 	public void paintLayeredHighlights(Graphics g, int p0, int p1,
 						Shape viewBounds, JTextComponent editor, View view) {
 		paintListLayered(g, p0,p1, viewBounds, editor, view, markedOccurrences);
@@ -377,14 +381,17 @@ public class RSyntaxTextAreaHighlighter extends BasicHighlighter {
 			return color;
 		}
 
+		@Override
 		public int getStartOffset() {
 			return p0.getOffset();
 		}
 		
+		@Override
 		public int getEndOffset() {
 			return p1.getOffset();
 		}
 		
+		@Override
 		public Highlighter.HighlightPainter getPainter() {
 			return painter;
 		}

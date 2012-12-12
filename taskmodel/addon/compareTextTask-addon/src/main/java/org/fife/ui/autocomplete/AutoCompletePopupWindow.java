@@ -31,6 +31,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JWindow;
 import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
@@ -138,6 +139,7 @@ class AutoCompletePopupWindow extends JWindow implements CaretListener,
 		this.ac = ac;
 		model = new CompletionListModel();
 		list = new JList(model) {
+			@Override
 			public void setUI(ListUI ui) {
 				// Keep our special UI, no matter what
 				super.setUI(new FastListUI());
@@ -150,8 +152,8 @@ class AutoCompletePopupWindow extends JWindow implements CaretListener,
 
 		JPanel contentPane = new JPanel(new BorderLayout());
 		JScrollPane sp = new JScrollPane(list,
-							JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-							JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+							ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+							ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 
 		// In 1.4, JScrollPane.setCorner() has a bug where it won't accept
 		// JScrollPane.LOWER_TRAILING_CORNER, even though that constant is
@@ -160,8 +162,8 @@ class AutoCompletePopupWindow extends JWindow implements CaretListener,
 		JPanel corner = new SizeGrip();
 		//sp.setCorner(JScrollPane.LOWER_TRAILING_CORNER, corner);
 		boolean isLeftToRight = o.isLeftToRight();
-	    String str = isLeftToRight ? JScrollPane.LOWER_RIGHT_CORNER :
-	    								JScrollPane.LOWER_LEFT_CORNER;
+	    String str = isLeftToRight ? ScrollPaneConstants.LOWER_RIGHT_CORNER :
+	    								ScrollPaneConstants.LOWER_LEFT_CORNER;
 	    sp.setCorner(str, corner);
 
 		contentPane.add(sp);
@@ -185,6 +187,7 @@ class AutoCompletePopupWindow extends JWindow implements CaretListener,
 	}
 
 
+	@Override
 	public void caretUpdate(CaretEvent e) {
 		if (isVisible()) { // Should always be true
 			int line = ac.getLineOfCaret();
@@ -303,7 +306,7 @@ class AutoCompletePopupWindow extends JWindow implements CaretListener,
 	 *
 	 * @see #getSelection()
 	 */
-	private void insertSelectedCompletion() {
+	public void insertSelectedCompletion() {
 		Completion comp = getSelection();
 		ac.insertCompletion(comp);
 	}
@@ -358,6 +361,7 @@ class AutoCompletePopupWindow extends JWindow implements CaretListener,
 	}
 
 
+	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount()==2) {
 			insertSelectedCompletion();
@@ -365,18 +369,22 @@ class AutoCompletePopupWindow extends JWindow implements CaretListener,
 	}
 
 
+	@Override
 	public void mouseEntered(MouseEvent e) {
 	}
 
 
+	@Override
 	public void mouseExited(MouseEvent e) {
 	}
 
 
+	@Override
 	public void mousePressed(MouseEvent e) {
 	}
 
 
+	@Override
 	public void mouseReleased(MouseEvent e) {
 	}
 
@@ -666,6 +674,7 @@ class AutoCompletePopupWindow extends JWindow implements CaretListener,
 	 *
 	 * @param visible Whether this window should be visible.
 	 */
+	@Override
 	public void setVisible(boolean visible) {
 
 		if (visible!=isVisible()) {
@@ -775,6 +784,7 @@ class AutoCompletePopupWindow extends JWindow implements CaretListener,
 	 *
 	 * @param e The event.
 	 */
+	@Override
 	public void valueChanged(ListSelectionEvent e) {
 		if (!e.getValueIsAdjusting()) {
 			Object value = list.getSelectedValue();
@@ -788,6 +798,7 @@ class AutoCompletePopupWindow extends JWindow implements CaretListener,
 
 	class CopyAction extends AbstractAction {
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			boolean doNormalCopy = false;
 			if (descWindow!=null && descWindow.isVisible()) {
@@ -803,6 +814,7 @@ class AutoCompletePopupWindow extends JWindow implements CaretListener,
 
 	class DownAction extends AbstractAction {
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (isVisible()) {
 				selectNextItem();
@@ -814,6 +826,7 @@ class AutoCompletePopupWindow extends JWindow implements CaretListener,
 
 	class EndAction extends AbstractAction {
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (isVisible()) {
 				selectLastItem();
@@ -825,6 +838,7 @@ class AutoCompletePopupWindow extends JWindow implements CaretListener,
 
 	class EnterAction extends AbstractAction {
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (isVisible()) {
 				insertSelectedCompletion();
@@ -836,6 +850,7 @@ class AutoCompletePopupWindow extends JWindow implements CaretListener,
 
 	class EscapeAction extends AbstractAction {
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (isVisible()) {
 				setVisible(false);
@@ -847,6 +862,7 @@ class AutoCompletePopupWindow extends JWindow implements CaretListener,
 
 	class HomeAction extends AbstractAction {
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (isVisible()) {
 				selectFirstItem();
@@ -877,6 +893,7 @@ class AutoCompletePopupWindow extends JWindow implements CaretListener,
 
 	class LeftAction extends AbstractAction {
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (isVisible()) {
 				JTextComponent comp = ac.getTextComponent();
@@ -900,6 +917,7 @@ class AutoCompletePopupWindow extends JWindow implements CaretListener,
 
 	class PageDownAction extends AbstractAction {
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (isVisible()) {
 				selectPageDownItem();
@@ -911,6 +929,7 @@ class AutoCompletePopupWindow extends JWindow implements CaretListener,
 
 	class PageUpAction extends AbstractAction {
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (isVisible()) {
 				selectPageUpItem();
@@ -922,6 +941,7 @@ class AutoCompletePopupWindow extends JWindow implements CaretListener,
 
 	class RightAction extends AbstractAction {
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (isVisible()) {
 				JTextComponent comp = ac.getTextComponent();
@@ -945,6 +965,7 @@ class AutoCompletePopupWindow extends JWindow implements CaretListener,
 
 	class UpAction extends AbstractAction {
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (isVisible()) {
 				selectPreviousItem();
