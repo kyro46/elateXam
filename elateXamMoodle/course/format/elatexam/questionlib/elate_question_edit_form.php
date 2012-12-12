@@ -36,9 +36,8 @@ require_once($CFG->dirroot.'/question/type/edit_question_form.php');
  *
  * @author	C.Wilhelm
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+*/
 abstract class elate_question_edit_form extends question_edit_form {
-
 	/**
 	 * for one Editor field, attributes text, format and itemid must be handled.
 	 * @param string $name of the editor field that would normally be added
@@ -50,13 +49,34 @@ abstract class elate_question_edit_form extends question_edit_form {
 	}
 	/**
 	 * use this in context of repeated elements, e.g. @see self::get_per_answer_fields()
+	 * self::repeat_elements_fix_clone() must be altered for this to work
+	 *
 	 * @param string $name of the editor field that would normally be added
 	 * @param array $repeated
 	 */
-	protected function create_editor_field_replacement($name, array $repeated) {
+	protected function create_editor_field_replacement($name, array &$repeated) {
 		$repeated[] = $this->_form->createElement('hidden', $name.'[text]');
 		$repeated[] = $this->_form->createElement('hidden', $name.'[format]');
 		$repeated[] = $this->_form->createElement('hidden', $name.'[itemid]');
+	}
+	/**
+	 * This is overridden as this method would do the following by default:
+	 *
+	 * "feedback" would become "feedback[1]" (correct)
+	 * "feedback[format]" would become "feedback[format][1]" (not what we expect)
+	 * "feedback[format]" should become "feedback[1][format]" (that's what this method does instead)
+	 *
+	 * @see moodleform::repeat_elements_fix_clone($i, $elementclone, &$namecloned)
+	 */
+	function repeat_elements_fix_clone($i, $elementclone, &$namecloned) {
+		parent::repeat_elements_fix_clone($i, $elementclone, $namecloned);
+		$name = $elementclone->getName();
+		$pos_last = strrpos($name, '[');
+		$pos_first = strpos($name, '[');
+		if($pos_first != $pos_last) { // insert "[$i]" at proper position
+			$resultingname = substr($name, 0, $pos_first) . "[$i]" . substr($name, $pos_first, $pos_last-$pos_first);
+			$elementclone->setName($resultingname);
+		}
 	}
 	/**
 	 * replace editor field with the appropriate hidden fields
@@ -83,7 +103,7 @@ abstract class elate_question_edit_form extends question_edit_form {
 				$mform->setType('responsefieldlines', PARAM_INT);
 				$mform->setType('responsefieldwidth', PARAM_INT);
 				$mform->setDefault('responsefieldlines', 15);
-				$mform->setDefault('responsefieldwidth', 25);
+				$mform->setDefault('responsefieldwidth', 60);
 				$mform->removeElement('attachments');
 				$mform->removeElement('responseformat');
 				$mform->addElement('hidden', 'attachments', 0);
@@ -146,7 +166,7 @@ abstract class elate_question_edit_form extends question_edit_form {
 	 * this method was overridden as we want a textfield instead of the default combobox for 'penalty'
 	 * all the other fields that would be added by this method ain't needed at all
 	 * this method is overridden in qtype_multichoice_edit_form::add_interactive_settings()
-	 * 
+	 *
 	 * @see question_edit_form::add_interactive_settings()
 	 */
 	protected function add_interactive_settings($withclearwrong = false, $withshownumpartscorrect = false) {
