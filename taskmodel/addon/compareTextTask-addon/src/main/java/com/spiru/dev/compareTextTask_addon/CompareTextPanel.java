@@ -103,7 +103,7 @@ public class CompareTextPanel extends JPanel {
 		viewOnly = view_only;
 
 		initScrollPanes();
-		//enableAutoCompletion();
+		enableAutoCompletion();
 		//System.out.println(this.getClass().getName());
 		if (! this.getClass().getName().contains("CompareTextProfessorenPanel")) {
 			initStudentView();
