@@ -22,6 +22,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot.'/question/type/questiontypebase.php');
+require_once($CFG->dirroot.'/course/format/elatexam/questionlib/defaults.php');
 
 /**
  * Modified Question-Type base class for all question used by ElateXam.
@@ -43,14 +44,6 @@ class elate_questiontype_base extends question_type {
 		foreach(array('correctfeedback','partiallycorrectfeedback','incorrectfeedback') as $fieldname)
 			$question->{$fieldname} = "";
 	}
-
-	/*protected function save_combined_feedback_helper($options, $formdata, $context, $withparts = false) {
-		// @see question_type::save_combined_feedback_helper()
-		foreach(array('correctfeedback','partiallycorrectfeedback','incorrectfeedback') as $fieldname) {
-			$options->{$fieldname} = '';
-			$options->{$fieldname.'format'} = '';
-		}
-	}*/
 
 	protected function import_or_save_files($field, $context, $component, $filearea, $itemid) {
 		// overridden because of missing exception handling in question_type::import_or_save_files()
@@ -76,12 +69,14 @@ class elate_questiontype_base extends question_type {
 	 */
 	public function import_from_xml($data, $question, qformat_xml $format, $extra=null) {
 		$qtype = $data['@']['type'];
+		if($qtype == 'multichoice') // 'penalty' will not be part of $extraquestionfields
+			$extra->penalty = get_default_for_elatexam('multichoice','penalty');
 		if($qtype == 'multianswer' || $qtype == 'multichoice' || $qtype == 'essay') {
 			// called from qformat_xml::readquestions(), you shall have a look on what we've modified there
 			$extraquestionfields = $this->extra_question_fields();
 			array_shift($extraquestionfields);
 			foreach ($extraquestionfields as $field) {
-				$default = 0; // currently we have only numbers, TODO: lookup defaults in global assoziative array?
+				$default = get_default_for_elatexam($qtype, $field); // lookup defaults
 				$extra->$field = $format->getpath($data, array('#', $field, 0, '#'), $default);
 			}
 			return $extra;

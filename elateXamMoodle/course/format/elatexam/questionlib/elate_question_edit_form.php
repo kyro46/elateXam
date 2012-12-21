@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot.'/question/type/edit_question_form.php');
+require_once($CFG->dirroot.'/course/format/elatexam/questionlib/defaults.php');
 
 /**
  * Modified Form definition base class for all question used by ElateXam.
@@ -102,18 +103,20 @@ abstract class elate_question_edit_form extends question_edit_form {
 				$mform->insertElementBefore($width, 'attachments');
 				$mform->setType('responsefieldlines', PARAM_INT);
 				$mform->setType('responsefieldwidth', PARAM_INT);
-				$mform->setDefault('responsefieldlines', 15);
-				$mform->setDefault('responsefieldwidth', 60);
+				$mform->setDefault('responsefieldlines', get_default_for_elatexam('essay','responsefieldlines'));
+				$mform->setDefault('responsefieldwidth', get_default_for_elatexam('essay','responsefieldwidth'));
 				$mform->removeElement('attachments');
 				$mform->removeElement('responseformat');
 				$mform->addElement('hidden', 'attachments', 0);
 				$mform->addElement('hidden', 'responseformat');
+				$initialtxt = $mform->createElement('textarea', 'initialtextfieldvalue', get_string('initialtextfieldvalue', 'format_elatexam'), array('rows'=>7,'cols'=>80));
+				$mform->insertElementBefore($initialtxt, 'graderinfo');
 				break;
 			case 'multianswer':
 				$menu = array(get_string('caseno', 'qtype_shortanswer'), get_string('caseyes', 'qtype_shortanswer'));
 				$case = $mform->createElement('select', 'casesensitivity', get_string('casesensitive', 'qtype_shortanswer'), $menu);
 				$mform->insertElementBefore($case, 'generalfeedback');
-				$mform->setDefault('casesensitivity', 0);
+				$mform->setDefault('casesensitivity', get_default_for_elatexam('multianswer','casesensitivity'));
 				break;
 			case 'multichoice':
 				// @see qtype_multichoice_edit_form
@@ -121,6 +124,10 @@ abstract class elate_question_edit_form extends question_edit_form {
 			case 'truefalse':
 				$this->hide_editor_field('feedbacktrue');
 				$this->hide_editor_field('feedbackfalse');
+				break;
+			case 'shortanswer':
+				$mform->removeElement('usecase');
+				$mform->addElement('hidden', 'usecase', 'caseno');
 				break;
 		}
 		// Override some labels (global)
