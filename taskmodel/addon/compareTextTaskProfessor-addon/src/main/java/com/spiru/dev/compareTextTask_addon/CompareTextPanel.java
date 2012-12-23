@@ -47,7 +47,7 @@ public class CompareTextPanel extends JPanel {
 
 	protected static String sentenceEndingCharacters = ".!?\"'";
 	protected static String defaultFontSizeLabel = "Default Font Size";
-	protected static String defaultFontSize = "14";
+	protected static String defaultFontSize = "13";
 	protected BoundedRangeModel independentScrollbarModel;
 	protected String initialText;
 	protected String sofarResult;
@@ -76,7 +76,7 @@ public class CompareTextPanel extends JPanel {
 		textAreaRight = new RSyntaxTextArea(); // JTextArea
 
 		//Font font = new JTextArea().getFont();
-		Font font = new Font("Verdana", Font.PLAIN, 14);
+		Font font = new Font("Verdana", Font.PLAIN, Integer.parseInt(defaultFontSize));
 		//System.out.println(font);
 		textAreaLeft.setFont(font);
 		textAreaRight.setFont(font);
@@ -229,7 +229,7 @@ public class CompareTextPanel extends JPanel {
 		toolBar.add(toggleSyncButton);
 		toolBar.add(Box.createHorizontalGlue());
 		fontComboBox.setModel(new DefaultComboBoxModel(new String[] { defaultFontSizeLabel, "8", "9", "10", "11",
-				"12", "13", "14", "15", "16", "18", "20", "24", "28", "30", "36", "48", "64", "72" }));
+				"12", "13", "14", "15", "16", "18", "20", "24", "28", "30" }));
 		fontComboBox.addActionListener(new java.awt.event.ActionListener() {
 			@Override
 			public void actionPerformed(java.awt.event.ActionEvent e) {
