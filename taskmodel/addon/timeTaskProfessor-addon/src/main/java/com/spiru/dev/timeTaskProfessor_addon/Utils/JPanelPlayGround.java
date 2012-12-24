@@ -9,6 +9,8 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
+import com.spiru.dev.timeTaskProfessor_addon.TimeTaskAddOnJPanel;
+
 public class JPanelPlayGround extends JPanel {
 	
 	/** List with all Symbols */
@@ -16,14 +18,16 @@ public class JPanelPlayGround extends JPanel {
 	private MyMouseListener mouseListener;
 	/** The TimeLine */
 	private TimeLine timeLine;
+	private TimeTaskAddOnJPanel panel;
 	
-	public JPanelPlayGround(MyMouseListener mouseListener /* List of DatePoints */){
+	public JPanelPlayGround(MyMouseListener mouseListener, TimeTaskAddOnJPanel panel){
+		this.panel = panel;
 		this.setBackground(Color.LIGHT_GRAY);
 		this.mouseListener = mouseListener;
 		this.addMouseListener(mouseListener);		
 		this.addMouseMotionListener(new MyMouseMotionListener(this));		
 		timeLine = new TimeLine(this);		
-		this.setPreferredSize(new Dimension((int)timeLine.getLine().getP2().getX()+40,150));
+		this.setPreferredSize(new Dimension((int)timeLine.getLine().getP2().getX()+40,200));
 		this.setLayout(null);			
 	}
 	
@@ -56,6 +60,29 @@ public class JPanelPlayGround extends JPanel {
 		}
 	}
 	
+	public void editSymbol(Symbol sym){
+		panel.editSymbol(sym);
+	}
+	
+	public void editElement(DragElement e){
+		panel.editElement(e);
+	}
+	
+	public void addSymbol(Symbol sym){
+		sym.addMouseListener(mouseListener);
+		for(Symbol n: symbols){
+			if (sym.getBackground() == n.getBackground()){
+				// change symbols
+				this.remove(n);
+				symbols.remove(n);
+				break;
+			}
+		}	
+		this.add(sym);
+		symbols.add(sym);
+		this.repaint();
+	}
+	
 	/**
 	 * a new Symbol 
 	 * @param e the original Element
@@ -81,6 +108,8 @@ public class JPanelPlayGround extends JPanel {
 	 * @param symbol Symbol to set ConnectionLine
 	 */
 	public void setConnectionLine(Symbol symbol){
+		if (symbol.getDatePoint() != null)
+			return;
 		if (timeLine.getMouseOnLine_X()>0){
 			for(Symbol n:symbols){
 				if (n.getConnectionLine() == null)
@@ -93,7 +122,7 @@ public class JPanelPlayGround extends JPanel {
 					return;
 				}
 			}
-			ConnectionLine line = new ConnectionLine(symbol, timeLine.getMouseOnLine_X(),95);		
+			ConnectionLine line = new ConnectionLine(symbol, timeLine.getMouseOnLine_X(),110);		
 			symbol.setConnectionLine(line);
 		}
 		this.repaint();
@@ -103,9 +132,10 @@ public class JPanelPlayGround extends JPanel {
 	 * Removes a Symbol
 	 * @param symbol The Symbol to remove.
 	 */
-	public void removeSymbol(Symbol symbol){
+	public void removeSymbol(Symbol symbol){		
 		this.remove(symbol);
 		symbols.remove(symbol);
+		symbol.setDatePoint(null);
 		repaint();
 	}
 	
@@ -153,6 +183,7 @@ public class JPanelPlayGround extends JPanel {
 	 */
 	public void removeAllStuff(){
 		for(Symbol n:symbols){
+			n.setDatePoint(null);
 			this.remove(n);
 		}
 		symbols.clear();
@@ -172,5 +203,27 @@ public class JPanelPlayGround extends JPanel {
 			}
 		}
 		repaint();
+	}
+	
+	public void removeObject(DatePoint dp){
+		this.remove(dp);
+		timeLine.removeObject(dp);
+		repaint();
+	}
+	
+	public boolean addObject(DatePoint dp, int pos){
+		for(DatePoint n:this.timeLine.getDatePoints()){
+			if (n.getCaption().equals(dp.getCaption())){				
+				return false;
+			}
+		}
+		timeLine.addObject(dp,pos);
+		this.add(dp);
+		this.repaint();
+		return true;
+	}
+	
+	public void closeEditView(){
+		panel.closeEditView();
 	}
 }

@@ -23,7 +23,7 @@ public class MyKeyListener implements KeyListener  {
 		panel.setModified();
 		// only numbers and '.'
 		char c = e.getKeyChar();			
-		if (!Character.isDigit(c) && c != '.'){
+		if (panel.isCorrected()){
 			e.setKeyChar('\0');
 		}			
 	}	

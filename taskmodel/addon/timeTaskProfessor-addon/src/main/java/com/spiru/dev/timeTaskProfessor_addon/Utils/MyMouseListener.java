@@ -23,8 +23,17 @@ public class MyMouseListener implements MouseListener {
 		} else{
 			if (selectedSymbol != null)
 			selectedSymbol.markSymbol(false);
-			selectedSymbol = null;
+			selectedSymbol = null;					
 		}
+	}
+	
+	public void clearSelection(){		
+		selectedConnectionLine = null;
+		markSymbol(false);
+		if (selectedElement != null)
+			selectedElement.markElement(false);
+		selectedElement = null;		
+		panel.repaint();		
 	}
 	
 	public void mouseClicked(MouseEvent event) {
@@ -34,8 +43,9 @@ public class MyMouseListener implements MouseListener {
 			if (selectedElement != null)
 				selectedElement.markElement(false);
 			selectedElement = (DragElement)objekt;
-			selectedElement.markElement(true);
+			selectedElement.markElement(true);			
 			markSymbol(false);
+			panel.editElement(selectedElement);			
 			if (selectedConnectionLine != null){
 				selectedConnectionLine = panel.ClickLine(new Point(-1,-1));
 			}
@@ -49,8 +59,10 @@ public class MyMouseListener implements MouseListener {
 		}
 		else if (objekt instanceof JPanelPlayGround){	
 			((JPanelPlayGround) objekt).requestFocus();
+			panel.closeEditView();
 			if (selectedElement != null){
 				panel.addSymbol(selectedElement, event.getPoint());
+				panel.closeEditView();
 					selectedElement.markElement(false);
 					selectedElement = null;
 			} else
@@ -65,7 +77,9 @@ public class MyMouseListener implements MouseListener {
 		else if (objekt instanceof Symbol){
 			markSymbol(false);
 			selectedSymbol = (Symbol)objekt;
+			panel.closeEditView();
 			selectedSymbol.markSymbol(true);
+			panel.editSymbol(selectedSymbol);
 			if (selectedElement != null){
 				selectedElement.markElement(false);
 				selectedElement = null;
@@ -76,7 +90,7 @@ public class MyMouseListener implements MouseListener {
 		}
 		else if (objekt instanceof JButton){
 			JButton button = (JButton)objekt;
-			if (button.getActionCommand().equals("DELETE")){
+			if (button.getActionCommand().equals("Delete Selection")){
 				if (selectedSymbol != null){
 					panel.removeSymbol(selectedSymbol);
 					selectedSymbol = null;
@@ -85,7 +99,7 @@ public class MyMouseListener implements MouseListener {
 					panel.removeConnectionLine(selectedConnectionLine);
 					selectedConnectionLine = null;
 				}
-			}else if (button.getActionCommand().equals("DELETE_ALL")){
+			}else if (button.getActionCommand().equals("Delete All")){
 				if (selectedElement != null){
 					selectedElement.markElement(false);
 					selectedElement = null;
@@ -99,6 +113,7 @@ public class MyMouseListener implements MouseListener {
 				}
 				panel.removeAllStuff();
 			}
+			panel.closeEditView();
 		}
 	}
 

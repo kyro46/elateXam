@@ -8,7 +8,9 @@ import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JPanel;
@@ -20,7 +22,7 @@ import javax.swing.JScrollPane;
  */
 public class TimeLine {
 	/** List with all DatePoints*/
-	private List<DatePoint> datePoints;
+	private LinkedList<DatePoint> datePoints;
 	/** The TimeLine */
 	private Line2D line;
 	/** position of the mouse over the TimeLine */
@@ -31,62 +33,10 @@ public class TimeLine {
 	 */
 	public TimeLine(JPanelPlayGround panel/* List of DatePoints *//* groesse mit angeben */){	
 		// create DatePoints
-		datePoints = new ArrayList<DatePoint>();
-		this.line = new Line2D.Double(10,95,300,95);
-		this.panel = panel;
-		/*
-		// StartDatePoint
-		DatePoint start = new DatePoint("19.08.0001",true); 
-		panel.add(start);
-		datePoints.add(start);
-		// Test Points
-		int year = 1010;
-		for(int i=0; i<5; i++){
-			
-			DatePoint test = new DatePoint("20.04."+(year+5*i*i),true);
-			datePoints.add(test);		
-			panel.add(test);
-		}
-		// EndDatePoint
-		DatePoint end = new DatePoint("22.08.4222",true);
-		datePoints.add(end);
-		panel.add(end);
-		datePoints.add(end);
-		*/
-		
-		// arrange DatePoints on Line
-		sortDatePoints();
-	}
-	
-	public void sortDatePoints(){	
-		if (datePoints.size()==0)
-			return;
-		Date[] dates = new Date[datePoints.size()];
-		for(int i=0; i<dates.length; i++){
-			dates[i] = datePoints.get(i).getDate();
-		}	
-		datePoints.get(0).setLocation(10, 120);
-		for(int i = 1; i<datePoints.size(); i++){
-			int x = datePoints.get(i-1).getX()+datePoints.get(i-1).getWidth()+10+2*(dates[i].getYear()-dates[i-1].getYear());
-			datePoints.get(i).setLocation(x, 120);
-		}	
-		boolean test = true;
-		while(test){
-			test=false;
-			for(int i=1; i<datePoints.size(); i++){			
-				if(datePoints.get(i).getX()-datePoints.get(i-1).getX() > 200){
-					test=true;
-					for(int k=i; k<datePoints.size(); k++){
-						datePoints.get(k).setLocation(datePoints.get(k).getX()-80,120);
-					}
-				}
-			}
-		}
-		int start = datePoints.get(0).getX()+datePoints.get(0).getWidth()/2;
-		int end = datePoints.get(datePoints.size()-1).getX()+datePoints.get(datePoints.size()-1).getWidth()/2;
-		this.line = new Line2D.Double(start,95,end,95);		
-		this.panel.setPreferredSize(new Dimension(end+55,150));
-	}	
+		datePoints = new LinkedList<DatePoint>();
+		this.line = new Line2D.Double(10,115,300,115);
+		this.panel = panel;						
+	}		
 	
 	/**
 	 * Getter for the Line2D-Object
@@ -129,7 +79,7 @@ public class TimeLine {
 			g2D.drawLine(n.getX()+n.getWidth()/2,
 					   (int)line.getP1().getY(),
 					   n.getX()+n.getWidth()/2,
-					   115);
+					   135);
 		}
 		// Mouse on TimeLine?
 		drawDotOnTimeLine(g2D);
@@ -150,7 +100,7 @@ public class TimeLine {
 				break;
 			}
 		}		
-		g2D.fillOval(mouseOnLine_x-5, 90, 10, 10);						
+		g2D.fillOval(mouseOnLine_x-5, 110, 10, 10);						
 		g2D.setColor(Color.BLACK);
 	}
 	
@@ -168,7 +118,76 @@ public class TimeLine {
 	 */
 	public void setMouseOnLine_x(int x){
 		mouseOnLine_x = x;
+	}	
+	
+	private void checkOrder(){
+		Collections.sort(datePoints, new SortComparator());					
+		ArrayList<DatePoint> points = new ArrayList<DatePoint>();
+		for(int i=0; i<datePoints.size(); i++){
+			points.add(datePoints.get(i));
+		}
+		for(int i=1; i<points.size(); i++){
+			DatePoint dp1 = points.get(i-1);
+		    DatePoint dp2 = points.get(i);
+			if(dp1.getPos() == dp2.getPos()){
+				dp1.setPos(dp1.getPos()+1);
+				break;
+			}
+		}
+		datePoints.clear();
+		Collections.sort(points, new SortComparator());
+		for(int i=0; i<points.size(); i++){
+			DatePoint dp = points.get(i);
+			dp.setPos(i+1);
+			datePoints.add(dp);
+		}
 	}
 	
+	public void sortObjects(){
+		if (datePoints.size() == 0)
+			return;
+		checkOrder();		
+		datePoints.getFirst().setLocation(10, 140);
+		
+		for(int i = 1; i<datePoints.size(); i++){			
+			int x = datePoints.get(i-1).getX()+datePoints.get(i-1).getWidth()+10;
+			datePoints.get(i).setLocation(x, 140);						
+		}	
+		int start = datePoints.get(0).getX()+datePoints.get(0).getWidth()/2;		
+		int end = datePoints.getLast().getX()+datePoints.getLast().getWidth()/2;
+		this.line = new Line2D.Double(start,115,end,115);	
+		for(DatePoint n:datePoints){
+			if (n.getSymbol() != null){
+				n.getSymbol().setLocation(n.getX()+n.getWidth()/2-10, n.getY()-100);
+				ConnectionLine line = new ConnectionLine(n.getSymbol(),n.getX()+n.getWidth()/2,110);
+				n.getSymbol().setConnectionLine(line);
+			}
+		}
+		this.panel.setPreferredSize(new Dimension(end+55,panel.getHeight()));
+	}
 	
+	public void addObject(DatePoint dp, int pos){		
+		if (pos-1 >= datePoints.size())
+			pos = datePoints.size()+1;	
+		
+	    datePoints.add(dp);		
+		dp.setPos(pos);
+		sortObjects();				
+	}		
+	
+	public void removeObject(DatePoint dp){
+		datePoints.remove(dp);
+		sortObjects();
+	}
 }
+
+class SortComparator implements Comparator<DatePoint> {       
+		@Override
+		public int compare(DatePoint dp1, DatePoint dp2) {
+            if(dp1.getPos() > dp2.getPos())
+                return 1;
+            if(dp1.getPos() < dp2.getPos())
+                return -1;  
+            return 0;
+		}
+    }

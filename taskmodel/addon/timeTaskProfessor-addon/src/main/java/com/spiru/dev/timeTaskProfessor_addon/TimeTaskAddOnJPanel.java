@@ -1,36 +1,15 @@
 package com.spiru.dev.timeTaskProfessor_addon;
 
-import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.xml.bind.DatatypeConverter;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import com.spiru.dev.timeTaskProfessor_addon.Utils.ConnectionLine;
 import com.spiru.dev.timeTaskProfessor_addon.Utils.DatePoint;
 import com.spiru.dev.timeTaskProfessor_addon.Utils.DragElement;
+import com.spiru.dev.timeTaskProfessor_addon.Utils.JPanelButtons;
 import com.spiru.dev.timeTaskProfessor_addon.Utils.JPanelEditor;
 import com.spiru.dev.timeTaskProfessor_addon.Utils.JPanelOfElements;
 import com.spiru.dev.timeTaskProfessor_addon.Utils.JPanelPlayGround;
@@ -38,306 +17,121 @@ import com.spiru.dev.timeTaskProfessor_addon.Utils.MyDropTargetListener;
 import com.spiru.dev.timeTaskProfessor_addon.Utils.MyMouseListener;
 import com.spiru.dev.timeTaskProfessor_addon.Utils.Symbol;
 
-
-/**
- * Panel auf dem alle anderen Objekte liegen
- * @author Yves
- *
- */
-public class TimeTaskAddOnJPanel extends JPanel {
+public class TimeTaskAddOnJPanel extends JScrollPane {
 	
-	private JPanelOfElements  jpanelOfElements;
-	private JPanelPlayGround jpanelPlayground;
-	private JPanel jpanelButtons;
-	private JButton jbuttonDelete;
-	private JButton jbuttonDeleteAll;
+	private JPanel view;	
+	private JPanelEditor panelEditor;
+	private JPanelOfElements panelOfElements;
+	private JPanelPlayGround panelPlayground;
+	private JPanelButtons panelButtons;
 	private MyMouseListener mouseListener;	
 	private JScrollPane scrollPanePlayground;
-	private JScrollPane scrollPane;
-	private TimeTaskAddOnApplet applet;
 	
-    public TimeTaskAddOnJPanel(TimeTaskAddOnApplet applet, int width) {
-    	this.applet = applet;
-    	init(width);
-    }
-    
-    @Override
-    public void paint(Graphics g){
-    	scrollPanePlayground.paintAll(scrollPanePlayground.getGraphics());
-    	super.paint(g);
-    }
-    
-    private void init(int width){
-    	mouseListener = new MyMouseListener();
-    	// The elements 
-    	List<Object> objects = new ArrayList<Object>(); 
-    	jpanelOfElements = new JPanelOfElements(objects, mouseListener);
-    	jpanelButtons = new JPanel();
-    	jbuttonDelete = new JButton("Markierung entfernen");
-    	jbuttonDelete.addMouseListener(mouseListener);
-    	jbuttonDelete.setActionCommand("DELETE");
-    	jbuttonDeleteAll = new JButton("Alles entfernen");
-    	jbuttonDeleteAll.addMouseListener(mouseListener);
-    	jbuttonDeleteAll.setActionCommand("DELETE_ALL");
-    	jpanelButtons.add(jbuttonDelete);
-    	jpanelButtons.add(jbuttonDeleteAll);
+	public TimeTaskAddOnJPanel (int width, int height){
+		super(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		this.setBounds(0, 0, width, height);
+		this.setPreferredSize(new Dimension(width, height));		
+		mouseListener = new MyMouseListener();
+				
+		createView(width);
+		
+		this.getViewport().add(view);	
+	}
+	
+	private void createView(int width){
+		view = new JPanel();
+		view.setLayout(null);			
+		
+		panelEditor = new JPanelEditor(width, this, mouseListener);
+		view.add(panelEditor);
+		
+		panelOfElements = new JPanelOfElements(width);
+		panelOfElements.setLocation(0, panelEditor.getHeight());
+		view.add(panelOfElements);
+		
+		panelPlayground = new JPanelPlayGround(mouseListener, this);
+		mouseListener.setPlayGround(panelPlayground);		
+		new MyDropTargetListener(panelPlayground);
+    	scrollPanePlayground = new JScrollPane(panelPlayground, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+    	scrollPanePlayground.setBounds(0,panelEditor.getHeight()+panelOfElements.getHeight(),width,210);
     	
-    	jpanelPlayground = new JPanelPlayGround(mouseListener);
-    	mouseListener.setPlayGround(jpanelPlayground);
-    	new MyDropTargetListener(jpanelPlayground);
-    	scrollPane = new JScrollPane(jpanelOfElements);
-    	scrollPane.setBounds(0,130,width,60);
-    	jpanelButtons.setBounds(0,190,width,40);
-    	    	
-    	scrollPanePlayground = new JScrollPane(jpanelPlayground);
-    	scrollPanePlayground.setBounds(0,230,width,170);
-    	
-    	JPanelEditor panelInput = new JPanelEditor(this, mouseListener);
-    	panelInput.setBounds(0,0,width,130);
-    	
-    	this.add(panelInput);
-    	this.add(scrollPane);
-    	this.add(jpanelButtons);
-    	this.add(scrollPanePlayground);
-    	this.setLayout(null);    	
-    	this.setBounds(0,0,width,460);
-    }    
-    
-    public void addElement(String id, String name, String color){
-    	Color c = new Color(Integer.parseInt(color));
-    	DragElement e = new DragElement(name, c,mouseListener, Integer.parseInt(id));
-    	addElement(e);
-    }
-    
-    public void addElement(DragElement e){
-    	for(DragElement n:jpanelOfElements.getElementList()){
-    		if (e.getColor() == n.getColor() || e.getCaption().equals(n.getCaption())){
-    			return;
-    		}
-    	}
-    	jpanelOfElements.getElementList().add(e);
-    	jpanelOfElements.add(e);
-    	scrollPane.paintAll(scrollPane.getGraphics());
-    }
-    
-    public void deleteElement(){
-    	List<DragElement> elementList = jpanelOfElements.getElementList();
-    	List<DragElement> deleteList = new ArrayList<DragElement>();
-    	for(DragElement n:elementList){
-    		if(n.isMarked()){
-    			jpanelOfElements.remove(n);
-    			deleteList.add(n);
-    		}
-    	}
-    	elementList.removeAll(deleteList);
-    	for(int i=0; i<jpanelPlayground.getSymbols().size(); i++){
-			Symbol n = jpanelPlayground.getSymbols().get(i);
-			for(int j=0; j<deleteList.size(); j++){
-				DragElement k = deleteList.get(j);
-				if(n.getBackground() == k.getColor()){
-					jpanelPlayground.removeSymbol(n);
-					break;
-				}
-			}
+		view.add(scrollPanePlayground);
+		
+		panelButtons = new JPanelButtons(mouseListener);
+		panelButtons.setBounds(0, panelEditor.getHeight()+panelOfElements.getHeight()+scrollPanePlayground.getHeight(), width, 35);
+		view.add(panelButtons);
+		
+		int height = panelEditor.getHeight()+panelOfElements.getHeight()+scrollPanePlayground.getHeight()+panelButtons.getHeight();
+		view.setBounds(0, 0, width, height);	
+		view.setPreferredSize(new Dimension(width, height));
+		this.revalidate();
+		
+		// EditorPanel
+	}
+	
+	public void sortObjects(){
+		panelPlayground.getTimeLine().sortObjects();
+		panelPlayground.repaint();
+	}
+	
+	public void addSymbol(Symbol sym){
+		panelPlayground.addSymbol(sym);
+	}
+	
+	public boolean addObject(DatePoint dp, int pos){
+		return panelPlayground.addObject(dp,pos);		
+	}
+	
+	public void removeObject(DatePoint dp){
+		panelPlayground.removeObject(dp);
+	}
+	
+	public void editSymbol(Symbol sym){
+		panelEditor.editSymbol(sym);
+	}
+	
+	public void editElement(DragElement e){
+		panelEditor.editElement(e, panelPlayground.getSymbols());		
+	}
+	
+	public boolean addElement(DragElement e){
+		return panelOfElements.addElement(e);
+	}
+	
+	public void removeElement(DragElement e, Symbol sym){
+		if (e!=null)
+			panelOfElements.removeElement(e);
+		if (sym != null)
+			panelPlayground.removeSymbol(sym);
+	}
+	
+	public void closeEditView(){
+		panelEditor.closeObjectView();
+		panelEditor.closeSymbolView();
+	}
+	
+	public void removeSymbol(Symbol sym){		
+		if (sym != null){			
+			panelPlayground.removeSymbol(sym);			
 		}
-    	scrollPane.paintAll(scrollPane.getGraphics());
-    }
-    
-    public void addSymbol(String eventID, String posX, String posY, String lineX){
-    	List<DragElement> elementList = jpanelOfElements.getElementList();
-    	List<Symbol> symbolList = jpanelPlayground.getSymbols();
-    	
-    	for(DragElement n:elementList){
-    		if(n.getId() == Integer.parseInt(eventID)){       			
-    			Point pos = new Point(Integer.parseInt(posX),Integer.parseInt(posY));
-    			Symbol sym = new Symbol(pos,n.getColor(),n.getId());
-    			symbolList.add(sym);    			
-    			sym.setConnectionLine(new ConnectionLine(sym, Integer.parseInt(lineX), (int)jpanelPlayground.getTimeLine().getLine().getP1().getY()));
-    			jpanelPlayground.add(sym);
-    			sym.addMouseListener(mouseListener);
-    			scrollPane.paintAll(scrollPane.getGraphics());
-    			break;
-    		}
-    	}    	
-    }
-    
-    public void addDatePoint(String caption, boolean visible){
-    	DatePoint dp = new DatePoint(caption, visible);
-    	addDatePoint(dp);
-    }
-    
-    public void addDatePoint(DatePoint d){
-    	List<DatePoint> datePoints = jpanelPlayground.getTimeLine().getDatePoints();
-    	for(DatePoint n:datePoints){
-    		if(n.getCaption().equals(d.getCaption())){
-    			return;
-    		}
-    	}
-    	datePoints.add(d);
-    	jpanelPlayground.add(d);
-    	
-    	// fill
-    	List<Date> dates = new ArrayList<Date>();
-    	for(DatePoint n:datePoints){
-    		dates.add(n.getDate());
-    	}    	
-    	// sort
-    	boolean sort = true;
-    	while(sort){
-    		sort=false;
-    		for(int i=1; i<dates.size(); i++){
-    			if (dates.get(i-1).after(dates.get(i))){
-    				Date tmp = dates.get(i-1);
-    				dates.set(i-1, dates.get(i));
-    				dates.set(i, tmp);
-    				DatePoint dp = datePoints.get(i-1);
-    				datePoints.set(i-1, datePoints.get(i));
-    				datePoints.set(i, dp);
-    				sort = true;
-    			}
-    		}
-    	}
-    	
-    	jpanelPlayground.getTimeLine().sortDatePoints();   
-    	scrollPanePlayground.paintAll(scrollPanePlayground.getGraphics());    	
-    }
-    
-    public void deleteDate(){
-    	List<DatePoint> datePoints = jpanelPlayground.getTimeLine().getDatePoints();
-    	List<DatePoint> dates = new ArrayList<DatePoint>();
-    	for(int i=0; i<datePoints.size(); i++){
-    		DatePoint n = datePoints.get(i);
-    		if(n.isMarked()){
-    			dates.add(n);
-    			jpanelPlayground.remove(n);
-    			List<Symbol> symbols = jpanelPlayground.getSymbols();
-    			for(Symbol k:symbols){
-    				if(k.getConnectionLine() != null){
-    					DatePoint datePos;
-    					if (i>1)
-    						datePos = datePoints.get(i-1);
-    					else
-    						datePos = n;
-    					if(k.getConnectionLine().getLine().getP2().getX()>datePos.getX()+n.getWidth()/2){
-    						k.setConnectionLine(null);
-    					}    					
-    				}
-    			}
-    		}
-    	}    	
-    	
-    	datePoints.removeAll(dates);
-    	jpanelPlayground.getTimeLine().sortDatePoints();   
-    	scrollPanePlayground.paintAll(scrollPanePlayground.getGraphics()); 
-    }
-    
-    public int getCountOfElements(){
-    	return jpanelOfElements.getElementList().size();
-    }
-    
-    public String save(){
-    	List<DragElement> elements = jpanelOfElements.getElementList();
-    	List<DatePoint> datePoints = jpanelPlayground.getTimeLine().getDatePoints();
-    	List<Symbol> symbols = jpanelPlayground.getSymbols();
-    	String ret = "";
-    	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-    	try{
-			DocumentBuilder documentBuilder = factory.newDocumentBuilder();
-			Document document = documentBuilder.newDocument();
-			Element memento = document.createElement("Memento");
-			document.appendChild(memento);	    		
-			Element addonConfig = document.createElement("addonConfig");
-			memento.appendChild(addonConfig);	    		
-    		Element timelineSubTaskDef = document.createElement("timelineSubTaskDef");
-    		memento.appendChild(timelineSubTaskDef);	    			    			    		
-    		for(DragElement n:elements){
-    			Element assignedEvent = document.createElement("assignedEvent");
-    			assignedEvent.setAttribute("id", ""+n.getId());
-    			assignedEvent.setAttribute("name",n.getCaption());
-    			assignedEvent.setAttribute("color",String.valueOf(n.getColor().getRGB()));
-    			timelineSubTaskDef.appendChild(assignedEvent);
-    		}	
-    		// alle Intervalle prüfen
-    		for(int i=1; i<datePoints.size(); i++){
-    			Element date = document.createElement("date");
-    			date.setAttribute("dateId",""+i);
-    			date.setAttribute("datePoint1",datePoints.get(i-1).getCaption());
-    			date.setAttribute("datePoint2",datePoints.get(i).getCaption());
-    			if (!datePoints.get(i-1).isDateVisible() && !datePoints.get(i).isDateVisible()){
-    				date.setAttribute("whichDatePointAsTextbox","all");
-    			}else{
-    				if (!datePoints.get(i-1).isDateVisible())
-    					date.setAttribute("whichDatePointAsTextbox","datePoint1");
-    				if (!datePoints.get(i).isDateVisible())
-    					date.setAttribute("whichDatePointAsTextbox","datePoint2");	    				
-    			}
-    			timelineSubTaskDef.appendChild(date);
-    			int dp1x = datePoints.get(i-1).getX()+datePoints.get(i-1).getWidth()/2;
-    			int dp2x = datePoints.get(i).getX()+datePoints.get(i).getWidth()/2;
-    			List<Symbol> listSymbols = new ArrayList<Symbol>();	    			
-    			// alle Elemente zwischen dem Intervall
-    			for(Symbol n:symbols){
-    				int sx = (int)n.getConnectionLine().getLine().getP2().getX();
-    				if(sx >= dp1x && sx <= dp2x){
-    					listSymbols.add(n);
-    				}
-    			}
-    			boolean sort = true;
-    			while(sort){
-    				sort=false;
-    				for(int k=1; k<listSymbols.size(); k++){
-    					int x1 = (int)listSymbols.get(k-1).getConnectionLine().getLine().getP2().getX();
-    					int x2 = (int)listSymbols.get(k).getConnectionLine().getLine().getP2().getX();
-    					if(x1>x2){
-    						sort=true;
-    						Symbol tmp = listSymbols.get(k-1);
-    						listSymbols.set(k-1, listSymbols.get(k));
-    						listSymbols.set(k, tmp);
-    					}
-    				}
-    			}
-    			// in xml speichern
-    			int order = 0;
-    			for(Symbol n:listSymbols){	    				
-    				Element correctAssignmentID = document.createElement("correctAssignmentID");
-    				correctAssignmentID.setAttribute("order",""+order++);
-    				correctAssignmentID.setAttribute("eventId",""+n.getId());
-    				correctAssignmentID.setAttribute("LineX",""+(int)n.getConnectionLine().getLine().getX2());
-    				correctAssignmentID.setAttribute("PosX",""+n.getX());
-    				correctAssignmentID.setAttribute("PosY",""+n.getY());
-    				int sx = (int)n.getConnectionLine().getLine().getP2().getX();
-    				if (dp1x == sx){
-    					correctAssignmentID.setAttribute("isFixedToDate","datePoint1");
-    					// test, element zum linken date nicht doppelt speichern
-    					if (i>1)
-    						continue;
-    				}
-    				else if(dp2x == sx){
-    					correctAssignmentID.setAttribute("isFixedToDate","datePoint2");
-    				}
-    				date.appendChild(correctAssignmentID);
-    			}
-    		}
-			// write DOM to string
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			Transformer transformer = transformerFactory.newTransformer();
-			DOMSource source = new DOMSource(document);
-			StringWriter stringWriter = new StringWriter();
-			StreamResult result =  new StreamResult(stringWriter);
-			transformer.transform(source, result);
-			ret = stringWriter.toString();
-			// having it as base64 string so browsers won't complain
-			ret = DatatypeConverter.printBase64Binary(ret.getBytes("utf-8"));	    	
-	} catch (ParserConfigurationException e) {
-		e.printStackTrace();
-	} catch (TransformerConfigurationException e) {
-		e.printStackTrace();
-	} catch (TransformerException e) {
-		e.printStackTrace();
-	} catch (UnsupportedEncodingException e) {
-		e.printStackTrace();
-	}	    	
-	return ret;
-    }
-        
+	}
+	
+	public List<DatePoint> getObjects(){
+		return panelPlayground.getTimeLine().getDatePoints();
+	}
+	
+	public List<Symbol> getSymbols(){
+		return panelPlayground.getSymbols();
+	}
+	
+	public List<DragElement> getEvents(){
+		return panelEditor.getEvents();		
+	}
+	
+	public void load(String[][] eventListStrings, String[][] dateListStrings, String[][] symbolListStrings){
+		panelEditor.loadElements(eventListStrings);
+		panelEditor.loadObjects(dateListStrings, eventListStrings);
+		panelEditor.loadSymbols(symbolListStrings, eventListStrings);
+	}
+	
 }

@@ -4,10 +4,12 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.geom.Line2D;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -33,6 +35,7 @@ import com.spiru.dev.timeTask_addon.Utils.DragElement;
 import com.spiru.dev.timeTask_addon.Utils.JPanelOfElements;
 import com.spiru.dev.timeTask_addon.Utils.JPanelPlayGround;
 import com.spiru.dev.timeTask_addon.Utils.MyDropTargetListener;
+import com.spiru.dev.timeTask_addon.Utils.MyKeyListener;
 import com.spiru.dev.timeTask_addon.Utils.MyMouseListener;
 import com.spiru.dev.timeTask_addon.Utils.Symbol;
 
@@ -52,10 +55,12 @@ public class TimeTaskAddOnJPanel extends JPanel {
 	private MyMouseListener mouseListener = null;	
 	private JScrollPane scrollPanePlayground;
 	private JScrollPane scrollPane;
+	private boolean isMuster = false;
 	
 	private boolean oldIsProcessed = false;
 	
-    public TimeTaskAddOnJPanel(int width, boolean corrected) {
+    public TimeTaskAddOnJPanel(int width, boolean corrected, boolean isMuster) {
+    	this.isMuster = isMuster;
     	init(width, corrected);
     }
     
@@ -87,11 +92,12 @@ public class TimeTaskAddOnJPanel extends JPanel {
     	scrollPanePlayground = new JScrollPane(jpanelPlayground);
     	scrollPanePlayground.setBounds(0,100,width,320);
     	    	
-    	if(!corrected){
-    		this.add(scrollPane);
+    	this.add(scrollPane);
+    	if(!corrected){    		
     		this.add(jpanelButtons);
     		new MyDropTargetListener(jpanelPlayground);    		
-    	}
+    	}    	
+    	jpanelPlayground.setCorrected(corrected);
     	mouseListener.setCorrected(corrected);
     	
     	this.add(scrollPanePlayground);
@@ -101,7 +107,7 @@ public class TimeTaskAddOnJPanel extends JPanel {
     
     public void addElement(String id, String name, String color){
     	Color c = new Color(Integer.parseInt(color));
-    	DragElement e = new DragElement(name, c, Integer.parseInt(id));
+    	DragElement e = new DragElement(name, c);
     	addElement(e);    	
     }
     
@@ -134,49 +140,14 @@ public class TimeTaskAddOnJPanel extends JPanel {
     	jpanelOfElements.add(e);
     	scrollPane.paintAll(scrollPane.getGraphics());
     }
-    
-    public void addDatePoint(String caption, boolean visible, String input, boolean isCorrected){    	
-    	DatePoint dp = new DatePoint(caption, visible, jpanelPlayground);
-    	if (!visible){    		
-    		dp.setDateFromStudent(input);
-    		dp.setCorrected(isCorrected);
-    	}
-    	addDatePoint(dp);    	
-    }
-    
-    public void addDatePoint(DatePoint d){    	
-    	List<DatePoint> datePoints = jpanelPlayground.getTimeLine().getDatePoints();
-    	for(DatePoint n:datePoints){
-    		if(n.getCaption().equals(d.getCaption())){    			
-    			return;
-    		}
-    	}
-    	datePoints.add(d);
-    	jpanelPlayground.add(d);    	
-    	// fill
-    	List<Date> dates = new ArrayList<Date>();
-    	for(DatePoint n:datePoints){
-    		dates.add(n.getDate());
+        
+    public void sortDatePoint(LinkedList<DatePoint> datePoints){    	
+    	jpanelPlayground.getTimeLine().sortDatePoints(datePoints);
+    	int w = 20;
+    	for(DatePoint n:jpanelPlayground.getTimeLine().getDatePoints()){
+    		w += n.getWidth() + 10;
     	}    	
-    	// sort
-    	boolean sort = true;
-    	while(sort){
-    		sort=false;
-    		for(int i=1; i<dates.size(); i++){
-    			if (dates.get(i-1).after(dates.get(i))){
-    				Date tmp = dates.get(i-1);
-    				dates.set(i-1, dates.get(i));
-    				dates.set(i, tmp);
-    				DatePoint dp = datePoints.get(i-1);
-    				datePoints.set(i-1, datePoints.get(i));
-    				datePoints.set(i, dp);
-    				sort = true;
-    			}
-    		}
-    	}
-    	
-    	jpanelPlayground.getTimeLine().sortDatePoints();  
-    	jpanelPlayground.setPreferredSize(new Dimension(60+(int)jpanelPlayground.getTimeLine().getLine().getP2().getX(),jpanelPlayground.getHeight()));
+    	jpanelPlayground.setPreferredSize( new Dimension(w,jpanelPlayground.getHeight()));
     	scrollPanePlayground.paintAll(scrollPanePlayground.getGraphics());    	
     }
     
@@ -199,22 +170,20 @@ public class TimeTaskAddOnJPanel extends JPanel {
     		}
     	}    	
     }    
-    
-    public String save(){
-    	List<DragElement> elements = jpanelOfElements.getElementList();
-    	List<DatePoint> datePoints = jpanelPlayground.getTimeLine().getDatePoints();
-    	List<Symbol> symbols = jpanelPlayground.getSymbols();
-    	String ret = "";    	
-    	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-    	try{
-			DocumentBuilder documentBuilder = factory.newDocumentBuilder();
+   
+    public String save(){    	
+		String ret = null;
+		try {
+			// create Document
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder documentBuilder;
+			documentBuilder = factory.newDocumentBuilder();
 			Document document = documentBuilder.newDocument();
 			Element memento = document.createElement("Memento");
-			document.appendChild(memento);	    		
-			Element addonConfig = document.createElement("addonConfig");
-			memento.appendChild(addonConfig);	    		
-    		Element timelineSubTaskDef = document.createElement("timelineSubTaskDef");
-    		memento.appendChild(timelineSubTaskDef);
+			document.appendChild(memento);	  
+			Element timelineSubTaskDef = document.createElement("timelineSubTaskDef");
+			memento.appendChild(timelineSubTaskDef);
+						
     		Element isProcessed = document.createElement("Processed");
     		if (isModified() || oldIsProcessed){    			
     			isProcessed.setTextContent("true");    			
@@ -223,108 +192,64 @@ public class TimeTaskAddOnJPanel extends JPanel {
     			isProcessed.setTextContent("false");    			
     		}
     		timelineSubTaskDef.appendChild(isProcessed);
+					
     		Element img = document.createElement("image");
 			img.setTextContent(jpanelPlayground.getBase64StringFromImage());
 			timelineSubTaskDef.appendChild(img);
-    		for(DragElement n:elements){
-    			Element assignedEvent = document.createElement("assignedEvent");
-    			assignedEvent.setAttribute("id", ""+n.getId());
-    			assignedEvent.setAttribute("name",n.getCaption());
-    			assignedEvent.setAttribute("color",String.valueOf(n.getColor().getRGB()));
-    			timelineSubTaskDef.appendChild(assignedEvent);
-    		}	    		
-    		// alle Intervalle prüfen
-    		for(int i=1; i<datePoints.size(); i++){
-    			Element date = document.createElement("date");
-    			date.setAttribute("dateId",""+i);
-    			date.setAttribute("datePoint1",datePoints.get(i-1).getCaption());
-    			date.setAttribute("datePoint2",datePoints.get(i).getCaption());
-    			if (!datePoints.get(i-1).isDateVisible() && !datePoints.get(i).isDateVisible()){
-    				date.setAttribute("whichDatePointAsTextbox","all");
-    				date.setAttribute("datePointStudent1",datePoints.get(i-1).getDateFromStudent());
-    				date.setAttribute("datePointStudent2",datePoints.get(i).getDateFromStudent());
-    			}
-    			if (datePoints.get(i-1).isDateVisible() && datePoints.get(i).isDateVisible()){
-    				
-    				date.setAttribute("whichDatePointAsTextbox","none");
-    				date.setAttribute("datePointStudent1",datePoints.get(i-1).getDateFromStudent());
-    				date.setAttribute("datePointStudent2",datePoints.get(i).getDateFromStudent());
-    			}
-    			if (!datePoints.get(i-1).isDateVisible() && datePoints.get(i).isDateVisible())
-				{
-    				date.setAttribute("whichDatePointAsTextbox","datePoint1");
-    				date.setAttribute("datePointStudent1",datePoints.get(i-1).getDateFromStudent());
+    		
+			// get Event list and save
+			List<DragElement> events = jpanelOfElements.getElementList();
+			for(DragElement event:events){
+				Element assignedEvent = document.createElement("Event");
+				assignedEvent.setAttribute("id", ""+event.getId());
+				assignedEvent.setAttribute("name",event.getCaption());
+				assignedEvent.setAttribute("color",String.valueOf(event.getColor().getRGB()));
+				timelineSubTaskDef.appendChild(assignedEvent);
+			}
+			// get ObjectList and save
+			List<DatePoint> objList = jpanelPlayground.getTimeLine().getDatePoints();
+			for(DatePoint obj : objList){
+				Element assignedEvent = document.createElement("Date");
+				assignedEvent.setAttribute("id", ""+obj.getId());
+				assignedEvent.setAttribute("name", obj.getCaption());
+				assignedEvent.setAttribute("visible", ""+obj.isDateVisible());
+				if (obj.getSymbol() != null){
+					assignedEvent.setAttribute("connected", ""+obj.getSymbol().getId());
+					if (obj.isDateVisible()){
+						// Date visible -> getTextFromSymbol
+						String text = obj.getSymbol().getText();
+						assignedEvent.setAttribute("text", text);
+					}
+					else{
+						// Date !visible -> getTextFromDate
+						String text = obj.getDateFromStudent();
+						assignedEvent.setAttribute("text", text);
+					}
 				}
-    			if (!datePoints.get(i).isDateVisible() && datePoints.get(i-1).isDateVisible())
-    			{
-				date.setAttribute("whichDatePointAsTextbox","datePoint2");
-				date.setAttribute("datePointStudent2",datePoints.get(i).getDateFromStudent());
-    			}
- 
-    			timelineSubTaskDef.appendChild(date);
-    			int dp1x = datePoints.get(i-1).getX()+datePoints.get(i-1).getWidth()/2;
-    			int dp2x = datePoints.get(i).getX()+datePoints.get(i).getWidth()/2;
-    			List<Symbol> listSymbols = new ArrayList<Symbol>();	      			
-    			// alle Elemente zwischen dem Intervall    			
-    			for(Symbol n:symbols){
-    				if(n.getConnectionLine() == null || n.getConnectionLine().getLine() == null){    					
-    					continue;
-    				}
-    				int sx = (int)n.getConnectionLine().getLine().getP2().getX();
-    				if(sx >= dp1x && sx <= dp2x){
-    					listSymbols.add(n);
-    				}
-    			}
-    			boolean sort = true;
-    			while(sort){
-    				sort=false;
-    				for(int k=1; k<listSymbols.size(); k++){
-    					int x1 = (int)listSymbols.get(k-1).getConnectionLine().getLine().getP2().getX();
-    					int x2 = (int)listSymbols.get(k).getConnectionLine().getLine().getP2().getX();
-    					if(x1>x2){
-    						sort=true;
-    						Symbol tmp = listSymbols.get(k-1);
-    						listSymbols.set(k-1, listSymbols.get(k));
-    						listSymbols.set(k, tmp);
-    					}
-    				}
-    			}
-    			// in xml speichern
-    			int order = 0;
-    			for(Symbol n:listSymbols){	    				
-    				Element correctAssignmentID = document.createElement("correctAssignmentID");
-    				correctAssignmentID.setAttribute("order",""+order++);
-    				correctAssignmentID.setAttribute("eventId",""+n.getId());
-    				if(n.getConnectionLine() != null && n.getConnectionLine().getLine() != null){    					
-    					correctAssignmentID.setAttribute("LineX",""+(int)n.getConnectionLine().getLine().getX2());    					
-    				}
-    				correctAssignmentID.setAttribute("PosX",""+n.getX());
-    				correctAssignmentID.setAttribute("PosY",""+n.getY());
-    				int sx = (int)n.getConnectionLine().getLine().getP2().getX();
-    				if (dp1x == sx){
-    					correctAssignmentID.setAttribute("isFixedToDate","datePoint1");
-    					// test, element zum linken date nicht doppelt speichern
-    					if (i>1)
-    						continue;
-    				}
-    				else if(dp2x == sx){
-    					correctAssignmentID.setAttribute("isFixedToDate","datePoint2");
-    				}
-    				date.appendChild(correctAssignmentID);
-    			}    			
-    		}    
-    		List<Symbol> symbolsWithoutConnection = new ArrayList<Symbol>();
-    		for(Symbol n:symbols){
-				if(n.getConnectionLine() == null || n.getConnectionLine().getLine() == null){    					
-					symbolsWithoutConnection.add(n);
+				else{
+					if (!obj.isDateVisible()){
+						// Date !visible -> getTextFromDate
+						String text = obj.getDateFromStudent();
+						assignedEvent.setAttribute("text", text);
+					}
+					
 				}
-    		}
-    		for(Symbol n:symbolsWithoutConnection){
-				Element symbolNoLine = document.createElement("symbolNoLine");
-				symbolNoLine.setAttribute("eventId",""+n.getId());
-				symbolNoLine.setAttribute("PosX",""+n.getX());
-				symbolNoLine.setAttribute("PosY",""+n.getY());
-				timelineSubTaskDef.appendChild(symbolNoLine);
+				timelineSubTaskDef.appendChild(assignedEvent);
+			}
+			List<Symbol> symbols = jpanelPlayground.getSymbols();
+			for(Symbol sym : symbols){
+				if (sym.getDatePoint() != null){
+					// saved with Object
+					continue;
+				}
+				Element assignedEvent = document.createElement("Symbol");
+				assignedEvent.setAttribute("idEvent", ""+sym.getId());					
+				assignedEvent.setAttribute("x", ""+sym.getX());
+				assignedEvent.setAttribute("y", ""+sym.getY());				
+				if (sym.getConnectionLine() != null){
+					assignedEvent.setAttribute("xOnLine", ""+Math.round(sym.getConnectionLine().getLine().getX2()));
+				}
+				timelineSubTaskDef.appendChild(assignedEvent);
 			}
 			// write DOM to string
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -333,17 +258,95 @@ public class TimeTaskAddOnJPanel extends JPanel {
 			StringWriter stringWriter = new StringWriter();
 			StreamResult result =  new StreamResult(stringWriter);
 			transformer.transform(source, result);
-			ret = stringWriter.toString();	    	
-	} catch (ParserConfigurationException e) {
-		e.printStackTrace();
-	} catch (TransformerConfigurationException e) {
-		e.printStackTrace();
-	} catch (TransformerException e) {
-		e.printStackTrace();}	    	
-	return ret;
+			ret = stringWriter.toString();			
+		} catch (ParserConfigurationException e) {				
+			e.printStackTrace();
+		} catch (TransformerConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TransformerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}				
+		return ret;
     }
     
     public void setProcessed(boolean value){
     	oldIsProcessed = value;
+    }
+    
+    public void load(String[][] elementsList, String[][] objList, String[][] symbolsList){
+    	load(elementsList, objList);
+		// idEvent, x, y, xOnLine
+		// fuer alle symbole
+		for(int i=0; i<symbolsList.length; i++){
+			// finde id von DragElement
+			String name = null;
+			for(int k=0; k<elementsList.length; k++){				
+				if(symbolsList[i][0].equals(elementsList[k][0])){
+					name = elementsList[k][1];					
+					break;
+				}
+			}
+			// finde Element nach name
+			for(DragElement n:jpanelOfElements.getElementList()){
+				if(n.getCaption().equals(name)){
+					Symbol sym = new Symbol(new Point(Integer.parseInt(symbolsList[i][1]), Integer.parseInt(symbolsList[i][2])), n.getColor(), n.getId());
+					if(symbolsList[i][3].length()>0){
+						ConnectionLine line = new ConnectionLine(sym, Integer.parseInt(symbolsList[i][3]), (int)jpanelPlayground.getTimeLine().getLine().getY1());
+						sym.setConnectionLine(line);
+					}
+					jpanelPlayground.addSymbol(sym);					
+					break;
+				}
+			}			
+		}	
+    }
+    
+    public void load(String[][] elementsList, String[][] objList){
+		// id, name, color
+		for(int i=0; i<elementsList.length; i++){
+			DragElement el = new DragElement(elementsList[i][1], new Color(Integer.parseInt(elementsList[i][2])));
+			addElement(el);			
+			//el.addMouseListener(mouseListener);
+		}		
+		MyKeyListener keyLis = new MyKeyListener(jpanelPlayground);
+		// id, name, visible, connected, text
+		LinkedList<DatePoint> datePoints = new LinkedList<DatePoint>();
+		for(int i=0; i<objList.length; i++){
+			DatePoint dp = null;
+			if (objList[i][2].equals("true") || isMuster)
+				dp = new DatePoint(objList[i][1], true, Integer.parseInt(objList[i][0]), keyLis);				
+			else{
+				dp = new DatePoint(objList[i][1], false, Integer.parseInt(objList[i][0]), keyLis);
+				dp.setDateFromStudent(objList[i][4]);				
+			}
+	    	jpanelPlayground.add(dp); 	    	
+	    	dp.setBackground(Color.PINK);						
+			// find Element			
+			for(int k=0; k<elementsList.length; k++){
+				if(objList[i][3].equals(elementsList[k][0])){					
+					for(DragElement de:jpanelOfElements.getElementList()){
+						if (de.getCaption().equals(elementsList[k][1])){							
+							Symbol sym = new Symbol(new Point(2,2),de.getColor(),de.getId());
+							sym.setDatePoint(dp, keyLis);						
+							if (dp.isDateVisible()){
+								if (!isMuster)
+									de.hideCaption();
+								sym.setText(objList[i][4]);								
+							}
+							dp.setSymbol(sym);
+							jpanelPlayground.getSymbols().add(sym);
+			    			jpanelPlayground.add(sym);				    	
+			    			scrollPane.paintAll(scrollPane.getGraphics());
+						}							
+					}
+				}
+			}
+			jpanelPlayground.getTimeLine().getDatePoints().add(dp);
+			datePoints.add(dp);			
+		}		
+		sortDatePoint(datePoints);
+		placeAllSymbols();		
     }
 }

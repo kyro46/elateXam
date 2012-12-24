@@ -51,7 +51,7 @@ public class SubTaskView_TimeTask extends SubTaskView{
 				+ " width=\"710\" height=\"540\" title=\"Java\">\n";
 		ret += "<param name=\"param\" value=\""+timeSubTasklet.getMemento()+"\">";
 		ret += "<param name=\"handling\" value=\""+timeSubTasklet.fromHandling()+"\">";
-		ret += "<param name=\"corrected\" value=\""+corrected+"\">";
+		ret += "<param name=\"corrected\" value=\""+corrected+"\">";		
 		
 		ret+= "</applet>\n";
 		ret += "<textarea name=\"task[%s].result\" id=\"task_%s.result\" style=\"display:none;\"></textarea>";
@@ -78,6 +78,7 @@ public class SubTaskView_TimeTask extends SubTaskView{
 			ret += "<param name=\"param\" value=\""+timeSubTasklet.getMementoFromTaskDef()+"\">";
 			ret += "<param name=\"handling\" value=\""+true+"\">";
 			ret += "<param name=\"corrected\" value=\""+true+"\">";
+			ret += "<param name=\"muster\" value=\""+true+"\">";
 			ret+= "</applet>\n";
 		}
 		return ret.replaceAll("%s",""+relativeTaskNumber);

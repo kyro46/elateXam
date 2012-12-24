@@ -1,6 +1,7 @@
 package com.spiru.dev.timeTaskProfessor_addon.Utils;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.text.DateFormat;
@@ -28,6 +29,9 @@ public class DatePoint extends JPanel{
 	private String caption;
 	private boolean mark = false;
 	private boolean visible;
+	private int pos = 0;
+	private JLabel label;
+	private Symbol connectedSymbol = null;
 	
 	/**
 	 * A JPanel with a Date or a TextField to insert a Date (if visible = false)
@@ -38,9 +42,8 @@ public class DatePoint extends JPanel{
 		this.setLayout(null);
 		this.setBounds(0,0,70,25);
 		this.caption = caption;
-		this.visible = visible;
-		this.addMouseListener(new ExMouseListener());
-		JLabel label = new JLabel(caption);
+		this.visible = visible;		
+		label = new JLabel(caption);
 		label.setBounds(2,2,67,22);
 		this.add(label);
 		// visible? -> black color, else blue
@@ -50,23 +53,39 @@ public class DatePoint extends JPanel{
 		else label.setForeground(Color.BLUE);
 	}		
 	
+	public Symbol getSymbol(){
+		return connectedSymbol;
+	}
+	
+	public void setSymbol(Symbol e){					
+		if (connectedSymbol != null){
+			connectedSymbol.setDatePoint(null);			
+		}
+		connectedSymbol = e;
+		if (e != null){
+			e.setDatePoint(this, visible);
+		}
+	}
+	
 	public boolean isDateVisible(){
 		return this.visible;
 	}
 	
-	public Date getDate(){			
-		DateFormat datForm = DateFormat.getDateInstance();
-		datForm.setLenient(false);
-		try {
-			Date date = datForm.parse(caption);
-			return date;
-		} catch (ParseException e) {
-			return null;
-		}						
-	}
+	public void setDateVisible(boolean vis){
+		visible = vis;
+		if (vis){
+			label.setForeground(Color.BLACK);
+		}				
+		else label.setForeground(Color.BLUE);
+	}	
 	
 	public String getCaption(){
 		return caption;
+	}
+	
+	public void setCaption(String cap){
+		caption = cap;
+		label.setText(cap);
 	}
 	
 	public void setMarked(boolean mark){		
@@ -88,35 +107,13 @@ public class DatePoint extends JPanel{
 	public boolean isMarked(){
 		return mark;
 	}
-
-}
-
-class ExMouseListener implements MouseListener{
-
-	public void mouseClicked(MouseEvent e) {
-		DatePoint dp = (DatePoint)e.getComponent();
-		dp.setMarked(!dp.isMarked());
-		
-	}
-
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+	
+	public int getPos(){
+		return pos;
 	}
 	
+	public void setPos(int pos){
+		this.pos = pos;
+	}
+
 }

@@ -2,14 +2,18 @@ package com.spiru.dev.timeTask_addon.Utils;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DragGestureListener;
 import java.awt.dnd.DragSource;
+import java.awt.image.BufferedImage;
+
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
@@ -24,7 +28,9 @@ public class Symbol extends JPanel implements DragGestureListener {
 	private ConnectionLine line = null;
 	/** is Line selected? */
 	private boolean markLine = false;
-	private int id;
+	private int id;	
+	private DatePoint datePoint = null;
+	private JTextField textfield; 
 	
 	/**
 	 * constructor for a Symbol
@@ -36,12 +42,38 @@ public class Symbol extends JPanel implements DragGestureListener {
 		this.setBackground(color);
 		this.setBounds(maus.x, maus.y, 20,20);	
 		this.setBorder(BorderFactory.createLineBorder(Color.black));
-		this.id = id;
+		this.id = id;		
 		// Drag'n Drop
 		DragSource ds = new DragSource();
         ds.createDefaultDragGestureRecognizer(this,
             DnDConstants.ACTION_COPY, this);    
 	}	
+	
+	public void setDatePoint(DatePoint dp, MyKeyListener keyLis){
+		this.datePoint = dp;
+		if (dp.isDateVisible()){
+			textfield = new JTextField();
+			textfield.setBounds(2,2,67,22);	
+			textfield.addKeyListener(keyLis);
+			this.add(textfield);			
+			this.setSize(new Dimension(71,26));
+		}
+	}
+	
+	public void setText(String text){
+		if (textfield != null)
+			textfield.setText(text);
+	}
+	
+	public String getText(){
+		if (textfield == null)
+			return null;
+		return textfield.getText();
+	}
+	
+	public DatePoint getDatePoint(){
+		return datePoint;
+	}
 	
 	public int getId(){
 		return id;
@@ -105,10 +137,20 @@ public class Symbol extends JPanel implements DragGestureListener {
 	 */
 	public void dragGestureRecognized(DragGestureEvent event) {		
         Cursor cursor = null;
-        Symbol symbol = this;        
+        Symbol symbol = this;  
+        BufferedImage img = new BufferedImage( 8, 8, BufferedImage.TYPE_4BYTE_ABGR );
+        Graphics g = img.getGraphics();
+      //  g.setColor( Color.LIGHT_GRAY );
+        //g.fillRect( 0, 0, 8, 8 );
+        g.setColor( symbol.getBackground() );
+        g.fillRect( 3, 3, 5, 5 );
         // Element soll nur kopiert werden
         if (event.getDragAction() == DnDConstants.ACTION_COPY) {
-            cursor = DragSource.DefaultCopyDrop;
+            //cursor = DragSource.DefaultCopyDrop;
+        	cursor = getToolkit().createCustomCursor(
+        			  img,//new ImageIcon(img).getImage(),
+        			  new Point(8,8), "Cursor" );
+        			       	
         }
         // Drag starten, Cursor uebergeben sowie Element, das gedropt werden soll
         event.startDrag(cursor, new TransferableElement(symbol));	

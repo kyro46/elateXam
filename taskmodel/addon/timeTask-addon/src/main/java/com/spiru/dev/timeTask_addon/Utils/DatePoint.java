@@ -13,6 +13,8 @@ import java.util.GregorianCalendar;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
 
 /**
  * JPanel with Date-String and ConnectionLine to TimeLine
@@ -24,17 +26,18 @@ public class DatePoint extends JPanel{
 	private boolean visible;
 	/** The TextField, if visible = false */
 	private JTextField textfield; 
-	
+	private int id;
 	private String caption;
-	private JPanelPlayGround panel;
+	private Symbol sym = null;
 	
 	/**
 	 * A JPanel with a Date or a TextField to insert a Date (if visible = false)
 	 * @param caption The Date-String
 	 * @param visible true, show Date; false, show TextField
 	 */
-	public DatePoint(String caption, boolean visible, JPanelPlayGround panel){
+	public DatePoint(String caption, boolean visible, int id, MyKeyListener keyLis){
 		this.setLayout(null);
+		this.id = id;
 		this.setBounds(0,0,70,25);
 		this.visible = visible;
 		this.caption = caption;
@@ -47,10 +50,25 @@ public class DatePoint extends JPanel{
 			// else show empty TextField
 			textfield = new JTextField();
 			textfield.setBounds(2,2,67,22);			
-			textfield.addKeyListener(new MyKeyListener(panel));
+			textfield.addKeyListener(keyLis);
 			this.add(textfield);			
-		}				
+		}	
+		
+		Border margin = new LineBorder(Color.BLACK,1);
+		this.setBorder(margin);
 	}	
+	
+	public void setSymbol(Symbol sym){
+		this.sym = sym;
+	}
+	
+	public Symbol getSymbol(){
+		return sym;
+	}
+	
+	public int getId(){
+		return id;
+	}
 	
 	public void setCorrected(boolean value){
 		if (value == true){

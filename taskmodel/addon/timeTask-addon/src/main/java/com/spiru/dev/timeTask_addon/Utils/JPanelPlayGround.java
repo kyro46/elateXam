@@ -20,6 +20,7 @@ public class JPanelPlayGround extends JPanel {
 	private MyMouseListener mouseListener;
 	/** The TimeLine */
 	private TimeLine timeLine;
+	private boolean corrected = false;
 	
 	private boolean modified = false;
 	
@@ -28,7 +29,7 @@ public class JPanelPlayGround extends JPanel {
 		this.mouseListener = mouseListener;
 		this.addMouseListener(mouseListener);		
 		this.addMouseMotionListener(new MyMouseMotionListener(this));		
-		this.timeLine = new TimeLine(this);				
+		this.timeLine = new TimeLine();				
 		this.setLayout(null);			
 		this.setPreferredSize(new Dimension((int)timeLine.getLine().getP2().getX()+40,300));
 	}
@@ -61,9 +62,29 @@ public class JPanelPlayGround extends JPanel {
 	 * @param g Graphics to draw on it
 	 */
 	private void drawConnectionLine(Graphics g){
-		for(Symbol n: symbols){
+		for(Symbol n: symbols){			
 			n.drawConnectionLine(g);
-		}
+			if (n.getDatePoint()!=null){
+				DatePoint dp = n.getDatePoint();
+				n.setLocation(dp.getX()+dp.getWidth()/2-n.getWidth()/2, dp.getY()-100);
+				g.drawLine(n.getX()+n.getWidth()/2, n.getY()+n.getHeight(), dp.getX()+dp.getWidth()/2, (int)getTimeLine().getLine().getY1());
+			}
+		}		
+	}
+	
+	public void addSymbol(Symbol sym){
+		sym.addMouseListener(mouseListener);
+		for(Symbol n: symbols){
+			if (sym.getBackground() == n.getBackground()){
+				// change symbols
+				this.remove(n);
+				symbols.remove(n);
+				break;
+			}
+		}	
+		this.add(sym);
+		symbols.add(sym);
+		this.repaint();
 	}
 	
 	/**
@@ -173,6 +194,14 @@ public class JPanelPlayGround extends JPanel {
 		}
 		//symbols.clear();
 		repaint();
+	}
+	
+	public void setCorrected(boolean value){
+		this.corrected = value;
+	}
+	
+	public boolean isCorrected(){
+		return corrected;
 	}
 	
 	/**
