@@ -24,11 +24,11 @@ public class Base64Relocator {
 		// fileList.get(0).getValue(); //Base64-String
 		// fileList.get(0).getEncoding(); //base64
 		// fileList.get(0).getName(); //Dateiname, der im Text zu ersetzen ist
-
+		
 		if (!problem_string.equals("")) {
 			try {
 				for (int i = 0; i < fileList.toArray().length; i++) {
-					problem_string = problem_string.replaceAll("@@PLUGINFILE@@/" + fileList.get(i).getName(), "data:image/gif;base64," + fileList.get(i).getValue());					
+					problem_string = problem_string.replaceAll("@@PLUGINFILE@@/" + fileList.get(i).getName().replaceAll(" ", "%20"), "data:image/gif;base64," + fileList.get(i).getValue());					
 				}
 				text = problem_string;
 

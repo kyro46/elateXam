@@ -23,31 +23,35 @@ import generated.Quiz.Question;
 
 public class ShortanswerToTextConverter {
 
-	public static TextSubTaskDef processing(Question question) throws ParserConfigurationException, SAXException, IOException, TransformerException {
+	public static TextSubTaskDef processing(Question question)
+			throws ParserConfigurationException, SAXException, IOException,
+			TransformerException {
 
 		RandomIdentifierGenerator rand = new RandomIdentifierGenerator();
 
 		TextSubTaskDef subTask = new TextSubTaskDef();
 
-				subTask = new TextSubTaskDef();
+		subTask = new TextSubTaskDef();
 
-				subTask.setHint(question.getName().getText().toString());
+		subTask.setHint(Base64Relocator.relocateBase64(question
+				.getGeneralfeedback().getText(), question.getQuestiontext()
+				.getFile()));
 
-				String answer = question.getAnswer()
-						.get(0).getText();
+		String answer = question.getAnswer().get(0).getText();
 
-				subTask.setCorrectionHint(answer);
+		subTask.setCorrectionHint(answer);
 
-				// Allgemeine Angaben pro Frage
-				subTask.setTrash(false);
-				subTask.setInteractiveFeedback(false);
+		// Allgemeine Angaben pro Frage
+		subTask.setTrash(false);
+		subTask.setInteractiveFeedback(false);
 
-				// Spezielle Angaben pro Frage
-				subTask.setProblem(Base64Relocator.relocateBase64(question.getQuestiontext().getText(),question.getQuestiontext().getFile()));
-				subTask.setId(question.getName()
-						.getText().toString()
-						+ "_" + rand.getRandomID());
-		
+		// Spezielle Angaben pro Frage
+		subTask.setProblem(Base64Relocator.relocateBase64(question
+				.getQuestiontext().getText(), question.getQuestiontext()
+				.getFile()));
+		subTask.setId(question.getName().getText().toString() + "_"
+				+ rand.getRandomID());
+
 		return subTask;
 	}
 

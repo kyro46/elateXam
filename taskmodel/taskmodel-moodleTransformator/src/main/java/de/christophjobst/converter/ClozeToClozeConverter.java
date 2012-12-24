@@ -25,11 +25,11 @@ import de.thorstenberger.taskmodel.complex.complextaskdef.ClozeSubTaskDef;
 
 public class ClozeToClozeConverter {
 
-	
 	public static float punktzahl = 0;
 
-	
-	public static ClozeSubTaskDef processing(Question question) throws ParserConfigurationException, SAXException, IOException, TransformerException {
+	public static ClozeSubTaskDef processing(Question question)
+			throws ParserConfigurationException, SAXException, IOException,
+			TransformerException {
 
 		RandomIdentifierGenerator rand = new RandomIdentifierGenerator();
 
@@ -39,7 +39,9 @@ public class ClozeToClozeConverter {
 		subTask.setTrash(false);
 		subTask.setInteractiveFeedback(false);
 		subTask.setCorrectionHint(" ");
-		subTask.setHint(question.getName().getText().toString());
+		subTask.setHint(Base64Relocator.relocateBase64(question
+				.getGeneralfeedback().getText(), question.getQuestiontext()
+				.getFile()));
 
 		// Spezielle Angaben pro Frage
 		subTask.setId(question.getName().getText().toString() + "_"
@@ -47,19 +49,20 @@ public class ClozeToClozeConverter {
 
 		String problem = "Lösen Sie folgenden Lückentext.";
 
-			// Konvertierung des String in separaten Block,
-			// falls bei häufiger Nutzung Auslagerung nötig
-			try {
-				byte[] bytes = problem.getBytes("UTF-8");
-				problem = new String(bytes);
-				// System.out.println(problem);
-				subTask.setProblem(problem);
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
+		// Konvertierung des String in separaten Block,
+		// falls bei häufiger Nutzung Auslagerung nötig
+		try {
+			byte[] bytes = problem.getBytes("UTF-8");
+			problem = new String(bytes);
+			// System.out.println(problem);
+			subTask.setProblem(problem);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 
-		
-		subTask.setCloze(clozeParser(Base64Relocator.relocateBase64(question.getQuestiontext().getText(),question.getQuestiontext().getFile())));
+		subTask.setCloze(clozeParser(Base64Relocator.relocateBase64(question
+				.getQuestiontext().getText(), question.getQuestiontext()
+				.getFile())));
 
 		return subTask;
 	}
@@ -67,7 +70,7 @@ public class ClozeToClozeConverter {
 	private static Cloze clozeParser(String moodleText) {
 
 		Cloze cloze = new Cloze();
-			
+
 		punktzahl = 0;
 		int klammeraufindex = 0;
 		int klammerzuindex = 0;
@@ -89,16 +92,16 @@ public class ClozeToClozeConverter {
 					Math.max(multichoiceindex, numericalindex));
 
 			klammeraufindex = moodleText.lastIndexOf("{", gapIndexToUse);
-		
+
 			if (klammeraufindex != -1) {
 
-				//Text am Anfang der Aufgabe
+				// Text am Anfang der Aufgabe
 				if (klammerzuindex == 0) {
 					cloze.getTextOrGap().add(
 							moodleText.substring(klammerzuindex,
 									klammeraufindex));
 				} else {
-					//Text zwischen 2 Lücken
+					// Text zwischen 2 Lücken
 					cloze.getTextOrGap().add(
 							moodleText.substring(klammerzuindex + 1,
 									klammeraufindex));
@@ -109,7 +112,7 @@ public class ClozeToClozeConverter {
 						gapBuilder(moodleText.substring(klammeraufindex + 1,
 								klammerzuindex)));
 			} else {
-				//Text nach der letzten Lücke
+				// Text nach der letzten Lücke
 				cloze.getTextOrGap().add(
 						moodleText.substring(klammerzuindex + 1));
 			}
@@ -122,9 +125,9 @@ public class ClozeToClozeConverter {
 					gapIndexToUse + 1);
 
 		} while (klammeraufindex != -1);
-		
-//		System.out.println("Gesamtpunktzahl für die Aufgabe: " + punktzahl);
-		
+
+		// System.out.println("Gesamtpunktzahl für die Aufgabe: " + punktzahl);
+
 		return cloze;
 	}
 
@@ -133,29 +136,28 @@ public class ClozeToClozeConverter {
 		Gap gap = new Gap();
 		gap.setIgnoreCase(true);
 		String correctAnswer;
-		
-//		try {
-//			punktzahl += Float.parseFloat(input.substring(0, input.indexOf(":")));
-//		} catch (NumberFormatException e) {
-//			punktzahl += 1;
-//		}
-		
-		//Jede Lücke bekommt standardmäßig genau 1 Punkt
+
+		// try {
+		// punktzahl += Float.parseFloat(input.substring(0,
+		// input.indexOf(":")));
+		// } catch (NumberFormatException e) {
+		// punktzahl += 1;
+		// }
+
+		// Jede Lücke bekommt standardmäßig genau 1 Punkt
 		punktzahl += 1;
-		
-		
-		
+
 		int nextAnswer = 0;
-//		System.out.println(input);
+		// System.out.println(input);
 		while ((nextAnswer = input.indexOf("=", nextAnswer + 1)) != -1) {
 
 			if (input.indexOf("=", nextAnswer + 1) == -1) {
 				correctAnswer = input.substring(nextAnswer + 1);
-//				System.out.println(correctAnswer);
+				// System.out.println(correctAnswer);
 			} else {
 				correctAnswer = input.substring(nextAnswer + 1,
-						input.indexOf("=", nextAnswer + 1)-1);
-//				System.out.println(correctAnswer);
+						input.indexOf("=", nextAnswer + 1) - 1);
+				// System.out.println(correctAnswer);
 			}
 
 			gap.getCorrect().add(correctAnswer);
@@ -163,10 +165,6 @@ public class ClozeToClozeConverter {
 			correctAnswer = new String();
 
 		}
-		
-		
-		
-
 
 		return gap;
 	}

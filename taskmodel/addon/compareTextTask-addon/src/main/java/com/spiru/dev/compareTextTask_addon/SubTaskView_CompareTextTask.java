@@ -6,8 +6,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.management.modelmbean.XMLParseException;
-import javax.xml.bind.DatatypeConverter;
-
 import de.thorstenberger.taskmodel.MethodNotSupportedException;
 import de.thorstenberger.taskmodel.complex.ParsingException;
 import de.thorstenberger.taskmodel.complex.complextaskhandling.CorrectionSubmitData;

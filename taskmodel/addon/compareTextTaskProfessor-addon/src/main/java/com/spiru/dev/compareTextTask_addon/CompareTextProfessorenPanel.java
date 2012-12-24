@@ -1,17 +1,22 @@
 package com.spiru.dev.compareTextTask_addon;
 
 import java.awt.Insets;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.File;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Vector;
 
+import javax.swing.DefaultCellEditor;
+import javax.swing.JTextField;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * TODO: raise (and handle) Exception if entered tag contains illegal characters
+ * New: non-alphanumeric Characters in Tag List are handled
  *
  * @author C.Wilhelm
  */
@@ -38,7 +43,14 @@ public class CompareTextProfessorenPanel extends CompareTextPanel {
 		labelInitialText = new javax.swing.JLabel("Initial Text:");
 		labelSampleSolution = new javax.swing.JLabel("Sample Solution:");
 		scrollPaneAvailableTags = new javax.swing.JScrollPane();
-		tablePanel = new javax.swing.JTable();
+		// see http://stackoverflow.com/questions/8405934
+		tablePanel = new javax.swing.JTable(); /*{
+			@Override public Class<?> getColumnClass(int column) {
+				Class<?> tmp = super.getColumnClass(column);
+				System.out.println(tmp);
+				return tmp;
+			}
+		};*/
 		buttonMinus = new javax.swing.JButton();
 		buttonPlus = new javax.swing.JButton();
 		buttonUpload = new javax.swing.JButton();
@@ -55,6 +67,7 @@ public class CompareTextProfessorenPanel extends CompareTextPanel {
 	protected void initButtons() {
 		buttonUpload.setText("Upload Text File");
 		buttonUpload.addActionListener(new java.awt.event.ActionListener() {
+			@Override
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				String tmp = "";
 				try {
@@ -87,6 +100,7 @@ public class CompareTextProfessorenPanel extends CompareTextPanel {
 		});
 		buttonMinus.setText("-");
 		buttonMinus.addActionListener(new java.awt.event.ActionListener() {
+			@Override
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				int s[] = tablePanel.getSelectedRows();
 				for (int i = 0; i < s.length; i++) {
@@ -98,6 +112,7 @@ public class CompareTextProfessorenPanel extends CompareTextPanel {
 		});
 		buttonPlus.setText("+");
 		buttonPlus.addActionListener(new java.awt.event.ActionListener() {
+			@Override
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				tableModel.addRow(new Object [] {null, null});
 			}
@@ -114,7 +129,29 @@ public class CompareTextProfessorenPanel extends CompareTextPanel {
 			String description = entry.getValue();
 			tableModel.addRow(new Object[] {tagname, description}); // final step!
 		}
+		// add one last row which is empty
 		tableModel.addRow(new Object[] {"", ""});
+		// entered text should be alphanumerical
+		// This KeyListener only works outside cell editors, see http://stackoverflow.com/questions/9134021
+		tablePanel.addKeyListener(new KeyListener() {
+			@Override public void keyPressed(KeyEvent e) {
+				if(!Character.isLetter(e.getKeyChar()) && !Character.isDigit(e.getKeyChar()))
+					e.consume(); // supress non-alphanumerical characters
+			}
+			@Override public void keyReleased(KeyEvent e) {}
+			@Override public void keyTyped(KeyEvent e) {}
+		});
+		// KeyListeners are not applicable to TableCellEditor, so we have to remove (or escape?)
+		// any non-alphanumerical values from cell-editors after editing took place
+		tablePanel.setDefaultEditor(Object.class, new DefaultCellEditor(new JTextField()) {
+			@Override public boolean stopCellEditing() {
+				String editedvalue = (String) getCellEditorValue();
+				// the following is too harsh:
+				editedvalue = editedvalue.replaceAll("[<>&\'\"]", "");
+				delegate.setValue(editedvalue);
+				return super.stopCellEditing();
+			}
+		});
 	}
 
 	protected void initProfessorView(boolean textfirst) {

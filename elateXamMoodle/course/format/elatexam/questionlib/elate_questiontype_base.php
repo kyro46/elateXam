@@ -22,6 +22,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot.'/question/type/questiontypebase.php');
+require_once($CFG->dirroot.'/course/format/elatexam/questionlib/defaults.php');
 
 /**
  * Modified Question-Type base class for all question used by ElateXam.
@@ -39,12 +40,13 @@ class elate_questiontype_base extends question_type {
 	}
 
 	protected function initialise_combined_feedback(question_definition $question, $questiondata, $withparts = false) {
+		// @see parent::initialise_combined_feedback($question, $questiondata);
 		foreach(array('correctfeedback','partiallycorrectfeedback','incorrectfeedback') as $fieldname)
 			$question->{$fieldname} = "";
 	}
 
 	protected function import_or_save_files($field, $context, $component, $filearea, $itemid) {
-		// overridden because of missing exception handling in question_type::
+		// overridden because of missing exception handling in question_type::import_or_save_files()
 		if(!in_array($filearea, array('answerfeedback','correctfeedback','partiallycorrectfeedback','incorrectfeedback'))) try {
 			return parent::import_or_save_files($field, $context, $component, $filearea, $itemid);
 		} catch(Exception $e) {
@@ -52,6 +54,56 @@ class elate_questiontype_base extends question_type {
 			//debug_print_backtrace();
 		}
 		return "";
+	}
+
+	/**
+	 * if questiontype is one of multianswer/multichoice/essay,
+	 * the question object needs to get finalized here
+	 *
+	 * IMPORTANT: "$question" parameter is (re-)created in
+	 * qformat_default::try_importing_using_qtypes, other than it's
+	 * documentation suggests! thus we use the "$extra" parameter.
+	 *
+	 * @see qformat_xml::readquestions() in /question/format/xml/format.php
+	 * @see question_type::import_from_xml()
+	 */
+	public function import_from_xml($data, $question, qformat_xml $format, $extra=null) {
+		$qtype = $data['@']['type'];
+		if($qtype == 'multichoice') // 'penalty' will not be part of $extraquestionfields
+			$extra->penalty = get_default_for_elatexam('multichoice','penalty');
+		if($qtype == 'multianswer' || $qtype == 'multichoice' || $qtype == 'essay') {
+			// called from qformat_xml::readquestions(), you shall have a look on what we've modified there
+			$extraquestionfields = $this->extra_question_fields();
+			array_shift($extraquestionfields);
+			foreach ($extraquestionfields as $field) {
+				$default = get_default_for_elatexam($qtype, $field); // lookup defaults
+				$extra->$field = $format->getpath($data, array('#', $field, 0, '#'), $default);
+			}
+			return $extra;
+		}
+		return parent::import_from_xml($data, $question, $format, $extra);
+	}
+
+	/**
+	 * we modified qformat_xml::writequestion() to be able to export
+	 * additional attributes for multianswer/multichoice/essay
+	 *
+	 * @see question_type::export_to_xml()
+	 */
+	public function export_to_xml($question, qformat_xml $format, $extra='') {
+		$qtype = $question->qtype;
+		if($qtype == 'multianswer' || $qtype == 'multichoice' || $qtype == 'essay') {
+			// @see parent::export_to_xml($question, $format, $extra);
+			// @see writequestion() in /question/format/xml/format.php
+			$extraquestionfields = $this->extra_question_fields();
+			array_shift($extraquestionfields);
+			foreach ($extraquestionfields as $field) {
+				$exportedvalue = $format->xml_escape($question->options->$field);
+				$extra .= "    <$field>{$exportedvalue}</$field>\n";
+			}
+			return $extra;
+		}
+		return parent::export_to_xml($question, $format, $extra);
 	}
 }
 
@@ -84,10 +136,10 @@ class elate_addon_questiontype_base extends question_type {
 	/** Imports question from the Moodle XML format */
 	public function import_from_xml($data, $question, qformat_xml $format, $extra=null) {
 		// compare to parent::import_from_xml($data, $question, $format, $extra);
-		$question_type = $data['@']['type'];
-		if ($question_type != $this->name()) return false;
+		$qtype = $data['@']['type'];
+		if ($qtype != $this->name()) return false;
 		$qo = $format->import_headers($data);
-		$qo->qtype = $question_type;
+		$qo->qtype = $qtype;
 		$qo->memento = $format->getpath($data, array('#', 'memento', 0, '#'), '');
 		// compare to qformat_xml::import_essay() in /question/format/xml/format.php
 		// also see here: https://github.com/maths/moodle-qtype_stack/blob/master/questiontype.php

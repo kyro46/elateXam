@@ -22,7 +22,9 @@ import de.thorstenberger.taskmodel.complex.complextaskdef.McSubTaskDef;
 
 public class MultichoiceToMcConverter {
 
-	public static McSubTaskDef processing(Question question) throws ParserConfigurationException, SAXException, IOException, TransformerException {
+	public static McSubTaskDef processing(Question question)
+			throws ParserConfigurationException, SAXException, IOException,
+			TransformerException {
 
 		RandomIdentifierGenerator rand = new RandomIdentifierGenerator();
 
@@ -41,31 +43,41 @@ public class MultichoiceToMcConverter {
 				: "multipleSelect");
 
 		// Spezielle Angaben pro Frage
-		subTask.setProblem(Base64Relocator.relocateBase64(question.getQuestiontext().getText(),question.getQuestiontext().getFile()));
-		subTask.setHint(question.getName().getText().toString());
+		subTask.setProblem(Base64Relocator.relocateBase64(question
+				.getQuestiontext().getText(), question.getQuestiontext()
+				.getFile()));
+		subTask.setHint(Base64Relocator.relocateBase64(question
+				.getGeneralfeedback().getText(), question.getQuestiontext()
+				.getFile()));
 		subTask.setId(question.getName().getText().toString() + "_"
 				+ rand.getRandomID());
 		int correctAnswerCount = 0;
 		for (int j = 0; j < question.getAnswer().toArray().length; j++) {
 
 			if (!question.getAnswer().get(j).getFraction().equals("0")) {
-				correct.setValue(Base64Relocator.relocateBase64(question.getAnswer().get(j).getText(),question.getAnswer().get(j).getFile()));
+				correct.setValue(Base64Relocator.relocateBase64(question
+						.getAnswer().get(j).getText(), question.getAnswer()
+						.get(j).getFile()));
 				correct.setId(rand.getRandomID());
 				correctAnswerCount++;
 				subTask.getCorrectOrIncorrect().add(correct);
 				correct = new McSubTaskDef.Correct();
 
 			} else {
-				incorrect.setValue(Base64Relocator.relocateBase64(question.getAnswer().get(j).getText(),question.getAnswer().get(j).getFile()));
+				incorrect.setValue(Base64Relocator.relocateBase64(question
+						.getAnswer().get(j).getText(), question.getAnswer()
+						.get(j).getFile()));
 				incorrect.setId(rand.getRandomID());
 				subTask.getCorrectOrIncorrect().add(incorrect);
 				incorrect = new McSubTaskDef.Incorrect();
 			}
 
 		}
-		
-		/* Sonderfall: Singlechoice-Aufgabe mit mehreren angezeigten korrekten L�sungen
-		 * Kann so nicht abgebildet werden - daher Umwandlung zur multichoice-Aufgabe
+
+		/*
+		 * Sonderfall: Singlechoice-Aufgabe mit mehreren angezeigten korrekten
+		 * Lösungen Kann so nicht abgebildet werden - daher Umwandlung zur
+		 * multichoice-Aufgabe
 		 */
 		if (correctAnswerCount > 1) {
 			subTask.setCategory("multipleSelect");

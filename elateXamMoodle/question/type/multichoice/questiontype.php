@@ -38,6 +38,17 @@ require_once($CFG->dirroot.'/course/format/elatexam/questionlib/elate_questionty
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_multichoice extends elate_questiontype_base {
+
+	/**
+	 * overridden, thus question_type::save_question_options() and
+	 * question_type::get_question_options() will use it
+	 *
+	 * @see question_type::extra_question_fields()
+	 */
+	public function extra_question_fields() {
+		return array('qtype_enhancements_mc', 'num_shown', 'num_right_min', 'num_right_max', 'penalty_empty', 'penalty_wrong', 'assessmentmode');
+	}
+
     public function get_question_options($question) {
         global $DB, $OUTPUT;
         $question->options = $DB->get_record('question_multichoice',
@@ -89,10 +100,9 @@ class qtype_multichoice extends elate_questiontype_base {
                     $context, 'question', 'answer', $answer->id);
             $answer->answerformat = $answerdata['format'];
             $answer->fraction = $question->fraction[$key];
-            // removed
-            //$answer->feedback = $this->import_or_save_files($question->feedback[$key],
-            //        $context, 'question', 'answerfeedback', $answer->id);
-            $answer->feedbackformat = "";//$question->feedback[$key]['format'];
+            $answer->feedback = $this->import_or_save_files($question->feedback[$key],
+                    $context, 'question', 'answerfeedback', $answer->id);
+            $answer->feedbackformat = $question->feedback[$key]['format'];
             $answer->feedback = "";
 
             $DB->update_record('question_answers', $answer);
@@ -151,6 +161,14 @@ class qtype_multichoice extends elate_questiontype_base {
                 return $result;
             }*/
         }
+        /* we need to call question_type::save_question_options(), as it
+         * will do the trick regarding extra_question_fields()
+         *
+         * @see qtype_multianswer::save_question_options()
+         *  -> contains a line like this: question_bank::get_qtype($wrapped->qtype)->save_question());
+         * Defaults are set within elate_questiontype_base::import_from_xml()
+        **/
+        return question_type::save_question_options($question);
     }
 
     protected function make_question_instance($questiondata) {

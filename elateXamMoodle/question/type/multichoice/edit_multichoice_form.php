@@ -37,38 +37,95 @@ require_once($CFG->dirroot.'/course/format/elatexam/questionlib/elate_question_e
 class qtype_multichoice_edit_form extends elate_question_edit_form {
     /**
      * Add question-type specific form fields.
+     * 
+     * Zusätzliche Eingabefelder für
+     *  Anzahl anzuzeigender richtiger Antworten
+     *  Anzahl anzuzeigender Antworten
+     * Antwortalternativen mittels Checkbox als korrekt markieren (keine abgestuften %-Angaben mehr)
      *
      * @param object $mform the form being built.
      */
     protected function definition_inner($mform) {
+    	$mform = $this->_form; // use it because of Eclipse introspection
         $menu = array(
             get_string('answersingleno', 'qtype_multichoice'),
             get_string('answersingleyes', 'qtype_multichoice'),
         );
         $mform->addElement('select', 'single',
                 get_string('answerhowmany', 'qtype_multichoice'), $menu);
-        $mform->setDefault('single', 1);
+        $mform->setDefault('single', get_default_for_elatexam('multichoice','single'));
+
+        // minimal anzuzeigende antwortalternativen (default jeweils 1), insgesamt anzuzeigende antwortalternativen (wenn nichts eingetragen alle)
+        // auswahlfeld ob singlechoice oder multichoice muss rein (der server muss wissen ob er die radiobuttons oder die checkboxen nimmt)
+        // wenn singlechoice: angeben wie viele antworten insgesamt angezeigt werden sollen
+        // wenn multichoice: min/max/insgesamt eingeben lassen; MC: default für negative punkte: 1
+        $mform->addElement('text', 'num_shown', get_string('num_shown', 'format_elatexam'), array('size' => 3));
+        $mform->addElement('text', 'num_right_min', get_string('num_right_min', 'format_elatexam'), array('size' => 3));
+        $mform->addElement('text', 'num_right_max', get_string('num_right_max', 'format_elatexam'), array('size' => 3));
+        $mform->addHelpButton('num_shown', 'num_shown', 'format_elatexam');
+        $mform->setType('num_right_min', PARAM_INT);
+        $mform->setType('num_right_max', PARAM_INT);
+        $mform->setType('num_shown', PARAM_INT);
+        $mform->setDefault('num_right_min', get_default_for_elatexam('multichoice','num_right_min'));
+        $mform->setDefault('num_right_max', get_default_for_elatexam('multichoice','num_right_max'));
+        $mform->setDefault('num_shown', get_default_for_elatexam('multichoice','num_shown')); // default(0):all
+        $mform->disabledIf('num_right_min', 'single', 'eq', 1);
+        $mform->disabledIf('num_right_max', 'single', 'eq', 1);
 
         $mform->addElement('advcheckbox', 'shuffleanswers',
                 get_string('shuffleanswers', 'qtype_multichoice'), null, null, array(0, 1));
         $mform->addHelpButton('shuffleanswers', 'shuffleanswers', 'qtype_multichoice');
-        $mform->setDefault('shuffleanswers', 1);
+        $mform->setDefault('shuffleanswers', get_default_for_elatexam('multichoice','shuffleanswers'));
 
-        $mform->addElement('select', 'answernumbering',
+        // not needed in ElateXam
+        /*$mform->addElement('select', 'answernumbering',
                 get_string('answernumbering', 'qtype_multichoice'),
                 qtype_multichoice::get_numbering_styles());
-        $mform->setDefault('answernumbering', 'abc');
+        $mform->setDefault('answernumbering', 'abc');*/
+        $mform->addElement('hidden', 'answernumbering', 'abc');
 
         $this->add_per_answer_fields($mform, get_string('choiceno', 'qtype_multichoice', '{no}'),
                 question_bank::fraction_options_full(), max(5, QUESTION_NUMANS_START));
 
         $this->add_combined_feedback_fields(true);
-        $mform->disabledIf('shownumcorrect', 'single', 'eq', 1);
+        //$mform->disabledIf('shownumcorrect', 'single', 'eq', 1);
 
-        $this->add_interactive_settings(true, true);
+        $this->add_interactive_settings(true, true); // call it earlier?
     }
 
-    // we want the method in the parent class to be used
+    /** Bewertungsmodus:
+     *       *  Reguläre Bewertung
+     *              “Negative Punkte für falsche Antworten” (Zahl eingeben, default 0)
+     *       *  Unterschiedliche Bewertung:
+     *              “negative Punkte für nicht gewählte richtige Antworten” (Zahl eingeben, default 0)
+     *              “negative Punkte für gewählte Falschantwort” (Zahl eingeben, default 0)
+     * @see elate_question_edit_form::add_interactive_settings()
+     */
+    protected function add_interactive_settings($withclearwrong = false, $withshownumpartscorrect = false) {
+    	$mform = $this->_form;
+    	$mform->addElement('header', 'penaltyheader', get_string('penaltyheader', 'format_elatexam'));
+    	$mform->addElement('radio', 'assessmentmode', get_string('assessment_reg', 'format_elatexam'), '', 0);
+    	$mform->addElement('text', 'penalty', get_string('penaltyforeachincorrecttry', 'format_elatexam'), array('size' => 3));
+    	$mform->addElement('radio', 'assessmentmode', get_string('assessment_dif', 'format_elatexam'), '', 1);
+    	$mform->addElement('text', 'penalty_empty', get_string('penalty_empty', 'format_elatexam'), array('size' => 3));
+    	$mform->addElement('text', 'penalty_wrong', get_string('penalty_wrong', 'format_elatexam'), array('size' => 3));
+    	//$mform->insertElementBefore($x, 'generalfeedback'); // we want it at the top
+    	$mform->setType('penalty', PARAM_FLOAT);
+    	$mform->setType('penalty_empty', PARAM_FLOAT);
+    	$mform->setType('penalty_wrong', PARAM_FLOAT);
+    	$mform->disabledIf('penalty', 'assessmentmode', 'checked');
+    	$mform->disabledIf('penalty_empty', 'assessmentmode', 'nonchecked');
+    	$mform->disabledIf('penalty_wrong', 'assessmentmode', 'nonchecked');
+    	$mform->setDefault('assessmentmode', get_default_for_elatexam('multichoice','assessmentmode'));
+    	$mform->setDefault('penalty', get_default_for_elatexam('multichoice','penalty'));
+    	$mform->setDefault('penalty_empty', get_default_for_elatexam('multichoice','penalty_empty'));
+    	$mform->setDefault('penalty_wrong', get_default_for_elatexam('multichoice','penalty_wrong'));
+    }
+
+    /**
+     * overhaul: overridden as we handle 'penalty' points differently
+     * @see elate_question_edit_form::get_per_answer_fields()
+     */
     protected function get_per_answer_fields($mform, $label, $gradeoptions, &$repeatedoptions, &$answersoption) {
     	$mform = $this->_form;
         $repeated = array();
@@ -83,7 +140,8 @@ class qtype_multichoice_edit_form extends elate_question_edit_form {
         $repeated[] = $mform->createElement('advcheckbox', 'fraction', get_string('grade'), get_string('right', 'format_elatexam'), array('group' => 1), array(0, 1));
 		// we don't need the 'feedback' fields;
         //$repeated[] = $mform->createElement('editor', 'feedback', get_string('feedback', 'question'), array('rows' => 1), $this->editoroptions);
-		$repeated[] = $mform->createElement('hidden', 'feedback', "");
+		//$repeated[] = $mform->createElement('hidden', 'feedback', "");
+        $this->create_editor_field_replacement('feedback', $repeated);
         $repeatedoptions['answer']['type'] = PARAM_RAW;
         $repeatedoptions['fraction']['default'] = 0;
         $answersoption = 'answers';

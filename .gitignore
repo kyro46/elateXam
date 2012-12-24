@@ -7,3 +7,4 @@ examServer/examserver.log
 .settings/
 *.strutside
 .amateras
+.svn

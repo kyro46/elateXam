@@ -173,25 +173,8 @@ public class Inputaufteiler {
 											.processing(quizsammlung
 													.getQuestion().get(i)),quizsammlung
 													.getQuestion().get(i).getDefaultgrade());
-
-//							categoryManagerList
-//									.get(belongingCategoryIndex)
-//									.getTextTaskBlock()
-//									.getTextSubTaskDefOrChoice()
-//									.add(EssayToTextConverter
-//											.processing(quizsammlung
-//													.getQuestion().get(i)));
 							categoryManagerList.get(belongingCategoryIndex)
 									.setHasTextTaskBlock(true);
-							// Debug:
-							// System.out.println("Categoryblock nummer "
-							// + belongingCategoryIndex
-							// + " hat nun "
-							// + categoryManager
-							// .get(belongingCategoryIndex)
-							// .getTextTaskBlock()
-							// .getTextSubTaskDefOrChoice()
-							// .toArray().length + " textfragen");
 						}
 
 						if (questionType.equals("cloze")) {
@@ -199,14 +182,6 @@ public class Inputaufteiler {
 							categoryManagerList.get(belongingCategoryIndex).setClozeTaskBlock(ClozeToClozeConverter
 									.processing(quizsammlung
 											.getQuestion().get(i)), ClozeToClozeConverter.punktzahl);
-							
-//							categoryManagerList
-//									.get(belongingCategoryIndex)
-//									.getClozeTaskBlock()
-//									.getClozeSubTaskDefOrChoice()
-//									.add(ClozeToClozeConverter
-//											.processing(quizsammlung
-//													.getQuestion().get(i)));
 							categoryManagerList.get(belongingCategoryIndex)
 									.setHasClozeTaskBlock(true);
 						}
@@ -217,14 +192,6 @@ public class Inputaufteiler {
 									.processing(quizsammlung
 											.getQuestion().get(i)),quizsammlung
 											.getQuestion().get(i).getDefaultgrade());
-							
-//							categoryManagerList
-//									.get(belongingCategoryIndex)
-//									.getMcTaskBlock()
-//									.getMcSubTaskDefOrChoice()
-//									.add(TruefalseToMcConverter
-//											.processing(quizsammlung
-//													.getQuestion().get(i)));
 							categoryManagerList.get(belongingCategoryIndex)
 									.setHasMcTaskBlock(true);
 						}
@@ -235,14 +202,6 @@ public class Inputaufteiler {
 									.processing(quizsammlung
 											.getQuestion().get(i)),quizsammlung
 											.getQuestion().get(i).getDefaultgrade());
-							
-//							categoryManagerList
-//									.get(belongingCategoryIndex)
-//									.getMcTaskBlock()
-//									.getMcSubTaskDefOrChoice()
-//									.add(MultichoiceToMcConverter
-//											.processing(quizsammlung
-//													.getQuestion().get(i)));
 							categoryManagerList.get(belongingCategoryIndex)
 									.setHasMcTaskBlock(true);
 
@@ -254,14 +213,6 @@ public class Inputaufteiler {
 									.processing(quizsammlung
 											.getQuestion().get(i)),quizsammlung
 											.getQuestion().get(i).getDefaultgrade());
-							
-//							categoryManagerList
-//									.get(belongingCategoryIndex)
-//									.getTextTaskBlock()
-//									.getTextSubTaskDefOrChoice()
-//									.add(ShortanswerToTextConverter
-//											.processing(quizsammlung
-//													.getQuestion().get(i)));
 							categoryManagerList.get(belongingCategoryIndex)
 									.setHasTextTaskBlock(true);
 
@@ -273,14 +224,6 @@ public class Inputaufteiler {
 									.processing(quizsammlung
 											.getQuestion().get(i)),quizsammlung
 											.getQuestion().get(i).getDefaultgrade());
-							
-//							categoryManagerList
-//									.get(belongingCategoryIndex)
-//									.getMappingTaskBlock()
-//									.getMappingSubTaskDefOrChoice()
-//									.add(MatchingToMappingConverter
-//											.processing(quizsammlung
-//													.getQuestion().get(i)));
 							categoryManagerList.get(belongingCategoryIndex)
 									.setHasMappingTaskBlock(true);
 						}
@@ -299,15 +242,6 @@ public class Inputaufteiler {
 									.processing(quizsammlung
 											.getQuestion().get(i)),quizsammlung
 											.getQuestion().get(i).getDefaultgrade());
-							
-							
-//								categoryManagerList
-//										.get(belongingCategoryIndex)
-//										.getAddonTaskBlock()
-//										.getAddonSubTaskDefOrChoice()
-//										.add(AddonTask
-//												.processing(quizsammlung
-//														.getQuestion().get(i)));
 								categoryManagerList.get(belongingCategoryIndex)
 										.setHasAddonTaskBlock(true);
 }

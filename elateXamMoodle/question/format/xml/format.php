@@ -911,6 +911,8 @@ class qformat_xml extends qformat_default {
 
             if ($questiontype == 'multichoice') {
                 $qo = $this->import_multichoice($question);
+                // Check if it contains Enhancements for ElateXam:
+                $qo = $this->try_importing_using_qtypes($question, null, $qo, $questiontype);
             } else if ($questiontype == 'truefalse') {
                 $qo = $this->import_truefalse($question);
             } else if ($questiontype == 'shortanswer') {
@@ -923,8 +925,12 @@ class qformat_xml extends qformat_default {
                 $qo = $this->import_match($question);
             } else if ($questiontype == 'cloze' || $questiontype == 'multianswer') {
                 $qo = $this->import_multianswer($question);
+                // Check if it contains Enhancements for ElateXam:
+                $qo = $this->try_importing_using_qtypes($question, null, $qo, $questiontype);
             } else if ($questiontype == 'essay') {
                 $qo = $this->import_essay($question);
+                // Check if it contains Enhancements for ElateXam:
+                $qo = $this->try_importing_using_qtypes($question, null, $qo, $questiontype);
             } else if ($questiontype == 'calculated') {
                 $qo = $this->import_calculated($question);
             } else if ($questiontype == 'calculatedsimple') {
@@ -1171,6 +1177,8 @@ class qformat_xml extends qformat_default {
                         "</answernumbering>\n";
                 $expout .= $this->write_combined_feedback($question->options, $question->id, $question->contextid);
                 $expout .= $this->write_answers($question->options->answers);
+                // Enhancements for ElateXam:
+                $expout .= $this->try_exporting_using_qtypes($question->qtype, $question);
                 break;
 
             case 'shortanswer':
@@ -1246,6 +1254,8 @@ class qformat_xml extends qformat_default {
                 foreach ($question->options->questions as $index => $subq) {
                     $expout = preg_replace('~{#' . $index . '}~', $subq->questiontext, $expout);
                 }
+                // Enhancements for ElateXam:
+                $expout .= $this->try_exporting_using_qtypes($question->qtype, $question);
                 break;
 
             case 'essay':
@@ -1261,6 +1271,8 @@ class qformat_xml extends qformat_default {
                 $expout .= $this->write_files($fs->get_area_files($contextid, 'qtype_essay',
                         'graderinfo', $question->id));
                 $expout .= "    </graderinfo>\n";
+                // Enhancements for ElateXam:
+                $expout .= $this->try_exporting_using_qtypes($question->qtype, $question);
                 break;
 
             case 'calculated':

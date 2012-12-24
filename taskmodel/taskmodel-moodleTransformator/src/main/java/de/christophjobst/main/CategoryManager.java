@@ -57,43 +57,6 @@ public class CategoryManager {
 	public CategoryManager(Category category) {
 		this.title = category.getTitle().toString();
 		this.category = category;
-		// Einheitliche Config für alle TaskBlock-Instanzen
-		Config generalTaskBlockConfig = new Config();
-		generalTaskBlockConfig.setNoOfSelectedTasks(1);
-		generalTaskBlockConfig.setPointsPerTask(5);
-		generalTaskBlockConfig.setPreserveOrder(false);
-
-		// Vorbereitung ClozeTaskBlock
-		clozeTaskBlock.setConfig(generalTaskBlockConfig);
-		ClozeConfig clozeConfig = new ClozeConfig();
-		clozeConfig.setIgnoreCase(true);
-		//TODO NegativePoints aus Moodle beziehen
-		clozeConfig.setNegativePoints(1);
-		clozeTaskBlock.setClozeConfig(clozeConfig);
-
-		// Vorbereitung TextTaskBlock
-		textTaskBlock.setConfig(generalTaskBlockConfig);
-
-		// Vorbereitung MappingTaskBlock
-		mappingTaskBlock.setConfig(generalTaskBlockConfig);
-		MappingConfig mappingConfig = new MappingConfig();
-		//TODO NegativePoints aus Moodle beziehen
-		mappingConfig.setNegativePoints(1);
-		mappingTaskBlock.setMappingConfig(mappingConfig);
-
-		// Vorbereitung McTaskBlock
-		mcTaskBlock.setConfig(generalTaskBlockConfig);
-		McConfig mcConfig = new McConfig();
-		Different different = new Different();
-		//TODO NegativePoints aus Moodle beziehen
-		different.setCorrectAnswerNegativePoints(1);
-		different.setIncorrectAnswerNegativePoints(0);
-		mcConfig.setDifferent(different);
-		mcTaskBlock.setMcConfig(mcConfig);
-
-		// Vorbereitung AddonTaskBlock
-		addonTaskBlock.setConfig(generalTaskBlockConfig);
-
 	}
 
 	public boolean isHasTextTaskBlock() {
@@ -128,28 +91,20 @@ public class CategoryManager {
 		this.hasMappingTaskBlock = hasMappingTaskBlock;
 	}
 
+	public boolean isHasAddonTaskBlock() {
+		return hasAddonTaskBlock;
+	}
+
+	public void setHasAddonTaskBlock(boolean hasAddonTaskBlock) {
+		this.hasAddonTaskBlock = hasAddonTaskBlock;
+	}
+	
 	public String getTitle() {
 		return title;
 	}
 
 	public void setTitle(String title) {
 		this.title = title;
-	}
-
-	public MappingTaskBlock getMappingTaskBlock() {
-		mappingTaskBlock = new MappingTaskBlock();
-		Config generalTaskBlockConfig = new Config();
-		generalTaskBlockConfig.setNoOfSelectedTasks(1);
-		generalTaskBlockConfig.setPointsPerTask(5);
-		generalTaskBlockConfig.setPreserveOrder(false);
-		
-		mappingTaskBlock.setConfig(generalTaskBlockConfig);
-		MappingConfig mappingConfig = new MappingConfig();
-		//TODO NegativePoints aus Moodle beziehen
-		mappingConfig.setNegativePoints(1);
-		mappingTaskBlock.setMappingConfig(mappingConfig);
-		
-		return mappingTaskBlock;
 	}
 
 	public void setMappingTaskBlock(MappingSubTaskDef mappingSubTaskDef,String defaultgrade) {
@@ -168,25 +123,6 @@ public class CategoryManager {
 		this.mappingTaskBlock.getMappingSubTaskDefOrChoice().add(mappingSubTaskDef);
 		
 		this.mappingTaskBlockList.add(mappingTaskBlock);
-	}
-
-	public McTaskBlock getMcTaskBlock() {
-		mcTaskBlock = new McTaskBlock();
-		Config generalTaskBlockConfig = new Config();
-		generalTaskBlockConfig.setNoOfSelectedTasks(1);
-		generalTaskBlockConfig.setPointsPerTask(5);
-		generalTaskBlockConfig.setPreserveOrder(false);
-		
-		mcTaskBlock.setConfig(generalTaskBlockConfig);
-		McConfig mcConfig = new McConfig();
-		Different different = new Different();
-		//TODO NegativePoints aus Moodle beziehen
-		different.setCorrectAnswerNegativePoints(1);
-		different.setIncorrectAnswerNegativePoints(0);
-		mcConfig.setDifferent(different);
-		mcTaskBlock.setMcConfig(mcConfig);
-		
-		return mcTaskBlock;
 	}
 
 	public void setMcTaskBlock(McSubTaskDef mcSubTaskDef,String defaultgrade) {
@@ -210,18 +146,6 @@ public class CategoryManager {
 		this.mcTaskBlockList.add(mcTaskBlock);
 	}
 
-	public TextTaskBlock getTextTaskBlock() {
-		textTaskBlock = new TextTaskBlock();
-		Config generalTaskBlockConfig = new Config();
-		generalTaskBlockConfig.setNoOfSelectedTasks(1);
-		generalTaskBlockConfig.setPointsPerTask(5);
-		generalTaskBlockConfig.setPreserveOrder(false);
-		
-		textTaskBlock.setConfig(generalTaskBlockConfig);
-
-		return textTaskBlock;
-	}
-
 	public void setTextTaskBlock(TextSubTaskDef textSubTaskDef,String defaultgrade) {
 		
 		textTaskBlock = new TextTaskBlock();
@@ -235,23 +159,6 @@ public class CategoryManager {
 		textTaskBlock.getTextSubTaskDefOrChoice().add(textSubTaskDef);
 		
 		this.textTaskBlockList.add(textTaskBlock);
-	}
-
-	public ClozeTaskBlock getClozeTaskBlock() {
-		clozeTaskBlock = new ClozeTaskBlock();
-		Config generalTaskBlockConfig = new Config();
-		generalTaskBlockConfig.setNoOfSelectedTasks(1);
-		generalTaskBlockConfig.setPointsPerTask(5);
-		generalTaskBlockConfig.setPreserveOrder(false);
-
-		// Vorbereitung ClozeTaskBlock
-		clozeTaskBlock.setConfig(generalTaskBlockConfig);
-		ClozeConfig clozeConfig = new ClozeConfig();
-		clozeConfig.setIgnoreCase(true);
-		//TODO NegativePoints aus Moodle beziehen
-		clozeConfig.setNegativePoints(1);
-		clozeTaskBlock.setClozeConfig(clozeConfig);
-		return clozeTaskBlock;
 	}
 
 	public void setClozeTaskBlock(ClozeSubTaskDef clozeSubTaskDef,float defaultgrade) {
@@ -273,26 +180,6 @@ public class CategoryManager {
 		
 		this.clozeTaskBlockList.add(clozeTaskBlock);
 	}
-
-	public boolean isHasAddonTaskBlock() {
-		return hasAddonTaskBlock;
-	}
-
-	public void setHasAddonTaskBlock(boolean hasAddonTaskBlock) {
-		this.hasAddonTaskBlock = hasAddonTaskBlock;
-	}
-
-	public AddonTaskBlock getAddonTaskBlock() {
-		addonTaskBlock = new AddonTaskBlock();
-		Config generalTaskBlockConfig = new Config();
-		generalTaskBlockConfig.setNoOfSelectedTasks(1);
-		generalTaskBlockConfig.setPointsPerTask(5);
-		generalTaskBlockConfig.setPreserveOrder(false);
-		
-		addonTaskBlock.setConfig(generalTaskBlockConfig);
-
-		return addonTaskBlock;
-	}
 	
 	public void setAddonTaskBlock(AddonSubTaskDef addonSubTaskDef,String defaultgrade){
 		addonTaskBlock = new AddonTaskBlock();
@@ -309,6 +196,7 @@ public class CategoryManager {
 		
 	}
 
+	//TODO Beibehaltung der Aufgabenreihenfolge pro Category  wird steht aus
 	public void generateCategory() {
 		if (hasClozeTaskBlock) {
 			for (int i = 0; i < clozeTaskBlockList.toArray().length; i ++){

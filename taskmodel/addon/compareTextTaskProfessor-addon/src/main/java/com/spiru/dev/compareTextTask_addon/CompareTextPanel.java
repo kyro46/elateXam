@@ -18,6 +18,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTextArea;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.ScrollPaneConstants;
@@ -28,10 +29,14 @@ import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.DefaultHighlighter.DefaultHighlightPainter;
 import javax.swing.text.Highlighter;
 
+import org.fife.ui.autocomplete.AutoCompletion;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import com.spiru.dev.compareTextTask_addon.Utils.XmlPane;
+import com.spiru.dev.compareTextTask_addon.Utils.CompareTextCompletionProvider;
+
 
 /**
  *
@@ -42,7 +47,7 @@ public class CompareTextPanel extends JPanel {
 
 	protected static String sentenceEndingCharacters = ".!?\"'";
 	protected static String defaultFontSizeLabel = "Default Font Size";
-	protected static String defaultFontSize = "14";
+	protected static String defaultFontSize = "13";
 	protected BoundedRangeModel independentScrollbarModel;
 	protected String initialText;
 	protected String sofarResult;
@@ -52,8 +57,8 @@ public class CompareTextPanel extends JPanel {
 	protected JSplitPane splitPane;
 	protected JScrollPane scrollPaneLeft;
 	protected JScrollPane scrollPaneRight;
-	protected XmlPane textAreaLeft;
-	protected XmlPane textAreaRight;
+	protected JTextArea textAreaLeft;
+	protected JTextArea textAreaRight;
 	protected int splitPaneHeight;
 	protected int splitPaneWidth;
 	protected int lastCaretPosRight;
@@ -67,11 +72,11 @@ public class CompareTextPanel extends JPanel {
 		splitPane = new JSplitPane();
 		scrollPaneLeft = new JScrollPane();
 		scrollPaneRight = new JScrollPane();
-		textAreaLeft = new XmlPane(); // new RSyntaxTextArea(); // JTextArea
-		textAreaRight = new XmlPane(); // new RSyntaxTextArea(); // JTextArea
+		textAreaLeft = new RSyntaxTextArea(); // JTextArea
+		textAreaRight = new RSyntaxTextArea(); // JTextArea
 
 		//Font font = new JTextArea().getFont();
-		Font font = new Font("Verdana", Font.PLAIN, 14);
+		Font font = new Font("Verdana", Font.PLAIN, Integer.parseInt(defaultFontSize));
 		//System.out.println(font);
 		textAreaLeft.setFont(font);
 		textAreaRight.setFont(font);
@@ -224,7 +229,7 @@ public class CompareTextPanel extends JPanel {
 		toolBar.add(toggleSyncButton);
 		toolBar.add(Box.createHorizontalGlue());
 		fontComboBox.setModel(new DefaultComboBoxModel(new String[] { defaultFontSizeLabel, "8", "9", "10", "11",
-				"12", "13", "14", "15", "16", "18", "20", "24", "28", "30", "36", "48", "64", "72" }));
+				"12", "13", "14", "15", "16", "18", "20", "24", "28", "30" }));
 		fontComboBox.addActionListener(new java.awt.event.ActionListener() {
 			@Override
 			public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -282,7 +287,7 @@ public class CompareTextPanel extends JPanel {
 		return ret;
 	}
 
-	/*protected void enableAutoCompletion() {
+	protected void enableAutoCompletion() {
 		CompareTextCompletionProvider completionp = new CompareTextCompletionProvider(tagList);
 		AutoCompletion ac = new AutoCompletion(completionp);
 		ac.install(textAreaRight);
@@ -290,7 +295,7 @@ public class CompareTextPanel extends JPanel {
 		ac.setAutoCompleteEnabled(true);
 		ac.setParameterAssistanceEnabled(false); // might come as a requirement
 		ac.setShowDescWindow(true); // show help text alongside completions
-	}*/
+	}
 
 	protected void initScrollPanes() {
 		// Adjust Divider of SplitPlane
@@ -326,19 +331,19 @@ public class CompareTextPanel extends JPanel {
 		splitPane.setRightComponent(scrollPaneRight);
 
 		// consider putting some of this into initStudentView()
-		//((RSyntaxTextArea)textAreaLeft).setHighlightCurrentLine(false);
-		//((RSyntaxTextArea)textAreaRight).setHighlightCurrentLine(false);
-		//((RSyntaxTextArea)textAreaLeft).setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
-		//((RSyntaxTextArea)textAreaRight).setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
-		//textAreaLeft.setLineWrap(true);
-		//textAreaRight.setLineWrap(true);
+		((RSyntaxTextArea)textAreaLeft).setHighlightCurrentLine(false);
+		((RSyntaxTextArea)textAreaRight).setHighlightCurrentLine(false);
+		((RSyntaxTextArea)textAreaLeft).setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
+		((RSyntaxTextArea)textAreaRight).setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
+		textAreaLeft.setLineWrap(true);
+		textAreaRight.setLineWrap(true);
 	}
 
 	protected void initStudentView() {
 		// Settings not relevant for the Professor View
 		textAreaLeft.setEditable(false); // left area contains original
 		textAreaRight.setEditable(!viewOnly); // correctors won't be able to edit
-		if (getRightTextAreaContent().length() > getLeftTextAreaContent().length()) {
+		if (getRightTextAreaContent().length() >= getLeftTextAreaContent().length()) {
 			toggleSyncButton.setSelected(!toggleSyncButton.isSelected());
 			sync_scrollbars(); // Sync Scrollbars by default
 		}
