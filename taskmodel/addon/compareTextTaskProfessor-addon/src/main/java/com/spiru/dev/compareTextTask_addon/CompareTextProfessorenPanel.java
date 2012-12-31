@@ -43,14 +43,7 @@ public class CompareTextProfessorenPanel extends CompareTextPanel {
 		labelInitialText = new javax.swing.JLabel("Initial Text:");
 		labelSampleSolution = new javax.swing.JLabel("Sample Solution:");
 		scrollPaneAvailableTags = new javax.swing.JScrollPane();
-		// see http://stackoverflow.com/questions/8405934
-		tablePanel = new javax.swing.JTable(); /*{
-			@Override public Class<?> getColumnClass(int column) {
-				Class<?> tmp = super.getColumnClass(column);
-				System.out.println(tmp);
-				return tmp;
-			}
-		};*/
+		tablePanel = new javax.swing.JTable();
 		buttonMinus = new javax.swing.JButton();
 		buttonPlus = new javax.swing.JButton();
 		buttonUpload = new javax.swing.JButton();
@@ -146,7 +139,6 @@ public class CompareTextProfessorenPanel extends CompareTextPanel {
 		tablePanel.setDefaultEditor(Object.class, new DefaultCellEditor(new JTextField()) {
 			@Override public boolean stopCellEditing() {
 				String editedvalue = (String) getCellEditorValue();
-				// the following is too harsh:
 				editedvalue = editedvalue.replaceAll("[<>&\'\"]", "");
 				delegate.setValue(editedvalue);
 				return super.stopCellEditing();
