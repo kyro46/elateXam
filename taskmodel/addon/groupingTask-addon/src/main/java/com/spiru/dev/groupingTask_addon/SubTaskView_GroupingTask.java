@@ -112,14 +112,16 @@ public class SubTaskView_GroupingTask extends SubTaskView{
 			////// save Image			
 			String typ = "png";
 			//Linux
-			String pfad = "/opt/apache-tomcat-7.0.29/webapps/taskmodel-core-view";			
-						
+			String pfad = ""; //"/opt/apache-tomcat-7.0.29/webapps/taskmodel-core-view";
+			pfad = System.getProperty("user.dir").replaceAll("bin", "webapps/taskmodel-core-view/SolutionImage");
+			new File(pfad).mkdir();			
 			//Dem Bild eine zufällige ID mitgeben, damit bei gleichzeitiger PDF-Erstellung
 			//keine Kollisionen mit anderen gleichnamigen Bildern anderer Studenten entstehen
 			SecureRandom random = new SecureRandom();	
 			//String name = "taskmodel-core-view/Grouping"+relativeTaskNumber+ "_" + new BigInteger(51, random).toString(32) + ".".concat(typ);
 			String name = "/Grouping"+relativeTaskNumber+ "_" + new BigInteger(51, random).toString(32) + ".".concat(typ);
-			File datei = new File( pfad + name );					
+			File datei = new File( pfad + name );	
+			datei.deleteOnExit();
 			// write Image
 			try {
 				ImageIO.write( bufferedImage, typ, datei );				
@@ -133,7 +135,7 @@ public class SubTaskView_GroupingTask extends SubTaskView{
 			// ImageTag for View und pdf		
 			HttpServletRequest request=(HttpServletRequest) context.getViewContextObject();
 			String pfadForAll = request.getContextPath();
-			String imgTag = "<img src=\""+pfadForAll+name+"\" alt=\"groupingImg\" width=\""+width+"\" height=\""+height+"\">";			
+			String imgTag = "<img src=\""+pfadForAll+"/SolutionImage"+name+"\" alt=\"groupingImg\" width=\""+width+"\" height=\""+height+"\">";			
 			return imgTag;
 		}
 	}
