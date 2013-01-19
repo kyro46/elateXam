@@ -37,14 +37,40 @@ public class EssayToTextConverter {
 				.getGeneralfeedback().getText(), question.getQuestiontext()
 				.getFile()));
 
-		subTask.setCorrectionHint(Base64Relocator.relocateBase64(question
-				.getGraderinfo().getText(), question.getGraderinfo().getFile()));
+		try {
+			subTask.setCorrectionHint(Base64Relocator.relocateBase64(question
+					.getGraderinfo().getText(), question.getGraderinfo()
+					.getFile()));
+		} catch (NullPointerException e) {
+			subTask.setCorrectionHint("Kein Muster hinterlegt.");
 
-		subTask.setTextFieldHeight(Integer.parseInt(question
-				.getResponsefieldlines()));
-		subTask.setTextFieldWidth(Integer.parseInt(question
-				.getResponsefieldwidth()));
+		}
 
+		try {
+
+			subTask.setTextFieldHeight(Integer.parseInt(question
+					.getResponsefieldlines()));
+		} catch (Exception e) {
+			subTask.setTextFieldHeight(15);
+		}
+
+		try {
+
+			subTask.setTextFieldWidth(Integer.parseInt(question
+					.getResponsefieldwidth()));
+		} catch (Exception e) {
+			subTask.setTextFieldWidth(60);
+		}
+
+		
+		try {
+			subTask.setInitialTextFieldValue(question.getInitialtextfieldvalue());
+		} catch (NullPointerException e) {
+			//Do nothing
+		}	
+		
+		
+		
 		subTask.setTrash(false);
 		subTask.setInteractiveFeedback(false);
 		subTask.setId(question.getName().getText().toString() + "_"

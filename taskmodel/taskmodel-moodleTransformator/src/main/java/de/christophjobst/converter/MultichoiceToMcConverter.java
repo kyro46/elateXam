@@ -36,11 +36,39 @@ public class MultichoiceToMcConverter {
 		// Allgemeine Angaben pro Frage
 		subTask.setTrash(false);
 		subTask.setInteractiveFeedback(false);
-		subTask.setPreserveOrderOfAnswers(false);
-		subTask.setDisplayedAnswers(question.getAnswer().toArray().length);
+		subTask.setPreserveOrderOfAnswers(!question.isShuffleanswers());
 
 		subTask.setCategory(question.getSingle().equals("true") ? "singleSelect"
 				: "multipleSelect");
+
+		if (question.getSingle().equals("false")) {
+
+			try {
+
+				if (question.getNumRightMin() < question.getNumRightMax()) {
+					subTask.setMinCorrectAnswers(question.getNumRightMin());
+					subTask.setMaxCorrectAnswers(question.getNumRightMax());
+				}
+
+				if (question.getNumShown() == 0) {
+					subTask.setDisplayedAnswers(question.getNumShown());
+				} else {
+					subTask.setDisplayedAnswers(question.getAnswer().toArray().length);
+				}
+			} catch (Exception e) {
+				subTask.setDisplayedAnswers(question.getAnswer().toArray().length);
+			}
+		} else {
+			try {
+				if (question.getNumShown() == 0) {
+					subTask.setDisplayedAnswers(question.getNumShown());
+				} else {
+					subTask.setDisplayedAnswers(question.getAnswer().toArray().length);
+				}
+			} catch (Exception e) {
+				subTask.setDisplayedAnswers(question.getAnswer().toArray().length);
+			}
+		}
 
 		// Spezielle Angaben pro Frage
 		subTask.setProblem(Base64Relocator.relocateBase64(question
