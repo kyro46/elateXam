@@ -48,13 +48,16 @@ public class ClozeToClozeConverter {
 				+ rand.getRandomID());
 
 		String problem = "Lösen Sie folgenden Lückentext.";
-
+		
 		// Konvertierung des String in separaten Block,
 		// falls bei häufiger Nutzung Auslagerung nötig
 		try {
-			byte[] bytes = problem.getBytes("UTF-8");
-			problem = new String(bytes);
-			// System.out.println(problem);
+			byte[] bytes;
+			if (!System.getProperty("os.name").contains("indows")) {
+				bytes = problem.getBytes("UTF-8");
+				problem = new String(bytes);
+				// System.out.println(problem);
+			}
 			subTask.setProblem(problem);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
@@ -86,10 +89,10 @@ public class ClozeToClozeConverter {
 
 		// Die { und } suchen nachdem man :SHORTANSWER: :MULTICHOICE: oder
 		// :NUMERICAL: gefunden hat
-
 		do {
-			gapIndexToUse = Math.max(shortanswerindex,
-					Math.max(multichoiceindex, numericalindex));
+			
+			gapIndexToUse = Math.min(shortanswerindex,
+					Math.min(multichoiceindex, numericalindex));
 
 			klammeraufindex = moodleText.lastIndexOf("{", gapIndexToUse);
 
@@ -123,7 +126,16 @@ public class ClozeToClozeConverter {
 					gapIndexToUse + 1);
 			numericalindex = moodleText.indexOf(":NUMERICAL:",
 					gapIndexToUse + 1);
-
+			
+			//Die Suche nach dem kleinsten Zähler sorgt bei fehlendem Vorkommen für Fehler
+			//Weil dann -1 im Index steht was immer die kleinste Zahl ist -> Algo. terminiert
+			// -> Wenn Index == -1 -> Mit größerer Zahl ersetzen... naja...
+			if (shortanswerindex == -1) shortanswerindex = Math.max(numericalindex, multichoiceindex) +1;
+			if (multichoiceindex == -1) multichoiceindex = Math.max(numericalindex, shortanswerindex) +1;
+			if (numericalindex == -1) numericalindex = Math.max(shortanswerindex, multichoiceindex) +1;
+			
+			
+			
 		} while (klammeraufindex != -1);
 
 		// System.out.println("Gesamtpunktzahl für die Aufgabe: " + punktzahl);

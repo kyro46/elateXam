@@ -50,7 +50,7 @@ public class MultichoiceToMcConverter {
 					subTask.setMaxCorrectAnswers(question.getNumRightMax());
 				}
 
-				if (question.getNumShown() == 0) {
+				if (question.getNumShown() != 0) {
 					subTask.setDisplayedAnswers(question.getNumShown());
 				} else {
 					subTask.setDisplayedAnswers(question.getAnswer().toArray().length);
@@ -60,7 +60,7 @@ public class MultichoiceToMcConverter {
 			}
 		} else {
 			try {
-				if (question.getNumShown() == 0) {
+				if (question.getNumShown() != 0) {
 					subTask.setDisplayedAnswers(question.getNumShown());
 				} else {
 					subTask.setDisplayedAnswers(question.getAnswer().toArray().length);
