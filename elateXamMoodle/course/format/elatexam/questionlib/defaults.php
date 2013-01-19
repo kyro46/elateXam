@@ -22,12 +22,10 @@ function get_default_for_elatexam($qtype, $identifier) {
 			),
 			'multianswer' => array(
 					'casesensitivity' => 0,
+					'penalty' => 1,
 			),
 			'shortanswer' => array(
 					'usecase' => 0,
-			),
-			'multianswer' => array(
-					'penalty' => 1,
 			),
 	);
 	return $ELATE_DEFAULTS[$qtype][$identifier];
