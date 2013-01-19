@@ -72,6 +72,8 @@ class elate_questiontype_base extends question_type {
 		if($qtype == 'cloze') $qtype = 'multianswer'; // needed for backwards compatibility
 		if($qtype == 'multichoice') // 'penalty' will not be part of $extraquestionfields
 			$extra->penalty = get_default_for_elatexam('multichoice','penalty');
+		if($qtype == 'multianswer') // 'penalty' will not be part of $extraquestionfields
+			$extra->penalty = get_default_for_elatexam('multianswer','penalty');
 		if($qtype == 'multianswer' || $qtype == 'multichoice' || $qtype == 'essay') {
 			// called from qformat_xml::readquestions(), you shall have a look on what we've modified there
 			$extraquestionfields = $this->extra_question_fields();
