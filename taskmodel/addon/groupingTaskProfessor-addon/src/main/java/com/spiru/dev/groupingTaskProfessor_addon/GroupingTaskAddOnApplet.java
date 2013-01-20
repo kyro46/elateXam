@@ -19,8 +19,7 @@ public class GroupingTaskAddOnApplet extends Applet{
 		this.setLayout(null);    	
 
 		// Get Parameter from HTML <applet> Tag
-		String mementostr = getParameter("memento");
-
+		String mementostr = getParameter("memento");		
 		gpanel = new GroupingTaskAddOnJPanel(width, height, mementostr);	        
 		add(gpanel);
 	}
@@ -40,6 +39,6 @@ public class GroupingTaskAddOnApplet extends Applet{
 	}
 
 	@Override
-	public void stop() {
+	public void stop() {		
 	}
 }

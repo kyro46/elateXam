@@ -10,6 +10,7 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import com.spiru.dev.groupingTaskProfessor_addon.GroupingTaskAddOnJPanel;
@@ -25,7 +26,8 @@ public class JPanelEditor extends JPanel implements MouseMotionListener {
 	private List<DragElement> elementList;
 	private GroupingTaskAddOnJPanel panel;
 	private JButton buttonDelete;
-	private JLabel labelDuplicate;
+	private JButton buttonEdit;	
+	private DragElement editElement = null;
 	
 	public JPanelEditor(int x, int y, int breit, int hoch, MyMouseListener listener, List<DragElement> elementList, GroupingTaskAddOnJPanel panel){
 		this.setLayout(null);		
@@ -44,8 +46,7 @@ public class JPanelEditor extends JPanel implements MouseMotionListener {
 		count.setBounds(110,35,60, 25);
 		count.addKeyListener(new MyKeyListener(count));
 		buttonAdd = new JButton("Add");
-		buttonAdd.setBounds(190,35,80,25);
-		
+		buttonAdd.setBounds(190,35,80,25);	
 	    buttonAdd.addActionListener( new ActionListener() {
 	          public void actionPerformed(ActionEvent e) {
 	            buttonAddAction();
@@ -59,6 +60,14 @@ public class JPanelEditor extends JPanel implements MouseMotionListener {
 	        	  buttonDeleteAction();	        	  
 	          }
 	        } );
+	    buttonEdit = new JButton("Edit");
+	    buttonEdit.setBounds(390,35,100,25);
+	    buttonEdit.addActionListener( new ActionListener() {
+	          public void actionPerformed(ActionEvent e) {
+	        	  editElement();	        	  
+	          }
+	        } );
+	    buttonEdit.setEnabled(false);
 		/*
 		SpinnerNumberModel model = new SpinnerNumberModel();
 		model.setMinimum(0);
@@ -67,11 +76,6 @@ public class JPanelEditor extends JPanel implements MouseMotionListener {
 		model.setValue(0);
 		count.setModel(model);	
 		*/
-		labelDuplicate = new JLabel("Name schon vorhanden!");
-		labelDuplicate.setForeground(Color.RED);
-		labelDuplicate.setBounds(buttonDelete.getX()+buttonDelete.getWidth()+10, buttonDelete.getY(),200,20);
-		labelDuplicate.setVisible(false);
-		this.add(labelDuplicate);
 		
 		this.add(labelCaption);
 		this.add(labelCount);
@@ -79,9 +83,53 @@ public class JPanelEditor extends JPanel implements MouseMotionListener {
 		this.add(count);
 		this.add(buttonAdd);
 		this.add(buttonDelete);
+		this.add(buttonEdit);
 	}	
 	
-	private void buttonAddAction(){		
+	private void editElement(){
+		if (editElement == null)
+			return;
+		if (textfield.getText().equals("") || count.getText().equals(""))
+			return;
+		String anzahl = "";
+		boolean ok = true;
+		if (count.getText().equals("n"))
+			anzahl = "\u221e";
+		else{
+			try{
+				Integer.parseInt(count.getText());
+				anzahl = count.getText();
+			}
+			catch (Exception e){
+				// Fehler! keine integer Zahl!
+				count.setForeground(Color.RED);	
+				ok=false;
+			}	
+		}
+		for(DragElement n: elementList){
+			if (n.getCaption().equals(textfield.getText()) && n != editElement){
+				JOptionPane.showMessageDialog(this, "Dieses Element existiert schon.");			
+				ok = false;
+				break;
+			}
+		}
+		if (ok && !anzahl.equals("\u221e") && panel.getCountOfElement(editElement) > Integer.parseInt(anzahl)){
+			ok = false;
+			JOptionPane.showMessageDialog(this, "Vermindern Sie erst die Anzahl der Elemente in der Lösung.");
+		}
+		if(ok){			
+			panel.changeElementCaption(editElement.getCaption(), textfield.getText());
+			editElement.changeCaption(textfield.getText());			
+			panel.changeElementCount(editElement, anzahl);
+			setEditMode(null);
+		}
+		
+		//JOptionPane.showMessageDialog(this, "Es sind mehr Elemente in der Musterlösung, als ");		
+		textfield.requestFocus();
+		panel.updateElementPanel();
+	}
+	
+	private void buttonAddAction(){					
 		if (textfield.getText().equals("") || count.getText().equals(""))
 			return;
 		String anzahl = "";
@@ -100,11 +148,22 @@ public class JPanelEditor extends JPanel implements MouseMotionListener {
 			}	
 		}
 		if (ok){
-			DragElement e = new DragElement(textfield.getText(),anzahl, ""+elementList.size(), listener);
+			int id = 0;
+			boolean match = true;
+			while(match){
+				match = false;
+				for(DragElement el:elementList){
+					if (id == el.getBoxId()){
+						id++;
+						match = true;
+					}
+				}
+			}			
+			DragElement e = new DragElement(textfield.getText(),anzahl, listener, id ,-1);
 			for(DragElement n: elementList){
 				if (n.getCaption().equals(e.getCaption())){
 					e = null;
-					labelDuplicate.setVisible(true);
+					JOptionPane.showMessageDialog(this, "Dieses Element existiert schon.");
 					break;
 				}
 			}
@@ -115,10 +174,12 @@ public class JPanelEditor extends JPanel implements MouseMotionListener {
 			count.setText("1");
 		}			
 		textfield.requestFocus();
+		setEditMode(null);
 	}
 	
 	private void buttonDeleteAction(){
-		panel.deleteElement();
+		panel.deleteElement();		
+		setEditMode(null);
 	}
 
 	@Override
@@ -128,8 +189,25 @@ public class JPanelEditor extends JPanel implements MouseMotionListener {
 	}
 
 	@Override
-	public void mouseMoved(MouseEvent arg0) {
-		labelDuplicate.setVisible(false);
-		
+	public void mouseMoved(MouseEvent arg0) {				
+	}
+	
+	public void setEditMode(DragElement el){
+		if (el!=null){
+			buttonEdit.setEnabled(true);
+			textfield.setText(el.getCaption());					
+			if (el.getMaxCount().equals("\u221e")){
+				count.setText("n");
+			}
+			else
+				count.setText(el.getMaxCount());
+			editElement = el;
+		}
+		else{
+			buttonEdit.setEnabled(false);
+			textfield.setText("");
+			count.setText("1");
+			editElement = null;
+		}
 	}
 }

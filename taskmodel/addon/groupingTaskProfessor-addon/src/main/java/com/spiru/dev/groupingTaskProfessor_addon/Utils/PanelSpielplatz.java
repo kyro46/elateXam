@@ -29,6 +29,7 @@ public class PanelSpielplatz extends JPanel {
 	private MyMouseListener listener;
 	/** Liste mit allen Verbindungen zwischen zwei Elementen */
 	private List<Verbindung> verbindungen = null;
+	private BufferedImage bufImgOfDrag = null;
 	
 	private Image imageAsString = null;
 	
@@ -43,8 +44,7 @@ public class PanelSpielplatz extends JPanel {
 		auswahlElemente = auswahl;
 		this.listener = listener;
 		this.setLayout(null);
-		this.addMouseListener(listener);
-				
+		this.addMouseListener(listener);			
 		//this.setDoubleBuffered(false);
 	}
 	
@@ -92,7 +92,7 @@ public class PanelSpielplatz extends JPanel {
 		DragElement neuesElement = null;
 		// element schon auf PanelSpielplatz?
 		for (DragElement n: elemente){			
-			if (n.getId() == e.getId() && n.getOrderID() == e.getOrderID() && n.getCaption().equals(e.getCaption())){			
+			if (n.getPlayId() == e.getPlayId()){					
 				neuesElement = n;
 				break;
 			}
@@ -101,17 +101,19 @@ public class PanelSpielplatz extends JPanel {
 	    	neuesElement.setLocation(pos);	    	
 	    } // sonst ein neues Element anzeigen
 	    else{
+	    	int boxId = 0;
 	    	// vom AuswahlElement Anzahl veringern
 	    	for(DragElement n:auswahlElemente){
 	    		if (n.getCaption().equals(e.getCaption())){
 	    			// wenn Anzahl = 0, dann abbrechen, da Aktion nicht erlaubt ist
 	    			if (n.getAnz()==0) return;
-	    			n.decAnz();	    			
+	    			n.decAnz();	
+	    			boxId = n.getBoxId();
 	    			break;
 	    		}
 	    	}
 	    	// neues Element erzeugen
-	    	neuesElement = new DragElement(e.getCaption(),null, null, listener);		
+	    	neuesElement = new DragElement(e.getCaption(), null, listener,  boxId, DragElement.getNextId());		
 			//neuesElement.setBounds(0,0, auswahlElemente.get(0).getWidth()+70, auswahlElemente.get(0).getHeight());
 			// passt so besser zur Mausposition ;)
 			pos.y -= 5; 
@@ -239,5 +241,29 @@ public class PanelSpielplatz extends JPanel {
 			imageAsString = new ImageIcon(Base64.base64ToByteArray(base64)).getImage();
 	}
 	
+	public void changeElementCaption(String ori, String change){		
+		for(DragElement n:elemente){
+			if(n.getCaption().equals(ori)){
+				n.changeCaption(change);				
+			}
+		}
+	}
 	
+	public int getCountOfElement(DragElement el){
+		int anz = 0;
+		for(DragElement n:elemente){
+			if(n.getCaption().equals(el.getCaption())){
+				anz++;
+			}
+		}
+		return anz;
+	}
+	/*
+	public void setMouseMode(BufferedImage img){
+		this.bufImgOfDrag = img;
+	}
+	
+	public BufferedImage getDragImage(){
+		return this.bufImgOfDrag;
+	}*/
 }

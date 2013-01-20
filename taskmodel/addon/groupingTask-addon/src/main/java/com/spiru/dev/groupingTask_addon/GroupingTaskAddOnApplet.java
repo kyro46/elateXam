@@ -45,7 +45,7 @@ public class GroupingTaskAddOnApplet extends Applet{
 	    	}*/
 	    		boolean isHandling = Boolean.parseBoolean(this.getParameter("handling"));
 	    		boolean isCorrected = Boolean.parseBoolean(this.getParameter("correction"));
-				gpanel = new GroupingTaskAddOnJPanel(width, height, isCorrected);
+				gpanel = new GroupingTaskAddOnJPanel(width, height, isCorrected);				
 				gpanel.load(isHandling, this.getParameter("memento"), isCorrected);
 		        add(gpanel);
 		        Timer timer = new Timer();	
@@ -59,7 +59,7 @@ public class GroupingTaskAddOnApplet extends Applet{
 	    }
 
 	    @Override
-	    public void stop() {
+	    public void stop() {	    	
 	    }	  
 	    
 		public String getResult() {

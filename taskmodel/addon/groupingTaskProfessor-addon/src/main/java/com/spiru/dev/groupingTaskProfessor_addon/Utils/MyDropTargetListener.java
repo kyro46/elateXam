@@ -34,6 +34,7 @@ public class MyDropTargetListener extends DropTargetAdapter {
     
 	//@Override
 	public void drop(DropTargetDropEvent event) {
+		//panel.setMouseMode(null);
 		// wenn Maus losgelassen wurde und ein Objekt gedropt werden soll
         try {              
             Transferable tr = event.getTransferable();

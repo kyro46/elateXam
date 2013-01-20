@@ -85,13 +85,25 @@ public class TimeTaskAddOnApplet extends Applet{
 			return null;
 	    }
 	    
+	    private String unescapeHtml(String text){
+	    	text = text.replaceAll("&Auml;", "Ä");
+	    	text = text.replaceAll("&auml;", "ä");
+	    	text = text.replaceAll("&Ouml;", "Ö");
+	    	text = text.replaceAll("&ouml;", "ö");
+	    	text = text.replaceAll("&Uuml;", "Ü");
+	    	text = text.replaceAll("&uuml;", "ü");    	
+	    	text = text.replaceAll("&szlig;", "ß");
+	    	text = text.replaceAll("&euro;", "€");
+	    	return text;
+	    }
+	    
 	    private String[][] getEventList(Element timelineSubTaskDef){
 	    	NodeList assignedEventList = timelineSubTaskDef.getElementsByTagName("Event");
 	    	String[][] eventListStrings = new String[assignedEventList.getLength()][3];
 	    	for (int i = 0; i < assignedEventList.getLength(); i++) {
 				Element assignedEvent = (Element) assignedEventList.item(i);						
 				String id = assignedEvent.getAttribute("id");
-				String name = assignedEvent.getAttribute("name");
+				String name = unescapeHtml(assignedEvent.getAttribute("name"));
 				String color = assignedEvent.getAttribute("color");
 				eventListStrings[i][0] = id;
 				eventListStrings[i][1] = name;
@@ -106,10 +118,10 @@ public class TimeTaskAddOnApplet extends Applet{
 			for(int i=0; i<dateList.getLength(); i++){
 				Element date = (Element) dateList.item(i);
 				String id = date.getAttribute("id");
-				String name = date.getAttribute("name");
+				String name = unescapeHtml(date.getAttribute("name"));
 				String visible = date.getAttribute("visible");
 				String connected = date.getAttribute("connected");
-				String text = date.getAttribute("text");
+				String text = unescapeHtml(date.getAttribute("text"));
 				dateListStrings[i][0] = id;
 				dateListStrings[i][1] = name;
 				dateListStrings[i][2] = visible;

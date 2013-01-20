@@ -26,12 +26,10 @@ import com.spiru.dev.groupingTask_addon.GroupingTaskAddOnJPanel;
  *
  */
 public class DragElement extends JPanel implements DragGestureListener, Comparable<DragElement>{		
-		
-	/** jedes Objekt erhoeht die id */
-	private static int id = 1;
-	/** zur Identifikation eines Elementes */
-	private int idElement;
-	private int idOrder;
+				
+	private int boxId=-1;
+	static int idElement=0;// start
+	private int elementId=-1;
 	/** Anzahl an Elementen, die momentan zur Verfuegung stehen */
 	private String anz;
 	/** wieviele Elemente es maximal gibt */
@@ -47,12 +45,21 @@ public class DragElement extends JPanel implements DragGestureListener, Comparab
 	
 	/**
 	 * Konstruktor eines Elementes
-	 * @param text Repraesentiert das Element
+	 * @param name Repraesentiert das Element
 	 * @param anz Anzahl Objekte von diesem Element
 	 * @param listener MyMouseListener fuer Mausaktionen
 	 */
-	public DragElement (String name, String anz,String listId, MyMouseListener listener){
+	public DragElement (String name, String anz, MyMouseListener listener, int initBoxId, int initPlayId){
 		labelCaption = new JLabel(name, JLabel.CENTER);
+		if (initPlayId == -1){
+			this.boxId = initBoxId;
+		}else{
+			this.boxId = initBoxId;
+			this.elementId = initPlayId;
+			if (idElement <= initPlayId){
+				idElement = initPlayId +1;
+			}
+		}
 		labelCaption.setBorder(BorderFactory.createLineBorder(Color.black));	
 		this.add(labelCaption);
 		// Element liegt auf ElementePanel
@@ -88,27 +95,23 @@ public class DragElement extends JPanel implements DragGestureListener, Comparab
 		this.setBorder(BorderFactory.createLineBorder(Color.black));
 		this.anz = anz;
 		this.anzAnfang = anz;
-		this.name = name;
-		// zu unterscheidung zweier Elemente mit gleichem Namen, 
-		// fuer Spielplatz, wenn mehrer gleiche Elemente vorhanden sind
-		this.idElement = id;
-		// erhoeht zaehler 
-		id++;			
-		if(listId != null){
-			this.idElement = Integer.parseInt(listId);
-		}
+		this.name = name;	
 		// Element kann Drag
 		DragSource ds = new DragSource();
         ds.createDefaultDragGestureRecognizer(this,
             DnDConstants.ACTION_COPY, this);              
 	}	
 	
-	public void setOrderID(int id){
-		this.idOrder = id;
+	static public int getNextId(){
+		return idElement++;
 	}
 	
-	public int getOrderID(){
-		return idOrder;
+	public int getBoxId(){
+		return boxId;
+	}
+	
+	public int getPlayId(){
+		return elementId;
 	}
 
 	//@Override
@@ -142,14 +145,6 @@ public class DragElement extends JPanel implements DragGestureListener, Comparab
 			this.setBorder(margin);
 			labelCaption.setForeground(Color.BLACK);
 		}
-	}
-	
-	/**
-	 * liefert Unterscheidungs-id
-	 * @return id des Objektes
-	 */
-	public int getId(){
-		return idElement;
 	}
 	
 	/**

@@ -170,6 +170,18 @@ public class TimeTaskAddOnJPanel extends JPanel {
     		}
     	}    	
     }    
+    
+    private String escapeHtml(String text){
+    	text = text.replaceAll("Ä", "&Auml;");
+    	text = text.replaceAll("ä", "&auml;");
+    	text = text.replaceAll("Ö", "&Ouml;");
+    	text = text.replaceAll("ö", "&ouml;");
+    	text = text.replaceAll("Ü", "&Uuml;");
+    	text = text.replaceAll("ü", "&uuml;");    	
+    	text = text.replaceAll("ß", "&szlig;");
+    	text = text.replaceAll("€", "&euro;");
+    	return text;
+    }
    
     public String save(){    	
 		String ret = null;
@@ -202,7 +214,7 @@ public class TimeTaskAddOnJPanel extends JPanel {
 			for(DragElement event:events){
 				Element assignedEvent = document.createElement("Event");
 				assignedEvent.setAttribute("id", ""+event.getId());
-				assignedEvent.setAttribute("name",event.getCaption());
+				assignedEvent.setAttribute("name",escapeHtml(event.getCaption()));
 				assignedEvent.setAttribute("color",String.valueOf(event.getColor().getRGB()));
 				timelineSubTaskDef.appendChild(assignedEvent);
 			}
@@ -211,18 +223,20 @@ public class TimeTaskAddOnJPanel extends JPanel {
 			for(DatePoint obj : objList){
 				Element assignedEvent = document.createElement("Date");
 				assignedEvent.setAttribute("id", ""+obj.getId());
-				assignedEvent.setAttribute("name", obj.getCaption());
+				assignedEvent.setAttribute("name", escapeHtml(obj.getCaption()));
 				assignedEvent.setAttribute("visible", ""+obj.isDateVisible());
 				if (obj.getSymbol() != null){
 					assignedEvent.setAttribute("connected", ""+obj.getSymbol().getId());
 					if (obj.isDateVisible()){
 						// Date visible -> getTextFromSymbol
 						String text = obj.getSymbol().getText();
+						text = escapeHtml(text);
 						assignedEvent.setAttribute("text", text);
 					}
 					else{
 						// Date !visible -> getTextFromDate
 						String text = obj.getDateFromStudent();
+						text = escapeHtml(text);
 						assignedEvent.setAttribute("text", text);
 					}
 				}
@@ -230,6 +244,7 @@ public class TimeTaskAddOnJPanel extends JPanel {
 					if (!obj.isDateVisible()){
 						// Date !visible -> getTextFromDate
 						String text = obj.getDateFromStudent();
+						text = escapeHtml(text);
 						assignedEvent.setAttribute("text", text);
 					}
 					

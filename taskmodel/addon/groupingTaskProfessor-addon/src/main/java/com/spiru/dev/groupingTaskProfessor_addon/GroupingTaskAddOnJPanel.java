@@ -14,8 +14,10 @@ import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import javax.xml.bind.DatatypeConverter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -70,6 +72,7 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 
 	private ScrollPane scrollPane;
 	private String base64String = null;
+	private JPanelEditor jpanelEditor;
 
 	/**
 	 * Creates new form AddonOnJPanel
@@ -97,14 +100,15 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 	 * initialisiert alle Komponenten
 	 * @param initElementList String-Array mit allen Captions fuer Elemente
 	 */
-	private void initComponents(int width, int height) {   
+	private void initComponents(int width, int height) {   		       		
+		DragElement.setPanel(this);
 		int h = height;
 		// Panel mit zur Auswahl stehenden Elementen
 		jPanelElements = new JPanel(); 
 		jPanelElements.setDoubleBuffered(false);
 
 		//******************************
-		JPanelEditor jpanelEditor = new JPanelEditor(0,0,width,65, listener, elementList, this);    	
+		jpanelEditor = new JPanelEditor(0,0,width,65, listener, elementList, this);    	
 		this.add(jpanelEditor);
 		h-=65;
 		//******************************
@@ -193,7 +197,7 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 		 * test!!!
 		 * 
 		 */
-		save();
+		//save();
 		
 		List<DragElement> deleteList = new ArrayList<DragElement>();
 		List<DragElement> deleteListPlayGround = new ArrayList<DragElement>();
@@ -228,10 +232,14 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 		elementList.removeAll(deleteList);
 		jPanelElements.paintAll(jPanelElements.getGraphics());
 	}
+	
+	public void updateElementPanel(){
+		jPanelElements.paintAll(jPanelElements.getGraphics());
+	}
 
 	
 	public String save() {
-		ArrayList<ArrayList<DragElement>> sortedLists = sort();
+		List<DragElement> list = jPanelSpielplatz.getElemente();						
 		String ret = "";
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		try {
@@ -249,26 +257,20 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 					count = "n";
 				}
 				BoxContainer.setAttribute("count", count);
-				BoxContainer.setAttribute("boxID",""+n.getId());
+				BoxContainer.setAttribute("boxID",""+n.getBoxId());
 				dragSubTaskDef.appendChild(BoxContainer);
 			}
 			// alle DragElements aufm spielplatz
 			for(DragElement n:jPanelSpielplatz.getElemente()) {
 				Element dragElement = document.createElement("DragElement");
-				dragElement.setAttribute("id",""+n.getOrderID());
-				for(DragElement k:elementList){
-					if(k.getCaption().equals(n.getCaption())){
-						dragElement.setAttribute("boxID",""+k.getId());
-						break;
-					}					
-				}
+				dragElement.setAttribute("id",""+n.getPlayId());
+				dragElement.setAttribute("boxID",""+n.getBoxId());				
 				dragElement.setAttribute("x",""+n.getX());
 				dragElement.setAttribute("y",""+n.getY());
 				dragSubTaskDef.appendChild(dragElement);
 			}
 			
-			// save solution
-			for(ArrayList<DragElement> list:sortedLists){
+			// save solution			
 				for(DragElement el:list){
 					// liste mit allen Kanten
 					ArrayList<Verbindung> connections = new ArrayList<Verbindung>();
@@ -283,18 +285,17 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 						DragElement el2 = con.getElement1();
 						if (el2 == el)
 							el2 = con.getElement2();
-						if(el2.getOrderID()>el.getOrderID()){
-							kanten += el2.getOrderID()+",";
+						if(el2.getPlayId()>el.getPlayId()){
+							kanten += el2.getPlayId()+",";
 						}
 					}
 					Element solution = document.createElement("Solution");					
-					solution.setAttribute("fromID",""+el.getOrderID());
+					solution.setAttribute("fromID",""+el.getPlayId());
 					solution.setAttribute("toIDs",""+kanten);
 					if (!kanten.equals(""))
 						dragSubTaskDef.appendChild(solution);
 					
-				}
-			}
+				}			
 			
 			// write DOM to string
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -320,7 +321,7 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 	}
 	
 	public void addElement(String name, String count, String id){
-		DragElement de = new DragElement(name, count, id, listener);
+		DragElement de = new DragElement(name, count, listener, Integer.parseInt(id), -1);
 		elementList.add(de);
 		jPanelElements.add(de);
 	}
@@ -328,8 +329,7 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 	public void load(String xml) {
 		byte[] text = null; // needed for ByteArrayInputStream
 		if (xml == null) { // Ist NULL, wenn Applet nicht von HTML, sondern von Eclipse aus gestartet wird
-			xml = testXml;
-			try { text = xml.getBytes("utf-8"); } catch (UnsupportedEncodingException e) { e.printStackTrace(); }
+			return;
 		} else if (xml.length() == 0) {
 			return; // assumption: Not editing existing-, but adding new Question -> nothing to do
 		} else {
@@ -370,11 +370,10 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 				int  y = Integer.parseInt(dragElement.getAttribute("y"));
 				// add Element
 				for(DragElement n:elementList){
-					if(n.getId() == Integer.parseInt(boxID)){
-						DragElement de = new DragElement(n.getCaption(), null, null, listener);
+					if(n.getBoxId() == Integer.parseInt(boxID)){
+						DragElement de = new DragElement(n.getCaption(), null, listener,  n.getBoxId(), id);
 						de.addMouseListener(listener);
-						n.decAnz();
-						de.setOrderID(id);
+						n.decAnz();						
 						jPanelSpielplatz.getElemente().add(de);
 						jPanelSpielplatz.add(de);
 						de.setLocation(x, y);
@@ -392,19 +391,19 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 				DragElement de = null;				
 				for(int pos=0; pos<jPanelSpielplatz.getElemente().size(); pos++){
 					DragElement d = jPanelSpielplatz.getElemente().get(pos); 					
-					if(d.getOrderID() == fromID){										
+					if(d.getPlayId() == fromID){										
 						de = d;
 					}
 				}
 				// find element2 and create line
 				for(int line=0; line<to.length; line++){
-					if(to[line].equals("") || to[line] == null){						
+					if(to[line] == null || to[line].equals("")){							
 						continue;
 					}
 					DragElement d2 = null;
 					for(int pos=0; pos<jPanelSpielplatz.getElemente().size(); pos++){
 						DragElement d = jPanelSpielplatz.getElemente().get(pos); 
-						if(d.getOrderID() == Integer.parseInt(to[line])){										
+						if(d.getPlayId() == Integer.parseInt(to[line])){										
 							d2 = d;
 						}						
 					}					
@@ -423,66 +422,33 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 			e.printStackTrace();
 		}
 		return;
+	}	
+	
+	public void setEditMode(DragElement el){
+		jpanelEditor.setEditMode(el);
 	}
 	
-	String testXml = 
-	"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"+
-	"<Memento>"+
-	    "<dragSubTaskDef>"+
-        "<BoxContainer boxID=\"0\" boxName=\"Lebewesen\" count=\"1\"/>"+
-        "<BoxContainer boxID=\"1\" boxName=\"Tier\" count=\"2\"/>"+
-        "<BoxContainer boxID=\"2\" boxName=\"Pflanze\" count=\"3\"/>"+
-        "<BoxContainer boxID=\"3\" boxName=\"Mensch\" count=\"4\"/>"+
-        "<BoxContainer boxID=\"4\" boxName=\"Pilze\" count=\"5\"/>"+
-        "<BoxContainer boxID=\"5\" boxName=\"Saeugetier\" count=\"5\"/>"+
-        "<BoxContainer boxID=\"6\" boxName=\"Eierleger\" count=\"8\"/>"+
-        "<BoxContainer boxID=\"7\" boxName=\"Fliegenpilz\" count=\"11\"/>"+
-        "<BoxContainer boxID=\"8\" boxName=\"Elefantenfuss\" count=\"100\"/>"+
-        "<BoxContainer boxID=\"9\" boxName=\"AAAAAAAAA\" count=\"n\"/>"+
-        "<DragElement boxID=\"0\" id=\"0\" x=\"261\" y=\"11\"/>"+
-        "<DragElement boxID=\"1\" id=\"1\" x=\"128\" y=\"74\"/>"+
-        "<DragElement boxID=\"2\" id=\"2\" x=\"267\" y=\"70\"/>"+
-        "<DragElement boxID=\"3\" id=\"7\" x=\"112\" y=\"200\"/>"+
-        "<DragElement boxID=\"4\" id=\"3\" x=\"447\" y=\"72\"/>"+
-        "<DragElement boxID=\"5\" id=\"4\" x=\"66\" y=\"134\"/>"+
-        "<DragElement boxID=\"6\" id=\"5\" x=\"213\" y=\"137\"/>"+
-        "<DragElement boxID=\"7\" id=\"6\" x=\"420\" y=\"142\"/>"+
-        "<DragElement boxID=\"8\" id=\"8\" x=\"323\" y=\"192\"/>"+
-        "<Solution fromID=\"0\" toIDs=\"2,1,3,\"/>"+
-        "<Solution fromID=\"1\" toIDs=\"4,5,\"/>"+
-        "<Solution fromID=\"2\" toIDs=\"8,\"/>"+
-        "<Solution fromID=\"3\" toIDs=\"6,\"/>"+
-        "<Solution fromID=\"4\" toIDs=\"7,\"/>"+
-	    "</dragSubTaskDef>"+
-	"</Memento>";
+	public void changeElementCaption(String ori, String change){
+		jPanelSpielplatz.changeElementCaption(ori, change);
+		jPanelSpielplatz.repaint();
+	}
 	
+	public int getCountOfElement(DragElement el){
+		return jPanelSpielplatz.getCountOfElement(el);
+	}
 	
-	private ArrayList<ArrayList<DragElement>> sort(){
-		List<DragElement> all = jPanelSpielplatz.getElemente();		
-				
-		ArrayList<ArrayList<DragElement>> dragList = new ArrayList<ArrayList<DragElement>>();
-				
-		// Sortiert alle Elemente in einer Zeile in eine Liste
-		for(int i=0; i<jPanelSpielplatz.getHeight()/60; i++){
-			ArrayList<DragElement> list = new ArrayList<DragElement>();
-			for(DragElement n:all){
-				if(n.getY()>= i*60 && n.getY()<i*60+60){
-					list.add(n);
-				}
-			}
-			if (list.size() != 0){	
-				java.util.Collections.sort(list);
-				dragList.add(list);
-				
-			}
+	public void changeElementCount(DragElement el, String anzMax){
+		if (anzMax.equals("\u221e")){
+			el.changeCount(anzMax, anzMax);
+		}else{
+			int anzNow = jPanelSpielplatz.getCountOfElement(el);
+			el.changeCount(anzMax, ""+(Integer.parseInt(anzMax)-anzNow));
 		}
-				
-		int id = 0;
-		for(ArrayList<DragElement> k:dragList){
-			for(DragElement x:k){
-				x.setOrderID(id++);
-			}
-		}		
-		return dragList;
+		
 	}
+	
+	public PanelSpielplatz getPlayground(){
+		return jPanelSpielplatz;
+	}
+	
 }

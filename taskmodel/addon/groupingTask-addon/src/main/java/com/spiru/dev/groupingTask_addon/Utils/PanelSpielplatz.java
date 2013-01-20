@@ -101,7 +101,7 @@ public class PanelSpielplatz extends JPanel {
 		DragElement neuesElement = null;
 		// element schon auf PanelSpielplatz?
 		for (DragElement n: elemente){
-			if (n.getId() == e.getId()){			
+			if (n.getPlayId() == e.getPlayId()){			
 				neuesElement = n;
 				break;
 			}
@@ -111,16 +111,18 @@ public class PanelSpielplatz extends JPanel {
 	    } // sonst ein neues Element anzeigen
 	    else{
 	    	// vom AuswahlElement Anzahl veringern
+	    	int boxId = 0;
 	    	for(DragElement n:auswahlElemente){
 	    		if (n.getCaption().equals(e.getCaption())){
 	    			// wenn Anzahl = 0, dann abbrechen, da Aktion nicht erlaubt ist
 	    			if (n.getAnz()==0) return;
-	    			n.decAnz();	    			
+	    			n.decAnz();
+	    			boxId = n.getBoxId();
 	    			break;
 	    		}
 	    	}
 	    	// neues Element erzeugen
-	    	neuesElement = new DragElement(e.getCaption(),null, null, listener);		
+	    	neuesElement = new DragElement(e.getCaption(),null, listener, boxId, DragElement.getNextId());		
 			//neuesElement.setBounds(0,0, auswahlElemente.get(0).getWidth()+70, auswahlElemente.get(0).getHeight());
 			// passt so besser zur Mausposition ;)
 			pos.y -= 5; 

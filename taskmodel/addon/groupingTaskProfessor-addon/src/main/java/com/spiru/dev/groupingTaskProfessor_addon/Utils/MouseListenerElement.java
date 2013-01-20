@@ -5,10 +5,26 @@ import java.awt.event.MouseListener;
 
 public class MouseListenerElement implements MouseListener {
 
+	private DragElement element = null;
+	
 	//@Override
 	public void mouseClicked(MouseEvent e) {
 		DragElement el = (DragElement)e.getComponent();
-		el.markiereElement(!el.isElementMarked());
+		if (element != null){
+			element.markiereElement(false);
+			if (el == element){
+				element = null;	
+				return;
+			}
+			element = null;					
+		}		
+		if (el.isElementMarked()){
+			el.markiereElement(false);			
+		}else{
+			el.markiereElement(true);
+			element = el;			
+		}
+				
 		
 	}
 

@@ -31,15 +31,13 @@ import com.spiru.dev.groupingTaskProfessor_addon.GroupingTaskAddOnJPanel;
  */
 public class DragElement extends JPanel implements DragGestureListener, Comparable<DragElement>{		
 		
-	/** jedes Objekt erhoeht die id */
-	private static int id = 1;
-	/** zur Identifikation eines Elementes */
-	private int idElement;
-	private int idOrder;
+	private int boxId=-1;
+	static int idElement=0;// start
+	private int elementId=-1;
 	/** Anzahl an Elementen, die momentan zur Verfuegung stehen */
 	private String anz;
 	/** wieviele Elemente es maximal gibt */
-	private final String anzAnfang;
+	private String anzAnfang;
 	/** String, der das Element repraesentiert */
 	private String name;
 	/** JLabel fuer Caption */
@@ -49,14 +47,29 @@ public class DragElement extends JPanel implements DragGestureListener, Comparab
 	/** Kleiner Button auf dem Element, um eine Verbindung zu einem anderen zu ziehen */
 	private JButton jButtonVerbindung;
 	private boolean marked = false;
+	private static MouseListenerElement mouseElementListener = new MouseListenerElement();
+	private static GroupingTaskAddOnJPanel panel;
 	
+	
+	public static void setPanel(GroupingTaskAddOnJPanel pa){
+		panel = pa;
+	}
 	/**
 	 * Konstruktor eines Elementes
 	 * @param text Repraesentiert das Element
 	 * @param anz Anzahl Objekte von diesem Element
 	 * @param listener MyMouseListener fuer Mausaktionen
 	 */
-	public DragElement (String name, String anz, String listId, MyMouseListener listener){				
+	public DragElement (String name, String anz, MyMouseListener listener,  int initBoxId, int initPlayId){
+		if (initPlayId == -1){
+			this.boxId = initBoxId;
+		}else{
+			this.boxId = initBoxId;
+			this.elementId = initPlayId;
+			if (idElement <= initPlayId){
+				idElement = initPlayId +1;
+			}
+		}
 		labelCaption = new JLabel(" "+name+" ", JLabel.CENTER);
 		labelCaption.setBorder(BorderFactory.createLineBorder(Color.black));	
 		this.add(labelCaption);		
@@ -70,7 +83,7 @@ public class DragElement extends JPanel implements DragGestureListener, Comparab
 			labelAnz = new JLabel(""+anz, JLabel.CENTER);
 			labelAnz.setBorder(BorderFactory.createLineBorder(Color.black));			
 			this.add(labelAnz);
-			this.addMouseListener(new MouseListenerElement());
+			this.addMouseListener(mouseElementListener);
 		}
 		// Element liegt auf Spielplatz
 		else{
@@ -95,19 +108,23 @@ public class DragElement extends JPanel implements DragGestureListener, Comparab
 		this.anz = anz;
 		this.anzAnfang = anz;
 		this.name = name;
-		// zu unterscheidung zweier Elemente mit gleichem Namen, 
-		// fuer Spielplatz, wenn mehrer gleiche Elemente vorhanden sind
-		this.idElement = id;
-		// erhoeht zaehler 
-		id++;		
-		if(listId != null){
-			this.idElement = Integer.parseInt(listId);
-		}
 		// Element kann Drag
 		DragSource ds = new DragSource();
         ds.createDefaultDragGestureRecognizer(this,
             DnDConstants.ACTION_COPY, this);                     
 	}	
+	
+	static public int getNextId(){
+		return idElement++;
+	}
+	
+	public int getBoxId(){
+		return boxId;
+	}
+	
+	public int getPlayId(){
+		return elementId;
+	}
 
 	//@Override
 	public void dragGestureRecognized(DragGestureEvent event) {
@@ -135,26 +152,24 @@ public class DragElement extends JPanel implements DragGestureListener, Comparab
 			this.setBorder(new CompoundBorder(border, margin));
 			labelCaption.setForeground(Color.YELLOW);	
 			marked=true;
+			if(elementId==-1){
+				panel.setEditMode(this);
+			}
 		}
 		else{
 			margin = new LineBorder(Color.BLACK,1);
 			this.setBorder(margin);
 			labelCaption.setForeground(Color.BLACK);
 			marked=false;
+			if(elementId==-1){
+				panel.setEditMode(null);
+			}
 		}
 	}
 	
 	public boolean isElementMarked(){
 		return marked;
-	}
-	
-	/**
-	 * liefert Unterscheidungs-id
-	 * @return id des Objektes
-	 */
-	public int getId(){
-		return idElement;
-	}
+	}		
 	
 	/**
 	 * liefert Namen des Objektes
@@ -204,14 +219,6 @@ public class DragElement extends JPanel implements DragGestureListener, Comparab
 		return anzAnfang;
 	}
 	
-	public void setOrderID(int id){
-		this.idOrder = id;
-	}
-	
-	public int getOrderID(){
-		return idOrder;
-	}
-
 	@Override
 	public int compareTo(DragElement a) {
         if( this.getX() < a.getX() )
@@ -220,5 +227,24 @@ public class DragElement extends JPanel implements DragGestureListener, Comparab
             return 1;
             
         return 0;
+	}
+	
+	public void changeCaption(String text){
+		labelCaption.setText(text);
+		name = text;
+		FontMetrics fm = getFontMetrics(labelCaption.getFont());			
+		labelCaption.setBounds(5,5,fm.stringWidth(name)+30,20);
+		if (labelAnz == null){
+			// auf spielplatz
+			this.setSize(jButtonVerbindung.getWidth()+labelCaption.getWidth()+20,30);
+			jButtonVerbindung.setLocation(labelCaption.getWidth()+10, 5);
+		}
+	}
+	
+	public void changeCount(String anzMax, String anzNow){
+		this.anzAnfang = anzMax;
+		this.anz = anzNow;
+		labelAnz.setText(anzNow);
+		
 	}
 }

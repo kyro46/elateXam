@@ -162,7 +162,7 @@ public class GroupingTaskAddOnJPanel extends JPanel {
     }
     
 	private void addElement(String name, String count, String id){
-		DragElement de = new DragElement(name, count, id, listener);
+		DragElement de = new DragElement(name, count, listener, Integer.parseInt(id), -1);
 		elementList.add(de);
 		jPanelElements.add(de);
 	}
@@ -225,19 +225,19 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 				int  y = Integer.parseInt(dragElement.getAttribute("y"));
 				// add Element
 				for(DragElement n:elementList){
-					if(n.getId() == Integer.parseInt(boxID)){
+					if(n.getBoxId() == Integer.parseInt(boxID)){
 						DragElement de;
 				    	if (corrected)
-				    		 de = new DragElement(n.getCaption(), null, null, null);
+				    		 de = new DragElement(n.getCaption(), null, null, n.getBoxId(), id);
 				    	else {
-				    		de = new DragElement(n.getCaption(), null, null, listener);
+				    		de = new DragElement(n.getCaption(), null, listener, n.getBoxId(), id);
 				    		de.addMouseListener(listener);
 				    	}											
-						n.decAnz();
-						de.setOrderID(id);
+						n.decAnz();						
 						jPanelSpielplatz.getElemente().add(de);
 						jPanelSpielplatz.add(de);
 						de.setLocation(x, y);
+						break;
 					}
 				}
 			}
@@ -252,19 +252,19 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 				DragElement de = null;				
 				for(int pos=0; pos<jPanelSpielplatz.getElemente().size(); pos++){
 					DragElement d = jPanelSpielplatz.getElemente().get(pos); 					
-					if(d.getOrderID() == fromID){										
+					if(d.getPlayId() == fromID){										
 						de = d;
 					}
 				}
 				// find element2 and create line
 				for(int line=0; line<to.length; line++){
-					if(to[line].equals("") || to[line] == null){						
+					if(to[line] == null || to[line].equals("")){						
 						continue;
 					}
 					DragElement d2 = null;
 					for(int pos=0; pos<jPanelSpielplatz.getElemente().size(); pos++){
 						DragElement d = jPanelSpielplatz.getElemente().get(pos); 
-						if(d.getOrderID() == Integer.parseInt(to[line])){										
+						if(d.getPlayId() == Integer.parseInt(to[line])){										
 							d2 = d;
 						}						
 					}					
@@ -298,7 +298,7 @@ public class GroupingTaskAddOnJPanel extends JPanel {
     }
     
     public String save(){
-    	ArrayList<ArrayList<DragElement>> sortedLists = sort();
+    	List<DragElement> list = jPanelSpielplatz.getElemente();
 		String ret = "";
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		try {
@@ -318,6 +318,7 @@ public class GroupingTaskAddOnJPanel extends JPanel {
     		else{
     			isProcessed.setTextContent("false");    			
     		}
+    		// alle zur Wahl stehenden DragElemente
     		dragSubTaskDef.appendChild(isProcessed);
 			for(DragElement n:elementList) {
 				Element BoxContainer = document.createElement("BoxContainer");
@@ -327,26 +328,20 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 					count = "n";
 				}
 				BoxContainer.setAttribute("count", count);
-				BoxContainer.setAttribute("boxID",""+n.getId());
+				BoxContainer.setAttribute("boxID",""+n.getBoxId());
 				dragSubTaskDef.appendChild(BoxContainer);
 			}
 			// alle DragElements aufm spielplatz
 			for(DragElement n:jPanelSpielplatz.getElemente()) {
 				Element dragElement = document.createElement("DragElement");
-				dragElement.setAttribute("id",""+n.getOrderID());
-				for(DragElement k:elementList){
-					if(k.getCaption().equals(n.getCaption())){
-						dragElement.setAttribute("boxID",""+k.getId());
-						break;
-					}					
-				}
+				dragElement.setAttribute("id",""+n.getPlayId());
+				dragElement.setAttribute("boxID",""+n.getBoxId());				
 				dragElement.setAttribute("x",""+n.getX());
 				dragElement.setAttribute("y",""+n.getY());
 				dragSubTaskDef.appendChild(dragElement);
 			}
 			
-			// save solution
-			for(ArrayList<DragElement> list:sortedLists){
+			// save solution			
 				for(DragElement el:list){
 					// liste mit allen Kanten
 					ArrayList<Verbindung> connections = new ArrayList<Verbindung>();
@@ -361,17 +356,16 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 						DragElement el2 = con.getElement1();
 						if (el2 == el)
 							el2 = con.getElement2();
-						if(el2.getOrderID()>el.getOrderID()){
-							kanten += el2.getOrderID()+",";
+						if(el2.getPlayId()>el.getPlayId()){
+							kanten += el2.getPlayId()+",";
 						}
 					}
 					Element solution = document.createElement("Solution");					
-					solution.setAttribute("fromID",""+el.getOrderID());
+					solution.setAttribute("fromID",""+el.getPlayId());
 					solution.setAttribute("toIDs",""+kanten);
 					if (!kanten.equals(""))
 						dragSubTaskDef.appendChild(solution);					
-				}
-			}
+				}			
 			
 			// write DOM to string
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -394,36 +388,6 @@ public class GroupingTaskAddOnJPanel extends JPanel {
 			e.printStackTrace();
 		}
 		return ret;
-    }
-    
-	private ArrayList<ArrayList<DragElement>> sort(){
-		List<DragElement> all = jPanelSpielplatz.getElemente();		
-				
-		ArrayList<ArrayList<DragElement>> dragList = new ArrayList<ArrayList<DragElement>>();
-				
-		// Sortiert alle Elemente in einer Zeile in eine Liste
-		for(int i=0; i<jPanelSpielplatz.getHeight()/60; i++){
-			ArrayList<DragElement> list = new ArrayList<DragElement>();
-			for(DragElement n:all){
-				if(n.getY()>= i*60 && n.getY()<i*60+60){
-					list.add(n);
-				}
-			}
-			if (list.size() != 0){	
-				java.util.Collections.sort(list);
-				dragList.add(list);
-				
-			}
-		}
-				
-		int id = 0;
-		for(ArrayList<DragElement> k:dragList){
-			for(DragElement x:k){
-				x.setOrderID(id++);
-			}
-		}		
-		return dragList;
-	}
-    
+    }        
 
 }
