@@ -18,6 +18,7 @@ import de.christophjobst.converter.CategoryToCategoryConverter;
 import de.christophjobst.converter.ClozeToClozeConverter;
 import de.christophjobst.converter.EssayToTextConverter;
 import de.christophjobst.converter.MatchingToMappingConverter;
+import de.christophjobst.converter.MetaToConfigConverter;
 import de.christophjobst.converter.MultichoiceToMcConverter;
 import de.christophjobst.converter.ShortanswerToTextConverter;
 import de.christophjobst.converter.TruefalseToMcConverter;
@@ -37,27 +38,22 @@ public class Inputaufteiler {
 	 */
 	public static ComplexTaskDef inputAufteilen(Quiz quizsammlung) {
 
-		RandomIdentifierGenerator rand = new RandomIdentifierGenerator();
 		Date date = new Date();
 		boolean hasAExamConfigTask = false;
-		
+
 		// Klausurdatei aufsetzen - Allgemeine Angaben
 		ComplexTaskDef complexTaskDef = new ComplexTaskDef();
-		CorrectionMode correctionMode = new CorrectionMode();
-		Regular regular = new Regular();
-		MultipleCorrectors multipleCorrectors = new MultipleCorrectors();
-		CorrectOnlyProcessedTasks correctOnlyProcessedTasks = new CorrectOnlyProcessedTasks();
-		ComplexTaskDef.Config config = new ComplexTaskDef.Config();
+
 		ComplexTaskDef.Revisions.Revision revision = new ComplexTaskDef.Revisions.Revision();
 		ComplexTaskDef.Revisions revisions = new ComplexTaskDef.Revisions();
-		
-		//TODO METATAG der exportieren Moodleklausur nach "Autor" oder Author druchsuchen
+
+		// TODO METATAG der exportieren Moodleklausur nach "Autor" oder Author
+		// durchsuchen
 		revision.setAuthor("Christoph Jobst");
 		revision.setDate(date.getTime());
 		revision.setSerialNumber(1);
 		revisions.getRevision().add(revision);
 		complexTaskDef.setRevisions(revisions);
-
 
 		/*
 		 * Zuweisungs und Konvertierungsschleife für Category-Blöcke
@@ -98,7 +94,8 @@ public class Inputaufteiler {
 		for (int j = 0; j < quizsammlung.getQuestion().toArray().length; j++) {
 			try {
 
-				if (quizsammlung.getQuestion().get(j).getType().equals("category")) {
+				if (quizsammlung.getQuestion().get(j).getType()
+						.equals("category")) {
 
 					/*
 					 * Abgleich: Ist zu welchem Objekt im categoryManager gehört
@@ -124,134 +121,124 @@ public class Inputaufteiler {
 					for (int i = j + 1; i < quizsammlung.getQuestion()
 							.toArray().length; i++) {
 
-						questionType = quizsammlung.getQuestion().get(i).getType();
-						
+						questionType = quizsammlung.getQuestion().get(i)
+								.getType();
+
 						if (questionType.equals("meta")) {
-							if (hasAExamConfigTask == false){
-							
-								
-								//################################################
-								//TODO in KonfigTaskType-Knoten einlagern
-								complexTaskDef.setTitle(quizsammlung.getQuestion().get(i).getName().getText());
-								
-								config.setTime(Integer.parseInt(quizsammlung.getQuestion().get(i).getTime()));
-								config.setKindnessExtensionTime(Integer.parseInt(quizsammlung.getQuestion().get(i).getKindnessextensiontime()));
-								config.setTasksPerPage(Integer.parseInt(quizsammlung.getQuestion().get(i).getTasksperpage()));
-								config.setTries(Integer.parseInt(quizsammlung.getQuestion().get(i).getTries()));
-								complexTaskDef.setConfig(config);
-								complexTaskDef.setID(rand.getRandomID());
-
-								complexTaskDef.setShowHandlingHintsBeforeStart(quizsammlung.getQuestion().get(i).getShowhandlinghintsbeforestart().equals("1") ? true : false);
-								complexTaskDef.setStartText(Base64Relocator.relocateBase64(quizsammlung.getQuestion().get(i).getGeneralfeedback().getText(),quizsammlung.getQuestion().get(i).getGeneralfeedback().getFile()));;
-								complexTaskDef.setDescription(Base64Relocator.relocateBase64(quizsammlung.getQuestion().get(i).getQuestiontext().getText(),quizsammlung.getQuestion().get(i).getQuestiontext().getFile()));
-
-								int numberOfCorrectors = Integer.parseInt(quizsammlung.getQuestion().get(i).getNumberofcorrectors());
-								
-								if (numberOfCorrectors == 1) {
-									correctionMode.setRegular(regular);
-								} else {
-									multipleCorrectors.setNumberOfCorrectors(numberOfCorrectors);
-									correctionMode.setMultipleCorrectors(multipleCorrectors);
-								}
-
-								//Wird z.Z. nicht angeboten
-//								correctOnlyProcessedTasks.setNumberOfTasks(10);
-//								correctionMode.setCorrectOnlyProcessedTasks(correctOnlyProcessedTasks);
-//								config.setCorrectionMode(correctionMode);
-
-								//############Ende Einlagerungsdaten						
-
+							if (hasAExamConfigTask == false) {
+								complexTaskDef = MetaToConfigConverter.processing(quizsammlung
+										.getQuestion().get(i));
 								hasAExamConfigTask = true;
 							} else {
-								System.err.println("Zu viele Klausurkonfigurationen vorhanden. Es wird die zuerst gefundene genutzt.");
+								System.err
+										.println("Zu viele Klausurkonfigurationen vorhanden. Es wird die zuerst gefundene genutzt.");
 							}
 						}
-		
+
 						if (questionType.equals("essay")) {
-							
-							categoryManagerList.get(belongingCategoryIndex).setTextTaskBlock(EssayToTextConverter
-											.processing(quizsammlung
-													.getQuestion().get(i)),quizsammlung
-													.getQuestion().get(i).getDefaultgrade());
+
+							categoryManagerList
+									.get(belongingCategoryIndex)
+									.setTextTaskBlock(
+											EssayToTextConverter.processing(quizsammlung
+													.getQuestion().get(i)),
+											quizsammlung.getQuestion().get(i)
+													.getDefaultgrade());
 							categoryManagerList.get(belongingCategoryIndex)
 									.setHasTextTaskBlock(true);
 						}
 
 						if (questionType.equals("cloze")) {
-							
-							categoryManagerList.get(belongingCategoryIndex).setClozeTaskBlock(ClozeToClozeConverter
-									.processing(quizsammlung
-											.getQuestion().get(i)), ClozeToClozeConverter.punktzahl);
+
+							categoryManagerList
+									.get(belongingCategoryIndex)
+									.setClozeTaskBlock(
+											ClozeToClozeConverter.processing(quizsammlung
+													.getQuestion().get(i)),
+											ClozeToClozeConverter.punktzahl);
 							categoryManagerList.get(belongingCategoryIndex)
 									.setHasClozeTaskBlock(true);
 						}
 
 						if (questionType.equals("truefalse")) {
-							
-							categoryManagerList.get(belongingCategoryIndex).setMcTaskBlock(TruefalseToMcConverter
-									.processing(quizsammlung
-											.getQuestion().get(i)),quizsammlung
-											.getQuestion().get(i).getDefaultgrade());
+
+							categoryManagerList
+									.get(belongingCategoryIndex)
+									.setMcTaskBlock(
+											TruefalseToMcConverter.processing(quizsammlung
+													.getQuestion().get(i)),
+											quizsammlung.getQuestion().get(i)
+													.getDefaultgrade());
 							categoryManagerList.get(belongingCategoryIndex)
 									.setHasMcTaskBlock(true);
 						}
 
 						if (questionType.equals("multichoice")) {
-							
-							categoryManagerList.get(belongingCategoryIndex).setMcTaskBlock(MultichoiceToMcConverter
-									.processing(quizsammlung
-											.getQuestion().get(i)),quizsammlung
-											.getQuestion().get(i).getDefaultgrade());
+
+							categoryManagerList
+									.get(belongingCategoryIndex)
+									.setMcTaskBlock(
+											MultichoiceToMcConverter.processing(quizsammlung
+													.getQuestion().get(i)),
+											quizsammlung.getQuestion().get(i)
+													.getDefaultgrade());
 							categoryManagerList.get(belongingCategoryIndex)
 									.setHasMcTaskBlock(true);
 
 						}
 
 						if (questionType.equals("shortanswer")) {
-							
-							categoryManagerList.get(belongingCategoryIndex).setTextTaskBlock(ShortanswerToTextConverter
-									.processing(quizsammlung
-											.getQuestion().get(i)),quizsammlung
-											.getQuestion().get(i).getDefaultgrade());
+
+							categoryManagerList
+									.get(belongingCategoryIndex)
+									.setTextTaskBlock(
+											ShortanswerToTextConverter.processing(quizsammlung
+													.getQuestion().get(i)),
+											quizsammlung.getQuestion().get(i)
+													.getDefaultgrade());
 							categoryManagerList.get(belongingCategoryIndex)
 									.setHasTextTaskBlock(true);
 
 						}
 
 						if (questionType.equals("matching")) {
-							
-							categoryManagerList.get(belongingCategoryIndex).setMappingTaskBlock(MatchingToMappingConverter
-									.processing(quizsammlung
-											.getQuestion().get(i)),quizsammlung
-											.getQuestion().get(i).getDefaultgrade());
+
+							categoryManagerList
+									.get(belongingCategoryIndex)
+									.setMappingTaskBlock(
+											MatchingToMappingConverter.processing(quizsammlung
+													.getQuestion().get(i)),
+											quizsammlung.getQuestion().get(i)
+													.getDefaultgrade());
 							categoryManagerList.get(belongingCategoryIndex)
 									.setHasMappingTaskBlock(true);
 						}
-						
-						
-						if (!questionType.equals("category") &&
-								!questionType.equals("meta") &&
-								!questionType.equals("matching") &&
-								!questionType.equals("shortanswer") &&
-								!questionType.equals("multichoice") &&
-								!questionType.equals("truefalse") &&
-								!questionType.equals("cloze") &&
-								!questionType.equals("essay")) {
 
-							categoryManagerList.get(belongingCategoryIndex).setAddonTaskBlock(AddonTask
-									.processing(quizsammlung
-											.getQuestion().get(i)),quizsammlung
-											.getQuestion().get(i).getDefaultgrade());
-								categoryManagerList.get(belongingCategoryIndex)
-										.setHasAddonTaskBlock(true);
-}
+						if (!questionType.equals("category")
+								&& !questionType.equals("meta")
+								&& !questionType.equals("matching")
+								&& !questionType.equals("shortanswer")
+								&& !questionType.equals("multichoice")
+								&& !questionType.equals("truefalse")
+								&& !questionType.equals("cloze")
+								&& !questionType.equals("essay")) {
+
+							categoryManagerList.get(belongingCategoryIndex)
+									.setAddonTaskBlock(
+											AddonTask.processing(quizsammlung
+													.getQuestion().get(i)),
+											quizsammlung.getQuestion().get(i)
+													.getDefaultgrade());
+							categoryManagerList.get(belongingCategoryIndex)
+									.setHasAddonTaskBlock(true);
+						}
 
 						if (questionType.equals("category")) {
 							/*
 							 * Wird ein Category gefunden, dann verlasse die
 							 * TaskBlock-Erstellungsschleife und suche dir die
 							 * neue zu füllende Category aus dem CategoryManager
-							 *
+							 * 
 							 * Wenn es eine Category ist und zu einer
 							 * Unterkategorie gehört verfahre wie bisher mit den
 							 * TaskBlöcken -> füge der aktuellen Category eine
@@ -275,37 +262,13 @@ public class Inputaufteiler {
 			}
 		}
 
-		
-		//Kein meta-Element zur Klausurdefinition? Defaultvorgaben:
-		//Defaultvorgaben
+		// Kein meta-Element zur Klausurdefinition? Defaultvorgaben:
 		if (hasAExamConfigTask == false) {
-			complexTaskDef.setTitle("Testklausur ohne Klausurkonfiguration");
-			
-			config.setTime(5);
-			config.setKindnessExtensionTime(2);
-			config.setTasksPerPage(3);
-			config.setTries(5);
-			complexTaskDef.setConfig(config);
-			complexTaskDef.setID(rand.getRandomID());
-
-			
-			complexTaskDef.setShowHandlingHintsBeforeStart(true);
-			complexTaskDef.setStartText("Starttext - Keine Klausurkonfiguration angegeben");
-			complexTaskDef.setDescription("Beschreibung - Keine Klausurkonfiguration angegeben");
-
-			correctionMode.setRegular(regular);
-
-//			multipleCorrectors.setNumberOfCorrectors(2);
-//			correctionMode.setMultipleCorrectors(multipleCorrectors);
-
+			System.err
+			.println("Keine Klausurkonfigurationen vorhanden. Es werden Platzhalter eingesetzt.");
+			complexTaskDef = MetaToConfigConverter.setDefault();
 		}
 
-		//Ende Defaultvorgaben
-		
-		
-		
-		
-		
 		// Alle Category in der Liste hinzufügen
 		// Hier Auswahl, ob flach oder geschachtelt
 		complexTaskDef = CategoryAssignment.assignFlatCategories(
