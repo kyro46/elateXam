@@ -87,6 +87,11 @@ public class ClozeToClozeConverter {
 		multichoiceindex = moodleText.indexOf(":MULTICHOICE:");
 		numericalindex = moodleText.indexOf(":NUMERICAL:");
 
+		if (shortanswerindex == -1) shortanswerindex = Math.max(numericalindex, multichoiceindex) +1;
+		if (multichoiceindex == -1) multichoiceindex = Math.max(numericalindex, shortanswerindex) +1;
+		if (numericalindex == -1) numericalindex = Math.max(shortanswerindex, multichoiceindex) +1;
+		
+		
 		// Die { und } suchen nachdem man :SHORTANSWER: :MULTICHOICE: oder
 		// :NUMERICAL: gefunden hat
 		do {
@@ -162,14 +167,16 @@ public class ClozeToClozeConverter {
 		int nextAnswer = 0;
 		// System.out.println(input);
 		while ((nextAnswer = input.indexOf("=", nextAnswer + 1)) != -1) {
-
+			//TODO falsche Antworten rausfiltern
+			//Momentan: {1:MULTICHOICE:=a~b~=c~b~=jo}
+			//Wird zu: [ a~b | c~b | jo ]
 			if (input.indexOf("=", nextAnswer + 1) == -1) {
 				correctAnswer = input.substring(nextAnswer + 1);
-				// System.out.println(correctAnswer);
+//				 System.out.println(correctAnswer);
 			} else {
 				correctAnswer = input.substring(nextAnswer + 1,
 						input.indexOf("=", nextAnswer + 1) - 1);
-				// System.out.println(correctAnswer);
+//				 System.out.println(correctAnswer);
 			}
 
 			gap.getCorrect().add(correctAnswer);

@@ -37,8 +37,12 @@ public class ShortanswerToTextConverter {
 				.getGeneralfeedback().getText(), question.getQuestiontext()
 				.getFile()));
 
-		String answer = question.getAnswer().get(0).getText();
+		String answer = "";
 
+		for(int i=0; i<question.getAnswer().size(); i++) {
+		 answer = answer + question.getAnswer().get(i).getText() + "; ";
+		}
+		
 		subTask.setCorrectionHint(answer);
 
 		// Allgemeine Angaben pro Frage

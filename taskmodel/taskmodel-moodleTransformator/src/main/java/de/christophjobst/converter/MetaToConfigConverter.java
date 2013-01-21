@@ -32,7 +32,6 @@ public class MetaToConfigConverter {
 		complexTaskDef.setID(rand.getRandomID());
 
 		int numberOfCorrectors = Integer.parseInt(question.getNumberofcorrectors());
-		System.out.println(numberOfCorrectors);
 
 		if (numberOfCorrectors == 1) {
 			correctionMode.setRegular(regular);
