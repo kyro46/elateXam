@@ -47,13 +47,12 @@ public class CategoryManager {
 	ClozeTaskBlock clozeTaskBlock = new ClozeTaskBlock();
 	AddonTaskBlock addonTaskBlock = new AddonTaskBlock();
 
-	List<TextTaskBlock> textTaskBlockList = new ArrayList<TextTaskBlock>();
-	List<McTaskBlock> mcTaskBlockList = new ArrayList<McTaskBlock>();
-	List<ClozeTaskBlock> clozeTaskBlockList = new ArrayList<ClozeTaskBlock>();
-	List<MappingTaskBlock> mappingTaskBlockList = new ArrayList<MappingTaskBlock>();
-	List<AddonTaskBlock> addonTaskBlockList = new ArrayList<AddonTaskBlock>();
+//	List<TextTaskBlock> textTaskBlockList = new ArrayList<TextTaskBlock>();
+//	List<McTaskBlock> mcTaskBlockList = new ArrayList<McTaskBlock>();
+//	List<ClozeTaskBlock> clozeTaskBlockList = new ArrayList<ClozeTaskBlock>();
+//	List<MappingTaskBlock> mappingTaskBlockList = new ArrayList<MappingTaskBlock>();
+//	List<AddonTaskBlock> addonTaskBlockList = new ArrayList<AddonTaskBlock>();
 
-	
 	public CategoryManager(Category category) {
 		this.title = category.getTitle().toString();
 		this.category = category;
@@ -122,7 +121,9 @@ public class CategoryManager {
 		
 		this.mappingTaskBlock.getMappingSubTaskDefOrChoice().add(mappingSubTaskDef);
 		
-		this.mappingTaskBlockList.add(mappingTaskBlock);
+//		this.mappingTaskBlockList.add(mappingTaskBlock);
+		
+		category.getMcTaskBlockOrClozeTaskBlockOrTextTaskBlock().add(mappingTaskBlock);
 	}
 
 	public void setMcTaskBlock(McSubTaskDef mcSubTaskDef,String defaultgrade) {
@@ -143,7 +144,9 @@ public class CategoryManager {
 		
 		mcTaskBlock.getMcSubTaskDefOrChoice().add(mcSubTaskDef);
 		
-		this.mcTaskBlockList.add(mcTaskBlock);
+//		this.mcTaskBlockList.add(mcTaskBlock);
+		
+		category.getMcTaskBlockOrClozeTaskBlockOrTextTaskBlock().add(mcTaskBlock);
 	}
 
 	public void setTextTaskBlock(TextSubTaskDef textSubTaskDef,String defaultgrade) {
@@ -158,7 +161,9 @@ public class CategoryManager {
 
 		textTaskBlock.getTextSubTaskDefOrChoice().add(textSubTaskDef);
 		
-		this.textTaskBlockList.add(textTaskBlock);
+//		this.textTaskBlockList.add(textTaskBlock);
+		
+		category.getMcTaskBlockOrClozeTaskBlockOrTextTaskBlock().add(textTaskBlock);
 	}
 
 	public void setClozeTaskBlock(ClozeSubTaskDef clozeSubTaskDef,float defaultgrade) {
@@ -178,7 +183,9 @@ public class CategoryManager {
 
 		clozeTaskBlock.getClozeSubTaskDefOrChoice().add(clozeSubTaskDef);
 		
-		this.clozeTaskBlockList.add(clozeTaskBlock);
+//		this.clozeTaskBlockList.add(clozeTaskBlock);
+		
+		category.getMcTaskBlockOrClozeTaskBlockOrTextTaskBlock().add(clozeTaskBlock);
 	}
 	
 	public void setAddonTaskBlock(AddonSubTaskDef addonSubTaskDef,String defaultgrade){
@@ -192,44 +199,51 @@ public class CategoryManager {
 
 		addonTaskBlock.getAddonSubTaskDefOrChoice().add(addonSubTaskDef);
 		
-		this.addonTaskBlockList.add(addonTaskBlock);
+//		this.addonTaskBlockList.add(addonTaskBlock);
+		
+		category.getMcTaskBlockOrClozeTaskBlockOrTextTaskBlock().add(addonTaskBlock);
 		
 	}
 
 	//TODO Beibehaltung der Aufgabenreihenfolge pro Category  wird steht aus
 	public void generateCategory() {
-		if (hasClozeTaskBlock) {
-			for (int i = 0; i < clozeTaskBlockList.toArray().length; i ++){
-				category.getMcTaskBlockOrClozeTaskBlockOrTextTaskBlock().add(
-						clozeTaskBlockList.get(i));
-			}
-
-		}
-		if (hasTextTaskBlock) {
-						
-			for (int i = 0; i < textTaskBlockList.toArray().length; i ++){
-				category.getMcTaskBlockOrClozeTaskBlockOrTextTaskBlock().add(
-						textTaskBlockList.get(i));
-			}
-		}
-		if (hasMappingTaskBlock) {
-			for (int i = 0; i < mappingTaskBlockList.toArray().length; i ++){
-				category.getMcTaskBlockOrClozeTaskBlockOrTextTaskBlock().add(
-						mappingTaskBlockList.get(i));
-			}
-		}
-		if (hasMcTaskBlock) {
-			for (int i = 0; i < mcTaskBlockList.toArray().length; i ++){
-				category.getMcTaskBlockOrClozeTaskBlockOrTextTaskBlock().add(
-						mcTaskBlockList.get(i));
-			}
-		}
-		if (hasAddonTaskBlock) {
-			for (int i = 0; i < addonTaskBlockList.toArray().length; i ++){
-				category.getMcTaskBlockOrClozeTaskBlockOrTextTaskBlock().add(
-						addonTaskBlockList.get(i));
-			}
-		}
+//		if (hasClozeTaskBlock) {
+//			for (int i = 0; i < clozeTaskBlockList.toArray().length; i ++){
+//				category.getMcTaskBlockOrClozeTaskBlockOrTextTaskBlock().add(
+//						clozeTaskBlockList.get(i));
+//			}
+//
+//		}
+//		if (hasTextTaskBlock) {
+//						
+//			for (int i = 0; i < textTaskBlockList.toArray().length; i ++){
+//				category.getMcTaskBlockOrClozeTaskBlockOrTextTaskBlock().add(
+//						textTaskBlockList.get(i));
+//			}
+//		}
+//		if (hasMappingTaskBlock) {
+//			for (int i = 0; i < mappingTaskBlockList.toArray().length; i ++){
+//				category.getMcTaskBlockOrClozeTaskBlockOrTextTaskBlock().add(
+//						mappingTaskBlockList.get(i));
+//			}
+//		}
+//		if (hasMcTaskBlock) {
+//			for (int i = 0; i < mcTaskBlockList.toArray().length; i ++){
+//				category.getMcTaskBlockOrClozeTaskBlockOrTextTaskBlock().add(
+//						mcTaskBlockList.get(i));
+//			}
+//		}
+//		if (hasAddonTaskBlock) {
+//			for (int i = 0; i < addonTaskBlockList.toArray().length; i ++){
+//				category.getMcTaskBlockOrClozeTaskBlockOrTextTaskBlock().add(
+//						addonTaskBlockList.get(i));
+//			}
+//		}
+		
+		
+		
+		
+		
 	}
 
 	public Category getCategory(){
