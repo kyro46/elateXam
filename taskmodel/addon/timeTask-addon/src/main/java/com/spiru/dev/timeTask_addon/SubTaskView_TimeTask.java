@@ -58,12 +58,11 @@ public class SubTaskView_TimeTask extends SubTaskView{
 		if (!corrected) {
 			ret += "<script type=\"text/javascript\">\n";
 			ret += " var preSave_task_%s = function(){\n";
-			ret += " 	document.getElementById(\"task_%s.result\").value = document.applet_%s.getResult();\n";
-			//ret += " 	alert(document.getElementById(\"task_%s.result\").value);\n";
+			ret += " 	document.getElementById(\"task_%s.result\").value = document.applet_%s.getResult();\n";			
 			ret += "};\n";
-			ret += " var leavePage_task_%s = function(){\n";
+			ret += " var leavePage_task_%s = function(){\n";			
 			ret += " 	if( document.applet_%s.hasChanged() ){\n";
-			ret += " 		setModified();\n";
+			ret += " 		setModified();\n";			
 			ret += " 	};\n";
 			ret += " };\n";
 			ret += "preSaveManager.registerCallback( preSave_task_%s );\n";

@@ -344,13 +344,14 @@ public class TimeTaskAddOnJPanel extends JPanel {
 					for(DragElement de:jpanelOfElements.getElementList()){
 						if (de.getCaption().equals(elementsList[k][1])){							
 							Symbol sym = new Symbol(new Point(2,2),de.getColor(),de.getId());
-							sym.setDatePoint(dp, keyLis);						
+							sym.setDatePoint(dp, keyLis);								
 							if (dp.isDateVisible()){
 								if (!isMuster)
 									de.hideCaption();
 								sym.setText(objList[i][4]);								
 							}
 							dp.setSymbol(sym);
+							sym.setMuster(isMuster, jpanelOfElements.getElementList());
 							jpanelPlayground.getSymbols().add(sym);
 			    			jpanelPlayground.add(sym);				    	
 			    			scrollPane.paintAll(scrollPane.getGraphics());

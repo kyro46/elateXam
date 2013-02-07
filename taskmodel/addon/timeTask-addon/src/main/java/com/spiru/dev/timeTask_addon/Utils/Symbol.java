@@ -10,6 +10,7 @@ import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DragGestureListener;
 import java.awt.dnd.DragSource;
 import java.awt.image.BufferedImage;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -57,6 +58,17 @@ public class Symbol extends JPanel implements DragGestureListener {
 			textfield.addKeyListener(keyLis);
 			this.add(textfield);			
 			this.setSize(new Dimension(71,26));
+		}
+	}
+	
+	public void setMuster(boolean muster, List<DragElement> list){
+		if (muster && textfield != null){
+			for(DragElement n:list){
+				if (n.getId() == this.id){
+					textfield.setText(n.getCaption());
+					break;
+				}
+			}			
 		}
 	}
 	
