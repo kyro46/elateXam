@@ -21,6 +21,8 @@ import com.spiru.dev.compareTextTask_addon.Utils.XMLBase64;
 public class CompareTextApplet extends Applet {
 	private CompareTextPanel jpanel;
 	private Task task;
+	private boolean hasChanged = false;	
+	private String sofarStart = "";
 	/**
 	 * Initialization method that will be called after the applet is loaded into
 	 * the browser.
@@ -30,7 +32,7 @@ public class CompareTextApplet extends Applet {
 		//this.getParameter("..."); // HTML: <parma name="" value=""></param>
 		// http://docs.oracle.com/javase/tutorial/deployment/applet/invokingAppletMethodsFromJavaScript.html
 		// http://stackoverflow.com/questions/7278626/javascript-to-java-applet-communication
-		String sofar = this.getParameter("soFarSolution"); // will be "EMPTY" (literally!) unless student triggered Save Page
+		String sofar = this.getParameter("soFarSolution"); // will be "EMPTY" (literally!) unless student triggered Save Page								
 		String memento = this.getParameter("memento"); // is expected to contain Base64 representation of Memento part in AddonTaskDef
 		boolean view_only = Boolean.parseBoolean(this.getParameter("viewOnly")); // correcor shouldn't be able to manipulate result
 		if (memento == null && this.getWidth() < 300) { // is NULL, when Applet is not loaded from a Webbrowser, but from Eclipse
@@ -42,8 +44,15 @@ public class CompareTextApplet extends Applet {
 		String leftTextStr = "";
 		Element mementoTaskDef = XMLBase64.base64StringToElement(memento, null);
 		Element availableTags = (Element) mementoTaskDef.getElementsByTagName("availableTags").item(0);
-		if (sofar != null && !sofar.equals("EMPTY")) // so-far solution will be sent as Base64 String
+		if (sofar != null && !sofar.equals("EMPTY")){ // so-far solution will be sent as Base64 String
 			sofar = new String(DatatypeConverter.parseBase64Binary(sofar));
+			if (sofar != null && !sofar.isEmpty()){
+				if (sofar.indexOf("#changed#") == 0){					
+					this.hasChanged = true;
+					sofar = sofar.replaceFirst("#changed#", "");					
+				}
+			}
+		}
 		if (view_only) { // Correction Mode -> use Sample Solution on the left
 			Element sampleSolution = (Element) mementoTaskDef.getElementsByTagName("sampleSolution").item(0);
 			leftTextStr = sampleSolution.getFirstChild().getNodeValue();
@@ -53,9 +62,10 @@ public class CompareTextApplet extends Applet {
 			leftTextStr = initialText.getFirstChild().getNodeValue();
 			leftTextStr = leftTextStr.replaceAll("<br/>", "\n");
 			if (sofar == null || sofar.equals("EMPTY")) {
-				sofar = leftTextStr;
+				sofar = leftTextStr;				
 			}
 		}
+		sofarStart = sofar; 
 		jpanel = new CompareTextPanel(leftTextStr, sofar, availableTags,
 				view_only, this.getWidth(), this.getHeight());
 		add(jpanel);
@@ -63,22 +73,26 @@ public class CompareTextApplet extends Applet {
 		task = new Task(this);
 		timer.schedule(task, 1000, 1500);
 	}
-	public String getResult() {
-		String ret = jpanel.getRightTextAreaContent();
+	
+	public String getResult() {				
+		String ret = "";		
+		if (this.hasChanged || (jpanel.getRightTextAreaContent()!= null && !jpanel.getRightTextAreaContent().equals(sofarStart))){
+			ret = "#changed#";			
+		}		
+		if (jpanel.getRightTextAreaContent() != null && !jpanel.getRightTextAreaContent().isEmpty()){
+			ret += jpanel.getRightTextAreaContent();
+		}				
 		return DatatypeConverter.printBase64Binary(ret.getBytes());
 	}
+	
 	public boolean hasChanged() {
-		return false;
-		/*
-		 * Anmerkung:
-		 * Text wird bearbeitet -> unterscheidet sich also und liefert true zurück
-		 * ----> bei speichern wird daran aber nichts geändert
-		 * ------> es kommt jedes mal der aufruf, dass noch nicht alle änderungen gespeichert wurden
-		 * ---> soll aber nur kommen, wenn etwas geändert wird und dann auf 
-		 *      abgeben statt auf speichern geklickt wurde
-		 * (Yves)      
-		 */
-		//return jpanel.getRightTextAreaContent() != jpanel.getLeftTextAreaContent();
+		if (jpanel.getRightTextAreaContent() == null || sofarStart == null){
+			return false;
+		}
+		if (sofarStart.equals(jpanel.getRightTextAreaContent())){
+			return false;
+		}
+		return true;
 	}
 
 	@Override
@@ -86,7 +100,7 @@ public class CompareTextApplet extends Applet {
 	}
 
 	@Override
-	public void stop() {
+	public void stop() {		
 	}
 
 	public void draw() {

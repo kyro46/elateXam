@@ -73,8 +73,8 @@ public class CompareTextPanel extends JPanel {
 		scrollPaneLeft = new JScrollPane();
 		scrollPaneRight = new JScrollPane();
 		textAreaLeft = new RSyntaxTextArea(); // JTextArea
-		textAreaRight = new RSyntaxTextArea(); // JTextArea
-
+		textAreaRight = new RSyntaxTextArea(); // JTextArea		
+		
 		//Font font = new JTextArea().getFont();
 		Font font = new Font("Verdana", Font.PLAIN, Integer.parseInt(defaultFontSize));
 		//System.out.println(font);
@@ -150,7 +150,7 @@ public class CompareTextPanel extends JPanel {
 		}
 	}
 	
-	protected void highlightXmlTags() {
+	protected void highlightXmlTags() {		
 		Highlighter highlighter = textAreaRight.getHighlighter();
 		highlighter.removeAllHighlights();
 		String txt = textAreaRight.getText();
@@ -174,6 +174,13 @@ public class CompareTextPanel extends JPanel {
 	}
 
 	public void onCaretMove(final int dot, final int mark) {
+		if (textAreaRight.getText() == null || textAreaRight.getText().isEmpty()){
+			lastCaretPosRight = 0;
+			return;
+		}
+		if (lastCaretPosRight > textAreaRight.getText().length()){
+			lastCaretPosRight = 0;
+		}
 		// check if still in the same sentence (in the right Pane)
 		char[] text_between;
 		try {
@@ -195,7 +202,7 @@ public class CompareTextPanel extends JPanel {
 			}
 			lastCaretPosRight = dot;
 		} catch (StringIndexOutOfBoundsException e) {
-			System.out.println(e);
+			e.printStackTrace();			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -305,7 +312,7 @@ public class CompareTextPanel extends JPanel {
 
 		// Configure Scrollbars
 		scrollPaneLeft.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		scrollPaneRight.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		scrollPaneRight.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);		
 		textAreaRight.addComponentListener(new ComponentListener() {
 			@Override public void componentResized(ComponentEvent e) {
 				Dimension d = textAreaRight.getSize();

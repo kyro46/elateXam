@@ -174,6 +174,13 @@ public class CompareTextPanel extends JPanel {
 	}
 
 	public void onCaretMove(final int dot, final int mark) {
+        if (textAreaRight.getText() == null || textAreaRight.getText().isEmpty()){
+			lastCaretPosRight = 0;
+			return;
+		}
+		if (lastCaretPosRight > textAreaRight.getText().length()){
+			lastCaretPosRight = 0;
+		}
 		// check if still in the same sentence (in the right Pane)
 		char[] text_between;
 		try {

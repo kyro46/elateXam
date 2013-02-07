@@ -66,8 +66,14 @@ public class CompareTextProfessorApplet extends Applet {
 			Element textComparisonSubTaskDef = document.createElement("textComparisonSubTaskDef");
 			Element initialText = document.createElement("initialText");
 			Element sampleSolution = document.createElement("sampleSolution");
-			initialText.setTextContent(jpanel.getInitialText());
-			sampleSolution.setTextContent(jpanel.getSampleSolution());
+            if (jpanel.getInitialText() != null)
+                initialText.setTextContent(jpanel.getInitialText());
+            else
+                initialText.setTextContent(" ");
+            if (jpanel.getSampleSolution()!=null)
+                sampleSolution.setTextContent(jpanel.getSampleSolution());
+            else
+                sampleSolution.setTextContent(" ");
 			textComparisonSubTaskDef.appendChild(initialText);
 			textComparisonSubTaskDef.appendChild(sampleSolution);
 			Memento.appendChild(textComparisonSubTaskDef);

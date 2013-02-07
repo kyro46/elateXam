@@ -44,14 +44,14 @@ public class SubTaskView_CompareTextTask extends SubTaskView{
 		if (!corrected) {
 			ret += "<script type=\"text/javascript\">\n";
 			ret += " var preSave_task_%s = function(){\n";
-			ret += " 	document.getElementById(\"task_%s.result\").value = document.applet_%s.getResult();\n";
-			//ret += " 	alert(document.getElementById(\"task_%s.result\").value);\n";
-			ret += "};\n";
-			ret += " var leavePage_task_%s = function(){\n";
+			ret += " 	document.getElementById(\"task_%s.result\").value = document.applet_%s.getResult();\n";			
+			ret += "};\n";			
+			ret += " var leavePage_task_%s = function(){\n";			
 			ret += " 	if( document.applet_%s.hasChanged() ){\n";
-			ret += " 		setModified();\n";
+			ret += " 		setModified();\n";			
 			ret += " 	};\n";
 			ret += " };\n";
+			
 			ret += "preSaveManager.registerCallback( preSave_task_%s );\n";
 			ret += "leavePageManager.registerCallback( leavePage_task_%s );\n";
 			ret += "</script>\n";
@@ -91,15 +91,13 @@ public class SubTaskView_CompareTextTask extends SubTaskView{
 	 */
 	@Override
 	public SubmitData getSubmitData(Map postedVarsForTask) throws ParsingException {
-		String resultstr = null;
 		Iterator it = postedVarsForTask.keySet().iterator();
 		while( it.hasNext() ) {
-			String key = (String) it.next();
-			if (getMyPart(key).equals("result"))
-				resultstr = (String) postedVarsForTask.get(key);
+			String key=(String) it.next();
+			String value = (String) postedVarsForTask.get(key);	
+			return new CompareTextTaskSubmitData( value );
 		}
-		if (resultstr == null) throw new ParsingException(postedVarsForTask.toString());
-		return new CompareTextTaskSubmitData(resultstr);
+		throw new ParsingException();
 	}
 
 	@Override

@@ -124,15 +124,20 @@ public class SubTasklet_CompareTextTaskImpl extends AbstractAddonSubTasklet impl
 	}
 	
 	@Override
-	public boolean isProcessed(){
+	public boolean isProcessed(){		
 		try {
-			if (getResult().equals("EMPTY"))
-				return false;
+			String result = getResult();		
+			if (result==null)
+				return false;								
+			if (result.indexOf("#changed#") == 0 ){				
+				return true;
+			}			
+			return false;
 		} catch (XMLParseException e) {
+			// TODO Auto-generated catch block			
 			e.printStackTrace();
 		}
-		return true;
-		//return getResult() != null && getResult().length() > 0 && !getResult().equals(getInitialText());
+		return false;
 	}
 
 	/*
