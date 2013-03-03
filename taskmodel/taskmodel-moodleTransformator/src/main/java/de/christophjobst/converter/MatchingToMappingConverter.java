@@ -10,15 +10,10 @@ package de.christophjobst.converter;
 
 import java.io.IOException;
 import java.util.*;
-
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-
 import org.xml.sax.SAXException;
-
-import generated.Quiz;
 import generated.Quiz.Question;
-
 import de.christophjobst.main.Base64Relocator;
 import de.christophjobst.main.RandomIdentifierGenerator;
 import de.thorstenberger.taskmodel.complex.complextaskdef.MappingSubTaskDef.Concept;

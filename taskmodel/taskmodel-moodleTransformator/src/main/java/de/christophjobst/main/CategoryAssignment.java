@@ -11,6 +11,7 @@ package de.christophjobst.main;
 import java.util.List;
 
 import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef;
+import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef.Category;
 
 public class CategoryAssignment {
 
@@ -20,10 +21,11 @@ public class CategoryAssignment {
 			List<CategoryManager> categoryManagerList) {
 		for (CategoryManager categoryManager : categoryManagerList) {
 			// Nur Categorien übernehmen, die mindestens 1 Taskblock haben
-			categoryManager.generateCategory();
-			if (categoryManager.getCategory()
+			
+			Category category = categoryManager.getCategory();
+			if (category
 					.getMcTaskBlockOrClozeTaskBlockOrTextTaskBlock().toArray().length != 0) {
-				complexTaskDef.getCategory().add(categoryManager.getCategory());
+				complexTaskDef.getCategory().add(category);
 			}
 		}
 		return complexTaskDef;

@@ -14,16 +14,29 @@ import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef.Categor
 
 public class CategoryToCategoryConverter {
 
-	public static Category processing(Question question) {
+	public static Category processing(Question question, int startmarke) {
 
 		RandomIdentifierGenerator rand = new RandomIdentifierGenerator();
 
 		Category category = new Category();
-		category.setTitle(question.getCategory().getText().substring(9));
+		category.setTitle(question.getCategory().getText().substring(startmarke));
 		category.setId("Kategorie_" + rand.getRandomID());
-		category.setIgnoreOrderOfBlocks(false);
-		category.setMixAllSubTasks(false);
 
+		//Aus dem Klausurplugin?
+		if (startmarke == 0) {
+			if (question.getCategory().getShuffle().toString().equals("0")){
+				category.setMixAllSubTasks(false);
+				category.setIgnoreOrderOfBlocks(false);
+			}else {
+				category.setMixAllSubTasks(true);
+				category.setIgnoreOrderOfBlocks(true);
+			}
+		}else {
+			//Normaler Frageexport -> beachte immer Reihenfolge in der Datei
+			category.setMixAllSubTasks(false);
+			category.setIgnoreOrderOfBlocks(false);
+		}
+		
 		return category;
 	}
 }
