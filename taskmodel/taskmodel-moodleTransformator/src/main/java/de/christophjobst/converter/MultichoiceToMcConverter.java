@@ -79,7 +79,7 @@ public class MultichoiceToMcConverter {
 				.getFile()));
 		subTask.setId(question.getName().getText().toString() + "_"
 				+ rand.getRandomID());
-		int correctAnswerCount = 0;
+		// int correctAnswerCount = 0;
 		for (int j = 0; j < question.getAnswer().toArray().length; j++) {
 
 			if (!question.getAnswer().get(j).getFraction().equals("0")) {
@@ -87,7 +87,7 @@ public class MultichoiceToMcConverter {
 						.getAnswer().get(j).getText(), question.getAnswer()
 						.get(j).getFile()));
 				correct.setId(rand.getRandomID());
-				correctAnswerCount++;
+				// correctAnswerCount++;
 				subTask.getCorrectOrIncorrect().add(correct);
 				correct = new McSubTaskDef.Correct();
 
@@ -107,9 +107,9 @@ public class MultichoiceToMcConverter {
 		 * Lösungen Kann so nicht abgebildet werden - daher Umwandlung zur
 		 * multichoice-Aufgabe
 		 */
-		if (correctAnswerCount > 1) {
-			subTask.setCategory("multipleSelect");
-		}
+		// if (correctAnswerCount > 1) {
+		// subTask.setCategory("multipleSelect");
+		// }
 
 		return subTask;
 	}

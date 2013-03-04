@@ -298,16 +298,16 @@
 								type="xs:int">
 							</xs:element>
 							<xs:element name="penalty_empty"
-								type="xs:double">
+								type="xs:float">
 							</xs:element>
 							<xs:element name="penalty_wrong"
-								type="xs:double">
+								type="xs:float">
 							</xs:element>
 							<xs:element name="shuffleanswers"
 								type="xs:boolean">
 							</xs:element>
 							<xs:element name="assessmentmode"
-								type="xs:int">
+								type="xs:boolean">
 							</xs:element>
 							<xs:element name="initialtextfieldvalue"
 								type="xs:string">

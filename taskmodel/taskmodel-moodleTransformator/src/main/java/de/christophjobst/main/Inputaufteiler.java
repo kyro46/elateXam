@@ -212,13 +212,14 @@ public class Inputaufteiler {
 							try {
 								penalty = Float.parseFloat(quizsammlung
 										.getQuestion().get(i).getPenalty());
-								
+
 								if (penalty < 0) {
 									penalty = 1;
 								}
-								
+
 							} catch (Exception e) {
-								//Kein Penalty-Element vorhanden -> nimm Standard 1
+								// Kein Penalty-Element vorhanden -> nimm
+								// Standard 1
 								penalty = 1;
 
 							}
@@ -242,12 +243,32 @@ public class Inputaufteiler {
 											TruefalseToMcConverter.processing(quizsammlung
 													.getQuestion().get(i)),
 											quizsammlung.getQuestion().get(i)
-													.getDefaultgrade());
+													.getDefaultgrade(), false, 1.f, 0.f, 0.f);
 							categoryManagerList.get(belongingCategoryIndex)
 									.setHasMcTaskBlock(true);
 						}
 
 						if (questionType.equals("multichoice")) {
+
+							float penalty = 1;
+							Boolean assessmentmode = false;
+							float penaltyEmpty = 0;
+							float penaltyWrong = 0;
+							try {
+								penalty = Float.parseFloat(quizsammlung
+										.getQuestion().get(i).getPenalty());
+								assessmentmode = quizsammlung.getQuestion()
+										.get(i).isAssessmentmode();
+								penaltyEmpty = quizsammlung.getQuestion()
+										.get(i).getPenaltyEmpty();
+								penaltyWrong = quizsammlung.getQuestion()
+										.get(i).getPenaltyWrong();
+							} catch (NullPointerException e) {
+								System.out
+										.println("Problem bei MC-Penalty's - nimm regular");
+								assessmentmode = Boolean.FALSE;
+
+							}
 
 							categoryManagerList
 									.get(belongingCategoryIndex)
@@ -255,7 +276,7 @@ public class Inputaufteiler {
 											MultichoiceToMcConverter.processing(quizsammlung
 													.getQuestion().get(i)),
 											quizsammlung.getQuestion().get(i)
-													.getDefaultgrade());
+													.getDefaultgrade(), assessmentmode, penalty, penaltyEmpty, penaltyWrong);
 							categoryManagerList.get(belongingCategoryIndex)
 									.setHasMcTaskBlock(true);
 

@@ -11,6 +11,7 @@ package de.christophjobst.main;
 import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef.Category.AddonTaskBlock;
 import de.thorstenberger.taskmodel.complex.complextaskdef.AddonSubTaskDef;
 import de.thorstenberger.taskmodel.complex.complextaskdef.ClozeSubTaskDef;
+import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef.Category.McTaskBlock.McConfig.Regular;
 import de.thorstenberger.taskmodel.complex.complextaskdef.Config;
 import de.thorstenberger.taskmodel.complex.complextaskdef.McSubTaskDef;
 import de.thorstenberger.taskmodel.complex.complextaskdef.TextSubTaskDef;
@@ -152,7 +153,9 @@ public class CategoryManager {
 
 	}
 
-	public void setMcTaskBlock(McSubTaskDef mcSubTaskDef, String defaultgrade) {
+	public void setMcTaskBlock(McSubTaskDef mcSubTaskDef, String defaultgrade,
+			Boolean assessmentmode, float penalty, float penaltyEmpty,
+			float penaltyWrong) {
 
 		// Einfach alles nehmen und mit versch. Bepunktung etc. eintragen.
 		if (num_shown.equals("-1")) {
@@ -165,11 +168,18 @@ public class CategoryManager {
 
 			mcTaskBlock.setConfig(generalTaskBlockConfig);
 			McConfig mcConfig = new McConfig();
-			Different different = new Different();
-			// TODO NegativePoints aus Moodle beziehen
-			different.setCorrectAnswerNegativePoints(1);
-			different.setIncorrectAnswerNegativePoints(0);
-			mcConfig.setDifferent(different);
+
+			if (assessmentmode) {
+				Different different = new Different();
+				different.setCorrectAnswerNegativePoints(penaltyEmpty);
+				different.setIncorrectAnswerNegativePoints(penaltyWrong);
+				mcConfig.setDifferent(different);
+			} else {
+				Regular regular = new Regular();
+				regular.setNegativePoints(penalty);
+				mcConfig.setRegular(regular);
+			}
+
 			mcTaskBlock.setMcConfig(mcConfig);
 
 			mcTaskBlock.getMcSubTaskDefOrChoice().add(mcSubTaskDef);
@@ -189,11 +199,16 @@ public class CategoryManager {
 
 				mcTaskBlock.setConfig(generalTaskBlockConfig);
 				McConfig mcConfig = new McConfig();
-				Different different = new Different();
-				// TODO NegativePoints aus Moodle beziehen
-				different.setCorrectAnswerNegativePoints(1);
-				different.setIncorrectAnswerNegativePoints(0);
-				mcConfig.setDifferent(different);
+				if (assessmentmode) {
+					Different different = new Different();
+					different.setCorrectAnswerNegativePoints(penaltyEmpty);
+					different.setIncorrectAnswerNegativePoints(penaltyWrong);
+					mcConfig.setDifferent(different);
+				} else {
+					Regular regular = new Regular();
+					regular.setNegativePoints(penalty);
+					mcConfig.setRegular(regular);
+				}
 				mcTaskBlock.setMcConfig(mcConfig);
 
 				mcTaskBlock.getMcSubTaskDefOrChoice().add(mcSubTaskDef);
@@ -246,12 +261,11 @@ public class CategoryManager {
 			float defaultgrade, Boolean casesensitivity, float penalty) {
 
 		float negativePoints = penalty;
-		 System.out.println(negativePoints);
+		System.out.println(negativePoints);
 		// if (negativePoints == 0) {
 		// negativePoints = 1.0f;
 		// }
-				
-		
+
 		// Einfach alles nehmen und mit versch. Bepunktung etc. eintragen.
 		if (num_shown.equals("-1")) {
 			clozeTaskBlock = new ClozeTaskBlock();
@@ -264,7 +278,6 @@ public class CategoryManager {
 			clozeTaskBlock.setConfig(generalTaskBlockConfig);
 			ClozeConfig clozeConfig = new ClozeConfig();
 			clozeConfig.setIgnoreCase(casesensitivity);
-			// TODO NegativePoints aus Moodle beziehen
 			clozeConfig.setNegativePoints(negativePoints);
 			clozeTaskBlock.setClozeConfig(clozeConfig);
 
@@ -286,7 +299,6 @@ public class CategoryManager {
 				clozeTaskBlock.setConfig(generalTaskBlockConfig);
 				ClozeConfig clozeConfig = new ClozeConfig();
 				clozeConfig.setIgnoreCase(true);
-				// TODO NegativePoints aus Moodle beziehen
 				clozeConfig.setNegativePoints(negativePoints);
 				clozeTaskBlock.setClozeConfig(clozeConfig);
 
@@ -339,9 +351,10 @@ public class CategoryManager {
 		}
 
 	}
-	
+
 	public int getCategoryLength() {
-		return category.getMcTaskBlockOrClozeTaskBlockOrTextTaskBlock().toArray().length;
+		return category.getMcTaskBlockOrClozeTaskBlockOrTextTaskBlock()
+				.toArray().length;
 	}
 
 	public Category getCategory() {
