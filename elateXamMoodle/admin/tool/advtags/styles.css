@@ -31,12 +31,12 @@ body .ui-tooltip { border-width: 2px; }
     border-radius: 4px;
 }
 .ajax_failed {
-    background: #FFE1E1 url(./../pix/i/cross_red_big.gif) no-repeat 5px center;
+    background: #FFE1E1 url('../pix/i/cross_red_big.gif') no-repeat 5px center;
     border: 2px solid #CD0A0A;
     color: #CD0A0A;
 }
 .ajax_success {
-    background: #DCFFDC url(./../pix/i/tick_green_big.gif) no-repeat 5px center;
+    background: #DCFFDC url('../pix/i/tick_green_big.gif') no-repeat 5px center;
     border: 1px solid #14B80A;
 }
 .save_text {

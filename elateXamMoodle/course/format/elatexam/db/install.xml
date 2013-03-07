@@ -1,87 +1,38 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="course/format/elatexam/db" VERSION="20121220" COMMENT="XMLDB file for Moodle course/format/elatexam"
+<XMLDB PATH="course/format/elatexam/db" VERSION="20130104" COMMENT="XMLDB file for Moodle course/format/elatexam"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="exam" COMMENT="Overview of ElateXam exams managed by the elatexam course format." NEXT="exam_categories">
+    <TABLE NAME="exam" COMMENT="Overview of ElateXam exams managed by the elatexam course format." NEXT="exam_exports">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="time"/>
-        <FIELD NAME="time" TYPE="int" LENGTH="4" NOTNULL="true" SEQUENCE="false" COMMENT="Available time in minutes to solve the task." PREVIOUS="id" NEXT="kindnessextensiontime"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="title"/>
+        <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Title of exam." PREVIOUS="id" NEXT="time"/>
+        <FIELD NAME="time" TYPE="int" LENGTH="4" NOTNULL="true" SEQUENCE="false" COMMENT="Available time in minutes to solve the task." PREVIOUS="title" NEXT="kindnessextensiontime"/>
         <FIELD NAME="kindnessextensiontime" TYPE="int" LENGTH="4" NOTNULL="true" SEQUENCE="false" COMMENT="Additional Time invisible to the Student." PREVIOUS="time" NEXT="tasksperpage"/>
         <FIELD NAME="tasksperpage" TYPE="int" LENGTH="4" NOTNULL="true" SEQUENCE="false" COMMENT="How many Questions should the Student see per page?" PREVIOUS="kindnessextensiontime" NEXT="tries"/>
         <FIELD NAME="tries" TYPE="int" LENGTH="4" NOTNULL="true" SEQUENCE="false" COMMENT="Number of possible tries to solve the task." PREVIOUS="tasksperpage" NEXT="showhandlinghintsbeforestart"/>
         <FIELD NAME="showhandlinghintsbeforestart" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="Whether to Show Introduction (there is no boolean type in XMLDB)" PREVIOUS="tries" NEXT="numberofcorrectors"/>
         <FIELD NAME="numberofcorrectors" TYPE="int" LENGTH="4" NOTNULL="true" SEQUENCE="false" COMMENT="Number of (human) correctors to proceed the correction of the Tasklet." PREVIOUS="showhandlinghintsbeforestart" NEXT="description"/>
         <FIELD NAME="description" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="legacy alias: questiontext" PREVIOUS="numberofcorrectors" NEXT="starttext"/>
-        <FIELD NAME="starttext" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="legacy alias: generalfeedback" PREVIOUS="description"/>
+        <FIELD NAME="starttext" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="legacy alias: generalfeedback" PREVIOUS="description" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="starttext"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="courseid"/>
+        <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="exam_categories" COMMENT="Categories for grouping questions inside exams" PREVIOUS="exam" NEXT="exam_category_question">
+    <TABLE NAME="exam_exports" COMMENT="exported exams" PREVIOUS="exam">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="name"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="info"/>
-        <FIELD NAME="info" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="examid"/>
-        <FIELD NAME="examid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Foreign Key refernces exam.id" PREVIOUS="info" NEXT="parent"/>
-        <FIELD NAME="parent" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="examid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="export_time"/>
+        <FIELD NAME="export_time" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="examid"/>
+        <FIELD NAME="examid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Foreign Key refernces exam.id" PREVIOUS="export_time" NEXT="structure"/>
+        <FIELD NAME="structure" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="examid"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="parent"/>
-        <KEY NAME="parent" TYPE="foreign" FIELDS="parent" REFTABLE="exam_categories" REFFIELDS="id" COMMENT="Comment from question_categories: note that to make this recursive FK working, the parent field must be declared NULL" PREVIOUS="primary" NEXT="examid"/>
-        <KEY NAME="examid" TYPE="foreign" FIELDS="examid" REFTABLE="exam" REFFIELDS="id" COMMENT="Foreign Key references exam.id" PREVIOUS="parent"/>
-      </KEYS>
-    </TABLE>
-    <TABLE NAME="exam_category_question" COMMENT="Map questions to exam_categories (1:1)." PREVIOUS="exam_categories" NEXT="qtype_enhancements_mc">
-      <FIELDS>
-        <FIELD NAME="categoryid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Foreign Key references exam_categories.id" NEXT="questionid"/>
-        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Foreign Key references question.id" PREVIOUS="categoryid"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="categoryid" TYPE="foreign" FIELDS="categoryid" REFTABLE="exam_categories" REFFIELDS="id" NEXT="questionid"/>
-        <KEY NAME="questionid" TYPE="foreign" FIELDS="questionid" REFTABLE="question" REFFIELDS="id" PREVIOUS="categoryid" NEXT="primary"/>
-        <KEY NAME="primary" TYPE="unique" FIELDS="categoryid, questionid" PREVIOUS="questionid"/>
-      </KEYS>
-    </TABLE>
-    <TABLE NAME="qtype_enhancements_mc" COMMENT="Additional Columns for MultipleChoice Questions." PREVIOUS="exam_category_question" NEXT="qtype_enhancements_essay">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="questionid"/>
-        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="id" NEXT="num_shown"/>
-        <FIELD NAME="num_shown" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="Number of visible Answers" PREVIOUS="questionid" NEXT="num_right_min"/>
-        <FIELD NAME="num_right_min" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="Minimal visible correct Answers" PREVIOUS="num_shown" NEXT="num_right_max"/>
-        <FIELD NAME="num_right_max" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="Maximal visible correct Answers" PREVIOUS="num_right_min" NEXT="penalty_empty"/>
-        <FIELD NAME="penalty_empty" TYPE="number" LENGTH="12" NOTNULL="false" SEQUENCE="false" DECIMALS="7" COMMENT="Negative Points for not chosen correct Answers" PREVIOUS="num_right_max" NEXT="penalty_wrong"/>
-        <FIELD NAME="penalty_wrong" TYPE="number" LENGTH="12" NOTNULL="false" SEQUENCE="false" DECIMALS="7" COMMENT="Negative Points for chosen wrong Answer" PREVIOUS="penalty_empty" NEXT="assessmentmode"/>
-        <FIELD NAME="assessmentmode" TYPE="int" LENGTH="2" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="0...regular (negative Points for False Answers) 1... differently (differentiate between negative Points for not chosen correct Answers and negative Points for chosen wrong Answer)" PREVIOUS="penalty_wrong"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="questionid"/>
-        <KEY NAME="questionid" TYPE="foreign" FIELDS="questionid" REFTABLE="question" REFFIELDS="id" PREVIOUS="primary"/>
-      </KEYS>
-    </TABLE>
-    <TABLE NAME="qtype_enhancements_essay" COMMENT="Additional Columns for Essay Questions." PREVIOUS="qtype_enhancements_mc" NEXT="qtype_enhancements_cloze">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="questionid"/>
-        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="id" NEXT="responsefieldwidth"/>
-        <FIELD NAME="responsefieldwidth" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" PREVIOUS="questionid" NEXT="initialtextfieldvalue"/>
-        <FIELD NAME="initialtextfieldvalue" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="vorbelegung des textfeldes" PREVIOUS="responsefieldwidth"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="questionid"/>
-        <KEY NAME="questionid" TYPE="foreign" FIELDS="questionid" REFTABLE="question" REFFIELDS="id" PREVIOUS="primary"/>
-      </KEYS>
-    </TABLE>
-    <TABLE NAME="qtype_enhancements_cloze" COMMENT="Additional Columns for MultiAnswer Questions." PREVIOUS="qtype_enhancements_essay">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="questionid"/>
-        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="id" NEXT="casesensitivity"/>
-        <FIELD NAME="casesensitivity" TYPE="int" LENGTH="2" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="0... ignore case 1... case sensitive" PREVIOUS="questionid"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="questionid"/>
-        <KEY NAME="questionid" TYPE="foreign" FIELDS="questionid" REFTABLE="question" REFFIELDS="id" PREVIOUS="primary"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="examid"/>
+        <KEY NAME="examid" TYPE="foreign" FIELDS="examid" REFTABLE="exam" REFFIELDS="id" COMMENT="Foreign Key references exam.id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
   </TABLES>
