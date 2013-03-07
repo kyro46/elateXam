@@ -27,4 +27,3 @@ $string['pluginname'] = 'Standard';
 $string['region-side-post'] = 'Right';
 $string['region-side-pre'] = 'Left';
 $string['choosereadme'] = 'This theme is a very basic white theme, with a minimum amount of CSS added to the base theme to make it actually usable.';
-require_once('xam.php');
