@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <XMLDB PATH="question/type/multianswer/db" VERSION="20120122" COMMENT="XMLDB file for Moodle question/type/multianswer">
   <TABLES>
-    <TABLE NAME="question_multianswer" COMMENT="Options for multianswer questions">
+    <TABLE NAME="question_multianswer" COMMENT="Options for multianswer questions" NEXT="qtype_enhancements_cloze">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="question"/>
         <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="sequence"/>
@@ -10,6 +10,17 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="question"/>
         <KEY NAME="question" TYPE="foreign" FIELDS="question" REFTABLE="question" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+    </TABLE>
+	    <TABLE NAME="qtype_enhancements_cloze" COMMENT="Additional Columns for MultiAnswer Questions." PREVIOUS="question_multianswer">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="questionid"/>
+        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="id" NEXT="casesensitivity"/>
+        <FIELD NAME="casesensitivity" TYPE="int" LENGTH="2" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="0... ignore case 1... case sensitive" PREVIOUS="questionid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="questionid"/>
+        <KEY NAME="questionid" TYPE="foreign" FIELDS="questionid" REFTABLE="question" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
   </TABLES>
