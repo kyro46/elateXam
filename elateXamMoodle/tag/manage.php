@@ -21,8 +21,6 @@
  * @copyright  2007 Luiz Cruz <luiz.laydner@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-include('manageadv.php');
-if(false){
 require_once('../config.php');
 require_once($CFG->libdir.'/tablelib.php');
 require_once('lib.php');
@@ -308,4 +306,3 @@ if ($perpage == SHOW_ALL_PAGE_SIZE) {
 echo '<br/>';
 
 echo $OUTPUT->footer();
-}

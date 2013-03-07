@@ -1,14 +1,18 @@
 <?php
 $xml_output = "<?xml version=\"1.0\"?>\n<response>\n";
-require_once('../config.php');
-require_once('lib.php');
+require_once('../../../config.php');
+require_once($CFG->dirroot.'/tag/lib.php');
+if (!isloggedin()) {
+    header("Content-type: text/xml");
+    echo $xml_output."<status>login failed</status>\n</response>";
+} else { 
 require_login();
 $task   = optional_param('task', '', PARAM_ALPHA);
 $id     = optional_param('tagid', '', PARAM_INT);
 $morexml = '';
 $error = '';
 if (strlen($task) == 0 || $id <= 0 ) {
-    $error = get_string('missing_data','theme_standard');
+    $error = get_string('missing_data','tool_advtags');
 } else {
     switch ($task) {
         case 'changetype':
@@ -26,10 +30,10 @@ if (strlen($task) == 0 || $id <= 0 ) {
                     }
                     
                 } else {
-                    $error = get_string('not_existing_tag','theme_standard');
+                    $error = get_string('not_existing_tag','tool_advtags');
                 }
             } else {
-                $error = get_string('undefined_tagtype','theme_standard');
+                $error = get_string('undefined_tagtype','tool_advtags');
             }
             break;
         case 'editname':
@@ -43,19 +47,19 @@ if (strlen($task) == 0 || $id <= 0 ) {
                     $morexml .= "<name>".$record->rawname."</name>\n";
                     
                 } else {
-                    $error = get_string('not_existing_tag','theme_standard');
+                    $error = get_string('not_existing_tag','tool_advtags');
                 }
             } else {
-                $error = get_string('missing_tagname','theme_standard');
+                $error = get_string('missing_tagname','tool_advtags');
             }
             break;
         case 'deletetag':
             if ($DB->record_exists('tag', array('id' => $id))) {
                 if (!tag_delete($id) ) {
-                    $error = get_string('tag_del_error','theme_standard');
+                    $error = get_string('tag_del_error','tool_advtags');
                 }
             } else {
-                $error = get_string('not_existing_tag','theme_standard');
+                $error = get_string('not_existing_tag','tool_advtags');
             }
             break;
         case 'writepredef':
@@ -69,7 +73,7 @@ if (strlen($task) == 0 || $id <= 0 ) {
                 $record = $DB->get_record('tag', array('id'=>$record->id));
                 $morexml .= "<name>".$record->rawname."</name>\n";
             } else {
-                $error = get_string('not_existing_tag','theme_standard');
+                $error = get_string('not_existing_tag','tool_advtags');
             }
             break;
         case 'setinstances':
@@ -111,24 +115,24 @@ WHERE tg.name LIKE '".$record->name."=%' AND ti.itemtype = 'question') ";
                             $morexml .= "<created>".($questionsafter - $questionsbefore)."</created>\n";
                             $morexml .= "<newcount>".$questionsafter."</newcount>\n";
                         } else {
-                            $error = get_string('db_error_update','theme_standard');
+                            $error = get_string('db_error_update','tool_advtags');
                         }
                         mysql_close($conn);
                         
                     } else {
-                        $error = get_string('error_create_instanz_1','theme_standard').$record->name."=".$description.get_string('error_create_instanz_2','theme_standard');
+                        $error = get_string('error_create_instanz_1','tool_advtags').$record->name."=".$description.get_string('error_create_instanz_2','tool_advtags');
                     }
                 } else {
-                    $error = get_string('instance_missmatch','theme_standard').$instance." , Server:$description";
+                    $error = get_string('instance_missmatch','tool_advtags').$instance." , Server:$description";
                 }
             } else {
-                $error = get_string('missing_instance','theme_standard');
+                $error = get_string('missing_instance','tool_advtags');
             }
 
                 
             break;
         default:
-            $error = get_string('wrong_task','theme_standard');
+            $error = get_string('wrong_task','tool_advtags');
             break;
     }
 
@@ -141,4 +145,5 @@ if (strlen($error)>0) {
 }
 header("Content-type: text/xml");
 echo $xml_output."</response>";
+}
 ?>
