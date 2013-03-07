@@ -23,14 +23,20 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$context = context_course::instance($course->id);
-if (optional_param('alive', 0, PARAM_INT) != 1) {//keeping_session_alive
-    if (($marker >=0) && has_capability('moodle/course:setcurrentsection', $context) && confirm_sesskey()) {
-        $course->marker = $marker;
-        course_set_marker($course->id, $marker);
-    }
-    
-    $renderer = $PAGE->get_renderer('format_elatexam');
-    
-    $renderer->print_multiple_section_page($course, $sections, $mods, $modnames, $modnamesused);
-}
+/*
+Forwarding is needed, because
+ - question_bank_view uses "question.php" as target for all forms
+ - the way /course/view.php works limits us e.g. to change anything in the headers
+ 	-> exam_bank_setup() would try change those headers
+ - question_bank_view renders the hole site, everything inbetween <html>*</html>
+... it would be very hard to overwrite all this behaviour
+*/
+
+$fw = $CFG->wwwroot . '/course/format/elatexam/edit.php?courseid=' . required_param('id', PARAM_INT);
+echo '<script type="text/javascript">
+<!--
+window.location = "' . $fw . '"
+//-->
+</script>
+Um diesen Kurs zu benutzen, muss Javascript aktiviert sein.
+Für eine manuelle Weiterleitung klicken Sie <a href="' .$fw. '">hier</a>.';
