@@ -36,8 +36,7 @@ public class MetaToConfigConverter {
 		config.setKindnessExtensionTime(Integer.parseInt(question.getKindnessextensiontime()));
 		config.setTasksPerPage(Integer.parseInt(question.getTasksperpage()));
 		config.setTries(Integer.parseInt(question.getTries()));
-		complexTaskDef.setConfig(config);
-		complexTaskDef.setID(rand.getRandomID());
+
 
 		int numberOfCorrectors = Integer.parseInt(question.getNumberofcorrectors());
 
@@ -49,6 +48,8 @@ public class MetaToConfigConverter {
 		}
 		config.setCorrectionMode(correctionMode);
 
+		complexTaskDef.setConfig(config);
+		complexTaskDef.setID(rand.getRandomID());
 		//Wird z.Z. nicht angeboten
 		//correctOnlyProcessedTasks.setNumberOfTasks(10);
 		//correctionMode.setCorrectOnlyProcessedTasks(correctOnlyProcessedTasks);

@@ -261,7 +261,7 @@ public class CategoryManager {
 			float defaultgrade, Boolean casesensitivity, float penalty) {
 
 		float negativePoints = penalty;
-		System.out.println(negativePoints);
+		// System.out.println(negativePoints);
 		// if (negativePoints == 0) {
 		// negativePoints = 1.0f;
 		// }

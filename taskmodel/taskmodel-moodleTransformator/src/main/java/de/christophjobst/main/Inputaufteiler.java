@@ -43,13 +43,7 @@ public class Inputaufteiler {
 		ComplexTaskDef.Revisions.Revision revision = new ComplexTaskDef.Revisions.Revision();
 		ComplexTaskDef.Revisions revisions = new ComplexTaskDef.Revisions();
 
-		// TODO METATAG der exportieren Moodleklausur nach "Autor" oder Author
-		// durchsuchen
-		revision.setAuthor("Converterprogramming by Christoph Jobst");
-		revision.setDate(date.getTime());
-		revision.setSerialNumber(1);
-		revisions.getRevision().add(revision);
-		complexTaskDef.setRevisions(revisions);
+
 
 		/*
 		 * Zuweisungs und Konvertierungsschleife für Category-Blöcke
@@ -369,6 +363,15 @@ public class Inputaufteiler {
 		complexTaskDef = CategoryAssignment.assignFlatCategories(
 				complexTaskDef, categoryManagerList);
 
+		// TODO METATAG der exportieren Moodleklausur nach "Autor" oder Author
+		// durchsuchen
+		revision.setAuthor("unknown");
+		revision.setDate(date.getTime());
+		revision.setSerialNumber(1);
+		revisions.getRevision().add(revision);
+		complexTaskDef.setRevisions(revisions);
+		
+		
 		return complexTaskDef;
 	}
 
