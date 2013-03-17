@@ -3,11 +3,23 @@
 This repository contains the complete code of a GPL v2 licensed eAssessment solution suitable for exams in an educational context.
 
 
+# elateXamMoodle - Open Source Questionpoolmanagement #
+
+The elateXamMoodle-directory contains a modified moodle 2.3 with
+* simplified and new questiontypes
+* advanced metadata-options
+* metasearch
+* exam creation and configuration in a new course-type
+* automated export management and creation for use with elateXam
+
+More Information: [iAssess.Sax] (http://www.uni-leipzig.de/~allpaed/wiki/doku.php?id=projekt2012:bericht)
+
+
 Subprojects
 ===========
 
 * taskmodel  
-    - embeddable components (api, reference implementation, addons)
+    - embeddable components (api, reference implementation, transformator, addons)
 * examserver 
     - Struts 1/JSP based server, runs in Jetty or Tomcat
 * taskmodel-log 
