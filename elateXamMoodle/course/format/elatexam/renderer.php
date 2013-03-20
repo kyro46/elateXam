@@ -202,6 +202,7 @@ class format_elatexam_renderer extends format_section_renderer_base {
         } else {
             $exam->id = $DB->insert_record('exam', $exam);
         }
+        echo "Klausur gespeichert... <br />";
         $this->export_exam($fromform->examdata, $exam);
     }
     
@@ -288,10 +289,11 @@ class format_elatexam_renderer extends format_section_renderer_base {
                 mkdir($CFG->dirroot.'/course/format/elatexam/xams');
             }
             $xml->save($CFG->dirroot.'/course/format/elatexam/xams/exam'.$exam->id.'_'.$export->export_time.'.xml');
-            echo "XML-Export erfolgt... <br />";
+            echo 'XML-Export erfolgt... <a href="format/elatexam/xams/exam'.$exam->id.'_'.$export->export_time.'.xml">herunterladen</a><br />';
             $xhtml->loadHTML($xamhtml);
             $xhtml->saveHTMLFile($CFG->dirroot.'/course/format/elatexam/xams/exam'.$exam->id.'_'.$export->export_time.'.html');     
-            echo "HTML-Export erfolgt... <br />";     
+            echo 'HTML-Export erfolgt... <a href="format/elatexam/xams/exam'.$exam->id.'_'.$export->export_time.'.html">anzeigen</a><br /><br />';   
+            echo 'Weiter zur <a href="view.php?id='.$exam->courseid.'">Klausurübersicht</a>...';    
             //echo '<div>XML-Export erfolgt: <a href="'.$CFG->dirroot.'/course/format/elatexam/xams/exam'.$exam->id.'_'.$export->export_time.'.xml'.'">Export herunterladen</a><br /><br />Weiter zur <a href="view.php?id='.$exam->courseid.'">Klausurübersicht</a>...</div>';
         } else {
             echo '<div>Kein Export erfolgt (keine Kategorien und Fragen zum Exportieren erstellt).<br />Weiter zur <a href="view.php?id='.$exam->courseid.'">Klausurübersicht</a>...</div>'; 
