@@ -122,7 +122,7 @@ if ($task == 'categories') {
 } elseif ($task == 'remexport') {
     $exportid   = optional_param('exportid', '', PARAM_INT);
     if ($DB->record_exists('exam_exports', array('id' => $exportid))) {
-        $query = "SELECT id, export_time FROM {exam_exports} WHERE id = ?";
+        $query = "SELECT id, export_time, examid FROM {exam_exports} WHERE id = ?";
         $export = $DB->get_record_sql($query,array($exportid));
         $DB->delete_records('exam_exports', array('id' => $exportid));
         if (file_exists($CFG->dirroot.'/course/format/elatexam/xams/exam'.$export->examid.'_'.$export->export_time.'.xml')) {
@@ -137,7 +137,7 @@ if ($task == 'categories') {
 } elseif ($task == 'remexam') {
     $examid   = optional_param('examid', '', PARAM_INT);
     if ($DB->record_exists('exam', array('id' => $examid))) {
-        $query = "SELECT id, export_time FROM {exam_exports} WHERE examid = ?";
+        $query = "SELECT id, export_time, examid FROM {exam_exports} WHERE examid = ?";
         $exports = $DB->get_records_sql($query,array($examid));
         foreach ($exports as $export) {
             if (file_exists($CFG->dirroot.'/course/format/elatexam/xams/exam'.$export->examid.'_'.$export->export_time.'.xml')) {
