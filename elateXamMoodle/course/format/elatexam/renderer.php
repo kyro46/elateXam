@@ -213,7 +213,7 @@ class format_elatexam_renderer extends format_section_renderer_base {
             require_once($CFG->dirroot.'/question/format/xhtml/format.php');
             $questionformatXML = new qformat_xml();
             $questionformatXHTML = new qformat_xhtml();
-            
+            $context = context_course::instance($exam->courseid);
             $export     = new stdClass();
             $export->export_time    = time();
             $export->structure      =  $structure;
@@ -276,7 +276,7 @@ class format_elatexam_renderer extends format_section_renderer_base {
                     $question->export_process = true;
                     $qtype = question_bank::get_qtype($question->qtype, false);
                     $qtype->get_question_options($question);
-                    $question->contextid = 0;
+                    $question->contextid = $context->id;
                     $componentXML->appendXML(str_replace('<question type=','<question category="'.$ecomp[2].'" id="'.$ecomp[1].'" type=',$questionformatXML->writequestion($question)));
                     //$xamhtml .= $questionformatXHTML->writequestion($question);
                 }
