@@ -163,13 +163,13 @@ class format_elatexam_renderer extends format_section_renderer_base {
                                         'creatorname' => get_string('createdby', 'question'),
                                         'modifiername' => get_string('lastmodifiedby', 'question'),
                                         'tags' => get_string('tags', 'tag'));
-                /*if ($off_tags= $DB->get_records_sql("SELECT name, rawname FROM {tag} WHERE tagtype = :seltag OR tagtype = :textag ORDER BY name",array('seltag'=>'official_select','textag'=>'official_text'))) {
+                if ($off_tags= $DB->get_records_sql("SELECT name, rawname FROM {tag} WHERE tagtype = :seltag OR tagtype = :textag ORDER BY name",array('seltag'=>'official_select','textag'=>'official_text'))) {
                     if(count($off_tags)){
                         foreach($off_tags as $tag) {
                             $selectable_cols[$tag->name] = $tag->rawname;
                         }
                     }
-                }*/
+                }
                 require_once('tpl_exam.php');
             }
         }

@@ -599,7 +599,11 @@ function changeCategories() {
     if (searchBlock) {
         searchBlock = searchBlock.join(',');
     }
-    if (categories != currentCategories || searchPhrase != currentSearch || searchBlock != currSearchBlock )  {
+    if (categories == null) {
+        $('#quest_list').empty();
+        currQuestions = {};
+    }
+    if (categories != null && (categories != currentCategories || searchPhrase != currentSearch || searchBlock != currSearchBlock ))  {
         currentCategories = categories;
         currentSearch = searchPhrase;
         currSearchBlock = searchBlock;
