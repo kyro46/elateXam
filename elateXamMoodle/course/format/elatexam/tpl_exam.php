@@ -26,7 +26,13 @@ $(function(){
         if (event.keyCode == 13) {
             event.preventDefault();
         }
-    })
+    });
+    $('#quest_search').keypress(function(event) {//prevent submit on
+        if (event.keyCode == 13) {
+            event.preventDefault();
+            changeCategories();
+        }
+    });
 });
 
 function createCategoryButton(newcat_trigger) {
