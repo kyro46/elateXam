@@ -114,7 +114,8 @@ class format_elatexam_renderer extends format_section_renderer_base {
     public function print_multiple_section_page($course, $sections, $mods, $modnames, $modnamesused) {
         global $PAGE, $CFG, $DB;   
         $list = 1;
-        if (optional_param('task', '', PARAM_ALPHA) == 'edit') {
+        if (optional_param('task', '', PARAM_ALPHA) == 'edit') {//edit/create single exam
+            //get exam
             require_once($CFG->dirroot . '/course/format/elatexam/exam_form_new.php');
             if ( ($examid = optional_param('examid', 0, PARAM_INT)) > 0) {
                 if ($DB->record_exists('exam', array('id'=>$examid))) {
@@ -124,25 +125,24 @@ class format_elatexam_renderer extends format_section_renderer_base {
             if (!isset($exam) ){
                 $exam = $this->createemptyexam($course->id);
             }
-            //required
             
             //create form
             $mform = new exam_form('view.php?task=edit&id='.$course->id, $exam, 'post');
             if ($mform->is_cancelled()){
                 
             } else if ($fromform=$mform->get_data()){
+                //save and export exam
                 $list = -1;
-                
                 $this->save_exam($fromform);
                 
             } else {
+                //show exam configuration
                 require_once($CFG->libdir . '/questionlib.php');
                 $thiscontext = get_context_instance(CONTEXT_COURSE, $course->id);
                 $contextswithacap = array();
                 foreach (array_values($thiscontext->get_parent_contexts(true)) as $context) {
                     $cap='moodle/question:editall';//'moodle/question:add';//managecategory';
                     if (has_capability($cap, $context)) {
-    					//var_dump($cap);var_dump($context);
                         $contextswithacap[] = $context;
                         break; //done with caps loop
                     }
@@ -173,16 +173,16 @@ class format_elatexam_renderer extends format_section_renderer_base {
                 require_once('tpl_exam.php');
             }
         }
-        if ($list > 0) {
+        if ($list > 0) {//list of exams
             //get exams
-            //TODO - escape ',"
             $xam_list = $this->get_xams($course->id);
-            
-            //load template to show all exams
             require_once('tpl_exams.php');
         }
     }
-    
+    /**
+     * function to save exam to database and trigger export
+     * @param mixed $fromform submitted form
+     */
     protected function save_exam(&$fromform) {
         global $DB;
         $exam                               = new stdClass();
@@ -202,10 +202,15 @@ class format_elatexam_renderer extends format_section_renderer_base {
         } else {
             $exam->id = $DB->insert_record('exam', $exam);
         }
-        echo "Klausur gespeichert... <br />";
+        echo get_string('exam_saved', 'format_elatexam');
         $this->export_exam($fromform->examdata, $exam);
     }
     
+    /**
+     * Create export of an exam
+     * @param string $structure structure-string from frontend or database
+     * @param mixed $exam exam-object filled with data from form
+     */
     protected function export_exam($structure, $exam) {
         global $DB, $CFG;
         if (strlen($structure) > 4) {
@@ -229,7 +234,7 @@ class format_elatexam_renderer extends format_section_renderer_base {
             $componentXML = $xml->createDocumentFragment();
             foreach ($exam_components as $ecomp) {
                 $ecomp = explode("|",$ecomp);
-                if ($ecomp[0] == 'c') {
+                if ($ecomp[0] == 'c') { //export of category
                     $componentXML->appendXML(
                          "<!-- question: 0  -->\n"
                         ."  <question type=\"category\">\n"
@@ -272,14 +277,13 @@ class format_elatexam_renderer extends format_section_renderer_base {
                     } else {
                         $xamhtml .= "<h2>$ecomp[3] ".($ecomp[6] == 1 ? '('.get_string('random_sort', 'format_elatexam').')' : '')." ".($ecomp[5] > 0 ? '('.get_string('num_shown', 'format_elatexam').': '.$ecomp[5].')' : '')."</h2>\n";
                     }
-                } elseif ($ecomp[0] == 'q') {
+                } elseif ($ecomp[0] == 'q') { //export of question
                     $question = $DB->get_record('question', array('id'=>intval($ecomp[1])));
                     $question->export_process = true;
                     $qtype = question_bank::get_qtype($question->qtype, false);
                     $qtype->get_question_options($question);
                     $question->contextid = $context->id;
                     $componentXML->appendXML(str_replace('<question type=','<question category="'.$ecomp[2].'" id="'.$ecomp[1].'" type=',$questionformatXML->writequestion($question)));
-                    //$xamhtml .= $questionformatXHTML->writequestion($question);
                 }
             }
             
@@ -289,17 +293,20 @@ class format_elatexam_renderer extends format_section_renderer_base {
                 mkdir($CFG->dirroot.'/course/format/elatexam/xams');
             }
             $xml->save($CFG->dirroot.'/course/format/elatexam/xams/exam'.$exam->id.'_'.$export->export_time.'.xml');
-            echo 'XML-Export erfolgt... <a href="format/elatexam/xams/exam'.$exam->id.'_'.$export->export_time.'.xml">herunterladen</a><br />';
+            echo get_string('exam_xml_exported', 'format_elatexam').' <a href="format/elatexam/xams/exam'.$exam->id.'_'.$export->export_time.'.xml">'.get_string('download_export', 'format_elatexam').'</a><br />';
             $xhtml->loadHTML($xamhtml);
             $xhtml->saveHTMLFile($CFG->dirroot.'/course/format/elatexam/xams/exam'.$exam->id.'_'.$export->export_time.'.html');     
-            echo 'HTML-Export erfolgt... <a href="format/elatexam/xams/exam'.$exam->id.'_'.$export->export_time.'.html">anzeigen</a><br /><br />';   
-            echo 'Weiter zur <a href="view.php?id='.$exam->courseid.'">Klausurübersicht</a>...';    
-            //echo '<div>XML-Export erfolgt: <a href="'.$CFG->dirroot.'/course/format/elatexam/xams/exam'.$exam->id.'_'.$export->export_time.'.xml'.'">Export herunterladen</a><br /><br />Weiter zur <a href="view.php?id='.$exam->courseid.'">Klausurübersicht</a>...</div>';
+            echo get_string('exam_xhtml_exported', 'format_elatexam').' <a href="format/elatexam/xams/exam'.$exam->id.'_'.$export->export_time.'.html">'.get_string('show_export', 'format_elatexam').'</a><br /><br />';   
+            echo '<a href="view.php?id='.$exam->courseid.'">'.get_string('continue_to_exams', 'format_elatexam').'</a>';    
         } else {
-            echo '<div>Kein Export erfolgt (keine Kategorien und Fragen zum Exportieren erstellt).<br />Weiter zur <a href="view.php?id='.$exam->courseid.'">Klausurübersicht</a>...</div>'; 
+            echo '<div>'.get_string('no_export', 'format_elatexam').'<br />'.get_string('continue_to_exams', 'format_elatexam').'</div>'; 
         }
     }
     
+    /**
+     * load all exams
+     * @param int $courseid id from course
+     */
     private function get_xams($courseid) {
         global $DB;
         $xams = $DB->get_records_sql('SELECT * FROM {exam} WHERE courseid = ?', array($courseid));
@@ -308,6 +315,11 @@ class format_elatexam_renderer extends format_section_renderer_base {
         }
         return $xams;
     }
+    
+    /**
+     * get all exported exams from for one exam
+     * @param int $examid id from exam
+     */
     private function get_exports($examid) {
         global $DB;
         if ($examid > 0) {
@@ -317,6 +329,11 @@ class format_elatexam_renderer extends format_section_renderer_base {
         }
         
     }
+    
+    /**
+     * create new exam-object
+     * @param int $courseid id from course
+     */
     private function createemptyexam($courseid) {
         $exam                               = new stdClass;
         $exam->id                           = '';
