@@ -88,7 +88,7 @@ class exam_form extends moodleform {
 
 		////// Add Question Selector  //////////
 		
-		$mform->addElement('header', 'qheader', 'Klausur zusammenstellen');//get_string('qheader', 'qtype_meta'));
+		$mform->addElement('header', 'qheader',  get_string('compose_exam', 'format_elatexam'));//get_string('qheader', 'qtype_meta'));
         $mform->addElement('html', $this->get_category_tree());
 		//$mform->addElement('html', $categoryview->get_list_html());
 		/*if(category_view::not_empty())
@@ -97,7 +97,7 @@ class exam_form extends moodleform {
         //$mform->addElement('html', html_writer::input_hidden_params($this->_customdata));
 		////// Add Submit / Cancel Buttons  //////////
 		$buttonarray=array();
-		$buttonarray[] =& $mform->createElement('submit', 'submitbutton', 'Klausur speichern und neuen Export erstellen');//get_string('savechanges'));
+		$buttonarray[] =& $mform->createElement('submit', 'submitbutton', get_string('save_and_export_exam', 'format_elatexam'));//get_string('savechanges'));
 		$buttonarray[] =& $mform->createElement('cancel');
 		$mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
 		$mform->closeHeaderBefore('buttonar');

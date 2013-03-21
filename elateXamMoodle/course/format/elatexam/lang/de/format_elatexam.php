@@ -23,7 +23,7 @@
  */
 
 $string['pluginname'] = 'ElateXam Format';
-
+////////// Strings for modifed questionbank //////////////////////
 $string['copyto'] = 'Kopieren nach >>';
 $string['empty_search'] = 'Kein Ergebnis für die aktuelle Suche.';
 $string['customize_table'] = 'Tabelleninformationen anpassen: ';
@@ -34,6 +34,61 @@ $string['search_text'] = 'Suchtext (jedes Wort muss für eine Frage in einer der
 $string['search_every_cat'] = ' in allen Kategorien suchen ';
 $string['tags'] = 'Schlagworte';
 $string['category'] = 'Kategorie';
+
+////////// Strings for examexport //////////////////////
+$string['random_sort'] = 'zufällige Reihenfolge';
+$string['num_shown'] = 'Aufgabenanzahl';
+$string['exam_saved'] = "Klausur gespeichert... <br />";
+$string['exam_xml_exported'] = "XML-Export erfolgt... ";
+$string['download_export'] = "Klausurexport herunterladen";
+$string['exam_xhtml_exported'] = "HTML-Export erfolgt... ";
+$string['show_export'] = "(Druck-)Vorschau anzeigen";
+$string['continue_to_exams'] = "Weiter zur Klausurübersicht...";
+$string['no_export'] = "Kein Export erfolgt (keine Kategorien und Fragen zum Exportieren erstellt).";
+$string['exams'] = "Klausuren";
+$string['exam_groups'] = "Klausurgruppen";
+$string['create_exam_group'] = "neue Klausur(gruppe) erstellen";
+$string['edit_and_export'] = "bearbeiten &amp; exportieren";
+$string['confirm_remove_exam_group'] = "Wollen Sie diese Klausurgruppe und ihre Exporte löschen?";
+$string['remove_exam_group'] = "Klausurgruppe löschen";
+$string['exported_on'] = "exportiert am";
+$string['remove_export'] = "Export löschen";
+$string['confirm_remove_export'] = "Wollen Sie diesen Klausurexport löschen?";
+$string['tasks'] = "Aufgaben";
+$string['random'] = 'zufällig';
+$string['deny_task_by_type_point'] = "Es können nur Aufgaben mit der gleichen Punktzahl und dem gleichen Aufgabentyp zu einer Auswahlkategorie hinzugefügt werden.";
+$string['move_to_another_category'] = "in andere Kategorie verschieben";
+$string['choice_category_desc'] = "Bei einer Auswahlkategorie wird in der Prüfung aus mehreren hinterlegten Fragen die angegebene Anzahl zufällig ausgewählt. In einer Auswahlkategorie sind nur Fragen mit gleicher Punktzahl und dem selben Fragentyp möglich.";
+$string['add_questions'] = "Aufgaben zu dieser Kategorie hinzufügen";
+$string['del_category'] = "Kategorie löschen";
+$string['confirm_del_category'] = "Wollen Sie diese Kategorie mit allen Unterkategorien und Aufgaben wirklich löschen?";
+$string['create_category'] = "Neue Kategorie erstellen";
+$string['points'] = "Punkte";
+$string['all_points'] = "Gesamtpunktzahl";
+$string['question_changed'] = "Die Frage wurde seit dem geladenen Klausur-Export verändert.";
+$string['del_question'] = "Aufgabe entfernen";
+$string['confirm_del_question'] = "Wollen Sie diese Aufgabe wirklich löschen?";
+$string['move_question'] = "in andere Kategorie verschieben";
+$string['question_doesnt_exist'] = "Die Frage existiert nicht mehr ";
+$string['edit_exam'] = "Klausur bearbeiten";
+$string['back_exam_groups'] = "zurück zu den Klausurgruppen";
+$string['load_export'] = "Exportierte Klausur laden";
+$string['category_validate'] = "Die Bezeichnung für eine Kategorie muss mindestens 1 Zeichen lang sein.";
+$string['catname'] = "Bezeichnung";
+$string['default_category'] = "Standardkategorie";
+$string['choice_category'] = "Auswahlkategorie";
+$string['add_selected_questions'] = "ausgewählte Fragen hinzufügen";
+$string['done'] = "Fertig";
+$string['catname_not_include'] = "Der Kategoriename darf weder ; noch | enthalten.";
+$string['cancel'] = "Abbrechen";
+$string['new_category'] = "neue Kategorie";
+$string['specify_search'] = "Suche eingrenzen";
+$string['all'] = "alle";
+$string['none'] = "keine";
+$string['selected'] = "ausgewählt";
+$string['select_question_categories'] = "Kategorien von Fragen auswählen";
+$string['compose_exam'] = "Klausur zusammenstellen";
+$string['save_and_export_exam'] = "Klausur speichern und neuen Export erstellen";
 
 ////////// Strings for Questionlib //////////////////////
 $string['generalfeedback'] = 'Hinweistext';

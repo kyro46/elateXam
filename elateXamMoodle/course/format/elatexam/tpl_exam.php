@@ -1,3 +1,6 @@
+<?php 
+/** Template zur Klausurerstellung **/
+?>
 <style type="text/css">
 .ui-state-highlight { height: 1.5em; line-height: 1.2em; }
 </style>
@@ -22,17 +25,29 @@ $(function(){
     
     $( "#cattype" ).buttonset();
     $( ".question_button" ).button();
-    $('#catname').keypress(function(event) {//prevent submit on
+    $('#catname').keypress(function(event) {//prevent submit on ENTER
         if (event.keyCode == 13) {
             event.preventDefault();
         }
-    })
+    });
+    $('#quest_search').keypress(function(event) {//prevent submit on ENTER
+        if (event.keyCode == 13) {
+            event.preventDefault();
+            changeCategories();
+        }
+    });
 });
 
+/**
+ * call category creation dialog
+ */
 function createCategoryButton(newcat_trigger) {
     $(newcat_trigger).parent().parent().addClass('addCat');
     $('#category-dialog-form').dialog('open');
 }
+/**
+ * create category from scratch or load it from database (exported)
+ */
 function createCategory(name, type, drag, catid, num_shown, shuffle) {
     if (catid == null) {
         catid = catid_counter++;
@@ -43,37 +58,24 @@ function createCategory(name, type, drag, catid, num_shown, shuffle) {
     if (shuffle) {
         shuffle = 'checked="true"';
     }
+    var cathandle='', catdel = '', addquestion = '', createCategoryButton = '';
     var new_cat = $('<div class="exam_cat" id="cat'+ catid +'"></div>');
+    var catPoints = '<?php echo get_string('points', 'format_elatexam') ?>: <span id="cat'+ catid +'_point_sum">0.0</span>';
     new_cat.data('points',0);
     new_cat.data('type',type);
-    var catPoints = 'Punkte: <span id="cat'+ catid +'_point_sum">0.0</span>';
-    if (type == 2) {
+    if (type == 2) {//not default category
         new_cat.addClass('catchoice');
-        catPoints = '<i>Aufgaben: <input id="cat'+ catid +'_quest_count" class="jquiSpinner" value="'+num_shown+'" /></i> ' + catPoints;
+        catPoints = '<i><?php echo get_string('tasks', 'format_elatexam') ?>: <input id="cat'+ catid +'_quest_count" class="jquiSpinner" value="'+num_shown+'" /></i> ' + catPoints;
+        catdel = '<span class="ui-icon ui-icon-info" title="<?php echo get_string('choice_category_desc', 'format_elatexam') ?>"></span> ';
         new_cat.data('qtype', '');
         new_cat.data('num_shown', num_shown);
     }
-    new_cat.mouseover(
-        function(e) {
-            e.stopPropagation();
-            $(this).css('background-color', '#EEEEEE');
-        }).mouseout(
-        function() {
-            $(this).css('background-color', 'white');
-        });
-    new_cat.css('background-color', 'white');
     if (drag) {
-        catPoints = '<label><i title="zufällige Reihenfolge der Aufgaben">zufällig: <input type="checkbox" id="cat'+ catid +'_random" '+shuffle+'/></i></label>'+catPoints;
-        /*new_cat.draggable({
-            handle: "p",
-            revert: "invalid",
-            iframeFix: true,
-            cursor: "move"
-            /*,stack: "div" //necessary but creates bugs if you use dialog */ 
-        //});*/
+        catPoints = '<label><i title="<?php echo get_string('random_sort', 'format_elatexam') ?>"><?php echo get_string('random', 'format_elatexam') ?>: <input type="checkbox" id="cat'+ catid +'_random" '+shuffle+'/></i></label>'+catPoints;
         new_cat.droppable({
             greedy: true,
             tolerance: "pointer",
+            accept: ".exam_quest",
             activeClass: "ui-state-default",
             hoverClass: "ui-state-hover",
             drop: function( event, ui ) {
@@ -82,63 +84,42 @@ function createCategory(name, type, drag, catid, num_shown, shuffle) {
                 if (category.data('type') == 2) {
                     if (category.data('qtype') != '' && (category.data('qtype') != ui.draggable.data('qtype') || category.data('points') != ui.draggable.data('points') ) ) {
                         deny = true;
-                        alert('Es können nur Aufgaben mit der gleichen Punktzahl und dem gleichen Aufgabentyp zu einer Aufgabenkategorie hinzugefügt werden.');
+                        alert('<?php echo get_string('deny_task_by_type_point', 'format_elatexam') ?>');
                     }
                 }
-                if (!deny) {
-                    var tplPoints = ui.draggable.data('points');
-                    if (ui.draggable.parent().attr('id') != category.attr('id')) {
-                        category.append(ui.draggable);
-                        calculate();
-                    }
+                if (!deny && ui.draggable.parent().attr('id') != category.attr('id')) {
+                    category.append(ui.draggable);
+                    calculate();
                 }
                 ui.draggable.animate({left: 0, top: 0});
                 ui.draggable.css({backgroundColor: ''});
             }
         });
-    }
-    
-    var cathandle='', catdel = '', addquestion = '', createCategoryButton = '';
-    if (drag) {
-        //cathandle = '<p class="drag_handle" title="in andere Kategorie verschieben"><span class="ui-icon ui-icon-arrow-4"></span></p>'+'<span class="exam_points">'+catPoints+'</span>';
+        
         cathandle = '<span class="exam_points">'+catPoints+'</span>'; 
-        if (type == 2) {
-            catdel = '<span class="ui-icon ui-icon-info" title="Bei einer Auswahlkategorie wird in der Prüfung aus mehreren hinterlegten Fragen die angegebene Anzahl zufällig ausgewählt. In einer Auswahlkategorie sind nur Fragen mit gleicher Punktzahl und dem selben Fragentyp möglich."></span> ';
-            new_cat.droppable( "option", "accept", ".exam_quest" );
-        }
-        addquestion = '<span onclick="addQuestions(this)" title="Aufgaben zu dieser Kategorie hinzufügen"><span class="ui-icon ui-icon-document"></span></span>';
-        catdel += '<span class="ui-icon ui-icon-trash" title="Kategorie löschen" onclick="if(confirm(\'Wollen Sie diese Kategorie mit allen Unterkategorien und Aufgaben wirklich löschen?\')){$(this).closest(\'div\').slideUp(\'normal\', function() { removeElement($(this)); } );}"></span>';           
+        addquestion = '<span onclick="addQuestions(this)" title="<?php echo get_string('add_questions', 'format_elatexam') ?>"><span class="ui-icon ui-icon-document"></span></span>';
+        catdel += '<span class="ui-icon ui-icon-trash" title="<?php echo get_string('del_category', 'format_elatexam') ?>" onclick="if(confirm(\'<?php echo get_string('confirm_del_category', 'format_elatexam') ?>\')){$(this).closest(\'div\').slideUp(\'normal\', function() { removeElement($(this)); } );}"></span>';           
     } else {
-        createCategoryButton = '<span onclick="createCategoryButton(this)" title="neue Kategorie erstellen"><span class="ui-icon ui-icon-folder-open"></span></span>';
+        createCategoryButton = '<span onclick="createCategoryButton(this)" title="<?php echo get_string('create_category', 'format_elatexam') ?>"><span class="ui-icon ui-icon-folder-open"></span></span>';
         new_cat.css('position','relative');
         new_cat.mousedown(function(e){
     		mousepos = (e.pageY - $(this).parent().offset().top-2);
     	});
-        cathandle = '<span class="exam_points"><strong>Gesamtpunktanzahl: <span id="cat'+ catid +'_point_sum">0.0</span></strong></span>';
+        cathandle = '<span class="exam_points"><strong><?php echo get_string('all_points', 'format_elatexam') ?>: <span id="cat'+ catid +'_point_sum">0.0</span></strong></span>';
     }
-    
-    new_cat.html( '<span class="cat_name">'+name+
-                  '</span><span class="cat_control">'+catdel+
-                  createCategoryButton+
-                  addquestion+
-                  '</span>'+cathandle+
-                  '<hr style="clear:both" />');
-    if (type == 2) {
-        $('#cat'+ catid +'_quest_count').spinner({
-            min: 1,
-            numberFormat: "n0",
-            stop: function() {
-                new_cat.data('num_shown',$(this).val());
-                calculate();
-            }
-        });
-    }
-    new_cat.tooltip({
-        track: true
-    });
+    //fill category
+    new_cat.html( '<span class="cat_name">'+name+'</span>' + '<span class="cat_control">' + catdel + createCategoryButton + addquestion + '</span>' + cathandle +'<hr style="clear:both" />');
     $('.addCat').append(new_cat);
+    $('#cat'+ catid +'_quest_count').spinner({ min: 1, numberFormat: "n0",
+        stop: function() {
+            new_cat.data('num_shown',$(this).val());
+            calculate();
+        }
+    });
+    new_cat.tooltip({track: true});
+    
     $('.addCat').removeClass('addCat');
-    $( '#'+new_cat.attr('id')).sortable({
+    $( '#'+new_cat.attr('id')).sortable({//sortable childrens
             items: "div",
             placeholder: "ui-state-highlight",
             forcePlaceholderSize: true,
@@ -157,9 +138,20 @@ function createCategory(name, type, drag, catid, num_shown, shuffle) {
                 $('#id_starttext_ifr_overlay').remove();
             } 
         });
+    new_cat.mouseover(//non-stacking hover-effect
+        function(e) {
+            e.stopPropagation();
+            $(this).css('background-color', '#EEEEEE');
+        }).mouseout(
+        function() {
+            $(this).css('background-color', 'white');
+        });
+    new_cat.css('background-color', 'white');
 }
+/**
+ * create new question
+ */
 function createQuestion(curQuest, existing, addid) {
-    //console.log(curQuest);
     var new_quest = $('<div class="exam_quest"></div>');
     new_quest.data('points', curQuest['points']);
     new_quest.data('qtype', curQuest['qtype']);
@@ -169,13 +161,13 @@ function createQuestion(curQuest, existing, addid) {
             curQuest['name'] = '<span class="ui-state-error msgblock" title="'+curQuest['name']+'"><span class="ui-icon ui-icon-alert msgblock"></span>'+curQuest['name']+'</span>';
         }
         if (existing == 2) {
-            curQuest['name'] = '<span class="ui-state-highlight msgblock" title="Die Frage wurde seit dem geladenen Klausur-Export verändert."><span class="ui-icon ui-icon-info msgblock"></span>'+curQuest['name']+'</span>';
+            curQuest['name'] = '<span class="ui-state-highlight msgblock" title="<?php echo get_string('question_changed', 'format_elatexam') ?>"><span class="ui-icon ui-icon-info msgblock"></span>'+curQuest['name']+'</span>';
         }
     }
     new_quest.html('<img src="<?php echo $CFG->wwwroot ?>/theme/image.php?theme=standard&component=qtype_'+curQuest['qtype']+'&image=icon" title="'+curQuest['qtypelocal']+'" />'+
                 curQuest['name']+
-                '<span class="quest_control"><span class="ui-icon ui-icon-trash" title="Aufgabe entfernen"  onclick="if(confirm(\'Wollen Sie diese Aufgabe wirklich löschen?\')){$(this).closest(\'div\').slideUp(\'normal\', function() { removeElement($(this)); } );}"></span>'+
-                '<p class="drag_handle" title="in andere Kategorie verschieben"><span class="ui-icon ui-icon-arrow-4"></span></p></span>'+
+                '<span class="quest_control"><span class="ui-icon ui-icon-trash" title="<?php echo get_string('del_question', 'format_elatexam') ?>"  onclick="if(confirm(\'<?php echo get_string('confirm_del_question', 'format_elatexam') ?>\')){$(this).closest(\'div\').slideUp(\'normal\', function() { removeElement($(this)); } );}"></span>'+
+                '<p class="drag_handle" title="<?php echo get_string('move_question', 'format_elatexam') ?>"><span class="ui-icon ui-icon-arrow-4"></span></p></span>'+
                 '<span class="exam_points">'+Number(curQuest['points']).toFixed(1)+'</span>');
     new_quest.draggable({
             handle: "p",
@@ -197,14 +189,23 @@ function createQuestion(curQuest, existing, addid) {
         }
     }
 }
+/**
+ * remove question or category
+ */
 function removeElement(element) {
     element.remove();
     calculate();
 }
+/**
+ * close dialog for adding questions
+ */
 function closeQDialog(){
     $('#questions_dialog').hide('normal');
     $('.addHere').removeClass('addHere');
 }
+/**
+ * open dialog for adding questions
+ */
 function addQuestions(questButton){
     if ($(questButton).closest('div').hasClass('addHere')) {
         closeQDialog();
@@ -219,6 +220,9 @@ function addQuestions(questButton){
         }, 600);
     }    
 }
+/**
+ * add question to exam
+ */
 function addQuestion(){
     var catDif = 0;
     $(".ui-selected").each( function () {
@@ -229,7 +233,7 @@ function addQuestion(){
         if (category.data('type') == 2) {
             if (category.data('qtype') != '' && (category.data('qtype') != currQuestions[questionID]['qtype'] || category.data('points') != currQuestions[questionID]['points'] ) ) {
                 deny = true;
-                alert('Es können nur Aufgaben mit der gleichen Punktzahl und dem gleichen Aufgabentyp zu einer Aufgabenkategorie hinzugefügt werden.');
+                alert('<?php echo get_string('deny_task_by_type_point', 'format_elatexam') ?>');
             }
         }
         if (!deny) {
@@ -239,6 +243,9 @@ function addQuestion(){
     calculate();
 }
 
+/**
+ * calculate points of categories and exam
+ */
 function calculate(pCat){
     if (pCat == null) {
         pCat = $('#cat0');
@@ -252,16 +259,21 @@ function calculate(pCat){
     } else {
         pCat.children('.exam_quest').each( function(){ sum += parseFloat($(this).data('points')); });
         pCat.children('.exam_cat').each( function(){sum += calculate($(this)); });
-        
     }
     $('#'+pCat.attr('id')+'_point_sum').html(sum.toFixed(1));
     return sum;
 }
+/**
+ * refresh exam structure
+ */
 function resetStructure(){
     catid_counter = 0;
     $('.examcontainer').empty();
     closeQDialog();
 }
+/**
+ * create exam from structure-string
+ */
 function setStructure(option){
     resetStructure();
     var exportTime = parseInt($(option).val());
@@ -314,7 +326,7 @@ function setStructure(option){
                                         }, exists, element[2]);
                     } else {
                         createQuestion({qid: element[1],
-                                        name: 'Die Frage mit der ID '+element[1]+' existiert nicht mehr.',
+                                        name: '<?php echo get_string('question_doesnt_exist', 'format_elatexam') ?> (ID: '+element[1]+')',
                                         points: 0.0,
                                         qtype: '',
                                         qtypelocal: ''
@@ -340,16 +352,16 @@ function setStructure(option){
 </script>
 
 <div class="questionbankwindow boxwidthwide boxaligncenter">
-    <h2 class="xams_top">Klausur bearbeiten</h2>
+    <h2 class="xams_top"><?php echo get_string('edit_exam', 'format_elatexam') ?></h2>
     <div>
-        <a href="<?php echo $_SERVER['PHP_SELF'] ?>?id=<?php echo $course->id ?>"><button>zurück zu den Klausurgruppen</button></a>
+        <a href="<?php echo $_SERVER['PHP_SELF'] ?>?id=<?php echo $course->id ?>"><button><?php echo get_string('back_exam_groups', 'format_elatexam') ?></button></a>
     </div>
     <?php if (count($xam_exports)) { ?>
     <div style="float: right;">
-        Exportierte Klausur laden:
+        <?php echo get_string('load_export', 'format_elatexam') ?>:
             <select id="structselect" onchange="setStructure(this)">
             <?php foreach ($xam_exports as $export) { ?>
-                <option value="<?php echo $export->export_time ?>">exportiert am: <?php echo date_format($tplDate->setTimestamp($export->export_time), 'Y-m-d H:i') ?></option>
+                <option value="<?php echo $export->export_time ?>"><?php echo get_string('exported_on', 'format_elatexam') ?>: <?php echo date_format($tplDate->setTimestamp($export->export_time), 'Y-m-d H:i') ?></option>
             <?php } ?>
             </select>
     </div>
@@ -358,22 +370,22 @@ function setStructure(option){
         <?php $mform->display(); ?>
 </div>
 
-<div id="category-dialog-form" title="Neue Kategorie erstellen">
-    <p class="validateTips">Eine Bezeichnung für die Kategorie mit mindestens einem Buchstaben wird benötigt.</p>
+<div id="category-dialog-form" title="<?php echo get_string('create_category', 'format_elatexam') ?>">
+    <p class="validateTips"><?php echo get_string('category_validate', 'format_elatexam') ?></p>
  
     <form onsubmit="return false">
     <fieldset>
-        <label for="catname">Bezeichnung</label>
+        <label for="catname"><?php echo get_string('catname', 'format_elatexam') ?></label>
         <input type="text" name="catname" id="catname" class="text ui-widget-content ui-corner-all" onkeydown="" />
         <div id="cattype" class="ui-buttonset">
             <input id="cattype1" class="ui-helper-hidden-accessible" type="radio" checked="checked" name="cattype" value="1" />
             <label class="ui-state-active ui-button ui-widget ui-state-default ui-button-text-only" for="cattype1" role="button" aria-disabled="false">
-                Standardkategorie
+                <?php echo get_string('default_category', 'format_elatexam') ?>
             </label>
             <input id="cattype2" class="ui-helper-hidden-accessible" type="radio" name="cattype" value="2" />
             <label class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" for="cattype2" role="button" aria-disabled="false"
-                title="Bei einer Auswahlkategorie wird in der Prüfung aus mehreren hinterlegten Fragen die angegebene Anzahl zufällig ausgewählt. In einer Auswahlkategorie sind nur Fragen mit gleicher Punktzahl und dem selben Fragentyp möglich.">
-                Auswahlkategorie
+                title="<?php echo get_string('choice_category_desc', 'format_elatexam') ?>">
+                <?php echo get_string('choice_category', 'format_elatexam') ?>
             </label>
         </div>        
     </fieldset>
@@ -397,8 +409,8 @@ function setStructure(option){
         </ol>
     </div>
     <div id="add_questions">
-        <span class="question_button" onclick="addQuestion(); return false;">ausgewählte Fragen hinzufügen</span>
-        <span class="question_button" onclick="closeQDialog(); return false;">Fertig</span>
+        <span class="question_button" onclick="addQuestion(); return false;"><?php echo get_string('add_selected_questions', 'format_elatexam') ?></span>
+        <span class="question_button" onclick="closeQDialog(); return false;"><?php echo get_string('done', 'format_elatexam') ?></span>
     </div>
 </div>
 <script type="text/javascript">
@@ -424,7 +436,7 @@ $(function() {
     function checkLength( o, min ) {
         if ( o.val().length < min ) {
             o.addClass( "ui-state-error" );
-            updateTips( "Die Bezeichnung für eine Kategorie muss mindestens 1 Zeichen lang sein." );
+            updateTips( "<?php echo get_string('category_validate', 'format_elatexam') ?>" );
             return false;
         } else {
             return true;
@@ -448,17 +460,17 @@ $(function() {
         width: 360,
         modal: true,
         buttons: {
-            "Kategorie erstellen": function() {
+            "<?php echo get_string('new_category', 'format_elatexam') ?>": function() {
                 var bValid = true;
                 allFields.removeClass( "ui-state-error" );
 
-                bValid = bValid && checkLength( catname, 1) && checkRegexp(catname, /(\||;)/, 'Der Kategoriename darf weder ; noch | enthalten.');
+                bValid = bValid && checkLength( catname, 1) && checkRegexp(catname, /(\||;)/, '<?php echo get_string('catname_not_include', 'format_elatexam') ?>');
                 if ( bValid ) {
                     createCategory(catname.val(),$( "input[name=cattype]:checked" ).val(),true,null,null,$( "input[name=cattype]:checked" ).val() == 2);                        
                     $( this ).dialog( "close" );
                 }
             },
-            "Abbrechen": function() {
+            "<?php echo get_string('cancel', 'format_elatexam') ?>": function() {
                 $( this ).dialog( "close" );
             }
         },
@@ -476,19 +488,19 @@ $(function() {
     //Multiselect --> custom search
     $("#search_select").multiselect({
      selectedList: 2,
-     noneSelectedText: 'Suche eingrenzen',
-     checkAllText: 'alle',
-     uncheckAllText: 'keine',
-     selectedText: '# ausgewählt',
+     noneSelectedText: '<?php echo get_string('specify_search', 'format_elatexam') ?>',
+     checkAllText: '<?php echo get_string('all', 'format_elatexam') ?>',
+     uncheckAllText: '<?php echo get_string('none', 'format_elatexam') ?>',
+     selectedText: '# <?php echo get_string('selected', 'format_elatexam') ?>',
      header: true,
    });
    //Multiselect --> question categories
    $("#category_select").multiselect({
      selectedList: 0,
-     noneSelectedText: 'Kategorien von Fragen auswählen',
-     checkAllText: 'alle',
-     uncheckAllText: 'keine',
-     selectedText: '# Kategorien ausgewählt',
+     noneSelectedText: '<?php echo get_string('select_question_categories', 'format_elatexam') ?>',
+     checkAllText: '<?php echo get_string('all', 'format_elatexam') ?>',
+     uncheckAllText: '<?php echo get_string('none', 'format_elatexam') ?>',
+     selectedText: '# <?php echo get_string('selected', 'format_elatexam') ?>',
      header: true,
      close: changeCategories
    });
@@ -593,7 +605,11 @@ function changeCategories() {
     if (searchBlock) {
         searchBlock = searchBlock.join(',');
     }
-    if (categories != currentCategories || searchPhrase != currentSearch || searchBlock != currSearchBlock )  {
+    if (categories == null) {
+        $('#quest_list').empty();
+        currQuestions = {};
+    }
+    if (categories != null && (categories != currentCategories || searchPhrase != currentSearch || searchBlock != currSearchBlock ))  {
         currentCategories = categories;
         currentSearch = searchPhrase;
         currSearchBlock = searchBlock;
