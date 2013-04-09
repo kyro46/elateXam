@@ -293,7 +293,7 @@ function setStructure(option){
             //createCategory();
             $('#cat'+element[2]).addClass('addCat');
             var catType = 1;
-            if (element[4] == 'choice') {
+            if (element[4] != 'default') {
                 catType = 2;
             }
             var drag = true;
@@ -301,9 +301,9 @@ function setStructure(option){
                 drag = false;
                 $('.examcontainer').addClass('addCat');
             }
-            var shuffle = true;
+            var shuffle = false;
             if (element[6] == 1) {
-                shuffle = false;
+                shuffle = true;
             }
             createCategory(element[3], catType, drag, element[1], element[5], shuffle);
             catid_counter++;            
