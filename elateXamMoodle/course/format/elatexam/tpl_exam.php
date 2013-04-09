@@ -644,7 +644,7 @@ function changeCategories() {
                                 .append($('<span class="questtype" title="'+xmlNode.attr("qtypelocal")+'">')
                                     .append('<img src="<?php echo $CFG->wwwroot ?>/theme/image.php?theme=standard&component=qtype_'+xmlNode.attr("qtype")+'&image=icon" />'))
                                 .append(xmlNode.text())
-                                .append('<a href="<?php echo $CFG->wwwroot ?>/question/question.php?courseid=<?php echo $course->id ?>&id='+xmlNode.attr("id")+'" target="_blank" title="<?php echo get_string('edit_question', 'format_elatexam') ?>"><span class="ui-icon ui-icon-pencil" style="display: inline-block;"></span></a>')
+                                .append('<a href="<?php echo $CFG->wwwroot ?>/question/question.php?courseid=<?php echo $course->id ?>&id='+xmlNode.attr("id")+'" onclick="window.open(this.href, \'_blank\', \'\'); return false;" target="_blank" title="<?php echo get_string('edit_question', 'format_elatexam') ?>"><span class="ui-icon ui-icon-pencil" style="display: inline-block;"></span></a>')
                                 .append($('<span class="questionpoints">')
                                     .append(Number(xmlNode.attr("points")).toFixed(1))));
                 });
