@@ -69,6 +69,7 @@ $string['points'] = "Punkte";
 $string['all_points'] = "Gesamtpunktzahl";
 $string['question_changed'] = "Die Frage wurde seit dem geladenen Klausur-Export verändert.";
 $string['del_question'] = "Aufgabe entfernen";
+$string['edit_question'] = "Frage bearbeiten (im neuen Fenster)";
 $string['confirm_del_question'] = "Wollen Sie diese Aufgabe wirklich löschen?";
 $string['move_question'] = "in andere Kategorie verschieben";
 $string['question_doesnt_exist'] = "Die Frage existiert nicht mehr ";

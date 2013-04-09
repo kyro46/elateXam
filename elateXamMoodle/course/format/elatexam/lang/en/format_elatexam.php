@@ -69,6 +69,7 @@ $string['points'] = "points";
 $string['all_points'] = "summary";
 $string['question_changed'] = "The question was chanced since export.";
 $string['del_question'] = "remove question";
+$string['edit_question'] = "edit question (open new window)";
 $string['confirm_del_question'] = "Do you really want to remove this question?";
 $string['move_question'] = "move into another category";
 $string['question_doesnt_exist'] = "question doesnt exist anymore ";

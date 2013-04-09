@@ -152,6 +152,7 @@ function createCategory(name, type, drag, catid, num_shown, shuffle) {
  * create new question
  */
 function createQuestion(curQuest, existing, addid) {
+    var qedit = '';
     var new_quest = $('<div class="exam_quest"></div>');
     new_quest.data('points', curQuest['points']);
     new_quest.data('qtype', curQuest['qtype']);
@@ -164,9 +165,12 @@ function createQuestion(curQuest, existing, addid) {
             curQuest['name'] = '<span class="ui-state-highlight msgblock" title="<?php echo get_string('question_changed', 'format_elatexam') ?>"><span class="ui-icon ui-icon-info msgblock"></span>'+curQuest['name']+'</span>';
         }
     }
+    if (new_quest.data('qid') > 0) {
+        qedit = '<a href="<?php echo $CFG->wwwroot ?>/question/question.php?courseid=<?php echo $course->id ?>&id='+new_quest.data('qid')+'" target="_blank" title="<?php echo get_string('edit_question', 'format_elatexam') ?>"><span class="ui-icon ui-icon-pencil"></span></a>'
+    }
     new_quest.html('<img src="<?php echo $CFG->wwwroot ?>/theme/image.php?theme=standard&component=qtype_'+curQuest['qtype']+'&image=icon" title="'+curQuest['qtypelocal']+'" />'+
                 curQuest['name']+
-                '<span class="quest_control"><span class="ui-icon ui-icon-trash" title="<?php echo get_string('del_question', 'format_elatexam') ?>"  onclick="if(confirm(\'<?php echo get_string('confirm_del_question', 'format_elatexam') ?>\')){$(this).closest(\'div\').slideUp(\'normal\', function() { removeElement($(this)); } );}"></span>'+
+                '<span class="quest_control">' + qedit + '<span class="ui-icon ui-icon-trash" title="<?php echo get_string('del_question', 'format_elatexam') ?>"  onclick="if(confirm(\'<?php echo get_string('confirm_del_question', 'format_elatexam') ?>\')){$(this).closest(\'div\').slideUp(\'normal\', function() { removeElement($(this)); } );}"></span>'+
                 '<p class="drag_handle" title="<?php echo get_string('move_question', 'format_elatexam') ?>"><span class="ui-icon ui-icon-arrow-4"></span></p></span>'+
                 '<span class="exam_points">'+Number(curQuest['points']).toFixed(1)+'</span>');
     new_quest.draggable({
@@ -640,6 +644,7 @@ function changeCategories() {
                                 .append($('<span class="questtype" title="'+xmlNode.attr("qtypelocal")+'">')
                                     .append('<img src="<?php echo $CFG->wwwroot ?>/theme/image.php?theme=standard&component=qtype_'+xmlNode.attr("qtype")+'&image=icon" />'))
                                 .append(xmlNode.text())
+                                .append('<a href="<?php echo $CFG->wwwroot ?>/question/question.php?courseid=<?php echo $course->id ?>&id='+xmlNode.attr("id")+'" target="_blank" title="<?php echo get_string('edit_question', 'format_elatexam') ?>"><span class="ui-icon ui-icon-pencil" style="display: inline-block;"></span></a>')
                                 .append($('<span class="questionpoints">')
                                     .append(Number(xmlNode.attr("points")).toFixed(1))));
                 });
