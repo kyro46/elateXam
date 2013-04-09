@@ -45,8 +45,10 @@ $string['exam_xhtml_exported'] = "HTML-Export erfolgt... ";
 $string['show_export'] = "(Druck-)Vorschau anzeigen";
 $string['continue_to_exams'] = "Weiter zur Klausurübersicht...";
 $string['no_export'] = "Kein Export erfolgt (keine Kategorien und Fragen zum Exportieren erstellt).";
+
 $string['exams'] = "Klausuren";
 $string['exam_groups'] = "Klausurgruppen";
+$string['open_question_bank'] = "Fragensammlung öffnen";
 $string['create_exam_group'] = "neue Klausur(gruppe) erstellen";
 $string['edit_and_export'] = "bearbeiten &amp; exportieren";
 $string['confirm_remove_exam_group'] = "Wollen Sie diese Klausurgruppe und ihre Exporte löschen?";

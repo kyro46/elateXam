@@ -45,8 +45,10 @@ $string['exam_xhtml_exported'] = "HTML-export created... ";
 $string['show_export'] = "view";
 $string['continue_to_exams'] = "continue to exams...";
 $string['no_export'] = "No export created (missing questions and categories).";
+
 $string['exams'] = "exams";
 $string['exam_groups'] = "exam groups";
+$string['open_question_bank'] = "open question bank";
 $string['create_exam_group'] = "create new exam(group)";
 $string['edit_and_export'] = "edit &amp; export";
 $string['confirm_remove_exam_group'] = "Are you sure you want to remove this exam and exports?";
