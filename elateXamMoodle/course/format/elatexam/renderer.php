@@ -136,25 +136,36 @@ class format_elatexam_renderer extends format_section_renderer_base {
                 $this->save_exam($fromform);
                 
             } else {
-                //show exam configuration
                 require_once($CFG->libdir . '/questionlib.php');
-                $thiscontext = get_context_instance(CONTEXT_COURSE, $course->id);
-                $contextswithacap = array();
-                foreach (array_values($thiscontext->get_parent_contexts(true)) as $context) {
-                    $cap='moodle/question:editall';//'moodle/question:add';//managecategory';
-                    if (has_capability($cap, $context)) {
-                        $contextswithacap[] = $context;
-                        break; //done with caps loop
-                    }
-                }
-
-                $selCatContext = question_category_options($contextswithacap, false, 0, false);
                 $selectable_categories = array();
-                foreach ($selCatContext as $courses) {
-                    foreach ($courses as $catKey => $catText) {
-                        $selectable_categories[intval(substr($catKey,0,strpos($catKey,",")+1))] = $catText;
+                //get courses
+                $courses = $DB->get_records('course', array());
+                foreach ($courses as $key => $tcourse) {
+                    if (!has_capability('moodle/course:changeshortname',get_context_instance(CONTEXT_COURSE, $tcourse->id))) {
+                        unset($courses[$key]);
+                    } else {
+                        //show exam configuration
+                        $thiscontext = get_context_instance(CONTEXT_COURSE, $tcourse->id);
+                        $contextswithacap = array();
+                        foreach (array_values($thiscontext->get_parent_contexts(true)) as $context) {
+                            $cap='moodle/question:editall';//'moodle/question:add';//managecategory';
+                            if (has_capability($cap, $context)) {
+                                $contextswithacap[] = $context;
+                                break; //done with caps loop
+                            }
+                        }
+                        //$contextswithacap = array_values($thiscontext->get_parent_contexts(true));
+                        $selCatContext = question_category_options($contextswithacap, false, 0, false);
+                        $selectable_categories[$tcourse->shortname] = array();
+                        $selectable_categories[$tcourse->shortname][$tcourse->shortname] = array();
+                        foreach ($selCatContext as $categories) {
+                            foreach ($categories as $catKey => $catText) {
+                                $selectable_categories[$tcourse->shortname][$tcourse->shortname][intval(substr($catKey,0,strpos($catKey,",")+1))] = $catText;
+                            }
+                        }
                     }
                 }
+                
                 $list = -2;
                 $xam_exports = $this->get_exports($examid);
                 $mform->set_data($_POST);
