@@ -152,6 +152,7 @@ function createCategory(name, type, drag, catid, num_shown, shuffle) {
  * create new question
  */
 function createQuestion(curQuest, existing, addid) {
+    var qedit = '';
     var new_quest = $('<div class="exam_quest"></div>');
     new_quest.data('points', curQuest['points']);
     new_quest.data('qtype', curQuest['qtype']);
@@ -164,9 +165,12 @@ function createQuestion(curQuest, existing, addid) {
             curQuest['name'] = '<span class="ui-state-highlight msgblock" title="<?php echo get_string('question_changed', 'format_elatexam') ?>"><span class="ui-icon ui-icon-info msgblock"></span>'+curQuest['name']+'</span>';
         }
     }
+    if (new_quest.data('qid') > 0) {
+        qedit = '<a href="<?php echo $CFG->wwwroot ?>/question/question.php?courseid=<?php echo $course->id ?>&id='+new_quest.data('qid')+'" target="_blank" title="<?php echo get_string('edit_question', 'format_elatexam') ?>"><span class="ui-icon ui-icon-pencil"></span></a>'
+    }
     new_quest.html('<img src="<?php echo $CFG->wwwroot ?>/theme/image.php?theme=standard&component=qtype_'+curQuest['qtype']+'&image=icon" title="'+curQuest['qtypelocal']+'" />'+
                 curQuest['name']+
-                '<span class="quest_control"><span class="ui-icon ui-icon-trash" title="<?php echo get_string('del_question', 'format_elatexam') ?>"  onclick="if(confirm(\'<?php echo get_string('confirm_del_question', 'format_elatexam') ?>\')){$(this).closest(\'div\').slideUp(\'normal\', function() { removeElement($(this)); } );}"></span>'+
+                '<span class="quest_control">' + qedit + '<span class="ui-icon ui-icon-trash" title="<?php echo get_string('del_question', 'format_elatexam') ?>"  onclick="if(confirm(\'<?php echo get_string('confirm_del_question', 'format_elatexam') ?>\')){$(this).closest(\'div\').slideUp(\'normal\', function() { removeElement($(this)); } );}"></span>'+
                 '<p class="drag_handle" title="<?php echo get_string('move_question', 'format_elatexam') ?>"><span class="ui-icon ui-icon-arrow-4"></span></p></span>'+
                 '<span class="exam_points">'+Number(curQuest['points']).toFixed(1)+'</span>');
     new_quest.draggable({
@@ -289,7 +293,7 @@ function setStructure(option){
             //createCategory();
             $('#cat'+element[2]).addClass('addCat');
             var catType = 1;
-            if (element[4] == 'choice') {
+            if (element[4] != 'default') {
                 catType = 2;
             }
             var drag = true;
@@ -297,9 +301,9 @@ function setStructure(option){
                 drag = false;
                 $('.examcontainer').addClass('addCat');
             }
-            var shuffle = true;
+            var shuffle = false;
             if (element[6] == 1) {
-                shuffle = false;
+                shuffle = true;
             }
             createCategory(element[3], catType, drag, element[1], element[5], shuffle);
             catid_counter++;            
@@ -353,6 +357,9 @@ function setStructure(option){
 
 <div class="questionbankwindow boxwidthwide boxaligncenter">
     <h2 class="xams_top"><?php echo get_string('edit_exam', 'format_elatexam') ?></h2>
+    <div class="create_xam">
+        <a href="http://localhost/moodlexam2/question/edit.php?courseid=<?php echo $course->id ?>" target="_blank"><button><?php echo get_string('open_question_bank', 'format_elatexam') ?></button></a>
+    </div>
     <div>
         <a href="<?php echo $_SERVER['PHP_SELF'] ?>?id=<?php echo $course->id ?>"><button><?php echo get_string('back_exam_groups', 'format_elatexam') ?></button></a>
     </div>
@@ -637,6 +644,7 @@ function changeCategories() {
                                 .append($('<span class="questtype" title="'+xmlNode.attr("qtypelocal")+'">')
                                     .append('<img src="<?php echo $CFG->wwwroot ?>/theme/image.php?theme=standard&component=qtype_'+xmlNode.attr("qtype")+'&image=icon" />'))
                                 .append(xmlNode.text())
+                                .append('<a href="<?php echo $CFG->wwwroot ?>/question/question.php?courseid=<?php echo $course->id ?>&id='+xmlNode.attr("id")+'" onclick="window.open(this.href, \'_blank\', \'\'); return false;" target="_blank" title="<?php echo get_string('edit_question', 'format_elatexam') ?>"><span class="ui-icon ui-icon-pencil" style="display: inline-block;"></span></a>')
                                 .append($('<span class="questionpoints">')
                                     .append(Number(xmlNode.attr("points")).toFixed(1))));
                 });
