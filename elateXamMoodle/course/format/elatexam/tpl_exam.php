@@ -358,7 +358,7 @@ function setStructure(option){
 <div class="questionbankwindow boxwidthwide boxaligncenter">
     <h2 class="xams_top"><?php echo get_string('edit_exam', 'format_elatexam') ?></h2>
     <div class="create_xam">
-        <a href="http://localhost/moodlexam2/question/edit.php?courseid=<?php echo $course->id ?>" target="_blank"><button><?php echo get_string('open_question_bank', 'format_elatexam') ?></button></a>
+        <a href="<?php echo $CFG->wwwroot ?>/question/edit.php?courseid=<?php echo $course->id ?>" target="_blank"><button><?php echo get_string('open_question_bank', 'format_elatexam') ?></button></a>
     </div>
     <div>
         <a href="<?php echo $_SERVER['PHP_SELF'] ?>?id=<?php echo $course->id ?>"><button><?php echo get_string('back_exam_groups', 'format_elatexam') ?></button></a>

@@ -36,7 +36,7 @@ $tplDate = new DateTime();
     <h2 class="xams_top"><?php echo get_string('exams', 'format_elatexam') ?></h2>
     
     <div class="create_xam">
-        <a href="http://localhost/moodlexam2/question/edit.php?courseid=<?php echo $course->id ?>"><button><?php echo get_string('open_question_bank', 'format_elatexam') ?></button></a>
+        <a href="<?php echo $CFG->wwwroot ?>/question/edit.php?courseid=<?php echo $course->id ?>"><button><?php echo get_string('open_question_bank', 'format_elatexam') ?></button></a>
         <big><?php echo get_string('exam_groups', 'format_elatexam') ?></big><a href="<?php echo $_SERVER['PHP_SELF'] ?>?id=<?php echo $course->id ?>&task=edit"><button><?php echo get_string('create_exam_group', 'format_elatexam') ?></button></a>
     </div>
     <div style="clear: both;"></div>
