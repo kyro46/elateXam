@@ -87,6 +87,7 @@ public class ReportBuilderImpl implements ReportBuilder {
 		public String task;		
 		public boolean auto = false;
 		public Set<String> kor = new TreeSet<String>();
+		public String cat = "";
 	}
 	
 	private TaskManager taskManager;
@@ -109,8 +110,9 @@ public class ReportBuilderImpl implements ReportBuilder {
 		// TODO change path!!!
 		File file = new File(home);
 		File[] fileArray = file.listFiles();
-		if (fileArray == null)
+		if (fileArray == null){
 			return;
+		}
 		TreeSet<String> tasks = new TreeSet<String>(); 
 		for(int i=0; i<fileArray.length; i++){
 			if(fileArray[i].isDirectory()){
@@ -151,7 +153,9 @@ public class ReportBuilderImpl implements ReportBuilder {
 						Match match = new Match();
 						match.task = node.getNodeValue();
 						for(Match ma:taskKorrektorMatches){
-							if (ma.task.equals(match.task)){
+							if (ma.task.equals(match.task) && ma.cat.equals(cat)){
+								// wenn kategorie schon gesetzt und nicht übereinstimmt,
+								// so ist es ein anderer task!
 								match = ma;
 								break;
 							}
@@ -164,7 +168,11 @@ public class ReportBuilderImpl implements ReportBuilder {
 							if (kor == null)
 								continue;							
 							match.kor.add(kor.getAttributes().getNamedItem("corrector").getNodeValue());							
-						}												
+						}			
+						/*
+						 * speichere Kategorie, um spaeter richtig zu ordnen zu koennen 
+						 */
+						match.cat=cat;
 						taskKorrektorMatches.add(match);						
 					}
 				}								
@@ -239,9 +247,16 @@ public class ReportBuilderImpl implements ReportBuilder {
 						
 			for( Category category : categories ) {				
 				row.createCell( c++ ).setCellValue( category.getTitle() + " (" + category.getId() + ")" );
+				// hier Task zu den Kat´s zuordnen
 				patchTasksToCats(category.getId(), taskId);
 				// erstelle alle spalten zur aufgabe mit allen ihrer korrektoren
-				for(Match match:taskKorrektorMatches){					
+				// TODO hier Kopfzeilen schreiben
+				for(Match match:taskKorrektorMatches){	
+					if (!match.cat.equals(category.getId())){
+						// wenn kategorie nicht passt, naechsten match testen
+						continue;
+						
+					}
 					int posChar = match.task.lastIndexOf("_");					
 					String taskCell = match.task.substring(0, posChar);					
 					if (match.kor == null || match.kor.isEmpty()){
@@ -373,7 +388,8 @@ public class ReportBuilderImpl implements ReportBuilder {
 						login = userInfo.getLogin();
 					}else{
 						login = tasklet.getUserId();
-					}						
+					}	
+					// TODO lies punkte aus xml
 					ArrayList<String> punkte = getPointsFromXml(category.getId(), login, taskId, anzInTask);
 					if (punkte !=null)
 					for(String text:punkte){
@@ -429,6 +445,9 @@ public class ReportBuilderImpl implements ReportBuilder {
 			// -> sonst speichere seine punkte ab	
 			ArrayList<String> points = new ArrayList<String>();
 			for(Match match:taskKorrektorMatches){
+				if (!match.cat.equals(cat)){
+					continue;
+				}
 				Element task = null;
 				boolean br = false;
 				for(int pa=0; pa<pages.getLength() && !br; pa++){					
