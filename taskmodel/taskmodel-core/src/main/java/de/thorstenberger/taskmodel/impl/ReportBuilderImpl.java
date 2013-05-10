@@ -250,7 +250,7 @@ public class ReportBuilderImpl implements ReportBuilder {
 				// hier Task zu den Kat´s zuordnen
 				patchTasksToCats(category.getId(), taskId);
 				// erstelle alle spalten zur aufgabe mit allen ihrer korrektoren
-				// TODO hier Kopfzeilen schreiben
+				//  hier Kopfzeilen schreiben
 				for(Match match:taskKorrektorMatches){	
 					if (!match.cat.equals(category.getId())){
 						// wenn kategorie nicht passt, naechsten match testen
@@ -389,7 +389,7 @@ public class ReportBuilderImpl implements ReportBuilder {
 					}else{
 						login = tasklet.getUserId();
 					}	
-					// TODO lies punkte aus xml
+					// lies punkte aus xml
 					ArrayList<String> punkte = getPointsFromXml(category.getId(), login, taskId, anzInTask);
 					if (punkte !=null)
 					for(String text:punkte){
