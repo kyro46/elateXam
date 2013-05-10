@@ -226,6 +226,15 @@
 											</xs:simpleType>
 										</xs:element>
 									</xs:sequence>
+									<xs:attribute name="type"
+										type="xs:string">
+									</xs:attribute>
+									<xs:attribute name="num_shown"
+										type="xs:string">
+									</xs:attribute>
+									<xs:attribute name="shuffle"
+										type="xs:string">
+									</xs:attribute>
 								</xs:complexType>
 							</xs:element>
 							<xs:element name="generalfeedback">
@@ -289,19 +298,22 @@
 								type="xs:int">
 							</xs:element>
 							<xs:element name="penalty_empty"
-								type="xs:double">
+								type="xs:float">
 							</xs:element>
 							<xs:element name="penalty_wrong"
-								type="xs:double">
+								type="xs:float">
 							</xs:element>
 							<xs:element name="shuffleanswers"
 								type="xs:boolean">
 							</xs:element>
 							<xs:element name="assessmentmode"
-								type="xs:int">
+								type="xs:boolean">
 							</xs:element>
 							<xs:element name="initialtextfieldvalue"
 								type="xs:string">
+							</xs:element>
+							<xs:element name="casesensitivity"
+								type="xs:boolean">
 							</xs:element>
 						</xs:sequence>
 						<xs:attribute name="type" use="required">

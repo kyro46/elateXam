@@ -23,10 +23,6 @@ import de.christophjobst.converter.MultichoiceToMcConverter;
 import de.christophjobst.converter.ShortanswerToTextConverter;
 import de.christophjobst.converter.TruefalseToMcConverter;
 import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef;
-import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef.Config.CorrectionMode.CorrectOnlyProcessedTasks;
-import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef.Config.CorrectionMode.MultipleCorrectors;
-import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef.Config.CorrectionMode.Regular;
-import de.thorstenberger.taskmodel.complex.complextaskdef.ComplexTaskDef.Config.CorrectionMode;
 import generated.*;
 
 public class Inputaufteiler {
@@ -47,13 +43,7 @@ public class Inputaufteiler {
 		ComplexTaskDef.Revisions.Revision revision = new ComplexTaskDef.Revisions.Revision();
 		ComplexTaskDef.Revisions revisions = new ComplexTaskDef.Revisions();
 
-		// TODO METATAG der exportieren Moodleklausur nach "Autor" oder Author
-		// durchsuchen
-		revision.setAuthor("Christoph Jobst");
-		revision.setDate(date.getTime());
-		revision.setSerialNumber(1);
-		revisions.getRevision().add(revision);
-		complexTaskDef.setRevisions(revisions);
+
 
 		/*
 		 * Zuweisungs und Konvertierungsschleife für Category-Blöcke
@@ -64,22 +54,70 @@ public class Inputaufteiler {
 		 */
 		List<String> categoryNameList = new ArrayList<String>();
 		List<CategoryManager> categoryManagerList = new ArrayList<CategoryManager>();
+		int startmarker = 9;
 		for (int i = 0; i < quizsammlung.getQuestion().toArray().length; i++) {
 			try {
+
+				// Ist es ein Direktexport aus Moodle (fängt mit $course$ an) ->
+				// startmarke=9 oder aus dem
+				// Klausurplugin -> startmarke=0?
+				if (quizsammlung.getQuestion().get(i).getType().toString()
+						.equals("category")
+						&& quizsammlung.getQuestion().get(i).getCategory()
+								.getText().toString().startsWith("$course$")) {
+					// System.out.println(quizsammlung.getQuestion().get(i)
+					// .getCategory().getText().toString());
+					startmarker = 9;
+
+				}
+				if (quizsammlung.getQuestion().get(i).getType().toString()
+						.equals("category")
+						&& !quizsammlung.getQuestion().get(i).getCategory()
+								.getText().toString().startsWith("$course$")) {
+					// System.out.println(quizsammlung.getQuestion().get(i)
+					// .getCategory().getText().toString());
+					startmarker = 0;
+				}
+
 				if (quizsammlung.getQuestion().get(i).getType().toString()
 						.equals("category")
 						&& (!categoryNameList.contains(quizsammlung
 								.getQuestion().get(i).getCategory().getText()
-								.toString().substring(9)))) {
+								.toString().substring(startmarker)))) {
 					categoryNameList.add(quizsammlung.getQuestion().get(i)
-							.getCategory().getText().toString().substring(9));
+							.getCategory().getText().toString()
+							.substring(startmarker));
+
+					String type;
+					String num_shown;
+					try {
+						type = quizsammlung.getQuestion().get(i).getCategory()
+								.getType();
+						num_shown = quizsammlung.getQuestion().get(i)
+								.getCategory().getNumShown();
+
+						if (num_shown == null) {
+							num_shown = "-1";
+						}
+						if (type == null) {
+							type = "default";
+						}
+
+					} catch (Exception e) {
+						type = "default";
+						num_shown = "-1";
+
+					}
+
 					categoryManagerList.add(new CategoryManager(
 							CategoryToCategoryConverter.processing(quizsammlung
-									.getQuestion().get(i))));
+									.getQuestion().get(i), startmarker),
+							num_shown, type));
 				}
 
 			} catch (Exception e) {
 				System.out.println("Problem beim Category-Parser");
+				e.printStackTrace();
 			}
 
 		}
@@ -107,7 +145,7 @@ public class Inputaufteiler {
 								.getTitle()
 								.equals(quizsammlung.getQuestion().get(j)
 										.getCategory().getText().toString()
-										.substring(9))) {
+										.substring(startmarker))) {
 							belongingCategoryIndex = k;
 						}
 					}
@@ -126,8 +164,9 @@ public class Inputaufteiler {
 
 						if (questionType.equals("meta")) {
 							if (hasAExamConfigTask == false) {
-								complexTaskDef = MetaToConfigConverter.processing(quizsammlung
-										.getQuestion().get(i));
+								complexTaskDef = MetaToConfigConverter
+										.processing(quizsammlung.getQuestion()
+												.get(i));
 								hasAExamConfigTask = true;
 							} else {
 								System.err
@@ -150,12 +189,42 @@ public class Inputaufteiler {
 
 						if (questionType.equals("cloze")) {
 
+							Boolean casesensitivity = false;
+							try {
+								if (!quizsammlung.getQuestion().get(i)
+										.isCasesensitivity()) {
+									casesensitivity = !quizsammlung
+											.getQuestion().get(i)
+											.isCasesensitivity();
+								}
+							} catch (NullPointerException e) {
+								System.out
+										.println("Probem bei Cloze Casesensitivity");
+							}
+
+							float penalty;
+							try {
+								penalty = Float.parseFloat(quizsammlung
+										.getQuestion().get(i).getPenalty());
+
+								if (penalty < 0) {
+									penalty = 1;
+								}
+
+							} catch (Exception e) {
+								// Kein Penalty-Element vorhanden -> nimm
+								// Standard 1
+								penalty = 1;
+
+							}
+
 							categoryManagerList
 									.get(belongingCategoryIndex)
 									.setClozeTaskBlock(
 											ClozeToClozeConverter.processing(quizsammlung
 													.getQuestion().get(i)),
-											ClozeToClozeConverter.punktzahl);
+											ClozeToClozeConverter.punktzahl,
+											casesensitivity, penalty);
 							categoryManagerList.get(belongingCategoryIndex)
 									.setHasClozeTaskBlock(true);
 						}
@@ -168,12 +237,32 @@ public class Inputaufteiler {
 											TruefalseToMcConverter.processing(quizsammlung
 													.getQuestion().get(i)),
 											quizsammlung.getQuestion().get(i)
-													.getDefaultgrade());
+													.getDefaultgrade(), false, 1.f, 0.f, 0.f);
 							categoryManagerList.get(belongingCategoryIndex)
 									.setHasMcTaskBlock(true);
 						}
 
 						if (questionType.equals("multichoice")) {
+
+							float penalty = 1;
+							Boolean assessmentmode = false;
+							float penaltyEmpty = 0;
+							float penaltyWrong = 0;
+							try {
+								penalty = Float.parseFloat(quizsammlung
+										.getQuestion().get(i).getPenalty());
+								assessmentmode = quizsammlung.getQuestion()
+										.get(i).isAssessmentmode();
+								penaltyEmpty = quizsammlung.getQuestion()
+										.get(i).getPenaltyEmpty();
+								penaltyWrong = quizsammlung.getQuestion()
+										.get(i).getPenaltyWrong();
+							} catch (NullPointerException e) {
+								System.out
+										.println("Problem bei MC-Penalty's - nimm regular");
+								assessmentmode = Boolean.FALSE;
+
+							}
 
 							categoryManagerList
 									.get(belongingCategoryIndex)
@@ -181,7 +270,7 @@ public class Inputaufteiler {
 											MultichoiceToMcConverter.processing(quizsammlung
 													.getQuestion().get(i)),
 											quizsammlung.getQuestion().get(i)
-													.getDefaultgrade());
+													.getDefaultgrade(), assessmentmode, penalty, penaltyEmpty, penaltyWrong);
 							categoryManagerList.get(belongingCategoryIndex)
 									.setHasMcTaskBlock(true);
 
@@ -265,7 +354,7 @@ public class Inputaufteiler {
 		// Kein meta-Element zur Klausurdefinition? Defaultvorgaben:
 		if (hasAExamConfigTask == false) {
 			System.err
-			.println("Keine Klausurkonfigurationen vorhanden. Es werden Platzhalter eingesetzt.");
+					.println("Keine Klausurkonfigurationen vorhanden. Es werden Platzhalter eingesetzt.");
 			complexTaskDef = MetaToConfigConverter.setDefault();
 		}
 
@@ -274,6 +363,15 @@ public class Inputaufteiler {
 		complexTaskDef = CategoryAssignment.assignFlatCategories(
 				complexTaskDef, categoryManagerList);
 
+		// TODO METATAG der exportieren Moodleklausur nach "Autor" oder Author
+		// durchsuchen
+		revision.setAuthor("unknown");
+		revision.setDate(date.getTime());
+		revision.setSerialNumber(1);
+		revisions.getRevision().add(revision);
+		complexTaskDef.setRevisions(revisions);
+		
+		
 		return complexTaskDef;
 	}
 

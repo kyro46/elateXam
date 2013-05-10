@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,10 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for moodlexam extensions, language 'de', branch 'MOODLE_20_STABLE'
+ * Advanced tags, language 'de'
  *
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    tool
+ * @subpackage advtags
+ * @copyright  2013 compl3te
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+$string['pluginname'] = 'Advanced Tags';
 
 $string['newtag'] = 'Ein neues Schlagwort wurde hinzugefügt: {$a}<br />';
 $string['default'] = 'Standard';

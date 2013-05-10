@@ -4,7 +4,7 @@
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="qtype_essay_options" COMMENT="Extra options for essay questions.">
+    <TABLE NAME="qtype_essay_options" COMMENT="Extra options for essay questions." NEXT="qtype_enhancements_essay">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="questionid"/>
         <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Foreign key linking to the question table." PREVIOUS="id" NEXT="responseformat"/>
@@ -17,6 +17,18 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="questionid"/>
         <KEY NAME="questionid" TYPE="foreign-unique" FIELDS="questionid" REFTABLE="question" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+    </TABLE>
+	   <TABLE NAME="qtype_enhancements_essay" COMMENT="Additional Columns for Essay Questions." PREVIOUS="qtype_essay_options" >
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="questionid"/>
+        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="id" NEXT="responsefieldwidth"/>
+        <FIELD NAME="responsefieldwidth" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" PREVIOUS="questionid" NEXT="initialtextfieldvalue"/>
+        <FIELD NAME="initialtextfieldvalue" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="vorbelegung des textfeldes" PREVIOUS="responsefieldwidth"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="questionid"/>
+        <KEY NAME="questionid" TYPE="foreign" FIELDS="questionid" REFTABLE="question" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
   </TABLES>
