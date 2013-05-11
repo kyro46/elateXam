@@ -76,7 +76,9 @@ a.MenuLink:hover {  font-family: Arial, Helvetica, sans-serif; font-size: 12px; 
 .imgbutton[name="save"] {
 	background: url('/taskmodel-core-view/icons/save-16px.png') no-repeat left;
 }
-
+.imgbutton[name="save-and-exit"] {
+	background: url('/taskmodel-core-view/pics/mail.gif') no-repeat left;
+}
 /* jetzt ein paar Definitionen f�r den TreeIncludeService */
 
 /*--------------------------------------------------|

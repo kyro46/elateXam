@@ -200,15 +200,21 @@ function checkedLink(name, target, linkClass)
 	document.write("<a class=" +linkClass+ " href=javascript:leave('" +escape( target ) + "')>" +name+ "</a>");
 }
 
+window.setTimeout('document.getElementById(\'bigLayer\').style.display=\'none\'',500);
 //-->
 </script>
-
+<!-- A Layer to prevent any clicks on the site till its away. see line 203 -->
+<div id='bigLayer' style="position: fixed;z-index:100;left:0;top:0;right:0;bottom:0;background: black;opacity: 0;">
+<table width=100% height=100%>
+<tr><td align=center valign=middle>
+</td></tr>
+</table></div>
 <br><br>
 <table border="0" cellspacing="0" cellpadding="5" width="790">
   <tr>
 
     <td bgcolor="#F2F9FF" class="complexTaskNav">
-      <div align="left"><img src="<%= request.getContextPath() %>/pics/exit.gif" width="20" height="16" align="absbottom">
+      <div id='backToMainpage' align="left"><img src="<%= request.getContextPath() %>/pics/exit.gif" width="20" height="16" align="absbottom">
         <script type="text/javascript">
 		 <!--
 			checkedLink("Hauptseite", "${ReturnURL}", "ComplexTaskLink");
@@ -234,7 +240,7 @@ function checkedLink(name, target, linkClass)
       <span class="ComplexNavHeadline">
       Navigation</span><br>
       <img src="<%= request.getContextPath() %>/pics/pixel.gif" width="1" height="4"><br>
-      <fieldset><jsp:include page="dhtmlTree.jsp"/><br></fieldset>
+      <fieldset id='navigation'><jsp:include page="dhtmlTree.jsp"/><br></fieldset>
       <div align="right">
         <table border="0" cellspacing="0" cellpadding="0">
           <tr>
@@ -377,11 +383,14 @@ function checkedLink(name, target, linkClass)
         <br>
 		<input type="hidden" name="page" value="${Task.page}">
 		<c:if test="${Task.page < Task.numOfPages}">
-			<input type="submit" class="imgbutton" name="save-and-forward" title="Speichern und Weiter" value="Speichern und Weiter">
+			<input type="submit" class="imgbutton" name="save-and-forward" id="save-and-forward" title="Speichern und weiter" value="Speichern und weiter">
 		</c:if>
-		<input type="submit" class="imgbutton" name="save" title="Speichern" value="Speichern">
+		<input type="submit" class="imgbutton" name="save"  id="save" title="Speichern" value="Speichern">
 		<c:if test="${Task.page > 1}">
-			<input type="submit" class="imgbutton" name="save-and-backward" title="Speichern und Zurück" value="Speichern und Zurück">
+			<input type="submit" class="imgbutton" name="save-and-backward" id="save-and-backward" title="Speichern und zurück" value="Speichern und zurück">
+		</c:if>
+		<c:if test="${Task.page == Task.numOfPages}">
+			<input type="submit" class="imgbutton" style="visibility:hidden;" name="save-and-exit" id="save-and-exit" title="Speichern und ABGEBEN" value="Speichern und ABGEBEN">
 		</c:if>
 		<br style="clear: both;" />
        </form>

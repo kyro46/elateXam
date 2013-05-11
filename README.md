@@ -53,5 +53,9 @@ Running
 If you have an installation of Tomcat v5.5 available, you may also directly install all needed artifacts by changing the maven commands above to
     mvn clean install -PdeployTomcat -Dtomcat.path=/path/to/tomcat-5.5.27/'
     
+**Due to hardcoded paths, some new functions are only available in apache-tomcat-7.0.29 and with a linux-server.**  (Core still works on Windows and with other Serversoftware.)
+**The *.war-files have to be saved on Linux in /opt/apache-tomcat-7.0.29/webapps.**
+**The *.war-files have to be named examServer-leipzig.war and taskmodel-core-view.war.**
+
 Assuming your tomcat configuration is unchanged, open your browser and navigate to [http://localhost:8080/examServer]()
 

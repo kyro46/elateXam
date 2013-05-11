@@ -61,7 +61,7 @@ public class Base64Relocator {
 				String orig = text;
 				// Workaround: Go through all Images containing Base64 Strings and write them
 				// somewhere to the disk, putting links to those files afterwards.
-				// TODO: move code to Import, handle deletion of image files (e.g. when the corresponding exam is deleted)
+				// TODO: handle deletion of image files (e.g. when the corresponding exam is deleted)
 				String ret = "";
 				int lastPos = 0;
 				String fspath = "/opt/apache-tomcat-7.0.29/webapps/taskmodel-core-view"; // FIXME: Get rid of this
