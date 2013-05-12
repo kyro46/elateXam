@@ -616,6 +616,12 @@
     	<artifactId>rtypeTask-addon</artifactId>
     	<version>0.0.30-SNAPSHOT</version>
     </dependency>
+    <dependency>
+    	<groupId>com.spiru.dev</groupId>
+    	<artifactId>speechTestTask-addon</artifactId>
+    	<version>0.0.30-SNAPSHOT</version>
+    </dependency>
+
 </dependencies>
 
   <profiles>
