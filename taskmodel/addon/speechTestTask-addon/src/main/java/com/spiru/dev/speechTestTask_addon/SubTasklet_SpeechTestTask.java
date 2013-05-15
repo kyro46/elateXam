@@ -26,6 +26,11 @@ public interface SubTasklet_SpeechTestTask extends AddOnSubTasklet {
 	public String getHandlingSolution();
 	public List<Boolean> getAnswerList();
 	
+	public String getDelayForAudioInMillis();
+	public String getPlayCount();
+	public String getFilePathMP3();
+	public String getMaximumTimeForTask();
+	
 }
 
 

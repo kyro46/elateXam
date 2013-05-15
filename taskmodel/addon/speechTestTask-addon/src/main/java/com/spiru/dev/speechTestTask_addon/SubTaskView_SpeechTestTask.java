@@ -62,11 +62,14 @@ public class SubTaskView_SpeechTestTask extends SubTaskView{
 		// selection->hint
 		ret.append("<tr>");
 		//ret.append("\n  <td nowrap valign=top><i>"+speechTestSubTasklet.getSelectionHint()+"</i></td>");
+		ret.append("\n  <td nowrap valign=top><div id=balken><div id=ladung></div></div></td>");
+		
 		ret.append("\n");
 		ret.append("</tr>\n");		
 		ret.append("</table>\n");				
 
-		//Set JavaScriptCookie to get the right timing in 1. remaining time for task till gray-out and if/when to play flash
+if (!corrected){		
+		//Set JavaScriptCookie to get the right timing in 1. remaining time for task till gray-out and 2. if/when to play flash
 		ret.append("<script>\n");
 		ret.append("var startTime = new Date();\n");
 		ret.append("startTime = startTime.getTime();\n");
@@ -141,7 +144,9 @@ public class SubTaskView_SpeechTestTask extends SubTaskView{
 		ret.append("</script>\n");		
 		
 		//Animated remaining time for task
-		ret.append("<div id=balken><div id=ladung></div></div>\n");
+		
+		//Moved to "hint"-field
+		//ret.append("<div id=balken><div id=ladung></div></div>\n");
 		ret.append("<script type=\"text/javascript\">\n");
 		ret.append("function ladebalken(){\n\n");
 			ret.append(" var s = new Date();\n");
@@ -159,9 +164,9 @@ public class SubTaskView_SpeechTestTask extends SubTaskView{
 			ret.append("difference = 0;\n");
 			ret.append("}\n");
 			
-		//TODO Set var sekunden (maximum time for single task) to value in memento
-			ret.append("var sekunden = 25;\n");
-		//TODO get expiredTime from cookie
+		//Set var sekunden (maximum time for single task) to value in memento
+			//ret.append("var sekunden = 25;\n"); //for testing
+			ret.append("var sekunden = " +speechTestSubTasklet.getMaximumTimeForTask()+ " ;\n");
 			ret.append("var expiredTime = 0;\n");
 			ret.append("var breite =300;\n");
 			ret.append("var hoehe = 20;\n");
@@ -262,8 +267,9 @@ public class SubTaskView_SpeechTestTask extends SubTaskView{
 		ret.append("function play()\n");
 		ret.append("{\n");
 		ret.append("if (myListener.position == 0) {\n");
-		//TODO take MP3-name from MEMENTO
-		ret.append("getFlashObject().SetVariable(\"method:setUrl\", \"/taskmodel-core-view/player_mp3_js/sample.mp3\");\n");
+		//take MP3-name from MEMENTO
+		//ret.append("getFlashObject().SetVariable(\"method:setUrl\", \"/taskmodel-core-view/player_mp3_js/sample.mp3\");\n"); //for testing
+		ret.append("getFlashObject().SetVariable(\"method:setUrl\", \"" + speechTestSubTasklet.getFilePathMP3() + "\");\n"); //for testing
 		ret.append("}\n");
 		ret.append("getFlashObject().SetVariable(\"method:play\", \"\");\n");
 		ret.append("getFlashObject().SetVariable(\"enabled\", \"true\");\n");
@@ -307,13 +313,14 @@ public class SubTaskView_SpeechTestTask extends SubTaskView{
 		
 		//counter to controll plays and replays
 		ret.append("<script>\n");
-		//TODO Set time, when mp3 is to be played according to MEMENTO
 		ret.append("// get from cookie\n");
 		ret.append("var expiredTimeToFlashplay = 0;\n");
 		ret.append("var sendTime_cookie = getCookie(\"sendTime\");\n");
 		ret.append("var startTime_cookie = getCookie(\"startTime\");\n");
 		ret.append("//get from memento, default is 15s\n");
-		ret.append("var timeToPlayFlash = 5000; //in ms\n");
+		//Set time, when mp3 is to be played according to MEMENTO
+		//ret.append("var timeToPlayFlash = 5000; //in ms\n"); for testing
+		ret.append("var timeToPlayFlash = " + speechTestSubTasklet.getDelayForAudioInMillis() + "; //in ms\n");
 		ret.append("if (sendTime_cookie !=null && sendTime_cookie!=\"\")\n");
 		ret.append("{\n");
 		ret.append("expiredTimeToFlashplay = (sendTime_cookie - startTime_cookie)*1000;\n");
@@ -330,8 +337,9 @@ public class SubTaskView_SpeechTestTask extends SubTaskView{
 		ret.append("{\n");
 		ret.append("window.setTimeout(\"count()\", timeToPlayFlash); // Aus MEMENTO\n");
 		ret.append("}\n");
-		//TODO Set counter according to Memento (number of replays)
-		ret.append("var counter = 3; //Aus MEMENTO, default:1\n");
+		//Set counter according to Memento (number of replays)
+		//ret.append("var counter = 3; //Aus MEMENTO, default:1\n"); //for testing
+		ret.append("var counter = " + speechTestSubTasklet.getPlayCount() + "; //Aus MEMENTO, default:1\n");
 		ret.append("var plays = 0;\n");
 		ret.append("function count() {\n");
 		ret.append("if (plays < counter) {\n");
@@ -372,6 +380,8 @@ public class SubTaskView_SpeechTestTask extends SubTaskView{
 		ret.append("}\n");
 		ret.append("</script>\n");	
 		
+}//End special stuff for speechTestTask during execution
+		
 		String solution = speechTestSubTasklet.getHandlingSolution();
 		Boolean[] b = null;
 		if (solution != null){
@@ -394,6 +404,32 @@ public class SubTaskView_SpeechTestTask extends SubTaskView{
 		// ende div		
 		//if (!corrected)
 			//ret.append("\n</div>");
+		
+		//display answers 3 seconds after end of mp3-play
+		ret.append("<div  style=\"display:none\" id=\"info_playing\">undefined</div>\n");
+		ret.append(
+		"<script>\n" +
+		"var played = \"false\";\n" + 
+		"function getPlayerStatus() {\n" +
+	"var status = document.getElementById(\"info_playing\").innerHTML;\n" +
+	"played_new = status;\n" +
+	
+	"if (played_new == \"false\" && played == \"true\") {\n" +
+		
+	"	answers = document.getElementsByClassName(\"answer\");\n" +
+	"	//alert(answers.length + \" \" + answers[0].style);\n" +
+	"	//answers.style.visibility = \"visible\";		\n" +
+	"	for( var y=0; y < answers.length; y++ ) {\n" +
+	"	answers[y].setAttribute('style', 'font-weight: bold; visibility: visible; color: red; font-size:150%;');\n" +
+	"	//answers[y].style.visibility = \"visible\";\n" +
+	"	//play button ausblenden \n" +
+	"	}\n" +
+	"}\n" +
+	"played = played_new;\n" +
+	"}\n" +
+	"setInterval(\"getPlayerStatus();\", 3000);\n" +
+	"</script>		\n");
+		
 		
 		if (!corrected) {
 			ret.append("<script type=\"text/javascript\">\n");
@@ -463,11 +499,15 @@ public class SubTaskView_SpeechTestTask extends SubTaskView{
 				else symbolPic = getSymbolForCorrectedAnswer(pos,false);
 			}			
 			
-			ret.append("\n  <td nowrap valign=top>"+
+			ret.append("\n  <div class=\"answer\" ");
+			
+			if (!disabled)
+			ret.append("style=\"visibility: hidden;\"");
+			ret.append("nowrap valign=top>"+
 					   " <input type=\"radio\" name=\"["+num+"]["+relativ+"]\"" +					
 					   " id=\""+relativ+"\" value=\""+n+"\" "+sel+" onChange=\"setModified()\" >"+n+
 					   symbolPic+
-					   "</td>");
+					   "</div>");
 			ret.append("\n");
 			ret.append("</tr>");	
 			pos++;

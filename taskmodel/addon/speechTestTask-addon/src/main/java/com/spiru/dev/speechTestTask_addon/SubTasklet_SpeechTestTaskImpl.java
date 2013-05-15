@@ -292,4 +292,68 @@ public class SubTasklet_SpeechTestTaskImpl extends AbstractAddonSubTasklet imple
 		return null;
 	}
 
+	
+	public String getDelayForAudioInMillis() {
+		String delayTime = getText(mementoTaskDef,"delayForAudioInSeconds","15");
+		//System.out.println(delayTime);
+		return String.valueOf(Integer.parseInt(delayTime)*1000);
+	}
+	public String getPlayCount(){
+		return getText(mementoTaskDef,"playCount","1");
+
+	}
+	public String getFilePathMP3(){
+		return getText(mementoTaskDef,"filePathMP3", null);
+	
+	}
+	public String getMaximumTimeForTask(){
+		//Expected format: eg. 4:30 as 4 minutes and 30 seconds
+		String timeFromMoodle = getText(mementoTaskDef,"maximumTimeForTask", null);
+		int splitAt = timeFromMoodle.indexOf(":");
+		int timeInSeconds = 240; // default for testing 4 minutes
+		//int timeInMillis = 240000;
+		
+		try {
+			if (splitAt != -1) {
+				// : exists?
+				int minutes = Integer.parseInt(timeFromMoodle.substring(0, splitAt));
+				//System.out.println("minutes " + minutes);
+				int seconds = Integer.parseInt(timeFromMoodle.substring(splitAt+1));
+				//System.out.println("seconds " + seconds);
+				timeInSeconds = (minutes * 60) + seconds;
+				//timeInMillis = timeInSeconds * 1000;
+			}
+			else {
+				// no : in timeformat - implying that minutes are meant
+				timeInSeconds = Integer.parseInt(timeFromMoodle) *60;
+				//timeInMillis = timeInSeconds * 1000;
+			}
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//System.out.println(timeInSeconds + " " + timeFromMoodle);
+		return String.valueOf(timeInSeconds);
+	}
+	
+	private Element getElement(Element memento, String string) {
+		Element e=null;
+		NodeList nl=memento.getElementsByTagName(string);
+		if(nl.getLength()>0) {
+            e=(Element) nl.item(0);
+        }
+		return e;
+	}
+
+	private String getText(Element memento, String nodeName, String dflt) {
+		Element element=getElement(memento,nodeName);
+		if(element!=null) {
+			String text = element.getFirstChild().getTextContent();
+			return text;
+		}
+		return dflt;
+	}
+
+	
 }
