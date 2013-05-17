@@ -10,7 +10,7 @@ public class SpeechTestTaskSubTaskViewFactory implements AddonSubTaskViewFactory
     public String getAddonTaskType() {
     	
     	System.out.println("ViewSubtasklet speechTestTask successfully loaded");
-    	return "speechTesttask";
+    	return "speechtesttask";
     }
 
     /*

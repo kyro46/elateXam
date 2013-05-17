@@ -17,8 +17,8 @@ AddOnSubTaskletFactory {
 	}
 
 	public String getAddonTaskType() {
-		System.out.println("Subtasklet speechTestTask successfully loaded");
-		return "speechTesttask";
+		//System.out.println("Subtasklet speechTestTask successfully loaded");
+		return "speechtesttask";
 	}
 
 }
