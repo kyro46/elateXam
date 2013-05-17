@@ -38,26 +38,32 @@ public class MetaToConfigConverter {
 		config.setTries(Integer.parseInt(question.getTries()));
 
 
-		int numberOfCorrectors = Integer.parseInt(question.getNumberofcorrectors());
-
-		if (numberOfCorrectors == 1) {
+		int numberOfCorrectors;
+		try {
+			numberOfCorrectors = Integer.parseInt(question.getNumberofcorrectors());
+			if (numberOfCorrectors == 1) {
+				correctionMode = new CorrectionMode();
+				correctionMode.setRegular(regular);
+			} else {
+				correctionMode = new CorrectionMode();
+				multipleCorrectors.setNumberOfCorrectors(numberOfCorrectors);
+				correctionMode.setMultipleCorrectors(multipleCorrectors);
+			}
+			//Wird z.Z. nicht angeboten:		
+			//correctOnlyProcessedTasks.setNumberOfTasks(10);
+			//correctionMode.setCorrectOnlyProcessedTasks(correctOnlyProcessedTasks);
+			//config.setCorrectionMode(correctionMode);
+		} catch (NumberFormatException e) {
+			correctionMode = new CorrectionMode();
 			correctionMode.setRegular(regular);
-		} else {
-			multipleCorrectors.setNumberOfCorrectors(numberOfCorrectors);
-			correctionMode.setMultipleCorrectors(multipleCorrectors);
+			e.printStackTrace();
 		}
+
 		config.setCorrectionMode(correctionMode);
 
 		complexTaskDef.setConfig(config);
 		complexTaskDef.setID(rand.getRandomID());
-		//Wird z.Z. nicht angeboten
-		//correctOnlyProcessedTasks.setNumberOfTasks(10);
-		//correctionMode.setCorrectOnlyProcessedTasks(correctOnlyProcessedTasks);
-		//config.setCorrectionMode(correctionMode);
-		
-		
-		
-		
+	
 		return complexTaskDef;
 	}
 	
