@@ -59,18 +59,21 @@ class qtype_speechtesttask_edit_form extends elate_question_edit_form {
 		$mform->addElement('text', 'delayForAudioInSeconds', get_string('delayForAudioInSeconds', "qtype_speechtesttask"), 'maxlength="5" size="5" ');
 		$mform->addElement('text', 'maximumTimeForTask', get_string('maximumTimeForTask', "qtype_speechtesttask"), 'maxlength="10" size="10" ');
 		$mform->addElement('text', 'timetostartreplay', get_string('timetostartreplay', "qtype_speechtesttask"), 'maxlength="5" size="5" ');
+		$mform->addElement('checkbox', 'isRestricted', get_string('isRestricted', "qtype_speechtesttask"));
 		
 		$mform->setDefault("playCount", 1);
 		$mform->setDefault("filePathMP3", "/audioFiles/");
 		$mform->setDefault("delayForAudioInSeconds", 20);
 		$mform->setDefault("maximumTimeForTask", "5:00");
 		$mform->setDefault("timetostartreplay", 3);
+		$mform->setDefault("isRestricted", 0);
 		
 		$mform->addHelpButton("playCount", 'playCount', 'qtype_speechtesttask');
 		$mform->addHelpButton("filePathMP3", 'filePathMP3', 'qtype_speechtesttask');
 		$mform->addHelpButton("delayForAudioInSeconds", 'delayForAudioInSeconds', 'qtype_speechtesttask');
 		$mform->addHelpButton("maximumTimeForTask", 'maximumTimeForTask', 'qtype_speechtesttask');
 		$mform->addHelpButton("timetostartreplay", 'timetostartreplay', 'qtype_speechtesttask');
+		$mform->addHelpButton("isRestricted", 'isRestricted', 'qtype_speechtesttask');
 		//End special fields for speechtest		
 		
 		for ($i = 1; $i <= $num_questions; $i++) {

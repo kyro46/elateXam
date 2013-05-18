@@ -43,5 +43,7 @@ $string['maximumTimeForTask'] = 'Maximum time for this task (mm:ss)';
 $string['maximumTimeForTask_help'] = 'Maximum time for this task (mm:ss), e.g. "05:30" or "10:00" or "5". When no seconds are givven, we assume minutes.';
 $string['timetostartreplay'] = 'Time to click replay after audio is over (s)';
 $string['timetostartreplay_help'] = 'Time to click replay after audio is over in seconds.';
+$string['isRestricted'] = 'Restrict navigation and set time limit on examServer';
+$string['isRestricted_help'] = 'No free navigation and time limit on the examServer. All questions in an exam have to have this option set or not set in the same way to avoid errors.';
 $string['addquestionbtn'] = 'Add another Question Block';
 //$string['addanswerbtn'] = 'Add another possible Answer';

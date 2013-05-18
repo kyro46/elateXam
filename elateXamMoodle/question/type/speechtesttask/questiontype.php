@@ -57,11 +57,13 @@ class qtype_speechtesttask extends elate_addon_questiontype_base {
 			$Delay = $dom->createElement('delayForAudioInSeconds', $question->{"delayForAudioInSeconds"});
 			$Maxtime = $dom->createElement('maximumTimeForTask', $question->{"maximumTimeForTask"});
 			$Timetostartreplay = $dom->createElement('timetostartreplay', $question->{"timetostartreplay"});
+			$IsRestricted = $dom->createElement('isRestricted', $question->{"isRestricted"});
 			$Memento->appendChild($Count);
 			$Memento->appendChild($Filepath);
 			$Memento->appendChild($Delay);
 			$Memento->appendChild($Maxtime);
 			$Memento->appendChild($Timetostartreplay);
+			$Memento->appendChild($IsRestricted);
 			//End adding special stuff
 			
 			$Memento->appendChild($mcList);
@@ -122,6 +124,7 @@ class qtype_speechtesttask extends elate_addon_questiontype_base {
 			$Delay = $dom->getElementsByTagName('delayForAudioInSeconds');
 			$Maxtime = $dom->getElementsByTagName('maximumTimeForTask');
 			$Timetostartreplay = $dom->getElementsByTagName('timetostartreplay');
+			$IsRestricted = $dom->getElementsByTagName('isRestricted');
 
 foreach ($Count as $iterate) {
        $question->{"playCount"} = $iterate -> nodeValue;
@@ -133,6 +136,8 @@ foreach ($Count as $iterate) {
        $question->{"maximumTimeForTask"} = $iterate -> nodeValue;
 }foreach ($Timetostartreplay as $iterate) {
        $question->{"timetostartreplay"} = $iterate -> nodeValue;
+}foreach ($IsRestricted as $iterate) {
+       $question->{"isRestricted"} = $iterate -> nodeValue;
 }
 			//echo $dom->saveHTML();
 			//$question->{"playCount"} = $Count->nodeValue;

@@ -303,8 +303,13 @@ public class SubTasklet_SpeechTestTaskImpl extends AbstractAddonSubTasklet imple
 
 	}
 	public String getFilePathMP3(){
-		return getText(mementoTaskDef,"filePathMP3", null);
+		return getText(mementoTaskDef,"filePathMP3", "");
 	
+	}
+	public boolean getIsRestricted(){
+		String restrictionMemento = getText(mementoTaskDef,"isRestricted", "0");
+		boolean isRestricted = restrictionMemento == "1"	? true: false;
+		return isRestricted;
 	}
 	public String getMaximumTimeForTask(){
 		//Expected format: eg. 4:30 as 4 minutes and 30 seconds
@@ -329,7 +334,6 @@ public class SubTasklet_SpeechTestTaskImpl extends AbstractAddonSubTasklet imple
 				//timeInMillis = timeInSeconds * 1000;
 			}
 		} catch (NumberFormatException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

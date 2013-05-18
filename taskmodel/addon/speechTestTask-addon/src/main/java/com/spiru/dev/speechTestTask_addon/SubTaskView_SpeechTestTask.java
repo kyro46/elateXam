@@ -407,29 +407,27 @@ if (!corrected){
 		
 		//display answers 3 seconds after end of mp3-play
 		ret.append("<div  style=\"display:none\" id=\"info_playing\">undefined</div>\n");
-		ret.append(
-		"<script>\n" +
-		"var played = \"false\";\n" + 
-		"function getPlayerStatus() {\n" +
-	"var status = document.getElementById(\"info_playing\").innerHTML;\n" +
-	"played_new = status;\n" +
-	
-	"if (played_new == \"false\" && played == \"true\") {\n" +
 		
-	"	answers = document.getElementsByClassName(\"answer\");\n" +
-	"	//alert(answers.length + \" \" + answers[0].style);\n" +
-	"	//answers.style.visibility = \"visible\";		\n" +
-	"	for( var y=0; y < answers.length; y++ ) {\n" +
-	"	answers[y].setAttribute('style', 'font-weight: bold; visibility: visible; color: red; font-size:150%;');\n" +
-	"	//answers[y].style.visibility = \"visible\";\n" +
-	"	//play button ausblenden \n" +
-	"	}\n" +
-	"}\n" +
-	"played = played_new;\n" +
-	"}\n" +
-	"setInterval(\"getPlayerStatus();\", 3000);\n" +
-	"</script>		\n");
-		
+		ret.append("<script>\n");
+		ret.append("var played = \"false\";\n");
+		ret.append("function getPlayerStatus() {\n");
+		ret.append("var status = document.getElementById(\"info_playing\").innerHTML;\n");
+		ret.append("played_new = status;\n");
+		ret.append("if (played_new == \"false\" && played == \"true\") {\n");
+		ret.append("	answers = document.getElementsByClassName(\"answer\");\n");
+		ret.append("	//alert(answers.length + \" \" + answers[0].style);\n");
+		ret.append("	//answers.style.visibility = \"visible\";		\n");
+		ret.append("	for( var y=0; y < answers.length; y++ ) {\n");
+		ret.append("	answers[y].setAttribute('style', 'font-weight: bold; visibility: visible; color: red; font-size:150%;');\n");
+		ret.append("	//answers[y].style.visibility = \"visible\";\n");
+		ret.append("	//play button ausblenden \n");
+		ret.append("	}\n");
+		ret.append("}\n");
+		ret.append("played = played_new;\n");
+		ret.append("}\n");
+		//TODO set time according to memento
+		ret.append("setInterval(\"getPlayerStatus();\", 3000);\n");
+		ret.append("</script>\n");
 		
 		if (!corrected) {
 			ret.append("<script type=\"text/javascript\">\n");
@@ -501,9 +499,11 @@ if (!corrected){
 			
 			ret.append("\n  <div class=\"answer\" ");
 			
+			//set hide-attribute in test, till mp3-play is over
 			if (!disabled)
 			ret.append("style=\"visibility: hidden;\"");
-			ret.append("nowrap valign=top>"+
+			
+			ret.append("nowrap valign=bottom>"+
 					   " <input type=\"radio\" name=\"["+num+"]["+relativ+"]\"" +					
 					   " id=\""+relativ+"\" value=\""+n+"\" "+sel+" onChange=\"setModified()\" >"+n+
 					   symbolPic+
@@ -548,7 +548,7 @@ if (!corrected){
 	    ret.append( getRenderedHTML( -1, true ) );	    	   
 
 	    ret.append(getCorrectorPointsInputString(actualCorrector, "SpeechTest", speechTestSubTasklet));
-
+	    
 	    return ret.toString();
 	}
 
