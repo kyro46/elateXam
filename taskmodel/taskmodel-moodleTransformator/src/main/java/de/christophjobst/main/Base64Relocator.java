@@ -57,14 +57,20 @@ public class Base64Relocator {
 		// Konvertierung des String in separaten Block,
 		// falls bei häufiger Nutzung Auslagerung nötig
 		try {
-			if (!System.getProperty("os.name").contains("indows")) {
 				String orig = text;
 				// Workaround: Go through all Images containing Base64 Strings and write them
 				// somewhere to the disk, putting links to those files afterwards.
 				// TODO: handle deletion of image files (e.g. when the corresponding exam is deleted)
+				// TODO name files corresponding to examname
+				// TODO save files in the taskfile-dir in user.home-dir
+				// TODO do this for the memento too
+				// TODO use relative path without webapp-name, same at the code for special images generated in applettasks (time, comparetext, grouping)
+
 				String ret = "";
 				int lastPos = 0;
-				String fspath = "/opt/apache-tomcat-7.0.29/webapps/taskmodel-core-view"; // FIXME: Get rid of this
+				//String fspath = "/opt/apache-tomcat-7.0.29/webapps/taskmodel-core-view"; // FIXME: Get rid of this
+				String fspath = System.getProperty("user.dir").replaceAll("bin", "webapps/taskmodel-core-view/ExamImages");
+				new File(fspath).mkdir();
 				SecureRandom random = new SecureRandom();
 				Pattern pattern = Pattern.compile("data:image/([a-z]+);base64,([^\"]+)");
 				Matcher match = pattern.matcher(orig);
@@ -74,14 +80,14 @@ public class Base64Relocator {
 					final BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(img));
 					String randomname = "/frombase64_" + new BigInteger(130, random).toString(32) + "." + type;
 					ImageIO.write(bufferedImage, type, new File(fspath + randomname)); // write to file on filesystem
-					ret += orig.substring(lastPos, match.start()) + "/taskmodel-core-view" + randomname; // have a link to that file accessible via web
+					ret += orig.substring(lastPos, match.start()) + "/taskmodel-core-view/ExamImages" + randomname; // have a link to that file accessible via web
 					lastPos = match.end();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 				ret += orig.substring(lastPos);
 				text = ret;
-			}
+			
 		} catch (Exception e) {
 		}
 	
