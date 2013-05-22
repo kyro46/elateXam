@@ -51,7 +51,9 @@ public class SubTaskView_SpeechTestTask extends SubTaskView{
 			ret.append("document.getElementById('save-and-backward').style.visibility = 'hidden';}\n");
 			//ret.append("hideBackButton();\n");
 		ret.append("</script>\n");		
-			
+		
+		ret.append("\n  <div id=balken><div id=ladung></div></div>");
+
 		ret.append("<table>");
 		ret.append("\n");
 		// selection->text
@@ -62,7 +64,6 @@ public class SubTaskView_SpeechTestTask extends SubTaskView{
 		// selection->hint
 		ret.append("<tr>");
 		//ret.append("\n  <td nowrap valign=top><i>"+speechTestSubTasklet.getSelectionHint()+"</i></td>");
-		ret.append("\n  <td nowrap valign=top><div id=balken><div id=ladung></div></div></td>");
 		
 		ret.append("\n");
 		ret.append("</tr>\n");		
@@ -175,6 +176,7 @@ if (!corrected){
 			ret.append("expiredTime = Math.ceil(breite/sekunden*difference);\n");
 			ret.append("balken.style.width = breite+\"px\";\n");
 			ret.append("balken.style.border = \"1px solid gray\";\n");
+			ret.append("balken.style.margin = \"0px auto\";\n");
 			ret.append(" ladung.style.backgroundColor = \"green\";\n");
 			ret.append("ladung.style.height = hoehe +\"px\";\n\n");
 			ret.append("ladung.innerHTML = \"<b>Gesamtbearbeitungszeit</b>\";\n");
@@ -192,6 +194,11 @@ if (!corrected){
 		  	ret.append("  else {\n");
 		  	ret.append("    ladung.style.width = w+\"px\";\n");
 		  	ret.append("  }\n");
+		  	//Give hint when time is nearly over
+		  	ret.append("if (w / breite == 0.8){\n");
+		  	ret.append("	ladung.style.backgroundColor = \"yellow\";\n");
+		  	ret.append("	ladung.innerHTML = \"<b>Gesamtbearbeitungszeit läuft aus</b>\";\n");
+		  	ret.append("	 }\n");
 		  	ret.append("}\n");
 		  	ret.append(" sto = setInterval(\"prozent()\",50);\n");
 		ret.append("}\n");
@@ -201,7 +208,7 @@ if (!corrected){
 		
 		//Play MP3 and provide replays according to Memento counts	
 		//Buttons for Play, Pause, Stop, currently only Play is used:	
-		ret.append(" <div style=\"text-align:left; visibility:hidden;\" id=\"playercontroller\">\n");
+		ret.append(" <div style=\"text-align:center; visibility:hidden;\" id=\"playercontroller\">\n");
 		ret.append("    <button id=\"playerplay\" name=\"playerplay\" type=\"button\"\n");
 		ret.append("      value=\"Play\" onclick=\"javascript:count()\">\n");
 		ret.append("        <img src=\"/taskmodel-core-view/player_mp3_js/play.png\" width=\"50\" height=\"50\" ><br>\n");
@@ -414,11 +421,12 @@ if (!corrected){
 		ret.append("var status = document.getElementById(\"info_playing\").innerHTML;\n");
 		ret.append("played_new = status;\n");
 		ret.append("if (played_new == \"false\" && played == \"true\") {\n");
+		ret.append("	document.getElementById('playerplay').style.visibility = 'hidden';\n");
 		ret.append("	answers = document.getElementsByClassName(\"answer\");\n");
 		ret.append("	//alert(answers.length + \" \" + answers[0].style);\n");
 		ret.append("	//answers.style.visibility = \"visible\";		\n");
 		ret.append("	for( var y=0; y < answers.length; y++ ) {\n");
-		ret.append("	answers[y].setAttribute('style', 'font-weight: bold; visibility: visible; color: red; font-size:150%;');\n");
+		ret.append("	answers[y].setAttribute('style', 'font-weight: bold; visibility: visible; ');\n");
 		ret.append("	//answers[y].style.visibility = \"visible\";\n");
 		ret.append("	//play button ausblenden \n");
 		ret.append("	}\n");
@@ -467,19 +475,17 @@ if (!corrected){
 		// problem			
 		ret.append("<hr>\n");
 		ret.append("<table width=\"100%\" border=\"0\">");
-		ret.append("\n<tr>\n  <td valign=top><b>"+speechTestSubTasklet.getQuestionProblem(num)+"</b></td>");
-		ret.append("\n"); 
-		ret.append("</tr>");			
+		ret.append("\n<div   nowrap valign=top><b>"+speechTestSubTasklet.getQuestionProblem(num)+"</b></div>");
+		ret.append("\n"); 		
 		// hint
-		ret.append("<tr>\n  <td nowrap valign=top><i>"+speechTestSubTasklet.getQuestionHint(num)+"</i></td>");
-		ret.append("\n"); ret.append("</tr>");
+		ret.append("<div   nowrap valign=top><i>"+speechTestSubTasklet.getQuestionHint(num)+"</i></div>");
+		ret.append("\n");
 		// answers						
 		int pos = 0;
 		for(int k=0; k<num; k++){
 			pos+=speechTestSubTasklet.getQuestionsAnswers(k).size();
 		}
 		for(String n:speechTestSubTasklet.getQuestionsAnswers(num)){
-			ret.append("<tr>");				
 			String sel = "";
 			String symbolPic = "";
 			if (param != null && param[pos]){
@@ -509,7 +515,6 @@ if (!corrected){
 					   symbolPic+
 					   "</div>");
 			ret.append("\n");
-			ret.append("</tr>");	
 			pos++;
 		}
 		
