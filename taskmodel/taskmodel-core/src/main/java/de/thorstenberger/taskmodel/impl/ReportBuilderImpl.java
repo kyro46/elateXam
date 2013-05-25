@@ -209,6 +209,8 @@ public class ReportBuilderImpl implements ReportBuilder {
 		row.createCell( c++ ).setCellValue( "Login" );
 		row.createCell( c++ ).setCellValue( "Vorname" );
 		row.createCell( c++ ).setCellValue( "Name" );
+		row.createCell( c++ ).setCellValue( "EMail" );
+
 		List<UserAttribute> uas = taskManager.availableUserAttributes();
 		for( UserAttribute ua : uas ) {
 			row.createCell( c++ ).setCellValue( ua.getName( null ) );
@@ -524,6 +526,7 @@ public class ReportBuilderImpl implements ReportBuilder {
 		String login;
 		String firstName;
 		String name;
+		String email;
 		List<String> userAttributeValues = new LinkedList<String>();;
 		boolean notfound;
 
@@ -531,6 +534,7 @@ public class ReportBuilderImpl implements ReportBuilder {
 			login = userInfo.getLogin();
 			firstName = userInfo.getFirstName();
 			name = userInfo.getName();
+			email = userInfo.getEMail();
 			for( UserAttribute ua : uas ){
 				String s = userInfo.getUserAttributeValue( ua.getKey() );
 				if( s == null || s.trim().length() == 0 ) {
@@ -544,6 +548,7 @@ public class ReportBuilderImpl implements ReportBuilder {
 			login = tasklet.getUserId();
 			firstName = "?";
 			name = "?";
+			email = "?";
 			for( UserAttribute ua : uas ) {
 				userAttributeValues.add( "?" );
 			}
@@ -564,6 +569,7 @@ public class ReportBuilderImpl implements ReportBuilder {
 
 		row.createCell( c++ ).setCellValue( firstName );
 		row.createCell( c++ ).setCellValue( name );
+		row.createCell( c++ ).setCellValue( email );
 		for( String uav : userAttributeValues ) {
 			row.createCell( c++ ).setCellValue( uav );
 		}		
