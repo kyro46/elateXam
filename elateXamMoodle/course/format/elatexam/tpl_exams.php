@@ -33,12 +33,15 @@ function removeExport(exportId){
 $tplDate = new DateTime();
 ?>
 <div class="xams_page">
-    <h2 class="xams_top"><?php echo get_string('exams', 'format_elatexam') ?></h2>
-    
+
+	<h2 class="xams_top"><?php echo get_string('exams', 'format_elatexam') ?></h2>
+
     <div class="create_xam">
-        <a href="<?php echo $CFG->wwwroot ?>/question/edit.php?courseid=<?php echo $course->id ?>"><button><?php echo get_string('open_question_bank', 'format_elatexam') ?></button></a>
+		<a href="<?php echo $CFG->wwwroot ?>/question/edit.php?courseid=<?php echo $course->id ?>"><button><?php echo get_string('open_question_bank', 'format_elatexam') ?></button></a>
         <big><?php echo get_string('exam_groups', 'format_elatexam') ?></big><a href="<?php echo $_SERVER['PHP_SELF'] ?>?id=<?php echo $course->id ?>&task=edit"><button><?php echo get_string('create_exam_group', 'format_elatexam') ?></button></a>
-    </div>
+            <a href="<?php echo $CFG->wwwroot ?>/question/wizzard.php?courseid=<?php echo $course->id ?>"><button style="height:40px;width:120px;font-size:22px;text-align:center;font-weight: bold;" ><?php echo get_string('goto_wizzard', 'format_elatexam') ?></button></a>
+
+	</div>
     <div style="clear: both;"></div>
     <?php foreach ($xam_list as $xam) { ?>
         <div class="xam_group" id="xam_group<?php echo $xam->id ?>">
