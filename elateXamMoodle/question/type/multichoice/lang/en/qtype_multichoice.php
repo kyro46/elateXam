@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -62,6 +62,8 @@ $string['pluginnameadding'] = 'Adding a Multiple choice question';
 $string['pluginnameediting'] = 'Editing a Multiple choice question';
 $string['pluginnamesummary'] = 'Allows the selection of a single or multiple responses from a pre-defined list.';
 $string['selectmulti'] = 'Select one or more:';
+$string['selectyesno'] = 'Allow only one answerselection in exams?';
+$string['selectyesno_help'] = 'If "YES" only one correct answer will be used in exams and only one answer at all can be selected. If "NO", students can select multiple answers and multiple correct answers can be shown.';
 $string['selectone'] = 'Select one:';
 $string['shuffleanswers'] = 'Shuffle the choices?';
 $string['shuffleanswers_help'] = 'If enabled, the order of the answers is randomly shuffled for each attempt, provided that "Shuffle within questions" in the activity settings is also enabled.';

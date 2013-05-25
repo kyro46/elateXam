@@ -13,7 +13,7 @@ function get_default_for_elatexam($qtype, $identifier) {
 					'num_shown' => 0,
 					'num_right_min' => 1,
 					'num_right_max' => 1,
-					'single' => 0,
+					'single' => 1,
 					'penalty' => 1,
 					'penalty_empty' => 0,
 					'penalty_wrong' => 0,

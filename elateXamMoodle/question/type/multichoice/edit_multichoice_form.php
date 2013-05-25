@@ -47,14 +47,61 @@ class qtype_multichoice_edit_form extends elate_question_edit_form {
      */
     protected function definition_inner($mform) {
     	$mform = $this->_form; // use it because of Eclipse introspection
-        $menu = array(
+        
+		// not needed in ElateXam
+        /*$mform->addElement('select', 'answernumbering',
+                get_string('answernumbering', 'qtype_multichoice'),
+                qtype_multichoice::get_numbering_styles());
+        $mform->setDefault('answernumbering', 'abc');*/
+        $mform->addElement('hidden', 'answernumbering', 'abc');
+
+        $this->add_per_answer_fields($mform, get_string('choiceno', 'qtype_multichoice', '{no}'),
+                question_bank::fraction_options_full(), max(4, QUESTION_NUMANS_START));
+
+        $this->add_combined_feedback_fields(true);
+
+
+$mform->addElement('html', '<br><script>
+			$(function() {
+			$( "#accordion" ).accordion({
+			heightStyle: "content", collapsible : true, active : \'none\'});
+			});
+			</script>
+			<div id="accordion">
+			<h3>Optional: Antwortoptionen</h3>
+			<div>');
+$this->add_answer_settings(); 
+$mform->addElement('html', '</div>
+			<h3>Optional: Strafpunkte</h3>
+			<div>');
+$this->add_interactive_settings(true, true);			
+$mform->addElement('html', '</div>
+		</div>');
+    }
+
+    protected function add_answer_settings() {
+ 		$mform = $this->_form;
+		//$mform->addElement('header', 'optionsheader', 'Antwortoptionen');
+		//$mform->disabledIf('shownumcorrect', 'single', 'eq', 1);
+
+		/*$menu = array(
             get_string('answersingleno', 'qtype_multichoice'),
             get_string('answersingleyes', 'qtype_multichoice'),
         );
-        $mform->addElement('select', 'single',
-                get_string('answerhowmany', 'qtype_multichoice'), $menu);
+		
+		String answersingleyes = get_string('answersingleyes', 'qtype_multichoice');
+		
+		
+        $mform->addElement('select', 'single', get_string('answerhowmany', 'qtype_multichoice'), $menu);
         $mform->setDefault('single', get_default_for_elatexam('multichoice','single'));
-
+		*/
+		//default auf diese weise-> string aus answersingleyes extra speichern und im if einen abgleich damit machen
+		
+		//Change Multichoice/Singlechoise-switch from above code to a selectyesno-field
+		$mform->addElement('selectyesno', 'single', get_string('selectyesno', 'qtype_multichoice'));
+		$mform->addHelpButton('single', 'selectyesno', 'qtype_multichoice');
+        $mform->setDefault('single', '1');
+		
         // minimal anzuzeigende antwortalternativen (default jeweils 1), insgesamt anzuzeigende antwortalternativen (wenn nichts eingetragen alle)
         // auswahlfeld ob singlechoice oder multichoice muss rein (der server muss wissen ob er die radiobuttons oder die checkboxen nimmt)
         // wenn singlechoice: angeben wie viele antworten insgesamt angezeigt werden sollen
@@ -76,34 +123,20 @@ class qtype_multichoice_edit_form extends elate_question_edit_form {
                 get_string('shuffleanswers', 'qtype_multichoice'), null, null, array(0, 1));
         $mform->addHelpButton('shuffleanswers', 'shuffleanswers', 'qtype_multichoice');
         $mform->setDefault('shuffleanswers', get_default_for_elatexam('multichoice','shuffleanswers'));
-
-        // not needed in ElateXam
-        /*$mform->addElement('select', 'answernumbering',
-                get_string('answernumbering', 'qtype_multichoice'),
-                qtype_multichoice::get_numbering_styles());
-        $mform->setDefault('answernumbering', 'abc');*/
-        $mform->addElement('hidden', 'answernumbering', 'abc');
-
-        $this->add_per_answer_fields($mform, get_string('choiceno', 'qtype_multichoice', '{no}'),
-                question_bank::fraction_options_full(), max(5, QUESTION_NUMANS_START));
-
-        $this->add_combined_feedback_fields(true);
-        //$mform->disabledIf('shownumcorrect', 'single', 'eq', 1);
-
-        $this->add_interactive_settings(true, true); // call it earlier?
-    }
-
-    /** Bewertungsmodus:
+   
+	}
+	
+	    /** Bewertungsmodus:
      *       *  Reguläre Bewertung
-     *              “Negative Punkte für falsche Antworten” (Zahl eingeben, default 0)
+     *              “Negative Punkte für falsche Antworten” (Zahl eingeben, default 1)
      *       *  Unterschiedliche Bewertung:
      *              “negative Punkte für nicht gewählte richtige Antworten” (Zahl eingeben, default 0)
      *              “negative Punkte für gewählte Falschantwort” (Zahl eingeben, default 0)
      * @see elate_question_edit_form::add_interactive_settings()
      */
-    protected function add_interactive_settings($withclearwrong = false, $withshownumpartscorrect = false) {
+	protected function add_interactive_settings($withclearwrong = false, $withshownumpartscorrect = false) {
     	$mform = $this->_form;
-    	$mform->addElement('header', 'penaltyheader', get_string('penaltyheader', 'format_elatexam'));
+    	//$mform->addElement('header', 'penaltyheader', get_string('penaltyheader', 'format_elatexam'));
     	$mform->addElement('radio', 'assessmentmode', get_string('assessment_reg', 'format_elatexam'), '', 0);
     	$mform->addElement('text', 'penalty', get_string('penaltyforeachincorrecttry', 'format_elatexam'), array('size' => 3));
     	$mform->addHelpButton('penalty', 'penaltyforeachincorrecttry', 'format_elatexam');
