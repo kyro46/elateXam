@@ -24,8 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 1368762720;
-$plugin->requires = 1368762720;
+$plugin->version  = 2012061700;
+$plugin->requires = 2012061700;
 $plugin->component = 'qtype_speechtesttask';
 
 $plugin->dependencies = array(
