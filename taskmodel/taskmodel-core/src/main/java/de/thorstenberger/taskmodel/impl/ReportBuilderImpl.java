@@ -296,7 +296,13 @@ public class ReportBuilderImpl implements ReportBuilder {
 			row.createCell( c++ ).setCellValue( tasklet.getStatus().toString() );
 
 			// auto correction points
-			row.createCell( c++ ).setCellValue( tasklet.getTaskletCorrection().getAutoCorrectionPoints() != null ? "" + tasklet.getTaskletCorrection().getAutoCorrectionPoints() : "-" );
+			//row.createCell( c++ ).setCellValue( tasklet.getTaskletCorrection().getAutoCorrectionPoints() != null ? "" + tasklet.getTaskletCorrection().getAutoCorrectionPoints() : "-" );
+			if (tasklet.getTaskletCorrection().getAutoCorrectionPoints() != null) {
+				row.createCell( c++ ).setCellValue( tasklet.getTaskletCorrection().getAutoCorrectionPoints().doubleValue() );	
+			} else {
+				row.createCell( c++ ).setCellValue( "-" );
+			}
+			
 			List<ManualCorrection> mcs = tasklet.getTaskletCorrection().getManualCorrections();
 			for( int i = 0; i < maxManualCorrectors; i++ ){
 				if( mcs != null && mcs.size() > i ) {
@@ -376,8 +382,16 @@ public class ReportBuilderImpl implements ReportBuilder {
 				}
 				int anzInTask = 0;
 				for( Category category : categories ){
-					Float points = pointsInCatMap.get( category.getId() );
-					row.createCell( c++ ).setCellValue( points != null ? "" + points : "-" );
+					Double points = pointsInCatMap.get( category.getId() ).doubleValue();
+					//Wenn vorhanden schreibe die Kategoriezusammenfassung auch als Zahl ins Sheet
+					//row.createCell( c++ ).setCellValue( points != null ? "" + points : "-" );
+					if (points != null){
+						row.createCell( c++ ).setCellValue( points );
+					} else {
+						row.createCell( c++ ).setCellValue( "-" );
+					}
+					
+
 					/* cat lesen
 					 * liste mit aufgaben in cat lesen
 					 * login vom stud holen // nur ein student, da obersten for-schleifezu beachten
@@ -395,13 +409,19 @@ public class ReportBuilderImpl implements ReportBuilder {
 					ArrayList<String> punkte = getPointsFromXml(category.getId(), login, taskId, anzInTask);
 					if (punkte !=null)
 					for(String text:punkte){
-						row.createCell( c++ ).setCellValue( text );
+						//Formatiere die Zahlen damit in den ExcelSheets gerechnet werden kann
+						Double pointsAsNumber = Double.parseDouble(text);
+						row.createCell( c++ ).setCellValue( pointsAsNumber );
+
 					}										
 				}
 
 			}
 
-			row.createCell( c++ ).setCellValue( tasklet.getFlags().toString() );
+			List<String> flags = tasklet.getFlags();
+			flags.add("taskID=" + taskId);
+					
+			row.createCell( c++ ).setCellValue( flags.toString() );
 
 		}
 
