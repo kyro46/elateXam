@@ -101,14 +101,30 @@ public class SubTasklet_SpeechTestTaskImpl extends AbstractAddonSubTasklet imple
 					b[i] = true;            
 				else b[i] = false;
 			}	
-						
+
 			int count = 0;
-			for(int i=0; i<getCountQuestions(); i++){				
+			for(int i=0; i<getCountQuestions(); i++){	
+				
+				//hack to export points of single questions in excel - see the two other parts below
+				//for every question do:
+				Element itemPoints = (Element) mementoTaskHandling.getElementsByTagName("answer").item(0);
+				itemPoints = mementoTaskHandling.getOwnerDocument().createElement("manualCorrection");
+				itemPoints.setAttribute("corrector", "item_" + (i+1));
+			
 				for(int k=0; k<getQuestionsAnswers(i).size(); k++){						
 					if (b[count+k] != boolList.get(count+k)){
 						points-=1;
+						
+						//hack to export points of single questions in excel
+						itemPoints.setAttribute("points", "0.0");
+						mementoTaskHandling.appendChild(itemPoints);	
 						break;
-					}					
+					}
+					
+					//hack to export points of single questions in excel
+					itemPoints.setAttribute("points", "1.0");
+					mementoTaskHandling.appendChild(itemPoints);	
+
 				}
 				count += getQuestionsAnswers(i).size();
 			}
