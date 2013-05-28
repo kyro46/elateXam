@@ -20,6 +20,7 @@ public class StudentDetailsForm
     protected String lastName;
     protected String matrikel;
     protected String semester;
+    protected String email;
 
     /** Default empty constructor. */
     public StudentDetailsForm() {}
@@ -102,6 +103,19 @@ public class StudentDetailsForm
      */
     public void setSemester(final String semester) {
       this.semester = semester;
+    }
+    /**
+     * @return the email
+     */
+    public String getEmail() {
+      return email;
+    }
+
+    /**
+     * @param semester the email to set
+     */
+    public void setEmail(final String email) {
+      this.email = email;
     }
 
     /**

@@ -66,6 +66,7 @@ public class StudentsInfoSubmitAction extends BaseAction {
     user.setLastName(userForm.getLastName());
     user.setSemester(userForm.getSemester());
     user.setMatrikel(userForm.getMatrikel());
+    user.setEmail(userForm.getEmail());
     userManager.saveUser(user);
     messages.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("studentsInfo.saved"));
 
