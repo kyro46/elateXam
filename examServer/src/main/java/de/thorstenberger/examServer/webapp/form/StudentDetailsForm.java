@@ -112,7 +112,7 @@ public class StudentDetailsForm
     }
 
     /**
-     * @param semester the email to set
+     * @param email the email to set
      */
     public void setEmail(final String email) {
       this.email = email;

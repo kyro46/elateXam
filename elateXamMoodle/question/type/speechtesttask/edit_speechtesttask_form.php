@@ -66,7 +66,7 @@ class qtype_speechtesttask_edit_form extends elate_question_edit_form {
 		$mform->setDefault("delayForAudioInSeconds", 20);
 		$mform->setDefault("maximumTimeForTask", "5:00");
 		$mform->setDefault("timetostartreplay", 3);
-		$mform->setDefault("isRestricted", 0);
+		$mform->setDefault("isRestricted", 1);
 		
 		$mform->addHelpButton("playCount", 'playCount', 'qtype_speechtesttask');
 		$mform->addHelpButton("filePathMP3", 'filePathMP3', 'qtype_speechtesttask');

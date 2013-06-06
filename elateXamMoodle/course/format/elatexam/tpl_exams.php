@@ -35,13 +35,34 @@ $tplDate = new DateTime();
 <div class="xams_page">
 
 	<h2 class="xams_top"><?php echo get_string('exams', 'format_elatexam') ?></h2>
-
     <div class="create_xam">
-		<a href="<?php echo $CFG->wwwroot ?>/question/edit.php?courseid=<?php echo $course->id ?>"><button><?php echo get_string('open_question_bank', 'format_elatexam') ?></button></a>
-        <big><?php echo get_string('exam_groups', 'format_elatexam') ?></big><a href="<?php echo $_SERVER['PHP_SELF'] ?>?id=<?php echo $course->id ?>&task=edit"><button><?php echo get_string('create_exam_group', 'format_elatexam') ?></button></a>
-            <a href="<?php echo $CFG->wwwroot ?>/question/wizzard.php?courseid=<?php echo $course->id ?>"><button style="height:40px;width:120px;font-size:22px;text-align:center;font-weight: bold;" ><?php echo get_string('goto_wizzard', 'format_elatexam') ?></button></a>
-
+	<script>
+		$(function() {
+		$( "#menu" ).menu();
+		});
+	</script>
+	<style>
+		.ui-menu { width: 220px; }
+	</style>
+	<ul id="menu">
+		<li><a href="<?php echo $CFG->wwwroot ?>/question/wizzard.php?courseid=<?php echo $course->id ?>"><span class="ui-icon ui-icon-star"></span><b><?php echo get_string('goto_wizzard', 'format_elatexam') ?></b></a></li>
+		<li><a href="<?php echo $CFG->wwwroot ?>/question/edit.php?courseid=<?php echo $course->id ?>"><span class="ui-icon ui-icon-note"></span><?php echo get_string('open_question_bank', 'format_elatexam') ?></a></li>
+		<li><a href="<?php echo $_SERVER['PHP_SELF'] ?>?id=<?php echo $course->id ?>&task=edit"><span class="ui-icon ui-icon-document"></span><?php echo get_string('create_exam_group', 'format_elatexam') ?></a></li>
+		<li>
+			<a href="#"><?php echo get_string('goto_other', 'format_elatexam') ?></a>
+			<ul>
+			<li><a href="<?php echo $CFG->wwwroot ?>/question/category.php?courseid=<?php echo $course->id ?>"><?php echo get_string('goto_category', 'format_elatexam') ?></a></li>
+			<li><a href="<?php echo $CFG->wwwroot ?>/question/import.php?courseid=<?php echo $course->id ?>"><?php echo get_string('goto_import', 'format_elatexam') ?></a></li>
+			<li><a href="<?php echo $CFG->wwwroot ?>/question/export.php?courseid=<?php echo $course->id ?>"><?php echo get_string('goto_export', 'format_elatexam') ?></a></li>
+			</ul>
+		</li>
+	</ul>
+	<br>	
+	<big><?php echo get_string('exam_groups', 'format_elatexam') ?></big>
+	<br>
+	<br>
 	</div>
+
     <div style="clear: both;"></div>
     <?php foreach ($xam_list as $xam) { ?>
         <div class="xam_group" id="xam_group<?php echo $xam->id ?>">

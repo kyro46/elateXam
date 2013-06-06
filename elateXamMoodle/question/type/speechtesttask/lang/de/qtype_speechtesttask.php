@@ -44,6 +44,6 @@ $string['maximumTimeForTask_help'] = 'Zeitfenster bis zur automatischen Weiterle
 $string['timetostartreplay'] = 'Zeitfenster bis zur Antworteinblendung nach MP3-Wiedergabeende (s)';
 $string['timetostartreplay_help'] = 'Zeitfenster, nach dem die Antwortalternativen angezeigt werden und das somit für die erneute MP3-Wiedergabe nach Wiedergabeende genutzt werden kann. Vorgabewert: 3 Sekunden.';
 $string['isRestricted'] = 'Restriktive Ablaufumgebung (Prüfungsserver) aktivieren';
-$string['isRestricted_help'] = 'Prüfungsserver: Freie Navigation deaktivieren und Zeitlimit pro Fragenkomplex setzen. Ist dies Aktiviert, so müssen alle anderen Fragen der Klausur diese Option ebenfalls nutzen, da sonst Fehler auftreten können.';
+$string['isRestricted_help'] = 'Prüfungsserver: Freie Navigation deaktivieren und Zeitlimit pro Fragenkomplex setzen. Ist dies aktiv, so müssen alle anderen Fragen der Klausur diese Option ebenfalls nutzen.';
 $string['addquestionbtn'] = 'Weiteren Fragenblock hinzufügen';
 $string['addanswerbtn'] = 'Weitere Antwortmöglichkeit hinzufügen';

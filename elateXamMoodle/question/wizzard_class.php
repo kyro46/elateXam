@@ -311,11 +311,21 @@ class question_category_object {
 			Andere Fragetypen anlegen, tabellarische Auflistung aller Fragen, mit Suchfunktion, 
 			Editierfunktion, Verschiebeoption zwischen Kategorien und L&ouml;schm&ouml;glichkeit: <br>
 					<form><input type="button" value="' . get_string('open_question_bank', 'format_elatexam') . '" 
-					onClick="window.location.href=\'edit.php?courseid=' . $courseid . '\'"></form>
+					onClick="window.open(\'edit.php?courseid=' . $courseid . '\'); return false;"></form>
 					<br>
 			Kategorien auflisten, neu anordnen, editieren, l&ouml;schen oder mit Beschreibungstexten versehen: <br><br>
 					<form><input type="button" value="Kategorien verwalten" 
-					onClick="window.location.href=\'category.php?courseid=' . $courseid . '\'"></form>
+					onClick="window.open(\'category.php?courseid=' . $courseid . '\'); return false;"></form>
+					<br>
+					Fragen aus dem Moodle (1.9) f&uuml;r den Lehrbetrieb importieren:
+					Die Fragen m&uuml;ssen zuvor von dort exporiert worden sein und auf Ihrem PC vorliegen. W&auml;hlen Sie daf&uuml;r das Moodle-XML-Format.<br><br>
+					<form><input type="button" value="Fragen importieren" 
+					onClick="window.open(\'import.php?courseid=' . $courseid . '\'); return false;"></form>
+					<br>					
+					Den Fragenpool f&uuml;r eigene Sicherungen exportieren:
+					W&auml;hlen Sie daf&uuml;r das Moodle-XML-Format.<br><br>
+					<form><input type="button" value="Fragen exportieren" 
+					onClick="window.open(\'export.php?courseid=' . $courseid . '\'); return false;"></form>
 					<br>
 					</div>
 			</div>';
