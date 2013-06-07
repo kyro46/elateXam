@@ -106,4 +106,5 @@ class question_category_edit_form_param extends moodleform {
         $mform->addElement('hidden', 'id', 0);
         $mform->setType('id', PARAM_INT);
     }
+	
 }

@@ -120,8 +120,21 @@ if (!empty($param->edit)) {
     $qcobject->display_move_form($questionstomove, $category);
 } else {
 
-    // display the user interface
-    $qcobject->display_user_interface(htmlspecialchars($_GET["courseid"]));
+	global $DB;
+	/*
+	1. course_id $_GET["courseid"]
+	2. in context nach der instanceid suchen WENN contextlevel gleichzeitig 50 (steht für course-content) ist
+	3. in question_categories nach der zugehörigen id von context suchen 
+	course_id -> context_instance_id => id -> question_category_ID
+	*/
+	$contextid = $DB->get_record_sql('SELECT id FROM {context} WHERE contextlevel=50 AND instanceid = :courseid', array('courseid'=>$_GET["courseid"]));
+	$question_category = $DB->get_record_sql('SELECT id from {question_categories} WHERE contextid= :contextid', array('contextid'=>$contextid->id));
+	//echo $contextid->id;
+	//echo '---';
+	//echo $question_category->id;
+
+	// display the user interface
+    $qcobject->display_user_interface(htmlspecialchars($_GET["courseid"]),$question_category->id);
 ?>
 	<br>
 	<br>

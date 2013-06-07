@@ -210,13 +210,11 @@ class question_category_object {
      * Displays the user interface
      *
      */
-    public function display_user_interface($courseid) {
+    public function display_user_interface($courseid, $categoryid) {
 
         /// Interface for editing existing categories
         //$this->output_edit_lists();
-
-        echo '<br />';
-		
+        echo '<br />';		
 		echo '
 			<script>
 			$(function() {
@@ -239,7 +237,6 @@ class question_category_object {
         /// Interface for adding a new category:
         $this->output_new_table();
         echo '<br />';
-		
 		echo '</p>
 			</div>
 			<h3>2. Single-Choice-Frage anlegen (je nach Bedarf mehrfach durchlaufen)</h3>
@@ -253,7 +250,7 @@ class question_category_object {
 			</ol>
 			Legen Sie einige Fragen an: <br><br>
 			<form><input type="button" value=" Zum Editor " 
-			onClick="window.location.href=\'question.php?returnurl=%2Fquestion%2Fwizzard.php%3Fcourseid%3D' . $courseid . '&courseid=' . $courseid . '&category=1&qtype=multichoice\'"></form>';
+			onClick="window.location.href=\'question.php?returnurl=%2Fquestion%2Fwizzard.php%3Fcourseid%3D' . $courseid . '&courseid=' . $courseid . '&category=' . $categoryid . '&qtype=multichoice\'"></form>';
 			
 		echo	'</p>
 			</div>
@@ -328,7 +325,7 @@ class question_category_object {
 					onClick="window.open(\'export.php?courseid=' . $courseid . '\'); return false;"></form>
 					<br>
 					</div>
-			</div>';
+			</div>';			
     }
 
     /**
