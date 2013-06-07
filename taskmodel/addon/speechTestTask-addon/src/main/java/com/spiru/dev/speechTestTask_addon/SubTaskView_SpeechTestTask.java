@@ -2,6 +2,8 @@ package com.spiru.dev.speechTestTask_addon;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -482,12 +484,16 @@ if (!corrected){
 		ret.append("\n");
 		// answers						
 		int pos = 0;
+		List<String> answerlist = new ArrayList<String>();
 		for(int k=0; k<num; k++){
 			pos+=speechTestSubTasklet.getQuestionsAnswers(k).size();
 		}
+		
+		
 		for(String n:speechTestSubTasklet.getQuestionsAnswers(num)){
 			String sel = "";
 			String symbolPic = "";
+			String answerPart;
 			if (param != null && param[pos]){
 				sel = "checked";				
 			}					
@@ -503,20 +509,37 @@ if (!corrected){
 				else symbolPic = getSymbolForCorrectedAnswer(pos,false);
 			}			
 			
-			ret.append("\n  <div class=\"answer\" ");
+			answerPart = "\n  <div class=\"answer\" ";
 			
 			//set hide-attribute in test, till mp3-play is over
 			if (!disabled)
-			ret.append("style=\"visibility: hidden;\"");
+			answerPart += "style=\"visibility: hidden;\"";
 			
-			ret.append("nowrap valign=bottom>"+
+		
+			answerPart += "nowrap valign=bottom>"+
 					   " <input type=\"radio\" name=\"["+num+"]["+relativ+"]\"" +					
 					   " id=\""+relativ+"\" value=\""+n+"\" "+sel+" onChange=\"setModified()\" >"+n+
 					   symbolPic+
-					   "</div>");
-			ret.append("\n");
+					   "</div>\n";
 			pos++;
+			answerlist.add(answerPart);
 		}
+		
+		//if shuffle = true and not the correctionview, mix answers
+		//Adjust autocorrection, otherwise this is not usable:
+		//uncomment the shuffleanswers-checkbox in the questionpool also
+		//edit_speechtesttask_form.php line  87-89 and questiontype.php line 86-89 and 154
+		/*
+		if (speechTestSubTasklet.getShuffleanswers(num) && !disabled){
+			Collections.shuffle(answerlist);
+		}
+		*/
+			
+	
+		for (String a:answerlist){
+			ret.append(a);
+		}
+		
 		
 		ret.append("\n");
 		ret.append("</table>");

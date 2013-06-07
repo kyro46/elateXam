@@ -83,9 +83,9 @@ class qtype_speechtesttask extends elate_addon_questiontype_base {
 				$hint->appendChild($dom->createTextNode($hintv));
 				$Question->appendChild($problem);
 				$Question->appendChild($hint);
-				assert(isset($question->{"shuffleanswers_$i"}));
-				$b = $question->{"shuffleanswers_$i"}? "true" : "false";
-				$Question->setAttribute('preserveOrderOfAnswers', $b);
+				//assert(isset($question->{"shuffleanswers_$i"}));
+				//$b = $question->{"shuffleanswers_$i"}? "true" : "false";
+				//$Question->setAttribute('shuffleanswers', $b);
 				//$problem->appendChild($problemCData);
 				//$hint->appendChild($hintCData);
 				for ($j = 1; $j <= 9999; $j++) {
@@ -151,7 +151,7 @@ foreach ($Count as $iterate) {
 			$Questions = $dom->getElementsByTagName('question');
 			foreach($Questions as $QNode){
 				$i++; // $i holds the number of yet-parsed subquestions
-				$question->{"shuffleanswers_$i"} = $QNode->getAttribute('preserveOrderOfAnswers') == "true"? 1 : 0;
+				//$question->{"shuffleanswers_$i"} = $QNode->getAttribute('shuffleanswers') == "true"? 1 : 0;
 				// Iterate over Children (which can be either problem, hint or answer fields)
 				foreach($QNode->childNodes as $entry) {
 					switch($entry->nodeName) {

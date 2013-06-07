@@ -30,6 +30,7 @@ public interface SubTasklet_SpeechTestTask extends AddOnSubTasklet {
 	public String getPlayCount();
 	public String getFilePathMP3();
 	public String getMaximumTimeForTask();
+	public Boolean getShuffleanswers(int number);
 	
 }
 

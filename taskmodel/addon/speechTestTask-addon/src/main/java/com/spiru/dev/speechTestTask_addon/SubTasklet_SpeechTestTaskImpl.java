@@ -357,6 +357,13 @@ public class SubTasklet_SpeechTestTaskImpl extends AbstractAddonSubTasklet imple
 		return String.valueOf(timeInSeconds);
 	}
 	
+	public Boolean getShuffleanswers(int number) {
+		Element child = (Element)(mementoTaskDef.getElementsByTagName("mcList").item(0));
+		NodeList list = child.getElementsByTagName("question");
+		Element el = (Element)list.item(number);
+		return Boolean.parseBoolean(el.getAttribute("shuffleanswers"));
+	}
+	
 	private Element getElement(Element memento, String string) {
 		Element e=null;
 		NodeList nl=memento.getElementsByTagName(string);
