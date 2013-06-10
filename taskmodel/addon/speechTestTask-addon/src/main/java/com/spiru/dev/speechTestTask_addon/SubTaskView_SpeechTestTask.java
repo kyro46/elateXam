@@ -47,6 +47,16 @@ public class SubTaskView_SpeechTestTask extends SubTaskView{
 				ret.append("document.getElementById('save').onclick = function(){\n");
 				ret.append("setCookies();\n");
 				ret.append("}\n");
+				
+				//show the answers after the pagereload
+				ret.append("if (getCookie(\"showAnswers\") == \"1\") {\n");
+				ret.append("answers = document.getElementsByClassName(\"answer\");\n");
+
+				ret.append("					for( var y=0; y < answers.length; y++ ) {\n");
+				ret.append("answers[y].setAttribute('style', 'font-weight: bold; visibility: visible; ');\n");
+				ret.append("}	\n");
+				ret.append("}	\n");
+	
 				ret.append("if (saveforward != null) {\n");
 					ret.append("document.getElementById('save').style.visibility = 'hidden';\n");
 					ret.append("}\n");
@@ -111,6 +121,9 @@ if (!corrected){
 		ret.append("}\n");
 		ret.append("function setCookies()\n");
 		ret.append("{\n");
+
+		ret.append("setCookie('showAnswers', '1', 15);\n");
+
 		ret.append("var sendTime=getCookie(\"sendTime\");\n");
 		ret.append("if (sendTime!=null && sendTime!=\"\")\n");
 		ret.append("{\n");
