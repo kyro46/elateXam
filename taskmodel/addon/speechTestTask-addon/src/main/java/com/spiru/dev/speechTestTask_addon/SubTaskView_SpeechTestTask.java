@@ -40,17 +40,18 @@ public class SubTaskView_SpeechTestTask extends SubTaskView{
 		ret.append("\n");
 		
 		//Hide save and save-and-backward Buttons and Mainpagelink to prevent jumping through test
-		ret.append("</body><body onload=\"hideBackButton();\"/>\n");
+		ret.append("</body><body onload=\"ModifyAndHideButtons();\"/>\n");
 		ret.append("<script type=\"text/javascript\">\n");
-			ret.append("function hideBackButton() {\n");
+			ret.append("function ModifyAndHideButtons() {\n");
 			ret.append("var saveforward = document.getElementById('save-and-forward');\n");	
-					ret.append("document.getElementById('save').onclick = function(){\n");
-					ret.append("setCookies();\n");
+				ret.append("document.getElementById('save').onclick = function(){\n");
+				ret.append("setCookies();\n");
+				ret.append("}\n");
+				ret.append("if (saveforward != null) {\n");
+					ret.append("document.getElementById('save').style.visibility = 'hidden';\n");
 					ret.append("}\n");
-					ret.append("if (saveforward != null) {\n");
-						ret.append("document.getElementById('save').style.visibility = 'hidden';\n");
-						ret.append("}\n");
-			ret.append("document.getElementById('save-and-backward').style.visibility = 'hidden';}\n");
+				ret.append("document.getElementById('save-and-backward').style.visibility = 'hidden';\n");		
+			ret.append("}\n");
 			//ret.append("hideBackButton();\n");
 		ret.append("</script>\n");		
 		
@@ -143,6 +144,7 @@ if (!corrected){
 		ret.append("setCookie(\"startTime\",startTime,25);\n");
 		ret.append("}\n");
 		ret.append("}\n"); 
+		
 		ret.append("}\n");
 		ret.append("</script>\n");		
 		
@@ -192,12 +194,13 @@ if (!corrected){
 		  	ret.append("ladung.style.backgroundColor = \"red\";\n");
 		  	ret.append("ladung.innerHTML = \"<b>Gesamtbearbeitungszeit abgelaufen</b>\";\n");
 		  	ret.append("document.getElementById('save-and-forward').click(); \n");
+		  	ret.append(" setInterval(\"document.getElementById('save-and-forward').click();\", 1000);\n");
 		  	ret.append(" }\n");
 		  	ret.append("  else {\n");
 		  	ret.append("    ladung.style.width = w+\"px\";\n");
 		  	ret.append("  }\n");
 		  	//Give hint when time is nearly over
-		  	ret.append("if (w / breite == 0.8){\n");
+		  	ret.append("if (w / breite >= 0.8 && w / breite <= 0.98){\n");
 		  	ret.append("	ladung.style.backgroundColor = \"yellow\";\n");
 		  	ret.append("	ladung.innerHTML = \"<b>Gesamtbearbeitungszeit läuft aus</b>\";\n");
 		  	ret.append("	 }\n");
@@ -437,6 +440,7 @@ if (!corrected){
 		ret.append("}\n");
 		//TODO set time according to memento
 		ret.append("setInterval(\"getPlayerStatus();\", 3000);\n");
+		
 		ret.append("</script>\n");
 		
 		if (!corrected) {
