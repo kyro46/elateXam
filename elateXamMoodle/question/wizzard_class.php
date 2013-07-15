@@ -315,7 +315,7 @@ class question_category_object {
 					onClick="window.open(\'category.php?courseid=' . $courseid . '\'); return false;"></form>
 					<br>
 					Fragen aus dem Moodle (1.9) f&uuml;r den Lehrbetrieb importieren:
-					Die Fragen m&uuml;ssen zuvor von dort exporiert worden sein und auf Ihrem PC vorliegen. W&auml;hlen Sie daf&uuml;r das Moodle-XML-Format.<br><br>
+					Die Fragen m&uuml;ssen zuvor von dort exportiert worden sein und auf Ihrem PC vorliegen. W&auml;hlen Sie daf&uuml;r das Moodle-XML-Format.<br><br>
 					<form><input type="button" value="Fragen importieren" 
 					onClick="window.open(\'import.php?courseid=' . $courseid . '\'); return false;"></form>
 					<br>					

@@ -62,7 +62,8 @@ $PAGE->set_url($url);
 $qcobject = new question_category_object($pagevars['cpage'], $thispageurl, $contexts->having_one_edit_tab_cap('categories'), $param->edit, $pagevars['cat'], $param->delete,
                             $contexts->having_cap('moodle/question:add'));
 							
-$streditingcategories = get_string('editcategories', 'question');
+//$streditingcategories = get_string('editcategories', 'question');
+$streditingcategories = 'Assistent';
 if ($param->left || $param->right || $param->moveup || $param->movedown|| $param->moveupcontext || $param->movedowncontext){
     require_sesskey();
     foreach ($qcobject->editlists as $list){
